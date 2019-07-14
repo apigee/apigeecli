@@ -1,9 +1,9 @@
 package products
 
 import (
-	"./listproducts"
-	"./getprod"
 	"../shared"
+	"./getprod"
+	"./listproducts"
 	"github.com/spf13/cobra"
 )
 
@@ -23,5 +23,5 @@ func init() {
 
 	Cmd.MarkPersistentFlagRequired("org")
 	Cmd.AddCommand(listproducts.Cmd)
-	Cmd.AddCommand(getprod.Cmd)		
+	Cmd.AddCommand(getprod.Cmd)
 }

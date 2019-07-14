@@ -1,9 +1,9 @@
 package listorgs
 
 import (
-	"net/url"
 	"../../shared"
 	"github.com/spf13/cobra"
+	"net/url"
 )
 
 var Cmd = &cobra.Command{

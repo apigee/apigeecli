@@ -1,12 +1,12 @@
 package setsync
 
 import (
-	"fmt"
-	"net/url"
 	"../../shared"
-	"path"
 	"encoding/json"
+	"fmt"
 	"github.com/spf13/cobra"
+	"net/url"
+	"path"
 	"strings"
 )
 
@@ -28,7 +28,7 @@ var Cmd = &cobra.Command{
 		} else {
 			return fmt.Errorf("identity[0] must have .iam.gserviceaccount.com suffix and should not be a Google managed service account: %s", identity)
 		}
-	}, 
+	},
 	Run: func(cmd *cobra.Command, args []string) {
 		u, _ := url.Parse(shared.BaseURL)
 		u.Path = path.Join(u.Path, shared.RootArgs.Org+":setSyncAuthorization")
@@ -43,17 +43,16 @@ var Cmd = &cobra.Command{
 
 func init() {
 
-
 	Cmd.Flags().StringVarP(&identity, "ity", "i",
-	"", "IAM Identity")
+		"", "IAM Identity")
 
-	Cmd.MarkFlagRequired("ity")		
+	Cmd.MarkFlagRequired("ity")
 }
 
 func validate(i string) string {
-	if strings.Contains(i, "serviceAccount:")  {
+	if strings.Contains(i, "serviceAccount:") {
 		return i
 	} else {
-		return "serviceAccount:"+i
+		return "serviceAccount:" + i
 	}
 }

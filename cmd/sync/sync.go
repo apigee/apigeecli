@@ -1,9 +1,9 @@
 package sync
 
 import (
-	"./setsync"
-	"./getsync"
 	"../shared"
+	"./getsync"
+	"./setsync"
 	"github.com/spf13/cobra"
 )
 
@@ -22,6 +22,6 @@ func init() {
 		"", "Apigee organization name")
 
 	Cmd.MarkPersistentFlagRequired("org")
-	Cmd.AddCommand(setsync.Cmd)	
-	Cmd.AddCommand(getsync.Cmd)		
+	Cmd.AddCommand(setsync.Cmd)
+	Cmd.AddCommand(getsync.Cmd)
 }

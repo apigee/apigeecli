@@ -1,9 +1,9 @@
 package env
 
 import (
-	"./listenv"
-	"./getenv"
 	"../shared"
+	"./getenv"
+	"./listenv"
 	"github.com/spf13/cobra"
 )
 
@@ -23,5 +23,5 @@ func init() {
 
 	Cmd.MarkPersistentFlagRequired("org")
 	Cmd.AddCommand(listenv.Cmd)
-	Cmd.AddCommand(getenv.Cmd)		
+	Cmd.AddCommand(getenv.Cmd)
 }

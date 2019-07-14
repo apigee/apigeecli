@@ -1,22 +1,22 @@
 package shared
 
 import (
-	"encoding/json"
 	"bytes"
+	"crypto/x509"
+	"encoding/json"
+	"encoding/pem"
 	"errors"
 	"fmt"
-	"log"
-	"os"
-	"io/ioutil"
-	"net/http"
-	"net/url"
-	"crypto/x509"
-	"encoding/pem"
 	"github.com/lestrrat/go-jwx/jwa"
 	"github.com/lestrrat/go-jwx/jwt"
 	"github.com/spf13/viper"
-	"strings"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"net/url"
+	"os"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -49,7 +49,6 @@ type OAuthAccessToken struct {
 	TokenType   string `json:"token_type,omitempty"`
 }
 
-
 //Init function initializes the logger objects
 func Init() {
 
@@ -57,7 +56,7 @@ func Init() {
 
 	if LogInfo {
 		infoHandle = os.Stdout
-	} 
+	}
 
 	warningHandle := os.Stdout
 	errorHandle := os.Stdout
@@ -75,7 +74,7 @@ func Init() {
 		log.Ldate|log.Ltime|log.Lshortfile)
 }
 
-func GetHttpClient(url string, token string) (error) {
+func GetHttpClient(url string, token string) error {
 	client := &http.Client{}
 
 	Info.Println("Connecting to : ", url)
@@ -105,13 +104,13 @@ func GetHttpClient(url string, token string) (error) {
 				Error.Fatalln("Error parsing response:\n", err)
 				return err
 			}
-			fmt.Println(string(prettyJSON.Bytes()))		
+			fmt.Println(string(prettyJSON.Bytes()))
 			return nil
 		}
 	}
 }
 
-func PostHttpClient(url string, token string, payload string) (error) {
+func PostHttpClient(url string, token string, payload string) error {
 	client := &http.Client{}
 
 	Info.Println("Connecting to : ", url)
@@ -141,10 +140,10 @@ func PostHttpClient(url string, token string, payload string) (error) {
 				Error.Fatalln("Error parsing response:\n", err)
 				return err
 			}
-			fmt.Println(string(prettyJSON.Bytes()))		
+			fmt.Println(string(prettyJSON.Bytes()))
 			return nil
 		}
-	}	
+	}
 }
 
 func getPrivateKey() (interface{}, error) {
@@ -205,10 +204,10 @@ func GenerateAccessToken() (string, error) {
 	form.Add("assertion", token)
 
 	client := &http.Client{}
-	req, err := http.NewRequest("POST", token_endpoint, strings.NewReader(form.Encode())) 
+	req, err := http.NewRequest("POST", token_endpoint, strings.NewReader(form.Encode()))
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-    req.Header.Add("Content-Length", strconv.Itoa(len(form.Encode())))
-	
+	req.Header.Add("Content-Length", strconv.Itoa(len(form.Encode())))
+
 	resp, err := client.Do(req)
 
 	if err != nil {

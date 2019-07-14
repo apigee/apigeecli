@@ -1,10 +1,10 @@
 package listdev
 
 import (
-	"net/url"
 	"../../shared"
-	"path"
 	"github.com/spf13/cobra"
+	"net/url"
+	"path"
 )
 
 var Cmd = &cobra.Command{
@@ -13,7 +13,7 @@ var Cmd = &cobra.Command{
 	Long:  "Lists all developers in an organization by email address",
 	Run: func(cmd *cobra.Command, args []string) {
 		u, _ := url.Parse(shared.BaseURL)
-		u.Path = path.Join(u.Path, shared.RootArgs.Org,"developers")
+		u.Path = path.Join(u.Path, shared.RootArgs.Org, "developers")
 		q := u.Query()
 		if expand {
 			q.Set("expand", "true")
@@ -42,5 +42,5 @@ func init() {
 	Cmd.Flags().BoolVarP(&expand, "expand", "x",
 		false, "Expand Details")
 
-	Cmd.MarkFlagRequired("org")		
+	Cmd.MarkFlagRequired("org")
 }

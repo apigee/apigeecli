@@ -1,10 +1,10 @@
 package getdev
 
 import (
-	"net/url"
 	"../../shared"
-	"path"
 	"github.com/spf13/cobra"
+	"net/url"
+	"path"
 )
 
 var Cmd = &cobra.Command{
@@ -13,7 +13,7 @@ var Cmd = &cobra.Command{
 	Long:  "Returns the profile for a developer by email address or ID",
 	Run: func(cmd *cobra.Command, args []string) {
 		u, _ := url.Parse(shared.BaseURL)
-		u.Path = path.Join(u.Path, shared.RootArgs.Org,"developers", name)
+		u.Path = path.Join(u.Path, shared.RootArgs.Org, "developers", name)
 		shared.GetHttpClient(u.String(), shared.RootArgs.Token)
 	},
 }
@@ -28,6 +28,6 @@ func init() {
 	Cmd.Flags().StringVarP(&name, "name", "n",
 		"", "email of the developer")
 
-	Cmd.MarkFlagRequired("org")		
-	Cmd.MarkFlagRequired("name")		
+	Cmd.MarkFlagRequired("org")
+	Cmd.MarkFlagRequired("name")
 }

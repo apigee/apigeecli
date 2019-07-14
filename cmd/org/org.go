@@ -1,8 +1,8 @@
 package org
 
 import (
-	"./listorgs"
 	"./getorg"
+	"./listorgs"
 	"github.com/spf13/cobra"
 )
 
@@ -17,6 +17,6 @@ var count string
 
 func init() {
 
-	Cmd.AddCommand(listorgs.Cmd)		
+	Cmd.AddCommand(listorgs.Cmd)
 	Cmd.AddCommand(getorg.Cmd)
 }

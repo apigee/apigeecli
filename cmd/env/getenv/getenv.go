@@ -15,13 +15,12 @@ var Cmd = &cobra.Command{
 		u, _ := url.Parse(shared.BaseURL)
 
 		if config {
-			u.Path = path.Join(u.Path, shared.RootArgs.Org, "environments",shared.RootArgs.Env, "deployedConfig")
+			u.Path = path.Join(u.Path, shared.RootArgs.Org, "environments", shared.RootArgs.Env, "deployedConfig")
 		} else {
-			u.Path = path.Join(u.Path, shared.RootArgs.Org, "environments",shared.RootArgs.Env)
+			u.Path = path.Join(u.Path, shared.RootArgs.Org, "environments", shared.RootArgs.Env)
 		}
 		shared.GetHttpClient(u.String(), shared.RootArgs.Token)
 	},
-
 }
 
 var config = false
@@ -29,7 +28,7 @@ var config = false
 func init() {
 
 	Cmd.Flags().StringVarP(&shared.RootArgs.Env, "env", "e",
-	"", "Apigee environment name")
+		"", "Apigee environment name")
 	Cmd.Flags().BoolVarP(&config, "config", "c",
 		false, "Return configuration details")
 

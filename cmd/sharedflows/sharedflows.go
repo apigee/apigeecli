@@ -1,9 +1,9 @@
 package sharedflows
 
 import (
+	"../shared"
 	getsf "./getsf"
 	listsf "./listsf"
-	"../shared"
 	"github.com/spf13/cobra"
 )
 
@@ -13,7 +13,6 @@ var Cmd = &cobra.Command{
 	Long:  "Manage Apigee shared flows in an org",
 }
 
-
 func init() {
 
 	Cmd.PersistentFlags().StringVarP(&shared.RootArgs.Org, "org", "o",
@@ -21,5 +20,5 @@ func init() {
 
 	Cmd.MarkPersistentFlagRequired("org")
 	Cmd.AddCommand(listsf.Cmd)
-	Cmd.AddCommand(getsf.Cmd)		
+	Cmd.AddCommand(getsf.Cmd)
 }

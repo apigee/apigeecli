@@ -1,10 +1,10 @@
 package listproducts
 
 import (
-	"net/url"
 	"../../shared"
-	"path"
 	"github.com/spf13/cobra"
+	"net/url"
+	"path"
 )
 
 var Cmd = &cobra.Command{
@@ -13,7 +13,7 @@ var Cmd = &cobra.Command{
 	Long:  "Returns a list of API products with a filter by attribute names and values if provided",
 	Run: func(cmd *cobra.Command, args []string) {
 		u, _ := url.Parse(shared.BaseURL)
-		u.Path = path.Join(u.Path, shared.RootArgs.Org,"apiproducts")
+		u.Path = path.Join(u.Path, shared.RootArgs.Org, "apiproducts")
 		q := u.Query()
 		if expand {
 			q.Set("expand", "true")
@@ -42,5 +42,5 @@ func init() {
 	Cmd.Flags().BoolVarP(&expand, "expand", "x",
 		false, "Expand Details")
 
-	Cmd.MarkFlagRequired("org")		
+	Cmd.MarkFlagRequired("org")
 }

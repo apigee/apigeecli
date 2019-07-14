@@ -1,10 +1,10 @@
 package getorg
 
 import (
-	"net/url"
 	"../../shared"
-	"path"
 	"github.com/spf13/cobra"
+	"net/url"
+	"path"
 )
 
 var Cmd = &cobra.Command{
@@ -23,5 +23,5 @@ func init() {
 	Cmd.Flags().StringVarP(&shared.RootArgs.Org, "org", "o",
 		"", "Apigee organization name")
 
-	Cmd.MarkFlagRequired("org")		
+	Cmd.MarkFlagRequired("org")
 }

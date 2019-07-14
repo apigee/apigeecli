@@ -1,10 +1,10 @@
 package listapis
 
 import (
-	"net/url"
 	"../../shared"
-	"path"
 	"github.com/spf13/cobra"
+	"net/url"
+	"path"
 )
 
 var Cmd = &cobra.Command{

@@ -1,9 +1,9 @@
 package developers
 
 import (
-	"./listdev"
-	"./getdev"
 	"../shared"
+	"./getdev"
+	"./listdev"
 	"github.com/spf13/cobra"
 )
 
@@ -23,5 +23,5 @@ func init() {
 
 	Cmd.MarkPersistentFlagRequired("org")
 	Cmd.AddCommand(listdev.Cmd)
-	Cmd.AddCommand(getdev.Cmd)		
+	Cmd.AddCommand(getdev.Cmd)
 }
