@@ -77,9 +77,9 @@ func init() {
 }
 
 func initConfig() {
+	viper.SetEnvPrefix("APIGEE")
 	viper.AutomaticEnv() // read in environment variables that match
 	viper.SetConfigType("json")
-
 }
 
 // GetRootCmd returns the root of the cobra command-tree.
