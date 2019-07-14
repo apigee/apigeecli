@@ -66,8 +66,8 @@ apigeeapi -a orgadmin.json
 
 ## <a name="org"/> org
 
-* [list] (#listorgs)
-* [get] (#getorg)
+* [list](#listorgs)
+* [get](#getorg)
 
 ### <a name="listorgs"/> list
 
