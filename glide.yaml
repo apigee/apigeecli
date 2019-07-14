@@ -1,0 +1,12 @@
+package: .
+import:
+- package: github.com/spf13/cobra
+  version: ^0.0.5
+- package: github.com/spf13/viper
+  version: ^1.4.0
+- package: github.com/inconshreveable/mousetrap
+  version: ^1.0.0
+- package: github.com/lestrrat/go-jwx
+  subpackages:
+  - jwa
+  - jwt

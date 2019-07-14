@@ -1,0 +1,29 @@
+# .goreleaser.yml
+builds:
+  -
+    main: ./main.go
+    binary: apigeeapi
+    goos:
+      - linux
+      - darwin
+      - windows
+archive:
+  name_template: "{{ .ProjectName }}_{{.Tag}}_{{ .Os }}_{{ .Arch }}"
+  replacements:
+    darwin: Darwin
+    linux: Linux
+    windows: Windows
+    386: i386
+    amd64: x86_64
+  wrap_in_directory: true  
+  format_overrides:
+  - goos: windows
+    format: zip
+git:
+  short_hash: true
+release:
+  draft: true
+  prerelease: true
+nfpm:
+  name_template: "{{ .ProjectName }}_{{.Tag}}_{{ .Os }}_{{ .Arch }}"
+  bindir: bin
