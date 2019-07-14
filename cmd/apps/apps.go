@@ -1,16 +1,16 @@
-package products
+package apps
 
 import (
-	"./listproducts"
-	"./getprod"
+	listapp "./listapp"
+	getapp "./getapp"
 	"../shared"
 	"github.com/spf13/cobra"
 )
 
 var Cmd = &cobra.Command{
-	Use:   "products",
-	Short: "Manage Apigee API products",
-	Long:  "Manage Apigee API products",
+	Use:   "apps",
+	Short: "Manage Apigee Developer Applications",
+	Long:  "Manage Apigee Developer Applications",
 }
 
 var expand = false
@@ -22,6 +22,6 @@ func init() {
 		"", "Apigee organization name")
 
 	Cmd.MarkPersistentFlagRequired("org")
-	Cmd.AddCommand(listproducts.Cmd)
-	Cmd.AddCommand(getprod.Cmd)		
+	Cmd.AddCommand(listapp.Cmd)
+	Cmd.AddCommand(getapp.Cmd)		
 }

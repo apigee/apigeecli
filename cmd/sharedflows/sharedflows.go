@@ -1,17 +1,18 @@
-package apis
+package sharedflows
 
 import (
-	"./listapis"
-	"./listdeploy"
+	getsf "./getsf"
+	listsf "./listsf"
 	"../shared"
 	"github.com/spf13/cobra"
 )
 
 var Cmd = &cobra.Command{
-	Use:   "apis",
-	Short: "Manage Apigee API proxies in an org",
-	Long:  "Manage Apigee API proxies in an org",
+	Use:   "sharedflows",
+	Short: "Manage Apigee shared flows in an org",
+	Long:  "Manage Apigee shared flows in an org",
 }
+
 
 func init() {
 
@@ -19,6 +20,6 @@ func init() {
 		"", "Apigee organization name")
 
 	Cmd.MarkPersistentFlagRequired("org")
-	Cmd.AddCommand(listapis.Cmd)
-	Cmd.AddCommand(listdeploy.Cmd)		
+	Cmd.AddCommand(listsf.Cmd)
+	Cmd.AddCommand(getsf.Cmd)		
 }

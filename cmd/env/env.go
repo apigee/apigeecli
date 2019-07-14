@@ -1,17 +1,20 @@
-package apis
+package env
 
 import (
-	"./listapis"
-	"./listdeploy"
+	"./listenv"
+	"./getenv"
 	"../shared"
 	"github.com/spf13/cobra"
 )
 
 var Cmd = &cobra.Command{
-	Use:   "apis",
-	Short: "Manage Apigee API proxies in an org",
-	Long:  "Manage Apigee API proxies in an org",
+	Use:   "envs",
+	Short: "Manage Apigee environments",
+	Long:  "Manage Apigee environments",
 }
+
+var expand = false
+var count string
 
 func init() {
 
@@ -19,6 +22,6 @@ func init() {
 		"", "Apigee organization name")
 
 	Cmd.MarkPersistentFlagRequired("org")
-	Cmd.AddCommand(listapis.Cmd)
-	Cmd.AddCommand(listdeploy.Cmd)		
+	Cmd.AddCommand(listenv.Cmd)
+	Cmd.AddCommand(getenv.Cmd)		
 }

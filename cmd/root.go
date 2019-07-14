@@ -4,9 +4,13 @@ import (
 	"fmt"
 	"./shared"
 	"./sync"
+	"./apps"
 	"./apis"
 	"./org"
+	"./env"
 	"./products"
+	"./developers"
+	"./sharedflows"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -65,8 +69,11 @@ func init() {
 	RootCmd.AddCommand(apis.Cmd)
 	RootCmd.AddCommand(org.Cmd)
 	RootCmd.AddCommand(sync.Cmd)
+	RootCmd.AddCommand(env.Cmd)
 	RootCmd.AddCommand(products.Cmd)
-
+	RootCmd.AddCommand(developers.Cmd)
+	RootCmd.AddCommand(apps.Cmd)
+	RootCmd.AddCommand(sharedflows.Cmd)
 }
 
 func initConfig() {
