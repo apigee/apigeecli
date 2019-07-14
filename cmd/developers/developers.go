@@ -9,6 +9,7 @@ import (
 
 var Cmd = &cobra.Command{
 	Use:   "devs",
+	Aliases: []string{"developers"},
 	Short: "Manage Apigee App Developers",
 	Long:  "Manage Apigee App Developers",
 }
