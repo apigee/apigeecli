@@ -18,7 +18,7 @@ You must have an account on [Apigee Hybrid](https://docs.apigee.com/hybrid/beta2
 * Manage API proxies,
 * Manage API Products,
 * Manage Apigee Environments,
-* View Org details
+* View Org details etc.
 
 You need to be familiar with basic concepts and features of Apigee Edge such as API proxies, organizations, and environments.
 
@@ -59,7 +59,10 @@ apigeeapi -a orgadmin.json
 * [org](#org)
 * [products] (#products)
 * [apis](#apis)
-* [environment](#environment)
+* [envs](#env)
+* [sharedflows](#sf)
+* [apps](#apps)
+* [devs](#devs)
 
 ## <a name="org"/> org
 
@@ -90,3 +93,100 @@ apigeeapi org get -o org -t $TOKEN
 ### <a name="listproducts"/> list
 
 List all API Products in the org
+
+```
+apigeeapi products list -o org -t $TOKEN
+```
+
+### <a name ="getproduct"/> get
+
+Get details of an API product
+
+```
+apigeeapi products list -o org -n name -t $TOKEN
+```
+
+## <a name="devs"/> developers
+
+* [list](#listdevs)
+* [get](#getdev)
+
+### <a name="listdevs"/> list
+
+List all App Developers in an org
+
+```
+apigeeapi devs list -o org -t $TOKEN
+```
+
+### <a name ="getdev"/> get
+
+Get details of an App Developer
+
+```
+apigeeapi devs get -o org -n name -t $TOKEN
+```
+
+## <a name="apps"/> apps
+
+* [list](#listapps)
+* [get](#getapp)
+
+### <a name="listapps"/> list
+
+List all developer apps in an org
+
+```
+apigeeapi apps list -o org -t $TOKEN
+```
+
+### <a name ="getapp"/> get
+
+Get details of a developer app
+
+```
+apigeeapi apps get -o org -n name -t $TOKEN
+```
+
+## <a name="sf"/> sharedflows
+
+* [list](#listsf)
+* [get](#getsf)
+
+### <a name="listsf"/> list
+
+List all shared flows in an org
+
+```
+apigeeapi sharedflows list -o org -t $TOKEN
+```
+
+### <a name ="getsf"/> get
+
+Get details of an App Developer
+
+```
+apigeeapi sharedflow get -o org -n name -t $TOKEN
+```
+
+## <a name="env"/> envs
+
+* [list](#listenv)
+* [get](#getsf)
+
+### <a name="listenv"/> list
+
+List all environments in an org
+
+```
+apigeeapi envs list -o org -t $TOKEN
+```
+
+### <a name ="getenv"/> get
+
+Get details of an environment
+
+```
+apigeeapi envs get -o org -e env -t $TOKEN
+```
+
