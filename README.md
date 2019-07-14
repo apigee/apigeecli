@@ -57,7 +57,7 @@ apigeeapi -a orgadmin.json
 ```
 
 * [org](#org)
-* [products] (#products)
+* [prods] (#products)
 * [apis](#apis)
 * [envs](#env)
 * [sharedflows](#sf)
@@ -87,6 +87,8 @@ apigeeapi org get -o org -t $TOKEN
 
 ## <a name="products"/> products
 
+Supported alias `products`
+
 * [list](#listproducts)
 * [get](#getproduct)
 
@@ -95,7 +97,7 @@ apigeeapi org get -o org -t $TOKEN
 List all API Products in the org
 
 ```
-apigeeapi products list -o org -t $TOKEN
+apigeeapi prods list -o org -t $TOKEN
 ```
 
 ### <a name ="getproduct"/> get
@@ -103,10 +105,12 @@ apigeeapi products list -o org -t $TOKEN
 Get details of an API product
 
 ```
-apigeeapi products list -o org -n name -t $TOKEN
+apigeeapi prods list -o org -n name -t $TOKEN
 ```
 
 ## <a name="devs"/> developers
+
+Supported alias `developers`
 
 * [list](#listdevs)
 * [get](#getdev)
@@ -128,6 +132,8 @@ apigeeapi devs get -o org -n name -t $TOKEN
 ```
 
 ## <a name="apps"/> apps
+
+Supported alias `applications`
 
 * [list](#listapps)
 * [get](#getapp)
@@ -170,6 +176,8 @@ apigeeapi sharedflow get -o org -n name -t $TOKEN
 ```
 
 ## <a name="env"/> envs
+
+Supported alias `environments`
 
 * [list](#listenv)
 * [get](#getsf)
