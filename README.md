@@ -57,7 +57,7 @@ apigeeapi -a orgadmin.json
 ```
 
 * [org](#org)
-* [prods] (#products)
+* [prods](#prods)
 * [apis](#apis)
 * [envs](#env)
 * [sharedflows](#sf)
@@ -85,7 +85,7 @@ Get org details for an Apigee Org
 apigeeapi org get -o org -t $TOKEN
 ```
 
-## <a name="products"/> products
+## <a name="prods"/> prods
 
 Supported alias `products`
 
