@@ -140,6 +140,41 @@ func PostHttpOctet(url string, proxyName string) error {
 	}
 }
 
+func DownloadResource(url string, name string) error {
+
+	out, err := os.Create(name+".zip")
+	if err != nil  {
+		Error.Fatalln("Error creating file:\n", err)
+		return err
+	}
+	defer out.Close()	
+
+	client := &http.Client{}
+
+	Info.Println("Connecting to : ", url)
+	req, err := http.NewRequest("GET", url, nil)
+
+	Info.Println("Setting token : ", RootArgs.Token)
+	req.Header.Add("Authorization", "Bearer "+ RootArgs.Token)
+
+	resp, err := client.Do(req)
+
+	if err != nil {
+		Error.Fatalln("Error connecting:\n", err)
+		return err
+	} else {
+		defer resp.Body.Close()
+		_, err = io.Copy(out, resp.Body)
+		if err != nil  {
+			Error.Fatalln("Error writing response to file:\n", err)
+			return err
+		}
+
+		fmt.Println("Proxy bundle "+name+".zip completed")
+		return nil
+	}
+}
+
 func HttpClient(params ...string) error {
 	
 	var req *http.Request
