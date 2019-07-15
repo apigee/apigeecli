@@ -32,9 +32,9 @@ func init() {
 		"", "API proxy name")
 	Cmd.Flags().StringVarP(&shared.RootArgs.Env, "env", "e",
 		"", "Apigee environment name")
-	Cmd.Flags().StringVarP(&revision, "rev", "r",
+	Cmd.Flags().StringVarP(&revision, "rev", "v",
 		"", "API Proxy revision")
-	Cmd.Flags().BoolVarP(&overrides, "ovr", "v",
+	Cmd.Flags().BoolVarP(&overrides, "ovr", "r",
 		false, "Forces deployment of the new revision")
 
 	Cmd.MarkFlagRequired("env")
