@@ -21,7 +21,7 @@ var Cmd = &cobra.Command{
 			q.Set("expand", "false")
 		}
 		if count != "" {
-			q.Set("count", count)
+			q.Set("row", count)
 		}
 		u.RawQuery = q.Encode()
 		shared.GetHttpClient(u.String(), shared.RootArgs.Token)
