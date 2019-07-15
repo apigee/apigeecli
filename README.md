@@ -47,7 +47,7 @@ The following options are available for security
 
 Pass the access token
 ```
-apigeeapi -t $TOKEN
+apigeeapi 
 ```
 
 Pass the service account
@@ -55,6 +55,39 @@ Pass the service account
 ```
 apigeeapi -a orgadmin.json
 ```
+
+## Access Token Caching
+
+`apigeeapi` caches the OAuth Access token for subsequent calls (until the token expires). The access token is stored in `$HOME/.access_token`. This path must be readable/writeable by the `apigeeapi` process. 
+
+### Example 1
+
+First command
+
+```
+apigeeapi orgs list -a orgadmin.json
+```
+
+Subsequent command (no token or service account)
+
+```
+apigeeapi orgs get -o org
+```
+### Example 2
+
+First command
+
+```
+apigeeapi orgs list -t $TOKEN
+```
+
+Subsequent command (no token or service account)
+
+```
+apigeeapi orgs get -o org
+```
+
+## Supported entites
 
 * [org](#org)
 * [prods](#prods)
@@ -74,7 +107,7 @@ apigeeapi -a orgadmin.json
 List all the orgs available to the identity (service account)
 
 ```
-apigeeapi org list -t $TOKEN
+apigeeapi org list 
 ```
 
 ### <a name="getorg"/> get
@@ -82,7 +115,7 @@ apigeeapi org list -t $TOKEN
 Get org details for an Apigee Org
 
 ```
-apigeeapi org get -o org -t $TOKEN
+apigeeapi org get -o org 
 ```
 
 ## <a name="prods"/> prods
@@ -97,7 +130,7 @@ Supported alias `products`
 List all API Products in the org
 
 ```
-apigeeapi prods list -o org -t $TOKEN
+apigeeapi prods list -o org 
 ```
 
 ### <a name ="getproduct"/> get
@@ -105,7 +138,7 @@ apigeeapi prods list -o org -t $TOKEN
 Get details of an API product
 
 ```
-apigeeapi prods list -o org -n name -t $TOKEN
+apigeeapi prods list -o org -n name 
 ```
 
 ## <a name="devs"/> developers
@@ -120,7 +153,7 @@ Supported alias `developers`
 List all App Developers in an org
 
 ```
-apigeeapi devs list -o org -t $TOKEN
+apigeeapi devs list -o org 
 ```
 
 ### <a name ="getdev"/> get
@@ -128,7 +161,7 @@ apigeeapi devs list -o org -t $TOKEN
 Get details of an App Developer
 
 ```
-apigeeapi devs get -o org -n name -t $TOKEN
+apigeeapi devs get -o org -n name 
 ```
 
 ## <a name="apps"/> apps
@@ -143,7 +176,7 @@ Supported alias `applications`
 List all developer apps in an org
 
 ```
-apigeeapi apps list -o org -t $TOKEN
+apigeeapi apps list -o org 
 ```
 
 ### <a name ="getapp"/> get
@@ -151,7 +184,7 @@ apigeeapi apps list -o org -t $TOKEN
 Get details of a developer app
 
 ```
-apigeeapi apps get -o org -n name -t $TOKEN
+apigeeapi apps get -o org -n name 
 ```
 
 ## <a name="sf"/> sharedflows
@@ -164,7 +197,7 @@ apigeeapi apps get -o org -n name -t $TOKEN
 List all shared flows in an org
 
 ```
-apigeeapi sharedflows list -o org -t $TOKEN
+apigeeapi sharedflows list -o org 
 ```
 
 ### <a name ="getsf"/> get
@@ -172,7 +205,7 @@ apigeeapi sharedflows list -o org -t $TOKEN
 Get details of an App Developer
 
 ```
-apigeeapi sharedflow get -o org -n name -t $TOKEN
+apigeeapi sharedflow get -o org -n name 
 ```
 
 ## <a name="env"/> envs
@@ -187,7 +220,7 @@ Supported alias `environments`
 List all environments in an org
 
 ```
-apigeeapi envs list -o org -t $TOKEN
+apigeeapi envs list -o org 
 ```
 
 ### <a name ="getenv"/> get
@@ -195,6 +228,6 @@ apigeeapi envs list -o org -t $TOKEN
 Get details of an environment
 
 ```
-apigeeapi envs get -o org -e env -t $TOKEN
+apigeeapi envs get -o org -e env 
 ```
 
