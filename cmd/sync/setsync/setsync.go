@@ -37,7 +37,7 @@ var Cmd = &cobra.Command{
 		identities.Identities = append(identities.Identities, identity)
 		payload, _ := json.Marshal(&identities)
 		fmt.Println(string(payload))
-		shared.PostHttpClient(u.String(), shared.RootArgs.Token, string(payload))
+		shared.PostHttpClient(u.String(), string(payload))
 	},
 }
 

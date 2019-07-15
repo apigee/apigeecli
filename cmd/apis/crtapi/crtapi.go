@@ -26,12 +26,12 @@ var Cmd = &cobra.Command{
 			u.RawQuery = q.Encode()
 			file, err := readProxyBundle()
 			if err != nil {
-				shared.PostHttpOctet(u.String(), shared.RootArgs.Token, file)
+				shared.PostHttpOctet(u.String(), file)
 			}
 			defer file.Close()					
 		} else {
 			proxyName := "{\"name\":\"" + name + "\"}"
-			shared.PostHttpClient(u.String(), shared.RootArgs.Token, proxyName)	
+			shared.PostHttpClient(u.String(), proxyName)	
 		}
 	},
 }

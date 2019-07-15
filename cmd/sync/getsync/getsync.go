@@ -14,7 +14,7 @@ var Cmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		u, _ := url.Parse(shared.BaseURL)
 		u.Path = path.Join(u.Path, shared.RootArgs.Org+":getSyncAuthorization")
-		shared.PostHttpClient(u.String(), shared.RootArgs.Token, "")
+		shared.PostHttpClient(u.String(), "")
 	},
 }
 

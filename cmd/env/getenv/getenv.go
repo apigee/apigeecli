@@ -19,7 +19,7 @@ var Cmd = &cobra.Command{
 		} else {
 			u.Path = path.Join(u.Path, shared.RootArgs.Org, "environments", shared.RootArgs.Env)
 		}
-		shared.GetHttpClient(u.String(), shared.RootArgs.Token)
+		shared.GetHttpClient(u.String())
 	},
 }
 

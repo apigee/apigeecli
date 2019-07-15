@@ -80,14 +80,14 @@ func Init() {
 		log.Ldate|log.Ltime|log.Lshortfile)
 }
 
-func GetHttpClient(url string, token string) error {
+func GetHttpClient(url string) error {
 	client := &http.Client{}
 
 	Info.Println("Connecting to : ", url)
 	req, err := http.NewRequest("GET", url, nil)
 
-	Info.Println("Setting token : ", token)
-	req.Header.Add("Authorization", "Bearer "+token)
+	Info.Println("Setting token : ", RootArgs.Token)
+	req.Header.Add("Authorization", "Bearer "+ RootArgs.Token)
 
 	resp, err := client.Do(req)
 
@@ -116,14 +116,14 @@ func GetHttpClient(url string, token string) error {
 	}
 }
 
-func PostHttpOctet(url string, token string, file *os.File) error {
+func PostHttpOctet(url string, file *os.File) error {
 	client := &http.Client{}
 
 	Info.Println("Connecting to : ", url)
 	req, err := http.NewRequest("POST", url, file)
 
-	Info.Println("Setting token : ", token)
-	req.Header.Add("Authorization", "Bearer "+token)
+	Info.Println("Setting token : ", RootArgs.Token)
+	req.Header.Add("Authorization", "Bearer "+ RootArgs.Token)
 	req.Header.Add("Content-Type", "application/octet")
 	resp, err := client.Do(req)
 
@@ -152,14 +152,14 @@ func PostHttpOctet(url string, token string, file *os.File) error {
 	}
 }
 
-func PostHttpClient(url string, token string, payload string) error {
+func PostHttpClient(url string, payload string) error {
 	client := &http.Client{}
 
 	Info.Println("Connecting to : ", url)
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer([]byte(payload)))
 
-	Info.Println("Setting token : ", token)
-	req.Header.Add("Authorization", "Bearer "+token)
+	Info.Println("Setting token : ", RootArgs.Token)
+	req.Header.Add("Authorization", "Bearer "+ RootArgs.Token)
 	req.Header.Add("Content-Type", "application/json")
 	resp, err := client.Do(req)
 
