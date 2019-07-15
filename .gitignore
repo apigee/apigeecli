@@ -15,3 +15,5 @@
 vendor/
 # binaries
 dist/
+# test folder
+test/
