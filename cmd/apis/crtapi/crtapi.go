@@ -24,11 +24,10 @@ var Cmd = &cobra.Command{
 			q.Set("name", name)
 			q.Set("action", "import")	
 			u.RawQuery = q.Encode()
-			file, err := readProxyBundle()
-			if err != nil {
-				shared.PostHttpOctet(u.String(), file)
-			}
-			defer file.Close()					
+			err := readProxyBundle()
+			if err == nil {
+				shared.PostHttpOctet(u.String(), proxy)
+			}					
 		} else {
 			proxyName := "{\"name\":\"" + name + "\"}"
 			shared.PostHttpClient(u.String(), proxyName)	
@@ -48,18 +47,18 @@ func init() {
 	Cmd.MarkFlagRequired("name")
 }
 
-func readProxyBundle() (*os.File, error){
+func readProxyBundle() error {
 
 	if !strings.HasSuffix(proxy, ".zip") {
 		shared.Error.Fatalln("Proxy bundle must be a zip file")
-		return nil, errors.New("source must be a zipfile")
+		return errors.New("source must be a zipfile")
 	}
 
 	file, err := os.Open(proxy)
 
 	if err != nil {
 		shared.Error.Fatalln("Cannot open/read API Proxy Bundle: ", err)
-		return nil, err
+		return err
 	}
 
 	fi, err := file.Stat()
@@ -67,8 +66,9 @@ func readProxyBundle() (*os.File, error){
 
 	if err != nil {
 		shared.Error.Fatalln("Invalid API Proxy Bundle: ", err)
-		return nil, err
+		return err
 	}
 
-	return file, nil
+	defer file.Close()
+	return nil
 }

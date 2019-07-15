@@ -12,6 +12,7 @@ import (
 	"github.com/spf13/viper"
 	"io/ioutil"
 	"log"
+	"mime/multipart"
 	"net/http"
 	"net/url"
 	"os"
@@ -116,15 +117,23 @@ func GetHttpClient(url string) error {
 	}
 }
 
-func PostHttpOctet(url string, file *os.File) error {
+func PostHttpOctet(url string, proxyName string) error {
+
+	file, err := os.Open(proxyName)
+	defer file.Close()
+
+	body := &bytes.Buffer{}
+	writer := multipart.NewWriter(body)
+	err = writer.Close()
+	
 	client := &http.Client{}
 
 	Info.Println("Connecting to : ", url)
-	req, err := http.NewRequest("POST", url, file)
+	req, err := http.NewRequest("POST", url, body)
 
 	Info.Println("Setting token : ", RootArgs.Token)
 	req.Header.Add("Authorization", "Bearer "+ RootArgs.Token)
-	req.Header.Add("Content-Type", "application/octet")
+	req.Header.Set("Content-Type", writer.FormDataContentType())
 	resp, err := client.Do(req)
 
 	if err != nil {
@@ -339,7 +348,7 @@ func checkAccessToken() bool {
 			Error.Fatalln("Token expired:\n", string(body))
 			return false
 		} else {
-			Info.Println("Response: ", body)
+			Info.Println("Response: ", string(body))
 			Info.Println("Reusing the cached token: ", RootArgs.Token)
 			return true
 		}
