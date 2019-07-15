@@ -15,6 +15,8 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"os/user"
+	"path"
 	"strconv"
 	"strings"
 	"time"
@@ -41,6 +43,8 @@ var (
 )
 
 var LogInfo = false
+var skipCheck = false
+var skipCache = false
 
 // Structure to hold OAuth response
 type OAuthAccessToken struct {
@@ -48,6 +52,8 @@ type OAuthAccessToken struct {
 	ExpiresIn   int    `json:"expires_in,omitempty"`
 	TokenType   string `json:"token_type,omitempty"`
 }
+
+const access_token_file = ".access_token"
 
 //Init function initializes the logger objects
 func Init() {
@@ -228,8 +234,123 @@ func GenerateAccessToken() (string, error) {
 			} else {
 				Info.Println("access token : ", accessToken)
 				RootArgs.Token = accessToken.AccessToken
+				writeAccessToken()
 				return accessToken.AccessToken, nil
 			}
 		}
+	}
+}
+
+func readAccessToken() error {
+	usr, err := user.Current()
+	if err != nil {
+		return err
+	}
+	content, err := ioutil.ReadFile(path.Join(usr.HomeDir,access_token_file))
+	if err != nil {
+		Info.Println("Cached access token was not found")
+		return err
+	} else {
+		Info.Println("Using cached access token: ", string(content))
+		RootArgs.Token = string(content)
+		return nil
+	}
+}
+
+func writeAccessToken() error {
+
+	if skipCache {
+		return nil
+	}
+	usr, err := user.Current()
+	if err != nil {	
+		Warning.Println(err)
+	} else {
+		Info.Println("Cache access token: ", RootArgs.Token)
+		err = ioutil.WriteFile(path.Join(usr.HomeDir,access_token_file), []byte(RootArgs.Token), 0644)
+	}
+	return err
+}
+
+func checkAccessToken() bool {
+
+	if skipCheck {
+		Warning.Println("skipping token validity")
+		return true
+	}
+
+	const tokenInfo = "https://www.googleapis.com/oauth2/v1/tokeninfo"
+	u, _ := url.Parse(tokenInfo)
+	q := u.Query()
+	q.Set("access_token", RootArgs.Token)	
+	u.RawQuery = q.Encode()
+
+	client := &http.Client{}
+
+	Info.Println("Connecting to : ", u.String())
+	req, err := http.NewRequest("GET", u.String(), nil)
+	resp, err := client.Do(req)
+	if err != nil {
+		Error.Fatalln("Error connecting to token endpoint:\n", err)
+		return false
+	} else {
+		defer resp.Body.Close()
+		body, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			Error.Fatalln("Token info error:\n", err)
+			return false
+		} else if resp.StatusCode != 200 {
+			Error.Fatalln("Token expired:\n", string(body))
+			return false
+		} else {
+			Info.Println("Response: ", body)
+			Info.Println("Reusing the cached token: ", RootArgs.Token)
+			return true
+		}
+	}
+}
+
+func SetAccessToken () error {
+
+	if RootArgs.Token == "" && RootArgs.ServiceAccount == "" {
+		err := readAccessToken() //try to read from config
+		if err != nil {
+			return fmt.Errorf("Either token or service account must be provided")
+		} else {
+			if checkAccessToken() { //check if the token is still valid
+				return nil
+			} else {
+				return fmt.Errorf("Token expired: request a new access token or pass the service account")
+			}			
+		}
+	} else {
+		if RootArgs.ServiceAccount != "" {
+			viper.SetConfigFile(RootArgs.ServiceAccount)
+			err := viper.ReadInConfig() // Find and read the config file
+			if err != nil {             // Handle errors reading the config file
+				return fmt.Errorf("Fatal error config file: %s \n", err)
+			} else {
+				if viper.Get("private_key") == "" {
+					return fmt.Errorf("Fatal error: Private key missing in the service account")
+				}
+				if viper.Get("client_email") == "" {
+					return fmt.Errorf("Fatal error: client email missing in the service account")
+				}
+				_, err = GenerateAccessToken()
+				if err != nil {
+					return fmt.Errorf("Fatal error generating access token: %s \n", err)
+				} else {
+					return nil
+				}
+			}
+		} else {
+			//a token was passed, cache it
+			if checkAccessToken() {
+				writeAccessToken()
+				return nil
+			} else {
+				return fmt.Errorf("Token expired: request a new access token or pass the service account")
+			}
+		}		
 	}
 }

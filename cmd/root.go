@@ -10,7 +10,6 @@ import (
 	"./shared"
 	"./sharedflows"
 	"./sync"
-	"fmt"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -23,32 +22,7 @@ var RootCmd = &cobra.Command{
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 
 		shared.Init()
-
-		if shared.RootArgs.Token == "" && shared.RootArgs.ServiceAccount == "" {
-			return fmt.Errorf("Either token or service account must be provided")
-		} else {
-			if shared.RootArgs.ServiceAccount != "" {
-				viper.SetConfigFile(shared.RootArgs.ServiceAccount)
-				err := viper.ReadInConfig() // Find and read the config file
-				if err != nil {             // Handle errors reading the config file
-					return fmt.Errorf("Fatal error config file: %s \n", err)
-				} else {
-					if viper.Get("private_key") == "" {
-						return fmt.Errorf("Fatal error: Private key missing in the service account")
-					}
-					if viper.Get("client_email") == "" {
-						return fmt.Errorf("Fatal error: client email missing in the service account")
-					}
-					_, err = shared.GenerateAccessToken()
-					if err != nil {
-						return fmt.Errorf("Fatal error generating access token: %s \n", err)
-					} else {
-						return nil
-					}
-				}
-			}
-			return nil
-		}
+		return shared.SetAccessToken()
 	},
 }
 
