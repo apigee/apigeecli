@@ -116,6 +116,42 @@ func GetHttpClient(url string, token string) error {
 	}
 }
 
+func PostHttpOctet(url string, token string, file *os.File) error {
+	client := &http.Client{}
+
+	Info.Println("Connecting to : ", url)
+	req, err := http.NewRequest("POST", url, file)
+
+	Info.Println("Setting token : ", token)
+	req.Header.Add("Authorization", "Bearer "+token)
+	req.Header.Add("Content-Type", "application/octet")
+	resp, err := client.Do(req)
+
+	if err != nil {
+		Error.Fatalln("Error connecting:\n", err)
+		return err
+	} else {
+		defer resp.Body.Close()
+		body, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			Error.Fatalln("Error in response:\n", err)
+			return err
+		} else if resp.StatusCode != 200 {
+			Error.Fatalln("Error in response:\n", string(body))
+			return errors.New("Error in response")
+		} else {
+			var prettyJSON bytes.Buffer
+			err = json.Indent(&prettyJSON, body, "", "\t")
+			if err != nil {
+				Error.Fatalln("Error parsing response:\n", err)
+				return err
+			}
+			fmt.Println(string(prettyJSON.Bytes()))
+			return nil
+		}
+	}
+}
+
 func PostHttpClient(url string, token string, payload string) error {
 	client := &http.Client{}
 

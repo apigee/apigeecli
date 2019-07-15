@@ -4,6 +4,7 @@ import (
 	"../shared"
 	"./listapis"
 	"./listdeploy"
+	crtapi "./crtapi"
 	"github.com/spf13/cobra"
 )
 
@@ -21,4 +22,5 @@ func init() {
 	Cmd.MarkPersistentFlagRequired("org")
 	Cmd.AddCommand(listapis.Cmd)
 	Cmd.AddCommand(listdeploy.Cmd)
+	Cmd.AddCommand(crtapi.Cmd)
 }
