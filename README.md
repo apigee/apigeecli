@@ -149,6 +149,7 @@ apigeeapi prods list -o org -n name
 
 * [list](#listorgs)
 * [listdeploy](#listdeploy)
+* [create](#createapi)
 
 ### <a name="listorgs"/> list
 
@@ -169,6 +170,23 @@ Optional parameters:
 
 ```
 apigeeapi org listdeploy -o org 
+```
+
+### <a name="createapi"/> create
+
+Import or create an API Proxy
+
+Create an API Proxy
+
+```
+apigeeapi apis create -o org -n proxy
+```
+This creates an empty proxy in the Org
+
+Import an API Proxy Bundle
+
+```
+apigeeapi apis create -o org -n proxy -p proxy.zip
 ```
 
 ## <a name="devs"/> developers
