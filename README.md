@@ -130,8 +130,8 @@ Supported alias `products`
 List all API Products in the org
 
 Optional parameters:
-* `--expand -x` : `true` or `false` - Optional. Returns an expanded list of apps for the organization.
-* `--count -c` - Optional. Number of app ids to return. Default is 10000
+* `--expand -x` : `true` or `false` - Optional. Returns an expanded list of products for the organization.
+* `--count -c` - Optional. Number of app ids to return. Default is 1000
 
 ```
 apigeeapi prods list -o org 
@@ -161,6 +161,11 @@ apigeeapi org list
 ### <a name="listdeploy"/> listdeploy
 
 Lists all deployments of an API proxy
+
+Optional parameters:
+* `--expand -x` : `true` or `false` - Optional. Returns an expanded list of developers for the organization.
+* `--count -c` - Optional. Number of app ids to return. Default is 1000
+
 
 ```
 apigeeapi org listdeploy -o org 
