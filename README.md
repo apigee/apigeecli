@@ -150,6 +150,7 @@ apigeeapi prods list -o org -n name
 * [list](#listorgs)
 * [listdeploy](#listdeploy)
 * [create](#createapi)
+* [deploy](#depapi)
 
 ### <a name="listorgs"/> list
 
@@ -188,6 +189,18 @@ Import an API Proxy Bundle
 ```
 apigeeapi apis create -o org -n proxy -p proxy.zip
 ```
+
+### <a name="depapi"/> deploy
+
+Deploys a revision of an existing API proxy to an environment in an organization.
+
+Optional parameters:
+* `--ovr -v` : `true` or `false` - Optional. Forces deployment of the new revision.
+
+```
+apigeeapi apis deploy -o org -e env -n proxy -v 1
+```
+
 
 ## <a name="devs"/> developers
 
