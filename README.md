@@ -151,6 +151,7 @@ apigeeapi prods list -o org -n name
 * [listdeploy](#listdeploy)
 * [create](#createapi)
 * [deploy](#depapi)
+* [fetch](#fetchapi)
 
 ### <a name="listorgs"/> list
 
@@ -195,12 +196,21 @@ apigeeapi apis create -o org -n proxy -p proxy.zip
 Deploys a revision of an existing API proxy to an environment in an organization.
 
 Optional parameters:
-* `--ovr -v` : `true` or `false` - Optional. Forces deployment of the new revision.
+* `--ovr -r` : `true` or `false` - Optional. Forces deployment of the new revision.
 
 ```
 apigeeapi apis deploy -o org -e env -n proxy -v 1
 ```
 
+### <a name="fetchapi"/> fetch
+
+Returns a zip-formatted proxy bundle of code and config files.
+
+```
+apigeeapi apis fetch -o org -e env -n proxy -v 1
+```
+
+The downloaded file is {proxyname}.zip and in the folder where the command runs
 
 ## <a name="devs"/> developers
 
