@@ -19,7 +19,7 @@ var Cmd = &cobra.Command{
 			u.RawQuery = q.Encode()			
 		}
 		u.Path = path.Join(u.Path, shared.RootArgs.Org, "environments", shared.RootArgs.Org, "apis", name, "revisions", revision,"deployments")
-		shared.GetHttpClient(u.String())
+		shared.HttpClient(u.String())
 	},
 }
 

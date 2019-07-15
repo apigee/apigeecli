@@ -14,7 +14,7 @@ var Cmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		u, _ := url.Parse(shared.BaseURL)
 		u.Path = path.Join(u.Path, shared.RootArgs.Org, "apis", name, "deployments")
-		shared.GetHttpClient(u.String())
+		shared.HttpClient(u.String())
 	},
 }
 

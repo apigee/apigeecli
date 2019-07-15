@@ -82,42 +82,6 @@ func Init() {
 		log.Ldate|log.Ltime|log.Lshortfile)
 }
 
-func GetHttpClient(url string) error {
-	client := &http.Client{}
-
-	Info.Println("Connecting to : ", url)
-	req, err := http.NewRequest("GET", url, nil)
-
-	Info.Println("Setting token : ", RootArgs.Token)
-	req.Header.Add("Authorization", "Bearer "+ RootArgs.Token)
-
-	resp, err := client.Do(req)
-
-	if err != nil {
-		Error.Fatalln("Error connecting:\n", err)
-		return err
-	} else {
-		defer resp.Body.Close()
-		body, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			Error.Fatalln("Error in response:\n", err)
-			return err
-		} else if resp.StatusCode != 200 {
-			Error.Fatalln("Error in response:\n", string(body))
-			return errors.New("Error in response")
-		} else {
-			var prettyJSON bytes.Buffer
-			err = json.Indent(&prettyJSON, body, "", "\t")
-			if err != nil {
-				Error.Fatalln("Error parsing response:\n", err)
-				return err
-			}
-			fmt.Println(string(prettyJSON.Bytes()))
-			return nil
-		}
-	}
-}
-
 func PostHttpOctet(url string, proxyName string) error {
 
 	file, _ := os.Open(proxyName)
@@ -176,15 +140,25 @@ func PostHttpOctet(url string, proxyName string) error {
 	}
 }
 
-func PostHttpClient(url string, payload string) error {
-	client := &http.Client{}
+func HttpClient(params ...string) error {
+	
+	var req *http.Request
+	var err error
 
-	Info.Println("Connecting to : ", url)
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer([]byte(payload)))
+	client := &http.Client{}
+	Info.Println("Connecting to : ", params[0])
+
+	if len(params) == 2 {
+		req, err = http.NewRequest("POST", params[0], bytes.NewBuffer([]byte(params[1])))
+	} else if len(params) == 1 {
+		req, err = http.NewRequest("GET", params[0], nil)		
+	} else {
+		return errors.New("Incorrect parameters to invoke the method")
+	}
 
 	Info.Println("Setting token : ", RootArgs.Token)
 	req.Header.Add("Authorization", "Bearer "+ RootArgs.Token)
-	req.Header.Add("Content-Type", "application/json")
+
 	resp, err := client.Do(req)
 
 	if err != nil {
@@ -209,7 +183,7 @@ func PostHttpClient(url string, payload string) error {
 			fmt.Println(string(prettyJSON.Bytes()))
 			return nil
 		}
-	}
+	}	
 }
 
 func getPrivateKey() (interface{}, error) {
