@@ -175,6 +175,9 @@ func DownloadResource(url string, name string) error {
 	}
 }
 
+// The first parameter is url. If only one parameter is sent, assume GET
+// The second parameter is the payload. The two parameters are sent, assume POST
+// THe third parammeter is the method. If three parameters are sent, assume method in param
 func HttpClient(params ...string) error {
 	
 	var req *http.Request
@@ -183,10 +186,18 @@ func HttpClient(params ...string) error {
 	client := &http.Client{}
 	Info.Println("Connecting to : ", params[0])
 
-	if len(params) == 2 {
-		req, err = http.NewRequest("POST", params[0], bytes.NewBuffer([]byte(params[1])))
-	} else if len(params) == 1 {
-		req, err = http.NewRequest("GET", params[0], nil)		
+	if len(params) == 1 {
+		req, err = http.NewRequest("GET", params[0], nil)
+	} else if len(params) == 2 {		
+		req, err = http.NewRequest("POST", params[0], bytes.NewBuffer([]byte(params[1])))		
+	} else if len(params) == 3 {
+		if params[2] == "DELETE" {
+			req, err = http.NewRequest("DELETE", params[0], nil)
+		} else if params[2] == "PUT" {
+			req, err = http.NewRequest("PUT", params[0], bytes.NewBuffer([]byte(params[1])))
+		} else {
+			return errors.New("Unsupported method")
+		}
 	} else {
 		return errors.New("Incorrect parameters to invoke the method")
 	}
