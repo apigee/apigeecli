@@ -4,6 +4,7 @@ import (
 	"../shared"
 	"./listapis"
 	"./listdeploy"
+	"./depapi"
 	crtapi "./crtapi"
 	"github.com/spf13/cobra"
 )
@@ -23,4 +24,5 @@ func init() {
 	Cmd.AddCommand(listapis.Cmd)
 	Cmd.AddCommand(listdeploy.Cmd)
 	Cmd.AddCommand(crtapi.Cmd)
+	Cmd.AddCommand(depapi.Cmd)
 }
