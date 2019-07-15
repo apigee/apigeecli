@@ -10,6 +10,7 @@ import (
 	"github.com/lestrrat/go-jwx/jwa"
 	"github.com/lestrrat/go-jwx/jwt"
 	"github.com/spf13/viper"
+	"io"
 	"io/ioutil"
 	"log"
 	"mime/multipart"
@@ -119,13 +120,27 @@ func GetHttpClient(url string) error {
 
 func PostHttpOctet(url string, proxyName string) error {
 
-	file, err := os.Open(proxyName)
+	file, _ := os.Open(proxyName)
 	defer file.Close()
 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
+	part, err := writer.CreateFormFile("proxy",proxyName)
+	if err != nil {
+		Error.Fatalln("Error writing multi-part:\n", err)
+		return err
+	}
+	_, err = io.Copy(part, file)
+	if err != nil {
+		Error.Fatalln("Error copying multi-part:\n", err)
+		return err
+	}
+
 	err = writer.Close()
-	
+	if err != nil {
+		Error.Fatalln("Error closing multi-part:\n", err)
+		return err
+	}
 	client := &http.Client{}
 
 	Info.Println("Connecting to : ", url)
