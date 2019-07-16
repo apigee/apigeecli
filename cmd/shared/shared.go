@@ -216,7 +216,8 @@ func HttpClient(params ...string) error {
 		if err != nil {
 			Error.Fatalln("Error in response:\n", err)
 			return err
-		} else if resp.StatusCode != 200 {
+		} else if resp.StatusCode > 299 {
+			Error.Fatalln("Response Code:\n", resp.StatusCode)
 			Error.Fatalln("Error in response:\n", string(body))
 			return errors.New("Error in response")
 		} else {
