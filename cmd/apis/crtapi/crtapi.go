@@ -40,7 +40,7 @@ var name, proxy string
 func init() {
 
 	Cmd.Flags().StringVarP(&name, "name", "n",
-		"", "email of the developer")
+		"", "API Proxy name")
 	Cmd.Flags().StringVarP(&proxy, "proxy", "p",
 		"", "API Proxy Bundle path")
 
