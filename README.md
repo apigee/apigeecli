@@ -47,7 +47,7 @@ The following options are available for security
 
 Pass the access token
 ```
-apigeeapi 
+apigeeapi -t $TOKEN
 ```
 
 Pass the service account
@@ -117,6 +117,11 @@ Get org details for an Apigee Org
 ```
 apigeeapi org get -o org 
 ```
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+
 
 ## <a name="prods"/> prods
 
@@ -131,13 +136,20 @@ Supported alias `products`
 
 List all API Products in the org
 
-Optional parameters:
-* `--expand -x` : `true` or `false` - Optional. Returns an expanded list of products for the organization.
-* `--count -c` - Optional. Number of app ids to return. Default is 1000
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--expand -x` (optional) Returns an expanded list of products for the organization.
+* `--count -c` (optional) Number of app ids to return. Default is 1000
 
 ```
 apigeeapi prods list -o org 
 ```
+Required parameters
+The following parameters are required. See Common Reference for a list of additional parameters.
+
+`--org -o` (required) Apigee organization name
+
 
 ### <a name ="getproduct"/> get
 
@@ -146,14 +158,33 @@ Get details of an API product
 ```
 apigeeapi prods list -o org -n name 
 ```
+Required parameters
+The following parameters are required. See Common Reference for a list of additional parameters.
+
+`--org -o` (required) Apigee organization name
+`--name -n` (required) API product name
+
 ### <a name="crtproduct"/> create
 
 Create an API product
 
 ```
-apigeeapi prods create -o org -n name 
+apigeeapi prods create -o org -n name -e test,prod -p proxy1,proxy2 -f auto
 ```
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
 
+* `--org -o` (required) Apigee organization name
+* `--name -n` (required) API product name
+* `--displayName -m` (optional) Display name for API product
+* `--approval -f` (required) Approval type for API product
+* `--desc -d` (optional) Description for API product
+* `--envs -e` (required) A comma separated list of environments to enable
+* `--proxies -p` (required) A comma separated list of API proxies
+* `--scopes -s` (optional) A comma separated list of OAuth scopes
+* `--quota -q` (optional) Quota Amount
+* `--interval -i` (optional) Quota Time Interval
+* `--unit -u` (optional) Quota Time Unit
 
 ### <a name="delprodct"/> delete
 
@@ -164,6 +195,11 @@ Get details of an API product
 ```
 apigeeapi prods delete -o org -n name 
 ```
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+* `--name -n` (required) API product name
 
 
 ## <a name="apis"/> apis
@@ -180,49 +216,61 @@ apigeeapi prods delete -o org -n name
 List APIs in an Apigee Org
 
 ```
-apigeeapi org list 
+apigeeapi apis list -o org 
 ```
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+
 
 ### <a name="listdeploy"/> listdeploy
 
 Lists all deployments of an API proxy
 
-Optional parameters:
-* `--expand -x` : `true` or `false` - Optional. Returns an expanded list of developers for the organization.
-* `--count -c` - Optional. Number of app ids to return. Default is 1000
-
-
 ```
-apigeeapi org listdeploy -o org 
+apigeeapi org listdeploy -o org -n name
 ```
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+* `--name -n` (required) API proxy name
+* `--expand -x` (optional) Returns an expanded list of proxies for the organization.
+* `--count -c` (optional) Number of apis to return
+
 
 ### <a name="createapi"/> create
 
-Import or create an API Proxy
-
-Create an API Proxy
+Import or create an API Proxy. If a bundle (zip) is supplied, it is imported else, it creates an empty proxy in the Org
 
 ```
 apigeeapi apis create -o org -n proxy
 ```
-This creates an empty proxy in the Org
 
-Import an API Proxy Bundle
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
 
-```
-apigeeapi apis create -o org -n proxy -p proxy.zip
-```
+* `--org -o` (required) Apigee organization name
+* `--name -n` (required) API proxy name
+* `--proxy -p` (required) API proxy bundle (zip)
 
 ### <a name="depapi"/> deploy
 
 Deploys a revision of an existing API proxy to an environment in an organization.
 
-Optional parameters:
-* `--ovr -r` : `true` or `false` - Optional. Forces deployment of the new revision.
-
 ```
 apigeeapi apis deploy -o org -e env -n proxy -v 1
 ```
+
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+* `--name -n` (required) API proxy name* 
+*`--revision -v` (required) API proxy revision
+* `--ovr -r` (optional) Forces deployment of the new revision.
+
 
 ### <a name="fetchapi"/> fetch
 
@@ -231,6 +279,13 @@ Returns a zip-formatted proxy bundle of code and config files.
 ```
 apigeeapi apis fetch -o org -e env -n proxy -v 1
 ```
+
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+* `--name -n` (required) API proxy name 
+*`--revision -v` (required) API proxy revision
 
 The downloaded file is {proxyname}.zip and in the folder where the command is executed
 
@@ -241,6 +296,12 @@ Deletes an API proxy and all associated endpoints, policies, resources, and revi
 ```
 apigeeapi apis delete -o org -n proxy
 ```
+
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+* `--name -n` (required) API proxy name 
 
 ## <a name="devs"/> developers
 
@@ -257,6 +318,11 @@ List all App Developers in an org
 apigeeapi devs list -o org 
 ```
 
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+
 ### <a name ="getdev"/> get
 
 Get details of an App Developer
@@ -264,6 +330,12 @@ Get details of an App Developer
 ```
 apigeeapi devs get -o org -n name 
 ```
+
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+* `--name -n` (required) Developer email
 
 ## <a name="apps"/> apps
 
@@ -276,13 +348,16 @@ Supported alias `applications`
 
 List all developer apps in an org
 
-Optional parameters:
-* `--expand -x` : `true` or `false` - Optional. Returns an expanded list of apps for the organization.
-* `--count -c` - Optional. Number of app ids to return. Default is 10000
-
 ```
 apigeeapi apps list -o org 
 ```
+
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+* `--expand -x` (optional) Returns an expanded list of apps for the organization.
+* `--count -c` (optional) Number of app ids to return.
 
 ### <a name ="getapp"/> get
 
@@ -291,6 +366,12 @@ Get details of a developer app
 ```
 apigeeapi apps get -o org -n name 
 ```
+
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+* `--name -n` (required) Developer App name
 
 ## <a name="sf"/> sharedflows
 
@@ -304,21 +385,32 @@ List all shared flows in an org
 ```
 apigeeapi sharedflows list -o org 
 ```
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+
 
 ### <a name ="getsf"/> get
 
-Get details of an App Developer
+Get details of a shared flow
 
 ```
 apigeeapi sharedflow get -o org -n name 
 ```
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+* `--name -n` (required) Shared flow name
+
 
 ## <a name="env"/> envs
 
 Supported alias `environments`
 
 * [list](#listenv)
-* [get](#getsf)
+* [get](#getenv)
 
 ### <a name="listenv"/> list
 
@@ -327,6 +419,10 @@ List all environments in an org
 ```
 apigeeapi envs list -o org 
 ```
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
 
 ### <a name ="getenv"/> get
 
@@ -336,3 +432,8 @@ Get details of an environment
 apigeeapi envs get -o org -e env 
 ```
 
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+* `--name -n` (required) environment name
