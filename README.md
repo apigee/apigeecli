@@ -96,6 +96,8 @@ apigeeapi orgs get -o org
 * [sharedflows](#sf)
 * [apps](#apps)
 * [devs](#devs)
+* [sync](#sync)
+* [kvm](#kvm)
 
 ## <a name="org"/> org
 
@@ -437,3 +439,86 @@ The following parameters are supported. See Common Reference for a list of addit
 
 * `--org -o` (required) Apigee organization name
 * `--name -n` (required) environment name
+
+## <a name="sync"/> sync
+
+* [set](#setsync)
+* [get](#getsync)
+
+### <a name="listorgs"/> set
+
+Set identity with access to control plane resources
+
+```
+apigeeapi sync set -o org -i identity 
+```
+
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+* `--ity -i` (required) IAM Identity
+
+### <a name="listorgs"/> get
+
+List all the orgs available to the identity (service account)
+
+```
+apigeeapi sync set -o org
+```
+
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+
+
+## <a name="kvm"/> kvm
+
+* [create](#crtkvm)
+* [list](#listkvm)
+* [delete](#delkvm)
+
+### <a name="crtkvm"/> create
+
+Create a new environment scoped KVM Map
+
+```
+apigeeapi kvms create -o org -e env -n name 
+```
+
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+* `--env -e` (required) Apigee environment name
+* `--name -n` (required) KVM Map name
+* `--encrypt -c` (optional) Enable encrypted KVM
+
+### <a name="listkvm"/> list
+
+List all the KVM Maps in an environment
+
+```
+apigeeapi kvms create -o org -e env
+```
+
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+* `--env -e` (required) Apigee environment name
+
+### <a name="delkvm"/> delete
+
+Delete a KVM Map
+
+```
+apigeeapi kvms create -o org -e env
+```
+
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+* `--env -e` (required) Apigee environment name

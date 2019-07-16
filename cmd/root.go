@@ -5,6 +5,7 @@ import (
 	"./apps"
 	"./developers"
 	"./env"
+	"./kvm"
 	"./org"
 	"./products"
 	"./shared"
@@ -48,6 +49,7 @@ func init() {
 	RootCmd.AddCommand(developers.Cmd)
 	RootCmd.AddCommand(apps.Cmd)
 	RootCmd.AddCommand(sharedflows.Cmd)
+	RootCmd.AddCommand(kvm.Cmd)
 }
 
 func initConfig() {
