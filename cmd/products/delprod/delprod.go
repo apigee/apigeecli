@@ -22,12 +22,8 @@ var name string
 
 func init() {
 
-	Cmd.Flags().StringVarP(&shared.RootArgs.Org, "org", "o",
-		"", "Apigee organization name")
-
 	Cmd.Flags().StringVarP(&name, "name", "n",
 		"", "name of the API Product")
 
-	Cmd.MarkFlagRequired("org")
 	Cmd.MarkFlagRequired("name")
 }
