@@ -4,6 +4,8 @@ import (
 	"../shared"
 	"./getdev"
 	"./listdev"
+	"./deldev"
+	"./crtdev"
 	"github.com/spf13/cobra"
 )
 
@@ -25,4 +27,6 @@ func init() {
 	Cmd.MarkPersistentFlagRequired("org")
 	Cmd.AddCommand(listdev.Cmd)
 	Cmd.AddCommand(getdev.Cmd)
+	Cmd.AddCommand(deldev.Cmd)
+	Cmd.AddCommand(crtdev.Cmd)
 }
