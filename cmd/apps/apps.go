@@ -4,6 +4,8 @@ import (
 	"../shared"
 	getapp "./getapp"
 	listapp "./listapp"
+	delapp "./delapp"
+	crtapp "./crtapp"
 	"github.com/spf13/cobra"
 )
 
@@ -25,4 +27,6 @@ func init() {
 	Cmd.MarkPersistentFlagRequired("org")
 	Cmd.AddCommand(listapp.Cmd)
 	Cmd.AddCommand(getapp.Cmd)
+	Cmd.AddCommand(delapp.Cmd)
+	Cmd.AddCommand(crtapp.Cmd)
 }
