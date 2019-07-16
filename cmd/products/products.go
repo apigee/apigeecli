@@ -4,6 +4,8 @@ import (
 	"../shared"
 	"./getprod"
 	"./listproducts"
+	"./delprod"
+	"./crtprod"
 	"github.com/spf13/cobra"
 )
 
@@ -14,15 +16,15 @@ var Cmd = &cobra.Command{
 	Long:  "Manage Apigee API products",
 }
 
-var expand = false
-var count string
-
 func init() {
 
 	Cmd.PersistentFlags().StringVarP(&shared.RootArgs.Org, "org", "o",
 		"", "Apigee organization name")
 
 	Cmd.MarkPersistentFlagRequired("org")
+
 	Cmd.AddCommand(listproducts.Cmd)
 	Cmd.AddCommand(getprod.Cmd)
+	Cmd.AddCommand(delprod.Cmd)
+	Cmd.AddCommand(crtprod.Cmd)
 }
