@@ -5,7 +5,7 @@ import (
 	"./listapis"
 	"./listdeploy"
 	"./depapi"
-	fetch "./fetch"
+	fetch "./fetchapi"
 	crtapi "./crtapi"
 	delapi "./delapi"
 	"github.com/spf13/cobra"

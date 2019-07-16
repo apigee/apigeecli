@@ -1,4 +1,4 @@
-package crtapis
+package fetchapi
 
 import (
 	"../../shared"

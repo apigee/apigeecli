@@ -162,6 +162,10 @@ func DownloadResource(url string, name string) error {
 	if err != nil {
 		Error.Fatalln("Error connecting:\n", err)
 		return err
+	} else if resp.StatusCode > 299 {
+		Error.Fatalln("Response Code:\n", resp.StatusCode)
+		Error.Fatalln("Error in response:\n", resp.Body)
+		return errors.New("Error in response")
 	} else {
 		defer resp.Body.Close()
 		_, err = io.Copy(out, resp.Body)

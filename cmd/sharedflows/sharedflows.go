@@ -4,6 +4,8 @@ import (
 	"../shared"
 	getsf "./getsf"
 	listsf "./listsf"
+	"./delsf"
+	"./fetchsf"
 	"github.com/spf13/cobra"
 )
 
@@ -21,4 +23,6 @@ func init() {
 	Cmd.MarkPersistentFlagRequired("org")
 	Cmd.AddCommand(listsf.Cmd)
 	Cmd.AddCommand(getsf.Cmd)
+	Cmd.AddCommand(fetchsf.Cmd)
+	Cmd.AddCommand(delsf.Cmd)
 }
