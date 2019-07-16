@@ -22,12 +22,9 @@ var name string
 
 func init() {
 
-	Cmd.Flags().StringVarP(&shared.RootArgs.Org, "org", "o",
-		"", "Apigee organization name")
 
 	Cmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of of the developer app")
 
-	Cmd.MarkFlagRequired("org")
 	Cmd.MarkFlagRequired("name")
 }

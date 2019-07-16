@@ -33,14 +33,9 @@ var count string
 
 func init() {
 
-	Cmd.Flags().StringVarP(&shared.RootArgs.Org, "org", "o",
-		"", "Apigee organization name")
-
 	Cmd.Flags().StringVarP(&count, "count", "c",
 		"", "Number of apps; limit is 1000")
 
 	Cmd.Flags().BoolVarP(&expand, "expand", "x",
 		false, "Expand Details")
-
-	Cmd.MarkFlagRequired("org")
 }
