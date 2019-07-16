@@ -2,17 +2,17 @@ package crtapis
 
 import (
 	"../../shared"
+	"archive/zip"
+	"errors"
 	"github.com/spf13/cobra"
 	"net/url"
-	"path"
 	"os"
-	"archive/zip"
+	"path"
 	"strings"
-	"errors"
 )
 
 var Cmd = &cobra.Command{
-	Use:   "create", 
+	Use:   "create",
 	Short: "Creates an API proxy in an Apigee Org",
 	Long:  "Creates an API proxy in an Apigee Org",
 	Run: func(cmd *cobra.Command, args []string) {
@@ -20,17 +20,17 @@ var Cmd = &cobra.Command{
 		u.Path = path.Join(u.Path, shared.RootArgs.Org, "apis")
 
 		if proxy != "" {
-			q := u.Query()			
+			q := u.Query()
 			q.Set("name", name)
-			q.Set("action", "import")	
+			q.Set("action", "import")
 			u.RawQuery = q.Encode()
 			err := readProxyBundle()
 			if err == nil {
 				shared.PostHttpOctet(u.String(), proxy)
-			}					
+			}
 		} else {
 			proxyName := "{\"name\":\"" + name + "\"}"
-			shared.HttpClient(u.String(), proxyName)	
+			shared.HttpClient(u.String(), proxyName)
 		}
 	},
 }

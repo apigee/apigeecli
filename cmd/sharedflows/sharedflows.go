@@ -2,10 +2,10 @@ package sharedflows
 
 import (
 	"../shared"
-	getsf "./getsf"
-	listsf "./listsf"
 	"./delsf"
 	"./fetchsf"
+	getsf "./getsf"
+	listsf "./listsf"
 	"github.com/spf13/cobra"
 )
 

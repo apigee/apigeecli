@@ -2,18 +2,18 @@ package apps
 
 import (
 	"../shared"
+	crtapp "./crtapp"
+	delapp "./delapp"
 	getapp "./getapp"
 	listapp "./listapp"
-	delapp "./delapp"
-	crtapp "./crtapp"
 	"github.com/spf13/cobra"
 )
 
 var Cmd = &cobra.Command{
-	Use:   "apps",
+	Use:     "apps",
 	Aliases: []string{"applications"},
-	Short: "Manage Apigee Developer Applications",
-	Long:  "Manage Apigee Developer Applications",
+	Short:   "Manage Apigee Developer Applications",
+	Long:    "Manage Apigee Developer Applications",
 }
 
 var expand = false

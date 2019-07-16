@@ -22,7 +22,6 @@ var name string
 
 func init() {
 
-
 	Cmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of of the developer app")
 

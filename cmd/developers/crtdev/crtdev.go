@@ -19,10 +19,10 @@ var Cmd = &cobra.Command{
 
 		developer = append(developer, "\"email\":\""+email+"\"")
 		developer = append(developer, "\"firstName\":\""+firstName+"\"")
-		developer = append(developer, "\"lastName\":\""+lastName+"\"")		
+		developer = append(developer, "\"lastName\":\""+lastName+"\"")
 		developer = append(developer, "\"userName\":\""+userName+"\"")
 
-		payload := "{"+strings.Join(developer,",")+"}"	
+		payload := "{" + strings.Join(developer, ",") + "}"
 		u.Path = path.Join(u.Path, shared.RootArgs.Org, "developers")
 		shared.HttpClient(u.String(), payload)
 	},
@@ -35,9 +35,9 @@ func init() {
 	Cmd.Flags().StringVarP(&email, "email", "n",
 		"", "The developer's email")
 	Cmd.Flags().StringVarP(&firstName, "first", "f",
-		"", "The first name of the developer")		
+		"", "The first name of the developer")
 	Cmd.Flags().StringVarP(&lastName, "last", "s",
-		"", "The last name of the developer")		
+		"", "The last name of the developer")
 	Cmd.Flags().StringVarP(&userName, "user", "u",
 		"", "The username of the developer")
 

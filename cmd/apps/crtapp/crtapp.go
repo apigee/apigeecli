@@ -25,14 +25,14 @@ var Cmd = &cobra.Command{
 		}
 
 		if expires != "" {
-			app = append(app, "\"keyExpiresIn\":\""+expires+"\"")		
+			app = append(app, "\"keyExpiresIn\":\""+expires+"\"")
 		}
 
 		if len(scopes) > 0 {
 			app = append(app, "\"scopes\":[\""+getArrayStr(scopes)+"\"]")
 		}
-		
-		payload := "{"+strings.Join(app,",")+"}"	
+
+		payload := "{" + strings.Join(app, ",") + "}"
 		u.Path = path.Join(u.Path, shared.RootArgs.Org, "developers", email, "apps")
 		shared.HttpClient(u.String(), payload)
 	},
@@ -44,13 +44,13 @@ var apiProducts, scopes []string
 func init() {
 
 	Cmd.Flags().StringVarP(&name, "name", "n",
-		"", "Name of the app app")	
+		"", "Name of the app app")
 	Cmd.Flags().StringVarP(&email, "email", "e",
 		"", "The app's email")
 	Cmd.Flags().StringVarP(&expires, "expires", "x",
-		"", "A setting, in milliseconds, for the lifetime of the consumer key")		
+		"", "A setting, in milliseconds, for the lifetime of the consumer key")
 	Cmd.Flags().StringVarP(&callback, "callback", "c",
-		"", "The callbackUrl is used by OAuth")		
+		"", "The callbackUrl is used by OAuth")
 	Cmd.Flags().StringArrayVarP(&apiProducts, "prods", "p",
 		[]string{}, "A list of api products")
 	Cmd.Flags().StringArrayVarP(&scopes, "scopes", "s",
@@ -62,7 +62,7 @@ func init() {
 }
 
 func getArrayStr(str []string) string {
-	tmp := strings.Join(str,",")
+	tmp := strings.Join(str, ",")
 	tmp = strings.ReplaceAll(tmp, ",", "\",\"")
 	return tmp
 }

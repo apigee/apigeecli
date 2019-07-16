@@ -2,18 +2,18 @@ package developers
 
 import (
 	"../shared"
+	"./crtdev"
+	"./deldev"
 	"./getdev"
 	"./listdev"
-	"./deldev"
-	"./crtdev"
 	"github.com/spf13/cobra"
 )
 
 var Cmd = &cobra.Command{
-	Use:   "devs",
+	Use:     "devs",
 	Aliases: []string{"developers"},
-	Short: "Manage Apigee App Developers",
-	Long:  "Manage Apigee App Developers",
+	Short:   "Manage Apigee App Developers",
+	Long:    "Manage Apigee App Developers",
 }
 
 var expand = false

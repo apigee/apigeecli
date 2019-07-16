@@ -2,12 +2,12 @@ package apis
 
 import (
 	"../shared"
-	"./listapis"
-	"./listdeploy"
-	"./depapi"
-	fetch "./fetchapi"
 	crtapi "./crtapi"
 	delapi "./delapi"
+	"./depapi"
+	fetch "./fetchapi"
+	"./listapis"
+	"./listdeploy"
 	"github.com/spf13/cobra"
 )
 

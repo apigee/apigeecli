@@ -89,7 +89,7 @@ func PostHttpOctet(url string, proxyName string) error {
 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
-	part, err := writer.CreateFormFile("proxy",proxyName)
+	part, err := writer.CreateFormFile("proxy", proxyName)
 	if err != nil {
 		Error.Fatalln("Error writing multi-part:\n", err)
 		return err
@@ -111,7 +111,7 @@ func PostHttpOctet(url string, proxyName string) error {
 	req, err := http.NewRequest("POST", url, body)
 
 	Info.Println("Setting token : ", RootArgs.Token)
-	req.Header.Add("Authorization", "Bearer "+ RootArgs.Token)
+	req.Header.Add("Authorization", "Bearer "+RootArgs.Token)
 	req.Header.Set("Content-Type", writer.FormDataContentType())
 	resp, err := client.Do(req)
 
@@ -142,12 +142,12 @@ func PostHttpOctet(url string, proxyName string) error {
 
 func DownloadResource(url string, name string) error {
 
-	out, err := os.Create(name+".zip")
-	if err != nil  {
+	out, err := os.Create(name + ".zip")
+	if err != nil {
 		Error.Fatalln("Error creating file:\n", err)
 		return err
 	}
-	defer out.Close()	
+	defer out.Close()
 
 	client := &http.Client{}
 
@@ -155,7 +155,7 @@ func DownloadResource(url string, name string) error {
 	req, err := http.NewRequest("GET", url, nil)
 
 	Info.Println("Setting token : ", RootArgs.Token)
-	req.Header.Add("Authorization", "Bearer "+ RootArgs.Token)
+	req.Header.Add("Authorization", "Bearer "+RootArgs.Token)
 
 	resp, err := client.Do(req)
 
@@ -169,12 +169,12 @@ func DownloadResource(url string, name string) error {
 	} else {
 		defer resp.Body.Close()
 		_, err = io.Copy(out, resp.Body)
-		if err != nil  {
+		if err != nil {
 			Error.Fatalln("Error writing response to file:\n", err)
 			return err
 		}
 
-		fmt.Println("Proxy bundle "+name+".zip completed")
+		fmt.Println("Proxy bundle " + name + ".zip completed")
 		return nil
 	}
 }
@@ -183,7 +183,7 @@ func DownloadResource(url string, name string) error {
 // The second parameter is the payload. The two parameters are sent, assume POST
 // THe third parammeter is the method. If three parameters are sent, assume method in param
 func HttpClient(params ...string) error {
-	
+
 	var req *http.Request
 	var err error
 
@@ -192,8 +192,8 @@ func HttpClient(params ...string) error {
 
 	if len(params) == 1 {
 		req, err = http.NewRequest("GET", params[0], nil)
-	} else if len(params) == 2 {		
-		req, err = http.NewRequest("POST", params[0], bytes.NewBuffer([]byte(params[1])))		
+	} else if len(params) == 2 {
+		req, err = http.NewRequest("POST", params[0], bytes.NewBuffer([]byte(params[1])))
 	} else if len(params) == 3 {
 		if params[2] == "DELETE" {
 			req, err = http.NewRequest("DELETE", params[0], nil)
@@ -207,7 +207,7 @@ func HttpClient(params ...string) error {
 	}
 
 	Info.Println("Setting token : ", RootArgs.Token)
-	req.Header.Add("Authorization", "Bearer "+ RootArgs.Token)
+	req.Header.Add("Authorization", "Bearer "+RootArgs.Token)
 
 	resp, err := client.Do(req)
 
@@ -234,7 +234,7 @@ func HttpClient(params ...string) error {
 			fmt.Println(string(prettyJSON.Bytes()))
 			return nil
 		}
-	}	
+	}
 }
 
 func getPrivateKey() (interface{}, error) {
@@ -331,7 +331,7 @@ func readAccessToken() error {
 	if err != nil {
 		return err
 	}
-	content, err := ioutil.ReadFile(path.Join(usr.HomeDir,access_token_file))
+	content, err := ioutil.ReadFile(path.Join(usr.HomeDir, access_token_file))
 	if err != nil {
 		Info.Println("Cached access token was not found")
 		return err
@@ -348,11 +348,11 @@ func writeAccessToken() error {
 		return nil
 	}
 	usr, err := user.Current()
-	if err != nil {	
+	if err != nil {
 		Warning.Println(err)
 	} else {
 		Info.Println("Cache access token: ", RootArgs.Token)
-		err = ioutil.WriteFile(path.Join(usr.HomeDir,access_token_file), []byte(RootArgs.Token), 0644)
+		err = ioutil.WriteFile(path.Join(usr.HomeDir, access_token_file), []byte(RootArgs.Token), 0644)
 	}
 	return err
 }
@@ -367,7 +367,7 @@ func checkAccessToken() bool {
 	const tokenInfo = "https://www.googleapis.com/oauth2/v1/tokeninfo"
 	u, _ := url.Parse(tokenInfo)
 	q := u.Query()
-	q.Set("access_token", RootArgs.Token)	
+	q.Set("access_token", RootArgs.Token)
 	u.RawQuery = q.Encode()
 
 	client := &http.Client{}
@@ -395,7 +395,7 @@ func checkAccessToken() bool {
 	}
 }
 
-func SetAccessToken () error {
+func SetAccessToken() error {
 
 	if RootArgs.Token == "" && RootArgs.ServiceAccount == "" {
 		err := readAccessToken() //try to read from config
@@ -406,7 +406,7 @@ func SetAccessToken () error {
 				return nil
 			} else {
 				return fmt.Errorf("Token expired: request a new access token or pass the service account")
-			}			
+			}
 		}
 	} else {
 		if RootArgs.ServiceAccount != "" {
@@ -436,6 +436,6 @@ func SetAccessToken () error {
 			} else {
 				return fmt.Errorf("Token expired: request a new access token or pass the service account")
 			}
-		}		
+		}
 	}
 }

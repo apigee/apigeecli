@@ -16,9 +16,9 @@ var Cmd = &cobra.Command{
 		if overrides {
 			q := u.Query()
 			q.Set("override", "true")
-			u.RawQuery = q.Encode()			
+			u.RawQuery = q.Encode()
 		}
-		u.Path = path.Join(u.Path, shared.RootArgs.Org, "environments", shared.RootArgs.Org, "apis", name, "revisions", revision,"deployments")
+		u.Path = path.Join(u.Path, shared.RootArgs.Org, "environments", shared.RootArgs.Org, "apis", name, "revisions", revision, "deployments")
 		shared.HttpClient(u.String())
 	},
 }

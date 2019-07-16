@@ -2,18 +2,18 @@ package products
 
 import (
 	"../shared"
+	"./crtprod"
+	"./delprod"
 	"./getprod"
 	"./listproducts"
-	"./delprod"
-	"./crtprod"
 	"github.com/spf13/cobra"
 )
 
 var Cmd = &cobra.Command{
-	Use:   "prods",
+	Use:     "prods",
 	Aliases: []string{"products"},
-	Short: "Manage Apigee API products",
-	Long:  "Manage Apigee API products",
+	Short:   "Manage Apigee API products",
+	Long:    "Manage Apigee API products",
 }
 
 func init() {
