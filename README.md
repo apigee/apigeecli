@@ -152,6 +152,7 @@ apigeeapi prods list -o org -n name
 * [create](#createapi)
 * [deploy](#depapi)
 * [fetch](#fetchapi)
+* [delete](#delapi)
 
 ### <a name="listorgs"/> list
 
@@ -210,7 +211,15 @@ Returns a zip-formatted proxy bundle of code and config files.
 apigeeapi apis fetch -o org -e env -n proxy -v 1
 ```
 
-The downloaded file is {proxyname}.zip and in the folder where the command runs
+The downloaded file is {proxyname}.zip and in the folder where the command is executed
+
+### <a name="delapi"/> delete
+
+Deletes an API proxy and all associated endpoints, policies, resources, and revisions. The API proxy must be undeployed before you can delete it.
+
+```
+apigeeapi apis delete -o org -n proxy
+```
 
 ## <a name="devs"/> developers
 
