@@ -124,6 +124,8 @@ Supported alias `products`
 
 * [list](#listproducts)
 * [get](#getproduct)
+* [create](#crtproduct)
+* [delete](#delproduct)
 
 ### <a name="listproducts"/> list
 
@@ -144,6 +146,25 @@ Get details of an API product
 ```
 apigeeapi prods list -o org -n name 
 ```
+### <a name="crtproduct"/> create
+
+Create an API product
+
+```
+apigeeapi prods create -o org -n name 
+```
+
+
+### <a name="delprodct"/> delete
+
+Delete an API Product
+
+Get details of an API product
+
+```
+apigeeapi prods delete -o org -n name 
+```
+
 
 ## <a name="apis"/> apis
 
