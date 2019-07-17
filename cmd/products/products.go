@@ -10,8 +10,8 @@ import (
 )
 
 var Cmd = &cobra.Command{
-	Use:     "prods",
-	Aliases: []string{"products"},
+	Use:     "products",
+	Aliases: []string{"prods"},
 	Short:   "Manage Apigee API products",
 	Long:    "Manage Apigee API products",
 }

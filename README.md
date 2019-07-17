@@ -212,6 +212,7 @@ The following parameters are supported. See Common Reference for a list of addit
 * [deploy](#depapi)
 * [fetch](#fetchapi)
 * [delete](#delapi)
+* [undeploy](#undepapi)
 
 ### <a name="listorgs"/> list
 
@@ -224,7 +225,9 @@ Parameters
 The following parameters are supported. See Common Reference for a list of additional parameters.
 
 * `--org -o` (required) Apigee organization name
+* `--env -e` (optional) Apigee environment name
 
+If the environment name is passed, lists the deployed proxies in the environment
 
 ### <a name="listdeploy"/> listdeploy
 
@@ -269,8 +272,8 @@ Parameters
 The following parameters are supported. See Common Reference for a list of additional parameters.
 
 * `--org -o` (required) Apigee organization name
-* `--name -n` (required) API proxy name* 
-*`--revision -v` (required) API proxy revision
+* `--name -n` (required) API proxy name 
+* `--revision -v` (required) API proxy revision
 * `--ovr -r` (optional) Forces deployment of the new revision.
 
 
@@ -287,7 +290,7 @@ The following parameters are supported. See Common Reference for a list of addit
 
 * `--org -o` (required) Apigee organization name
 * `--name -n` (required) API proxy name 
-*`--revision -v` (required) API proxy revision
+* `--revision -v` (required) API proxy revision
 
 The downloaded file is {proxyname}.zip and in the folder where the command is executed
 
@@ -305,12 +308,29 @@ The following parameters are supported. See Common Reference for a list of addit
 * `--org -o` (required) Apigee organization name
 * `--name -n` (required) API proxy name 
 
+### <a name="undepapi"/> undeploy
+
+Undeploys a revision of an existing API proxy to an environment in an organization.
+
+```
+apigeeapi apis undeploy -o org -e env -n proxy -v 1
+```
+
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+* `--name -n` (required) API proxy name
+* `--revision -v` (required) API proxy revision
+
 ## <a name="devs"/> developers
 
 Supported alias `developers`
 
 * [list](#listdevs)
 * [get](#getdev)
+* [create](#crtdev)
+* [delete](#deldev)
 
 ### <a name="listdevs"/> list
 
@@ -433,6 +453,8 @@ The following parameters are supported. See Common Reference for a list of addit
 
 * [list](#listsf)
 * [get](#getsf)
+* [deploy](#depsf)
+* [undeploy](#undepsf)
 
 ### <a name="listsf"/> list
 
@@ -445,7 +467,9 @@ Parameters
 The following parameters are supported. See Common Reference for a list of additional parameters.
 
 * `--org -o` (required) Apigee organization name
+* `--env -e` (optional) Apigee environment name
 
+When the environment name is passed, list the deployed shared flows in the environment
 
 ### <a name ="getsf"/> get
 
@@ -460,6 +484,35 @@ The following parameters are supported. See Common Reference for a list of addit
 * `--org -o` (required) Apigee organization name
 * `--name -n` (required) Shared flow name
 
+### <a name ="depsf"/> deploy
+
+Deploy a shared flow
+
+```
+apigeeapi sharedflow deploy -o org -n name -v 1 
+```
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+* `--env -e` (required) Apigee environment name
+* `--name -n` (required) Shared flow name
+* `--revision -v` (required) Shared flow revision
+
+### <a name ="undepsf"/> undeploy
+
+Deploy a shared flow
+
+```
+apigeeapi sharedflow undeploy -o org -n name -v 1 
+```
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+* `--env -e` (required) Apigee environment name
+* `--name -n` (required) Shared flow name
+* `--revision -v` (required) Shared flow revision
 
 ## <a name="env"/> envs
 

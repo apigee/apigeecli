@@ -4,9 +4,9 @@ import (
 	"../shared"
 	crtapp "./crtapp"
 	delapp "./delapp"
+	genkey "./genkey"
 	getapp "./getapp"
 	listapp "./listapp"
-	genkey "./genkey"
 	"github.com/spf13/cobra"
 )
 

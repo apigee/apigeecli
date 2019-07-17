@@ -1,4 +1,4 @@
-package depapi
+package depsf
 
 import (
 	"../../shared"
@@ -9,8 +9,8 @@ import (
 
 var Cmd = &cobra.Command{
 	Use:   "deploy",
-	Short: "Deploys a revision of an existing API proxy",
-	Long:  "Deploys a revision of an existing API proxy to an environment in an organization",
+	Short: "Deploys a revision of an existing Sharedflow",
+	Long:  "Deploys a revision of an existing Sharedflow to an environment in an organization",
 	Run: func(cmd *cobra.Command, args []string) {
 		u, _ := url.Parse(shared.BaseURL)
 		if overrides {
@@ -18,7 +18,7 @@ var Cmd = &cobra.Command{
 			q.Set("override", "true")
 			u.RawQuery = q.Encode()
 		}
-		u.Path = path.Join(u.Path, shared.RootArgs.Org, "environments", shared.RootArgs.Env, "apis", name, "revisions", revision, "deployments")
+		u.Path = path.Join(u.Path, shared.RootArgs.Org, "environments", shared.RootArgs.Env, "sharedflows", name, "revisions", revision, "deployments")
 		shared.HttpClient(u.String(), "")
 	},
 }
@@ -29,11 +29,11 @@ var overrides bool
 func init() {
 
 	Cmd.Flags().StringVarP(&name, "name", "n",
-		"", "API proxy name")
+		"", "Sharedflow name")
 	Cmd.Flags().StringVarP(&shared.RootArgs.Env, "env", "e",
 		"", "Apigee environment name")
 	Cmd.Flags().StringVarP(&revision, "rev", "v",
-		"", "API Proxy revision")
+		"", "Sharedflow revision")
 	Cmd.Flags().BoolVarP(&overrides, "ovr", "r",
 		false, "Forces deployment of the new revision")
 

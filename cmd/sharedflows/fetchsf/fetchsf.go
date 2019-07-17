@@ -31,5 +31,5 @@ func init() {
 		"", "Shared flow revision")
 
 	Cmd.MarkFlagRequired("name")
-	Cmd.MarkFlagRequired("revision")
+	Cmd.MarkFlagRequired("rev")
 }

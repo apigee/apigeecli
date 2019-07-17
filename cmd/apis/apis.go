@@ -8,6 +8,7 @@ import (
 	fetch "./fetchapi"
 	"./listapis"
 	"./listdeploy"
+	"./undepapi"
 	"github.com/spf13/cobra"
 )
 
@@ -29,4 +30,5 @@ func init() {
 	Cmd.AddCommand(depapi.Cmd)
 	Cmd.AddCommand(delapi.Cmd)
 	Cmd.AddCommand(fetch.Cmd)
+	Cmd.AddCommand(undepapi.Cmd)
 }

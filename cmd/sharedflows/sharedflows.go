@@ -3,9 +3,11 @@ package sharedflows
 import (
 	"../shared"
 	"./delsf"
+	"./depsf"
 	"./fetchsf"
 	getsf "./getsf"
 	listsf "./listsf"
+	"./undepsf"
 	"github.com/spf13/cobra"
 )
 
@@ -25,4 +27,6 @@ func init() {
 	Cmd.AddCommand(getsf.Cmd)
 	Cmd.AddCommand(fetchsf.Cmd)
 	Cmd.AddCommand(delsf.Cmd)
+	Cmd.AddCommand(undepsf.Cmd)
+	Cmd.AddCommand(depsf.Cmd)
 }
