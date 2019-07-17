@@ -1,4 +1,4 @@
-package crtapp
+package crtkey
 
 import (
 	"../../shared"
@@ -9,44 +9,44 @@ import (
 )
 
 var Cmd = &cobra.Command{
-	Use:   "create",
-	Short: "Create a Developer App",
-	Long:  "Create a Developer App",
+	Use:   "genkey",
+	Short: "Generate a new developer KeyPair",
+	Long:  "Generate a new developer KeyPair",
 	Run: func(cmd *cobra.Command, args []string) {
 		u, _ := url.Parse(shared.BaseURL)
 
-		app := []string{}
+		key := []string{}
 
-		app = append(app, "\"name\":\""+name+"\"")
-		app = append(app, "\"apiProducts\":[\""+getArrayStr(apiProducts)+"\"]")
+		key = append(key, "\"name\":\""+name+"\"")
+		key = append(key, "\"apiProducts\":[\""+getArrayStr(apiProducts)+"\"]")
 
 		if callback != "" {
-			app = append(app, "\"callbackUrl\":\""+callback+"\"")
+			key = append(key, "\"callbackUrl\":\""+callback+"\"")
 		}
 
 		if expires != "" {
-			app = append(app, "\"keyExpiresIn\":\""+expires+"\"")
+			key = append(key, "\"keyExpiresIn\":\""+expires+"\"")
 		}
 
 		if len(scopes) > 0 {
-			app = append(app, "\"scopes\":[\""+getArrayStr(scopes)+"\"]")
+			key = append(key, "\"scopes\":[\""+getArrayStr(scopes)+"\"]")
 		}
 
-		payload := "{" + strings.Join(app, ",") + "}"
-		u.Path = path.Join(u.Path, shared.RootArgs.Org, "developers", email, "apps")
+		payload := "{" + strings.Join(key, ",") + "}"
+		u.Path = path.Join(u.Path, shared.RootArgs.Org, "developers", devid, "apps", name)
 		shared.HttpClient(u.String(), payload)
 	},
 }
 
-var name, email, expires, callback string
+var name, devid, expires, callback string
 var apiProducts, scopes []string
 
 func init() {
 
 	Cmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of the developer app")
-	Cmd.Flags().StringVarP(&email, "email", "e",
-		"", "The developer's email")
+	Cmd.Flags().StringVarP(&devid, "devid", "d",
+		"", "Developer Id")
 	Cmd.Flags().StringVarP(&expires, "expires", "x",
 		"", "A setting, in milliseconds, for the lifetime of the consumer key")
 	Cmd.Flags().StringVarP(&callback, "callback", "c",
@@ -57,7 +57,7 @@ func init() {
 		[]string{}, "OAuth scopes")
 
 	Cmd.MarkFlagRequired("name")
-	Cmd.MarkFlagRequired("email")
+	Cmd.MarkFlagRequired("devid")
 	Cmd.MarkFlagRequired("prods")
 }
 

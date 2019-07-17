@@ -6,6 +6,7 @@ import (
 	delapp "./delapp"
 	getapp "./getapp"
 	listapp "./listapp"
+	genkey "./genkey"
 	"github.com/spf13/cobra"
 )
 
@@ -29,4 +30,5 @@ func init() {
 	Cmd.AddCommand(getapp.Cmd)
 	Cmd.AddCommand(delapp.Cmd)
 	Cmd.AddCommand(crtapp.Cmd)
+	Cmd.AddCommand(genkey.Cmd)
 }

@@ -345,6 +345,9 @@ Supported alias `applications`
 
 * [list](#listapps)
 * [get](#getapp)
+* [create](#crtapp)
+* [delete](#delapp)
+* [genkey](#genkey)
 
 ### <a name="listapps"/> list
 
@@ -374,6 +377,57 @@ The following parameters are supported. See Common Reference for a list of addit
 
 * `--org -o` (required) Apigee organization name
 * `--name -n` (required) Developer App name
+
+### <a name ="delapp"/> delete
+
+Delete a developer app
+
+```
+apigeeapi apps delete -o org -n name 
+```
+
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+* `--name -n` (required) Developer App name
+
+### <a name ="crtapp"/> create
+
+Delete a developer app
+
+```
+apigeeapi apps create -o org -n name -e test,prod -p proxy1 
+```
+
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+* `--name -n` (required) Developer App name
+* `--env -e` (required) Developer's email* 
+* `--expires -x` (optional) Lifetime of the consumer's key
+* `--callabck -c` (optional) OAuth callback url
+* `--prods -p` (required) A comma separated list of products
+* `--scopes -s` (optional) OAuthe scopes
+
+### <a name ="genkey"/> genkey
+
+Create new developer KeyPairs Generates a new consumer key and consumer secret for the named developer app
+
+```
+apigeeapi apps genkey -o org -n name -p proxy1
+```
+
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+* `--name -n` (required) Developer App name
+* `--expires -x` (optional) Lifetime of the consumer's key
+* `--callabck -c` (optional) OAuth callback url
+* `--prods -p` (required) A comma separated list of products
+* `--scopes -s` (optional) OAuthe scopes
 
 ## <a name="sf"/> sharedflows
 
