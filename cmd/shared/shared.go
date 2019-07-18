@@ -46,7 +46,7 @@ var (
 
 var LogInfo = false
 var skipCheck = false
-var skipCache = false
+var skipCache = true
 
 // Structure to hold OAuth response
 type OAuthAccessToken struct {
