@@ -5,12 +5,14 @@ import (
 	"./apps"
 	"./developers"
 	"./env"
+	flowhooks "./flowhooks"
 	"./kvm"
 	"./org"
 	"./products"
 	"./shared"
 	"./sharedflows"
 	"./sync"
+	targetservers "./targetservers"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -50,6 +52,8 @@ func init() {
 	RootCmd.AddCommand(apps.Cmd)
 	RootCmd.AddCommand(sharedflows.Cmd)
 	RootCmd.AddCommand(kvm.Cmd)
+	RootCmd.AddCommand(flowhooks.Cmd)
+	RootCmd.AddCommand(targetservers.Cmd)
 }
 
 func initConfig() {

@@ -98,6 +98,8 @@ apigeeapi orgs get -o org
 * [devs](#devs)
 * [sync](#sync)
 * [kvm](#kvm)
+* [flowhooks](#flow)
+* [targetservers](#target)
 
 ## <a name="org"/> org
 
