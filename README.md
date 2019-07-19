@@ -287,6 +287,7 @@ Returns a zip-formatted proxy bundle of code and config files.
 apigeeapi apis fetch -o org -e env -n proxy -v 1
 ```
 
+<<<<<<< HEAD
 Parameters
 The following parameters are supported. See Common Reference for a list of additional parameters.
 
@@ -294,6 +295,8 @@ The following parameters are supported. See Common Reference for a list of addit
 * `--name -n` (required) API proxy name 
 * `--revision -v` (required) API proxy revision
 
+=======
+>>>>>>> delapi
 The downloaded file is {proxyname}.zip and in the folder where the command is executed
 
 ### <a name="delapi"/> delete
