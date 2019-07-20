@@ -19,7 +19,7 @@ var Cmd = &cobra.Command{
 		} else {
 			u.Path = path.Join(u.Path, shared.RootArgs.Org, "environments", shared.RootArgs.Env)
 		}
-		shared.HttpClient(u.String())
+		_ = shared.HttpClient(u.String())
 	},
 }
 
@@ -32,5 +32,5 @@ func init() {
 	Cmd.Flags().BoolVarP(&config, "config", "c",
 		false, "Return configuration details")
 
-	Cmd.MarkFlagRequired("env")
+	_ = Cmd.MarkFlagRequired("env")
 }

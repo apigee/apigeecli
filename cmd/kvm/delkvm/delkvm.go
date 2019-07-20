@@ -15,7 +15,7 @@ var Cmd = &cobra.Command{
 		u, _ := url.Parse(shared.BaseURL)
 		u.Path = path.Join(u.Path, shared.RootArgs.Org, "environments", shared.RootArgs.Env, "keyvaluemaps", name)
 
-		shared.HttpClient(u.String(), "", "DELETE")
+		_ = shared.HttpClient(u.String(), "", "DELETE")
 	},
 }
 
@@ -28,6 +28,6 @@ func init() {
 	Cmd.Flags().StringVarP(&name, "name", "n",
 		"", "KVM Map name")
 
-	Cmd.MarkFlagRequired("env")
-	Cmd.MarkFlagRequired("name")
+	_ = Cmd.MarkFlagRequired("env")
+	_ = Cmd.MarkFlagRequired("name")
 }

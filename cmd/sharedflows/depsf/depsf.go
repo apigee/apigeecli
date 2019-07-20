@@ -19,7 +19,7 @@ var Cmd = &cobra.Command{
 			u.RawQuery = q.Encode()
 		}
 		u.Path = path.Join(u.Path, shared.RootArgs.Org, "environments", shared.RootArgs.Env, "sharedflows", name, "revisions", revision, "deployments")
-		shared.HttpClient(u.String(), "")
+		_ = shared.HttpClient(u.String(), "")
 	},
 }
 
@@ -37,7 +37,7 @@ func init() {
 	Cmd.Flags().BoolVarP(&overrides, "ovr", "r",
 		false, "Forces deployment of the new revision")
 
-	Cmd.MarkFlagRequired("env")
-	Cmd.MarkFlagRequired("name")
+	_ = Cmd.MarkFlagRequired("env")
+	_ = Cmd.MarkFlagRequired("name")
 
 }

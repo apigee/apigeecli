@@ -32,7 +32,7 @@ var Cmd = &cobra.Command{
 
 		payload := "{" + strings.Join(flowhook, ",") + "}"
 		u.Path = path.Join(u.Path, shared.RootArgs.Org, "environments", shared.RootArgs.Env, "flowhooks", name)
-		shared.HttpClient(u.String(), payload, "PUT")
+		_ = shared.HttpClient(u.String(), payload, "PUT")
 	},
 }
 
@@ -50,7 +50,7 @@ func init() {
 	Cmd.Flags().BoolVarP(&continueOnErr, "continue", "c",
 		true, "Continue on error")
 
-	Cmd.MarkFlagRequired("name")
-	Cmd.MarkFlagRequired("sharedflow")
+	_ = Cmd.MarkFlagRequired("name")
+	_ = Cmd.MarkFlagRequired("sharedflow")
 }
 

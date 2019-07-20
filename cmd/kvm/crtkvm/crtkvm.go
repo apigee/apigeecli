@@ -24,7 +24,7 @@ var Cmd = &cobra.Command{
 		payload := "{" + strings.Join(kvm, ",") + "}"
 		shared.Info.Println(payload)
 		u.Path = path.Join(u.Path, shared.RootArgs.Org, "environments", shared.RootArgs.Env, "keyvaluemaps")
-		shared.HttpClient(u.String(), payload)
+		_ = shared.HttpClient(u.String(), payload)
 	},
 }
 
@@ -40,6 +40,6 @@ func init() {
 	Cmd.Flags().BoolVarP(&encrypt, "encrypt", "c",
 		false, "Enable cncrypted KVM")
 
-	Cmd.MarkFlagRequired("env")
-	Cmd.MarkFlagRequired("name")
+	_ = Cmd.MarkFlagRequired("env")
+	_ = Cmd.MarkFlagRequired("name")
 }

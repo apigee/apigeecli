@@ -18,7 +18,7 @@ func init() {
 	Cmd.PersistentFlags().StringVarP(&shared.RootArgs.Org, "org", "o",
 		"", "Apigee organization name")
 
-	Cmd.MarkPersistentFlagRequired("org")
-	Cmd.AddCommand(setsync.Cmd)
+	_ = Cmd.MarkPersistentFlagRequired("org")
+	 Cmd.AddCommand(setsync.Cmd)
 	Cmd.AddCommand(getsync.Cmd)
 }

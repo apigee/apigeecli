@@ -48,7 +48,7 @@ var Cmd = &cobra.Command{
 		}
 		payload := "{" + strings.Join(product, ",") + "}"
 		u.Path = path.Join(u.Path, shared.RootArgs.Org, "apiproducts")
-		shared.HttpClient(u.String(), payload)
+		_ = shared.HttpClient(u.String(), payload)
 	},
 }
 
@@ -79,10 +79,10 @@ func init() {
 		"", "Approval type")
 	//TODO: apiresource -r later
 
-	Cmd.MarkFlagRequired("name")
-	Cmd.MarkFlagRequired("envs")
-	Cmd.MarkFlagRequired("proxies")
-	Cmd.MarkFlagRequired("approval")
+	_ = Cmd.MarkFlagRequired("name")
+	_ = Cmd.MarkFlagRequired("envs")
+	_ = Cmd.MarkFlagRequired("proxies")
+	_ = Cmd.MarkFlagRequired("approval")
 }
 
 func getArrayStr(str []string) string {

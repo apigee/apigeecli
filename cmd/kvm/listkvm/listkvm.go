@@ -15,7 +15,7 @@ var Cmd = &cobra.Command{
 		u, _ := url.Parse(shared.BaseURL)
 		u.Path = path.Join(u.Path, shared.RootArgs.Org, "environments", shared.RootArgs.Env, "keyvaluemaps")
 
-		shared.HttpClient(u.String())
+		_ = shared.HttpClient(u.String())
 	},
 }
 
@@ -23,5 +23,5 @@ func init() {
 
 	Cmd.Flags().StringVarP(&shared.RootArgs.Env, "env", "e",
 		"", "Environment name")
-	Cmd.MarkFlagRequired("env")
+	_ = Cmd.MarkFlagRequired("env")
 }

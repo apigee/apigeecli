@@ -12,7 +12,7 @@ var Cmd = &cobra.Command{
 	Long:  "List the Apigee organizations, and the related projects that a user has permissions for",
 	Run: func(cmd *cobra.Command, args []string) {
 		u, _ := url.Parse(shared.BaseURL)
-		shared.HttpClient(u.String())
+		_ = shared.HttpClient(u.String())
 	},
 }
 

@@ -30,6 +30,6 @@ func init() {
 	Cmd.Flags().StringVarP(&revision, "rev", "v",
 		"", "Shared flow revision")
 
-	Cmd.MarkFlagRequired("name")
-	Cmd.MarkFlagRequired("rev")
+	_ = Cmd.MarkFlagRequired("name")
+	_ = Cmd.MarkFlagRequired("rev")
 }

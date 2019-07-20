@@ -24,7 +24,7 @@ var Cmd = &cobra.Command{
 			q.Set("count", count)
 		}
 		u.RawQuery = q.Encode()
-		shared.HttpClient(u.String())
+		_ = shared.HttpClient(u.String())
 	},
 }
 
@@ -42,5 +42,5 @@ func init() {
 	Cmd.Flags().BoolVarP(&expand, "expand", "x",
 		false, "Expand Details")
 
-	Cmd.MarkFlagRequired("org")
+	_ = Cmd.MarkFlagRequired("org")
 }
