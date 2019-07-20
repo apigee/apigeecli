@@ -19,7 +19,7 @@ func init() {
 	Cmd.PersistentFlags().StringVarP(&shared.RootArgs.Org, "org", "o",
 		"", "Apigee organization name")
 
-	Cmd.MarkPersistentFlagRequired("org")
+	_ = Cmd.MarkPersistentFlagRequired("org")
 	Cmd.AddCommand(listkvm.Cmd)
 	Cmd.AddCommand(delkvm.Cmd)
 	Cmd.AddCommand(crtkvm.Cmd)

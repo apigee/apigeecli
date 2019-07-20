@@ -21,7 +21,7 @@ func init() {
 	Cmd.PersistentFlags().StringVarP(&shared.RootArgs.Org, "org", "o",
 		"", "Apigee organization name")
 
-	Cmd.MarkPersistentFlagRequired("org")
+	_ = Cmd.MarkPersistentFlagRequired("org")
 
 	Cmd.AddCommand(listproducts.Cmd)
 	Cmd.AddCommand(getprod.Cmd)
