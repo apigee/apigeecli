@@ -20,7 +20,7 @@ var Cmd = &cobra.Command{
 		} else {
 			u.Path = path.Join(u.Path, shared.RootArgs.Org, "sharedflows")
 		}
-		shared.HttpClient(u.String())
+		_ = shared.HttpClient(u.String())
 	},
 }
 

@@ -33,7 +33,7 @@ var Cmd = &cobra.Command{
 
 		payload := "{" + strings.Join(targetserver, ",") + "}"
 		u.Path = path.Join(u.Path, shared.RootArgs.Org, "environments", shared.RootArgs.Env, "targetservers")
-		shared.HttpClient(u.String(), payload)
+		_ = shared.HttpClient(u.String(), payload)
 	},
 }
 
@@ -54,7 +54,7 @@ func init() {
 	Cmd.Flags().IntVarP(&port, "port", "p",
 		80, "port number")
 
-	Cmd.MarkFlagRequired("name")
-	Cmd.MarkFlagRequired("host")
+	_ = Cmd.MarkFlagRequired("name")
+	_ = Cmd.MarkFlagRequired("host")
 }
 

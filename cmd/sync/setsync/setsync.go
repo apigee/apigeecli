@@ -37,7 +37,7 @@ var Cmd = &cobra.Command{
 		identities.Identities = append(identities.Identities, identity)
 		payload, _ := json.Marshal(&identities)
 		fmt.Println(string(payload))
-		shared.HttpClient(u.String(), string(payload))
+		_ = shared.HttpClient(u.String(), string(payload))
 	},
 }
 
@@ -46,7 +46,7 @@ func init() {
 	Cmd.Flags().StringVarP(&identity, "ity", "i",
 		"", "IAM Identity")
 
-	Cmd.MarkFlagRequired("ity")
+	_ = Cmd.MarkFlagRequired("ity")
 }
 
 func validate(i string) string {
