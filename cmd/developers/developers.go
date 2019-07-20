@@ -16,15 +16,13 @@ var Cmd = &cobra.Command{
 	Long:    "Manage Apigee App Developers",
 }
 
-var expand = false
-var count string
-
 func init() {
 
 	Cmd.PersistentFlags().StringVarP(&shared.RootArgs.Org, "org", "o",
 		"", "Apigee organization name")
 
-	Cmd.MarkPersistentFlagRequired("org")
+	_ = Cmd.MarkPersistentFlagRequired("org")
+	
 	Cmd.AddCommand(listdev.Cmd)
 	Cmd.AddCommand(getdev.Cmd)
 	Cmd.AddCommand(deldev.Cmd)

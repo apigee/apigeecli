@@ -24,7 +24,7 @@ var Cmd = &cobra.Command{
 
 		payload := "{" + strings.Join(developer, ",") + "}"
 		u.Path = path.Join(u.Path, shared.RootArgs.Org, "developers")
-		shared.HttpClient(u.String(), payload)
+		_ = shared.HttpClient(u.String(), payload)
 	},
 }
 
@@ -41,8 +41,8 @@ func init() {
 	Cmd.Flags().StringVarP(&userName, "user", "u",
 		"", "The username of the developer")
 
-	Cmd.MarkFlagRequired("email")
-	Cmd.MarkFlagRequired("first")
-	Cmd.MarkFlagRequired("last")
-	Cmd.MarkFlagRequired("user")
+	_ = Cmd.MarkFlagRequired("email")
+	_ = Cmd.MarkFlagRequired("first")
+	_ = Cmd.MarkFlagRequired("last")
+	_ = Cmd.MarkFlagRequired("user")
 }

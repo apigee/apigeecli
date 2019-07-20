@@ -26,11 +26,11 @@ var Cmd = &cobra.Command{
 			u.RawQuery = q.Encode()
 			err := readProxyBundle()
 			if err == nil {
-				shared.PostHttpOctet(u.String(), proxy)
+				_ = shared.PostHttpOctet(u.String(), proxy)
 			}
 		} else {
 			proxyName := "{\"name\":\"" + name + "\"}"
-			shared.HttpClient(u.String(), proxyName)
+			_ = shared.HttpClient(u.String(), proxyName)
 		}
 	},
 }
@@ -44,7 +44,7 @@ func init() {
 	Cmd.Flags().StringVarP(&proxy, "proxy", "p",
 		"", "API Proxy Bundle path")
 
-	Cmd.MarkFlagRequired("name")
+	_ = Cmd.MarkFlagRequired("name")
 }
 
 func readProxyBundle() error {
@@ -62,6 +62,10 @@ func readProxyBundle() error {
 	}
 
 	fi, err := file.Stat()
+	if err != nil {
+		shared.Error.Fatalln("Error accessing file: ", err)
+		return err
+	}
 	_, err = zip.NewReader(file, fi.Size())
 
 	if err != nil {

@@ -19,7 +19,7 @@ var Cmd = &cobra.Command{
 			u.Path = path.Join(u.Path, shared.RootArgs.Org, "apis")
 		}
 
-		shared.HttpClient(u.String())
+		_ = shared.HttpClient(u.String())
 	},
 }
 

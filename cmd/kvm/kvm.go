@@ -14,9 +14,6 @@ var Cmd = &cobra.Command{
 	Long:  "Manage Key Value Maps",
 }
 
-var expand = false
-var count string
-
 func init() {
 
 	Cmd.PersistentFlags().StringVarP(&shared.RootArgs.Org, "org", "o",

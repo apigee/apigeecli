@@ -17,7 +17,7 @@ var Cmd = &cobra.Command{
 		q.Set("format", "bundle")
 		u.RawQuery = q.Encode()
 		u.Path = path.Join(u.Path, shared.RootArgs.Org, "sharedflows", name, "revisions", revision)
-		shared.DownloadResource(u.String(), name)
+		_ = shared.DownloadResource(u.String(), name)
 	},
 }
 

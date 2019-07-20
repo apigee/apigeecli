@@ -13,9 +13,6 @@ var Cmd = &cobra.Command{
 	Long:  "Manage identities with grant access to control plane resources",
 }
 
-var expand = false
-var count string
-
 func init() {
 
 	Cmd.PersistentFlags().StringVarP(&shared.RootArgs.Org, "org", "o",

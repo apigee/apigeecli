@@ -37,11 +37,11 @@ func init() {
 
 	RootCmd.PersistentFlags().StringVarP(&shared.RootArgs.Token, "token", "t",
 		"", "Google OAuth Token")
-	viper.BindPFlag("token", RootCmd.PersistentFlags().Lookup("token"))
+	_ = viper.BindPFlag("token", RootCmd.PersistentFlags().Lookup("token"))
 
 	RootCmd.PersistentFlags().StringVarP(&shared.RootArgs.ServiceAccount, "account", "a",
 		"", "Path Service Account private key in JSON")
-	viper.BindPFlag("account", RootCmd.PersistentFlags().Lookup("account"))
+	_ = viper.BindPFlag("account", RootCmd.PersistentFlags().Lookup("account"))
 
 	RootCmd.AddCommand(apis.Cmd)
 	RootCmd.AddCommand(org.Cmd)

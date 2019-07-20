@@ -34,7 +34,7 @@ var Cmd = &cobra.Command{
 
 		payload := "{" + strings.Join(key, ",") + "}"
 		u.Path = path.Join(u.Path, shared.RootArgs.Org, "developers", devid, "apps", name)
-		shared.HttpClient(u.String(), payload)
+		_ = shared.HttpClient(u.String(), payload)
 	},
 }
 
@@ -56,9 +56,9 @@ func init() {
 	Cmd.Flags().StringArrayVarP(&scopes, "scopes", "s",
 		[]string{}, "OAuth scopes")
 
-	Cmd.MarkFlagRequired("name")
-	Cmd.MarkFlagRequired("devid")
-	Cmd.MarkFlagRequired("prods")
+	_ = Cmd.MarkFlagRequired("name")
+	_ = Cmd.MarkFlagRequired("devid")
+	_ = Cmd.MarkFlagRequired("prods")
 }
 
 func getArrayStr(str []string) string {

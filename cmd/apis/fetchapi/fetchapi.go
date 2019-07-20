@@ -17,7 +17,7 @@ var Cmd = &cobra.Command{
 		q.Set("format", "bundle")
 		u.RawQuery = q.Encode()
 		u.Path = path.Join(u.Path, shared.RootArgs.Org, "apis", name, "revisions", revision)
-		shared.DownloadResource(u.String(), name)
+		_ = shared.DownloadResource(u.String(), name)
 	},
 }
 
@@ -30,6 +30,6 @@ func init() {
 	Cmd.Flags().StringVarP(&revision, "rev", "v",
 		"", "API Proxy revision")
 
-	Cmd.MarkFlagRequired("name")
-	Cmd.MarkFlagRequired("revision")
+	_ = Cmd.MarkFlagRequired("name")
+	_ = Cmd.MarkFlagRequired("revision")
 }

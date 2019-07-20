@@ -23,8 +23,8 @@ func init() {
 	Cmd.PersistentFlags().StringVarP(&shared.RootArgs.Env, "env", "e",
 		"", "Apigee environment name")
 
-	Cmd.MarkPersistentFlagRequired("org")
-	Cmd.MarkPersistentFlagRequired("env")
+	_ = Cmd.MarkPersistentFlagRequired("org")
+	_ = Cmd.MarkPersistentFlagRequired("env")
 
 	Cmd.AddCommand(listfh.Cmd)
 	Cmd.AddCommand(getfh.Cmd)

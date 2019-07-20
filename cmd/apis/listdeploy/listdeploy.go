@@ -14,7 +14,7 @@ var Cmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		u, _ := url.Parse(shared.BaseURL)
 		u.Path = path.Join(u.Path, shared.RootArgs.Org, "apis", name, "deployments")
-		shared.HttpClient(u.String())
+		_ = shared.HttpClient(u.String())
 	},
 }
 
@@ -24,6 +24,6 @@ func init() {
 	Cmd.Flags().StringVarP(&name, "name", "n",
 		"", "API proxy name")
 
-	Cmd.MarkFlagRequired("name")
+	_ = Cmd.MarkFlagRequired("name")
 
 }

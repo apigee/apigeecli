@@ -109,6 +109,10 @@ func PostHttpOctet(url string, proxyName string) error {
 
 	Info.Println("Connecting to : ", url)
 	req, err := http.NewRequest("POST", url, body)
+	if err != nil {
+		Error.Fatalln("Error in client:\n", err)
+		return err
+	}	
 
 	Info.Println("Setting token : ", RootArgs.Token)
 	req.Header.Add("Authorization", "Bearer "+RootArgs.Token)
@@ -134,7 +138,7 @@ func PostHttpOctet(url string, proxyName string) error {
 				Error.Fatalln("Error parsing response:\n", err)
 				return err
 			}
-			fmt.Println(string(prettyJSON.Bytes()))
+			fmt.Println(prettyJSON.String())
 			return nil
 		}
 	}
@@ -153,7 +157,11 @@ func DownloadResource(url string, name string) error {
 
 	Info.Println("Connecting to : ", url)
 	req, err := http.NewRequest("GET", url, nil)
-
+	if err != nil {
+		Error.Fatalln("Error in client:\n", err)
+		return err
+	}
+	
 	Info.Println("Setting token : ", RootArgs.Token)
 	req.Header.Add("Authorization", "Bearer "+RootArgs.Token)
 
@@ -205,6 +213,11 @@ func HttpClient(params ...string) error {
 	} else {
 		return errors.New("Incorrect parameters to invoke the method")
 	}
+	
+	if err != nil {
+		Error.Fatalln("Error in client:\n", err)
+		return err
+	}
 
 	Info.Println("Setting token : ", RootArgs.Token)
 	req.Header.Add("Authorization", "Bearer "+RootArgs.Token)
@@ -231,7 +244,7 @@ func HttpClient(params ...string) error {
 				Error.Fatalln("Error parsing response:\n", err)
 				return err
 			}
-			fmt.Println(string(prettyJSON.Bytes()))
+			fmt.Println(prettyJSON.String())
 			return nil
 		}
 	}
@@ -263,11 +276,11 @@ func generateJWT() (string, error) {
 	now := time.Now()
 	token := jwt.New()
 
-	token.Set(jwt.AudienceKey, aud)
-	token.Set(jwt.IssuerKey, viper.Get("client_email"))
-	token.Set("scope", scope)
-	token.Set(jwt.IssuedAtKey, now.Unix())
-	token.Set(jwt.ExpirationKey, now.Unix())
+	_ = token.Set(jwt.AudienceKey, aud)
+	_ = token.Set(jwt.IssuerKey, viper.Get("client_email"))
+	_ = token.Set("scope", scope)
+	_ = token.Set(jwt.IssuedAtKey, now.Unix())
+	_ = token.Set(jwt.ExpirationKey, now.Unix())
 
 	payload, err := token.Sign(jwa.RS256, privKey)
 	if err != nil {
@@ -296,6 +309,10 @@ func GenerateAccessToken() (string, error) {
 
 	client := &http.Client{}
 	req, err := http.NewRequest("POST", token_endpoint, strings.NewReader(form.Encode()))
+	if err != nil {
+		Error.Fatalln("Error in client:\n", err)
+		return "", err
+	}
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Add("Content-Length", strconv.Itoa(len(form.Encode())))
 
@@ -319,7 +336,7 @@ func GenerateAccessToken() (string, error) {
 			} else {
 				Info.Println("access token : ", accessToken)
 				RootArgs.Token = accessToken.AccessToken
-				writeAccessToken()
+				_ = writeAccessToken()
 				return accessToken.AccessToken, nil
 			}
 		}
@@ -374,6 +391,11 @@ func checkAccessToken() bool {
 
 	Info.Println("Connecting to : ", u.String())
 	req, err := http.NewRequest("GET", u.String(), nil)
+	if err != nil {
+		Error.Fatalln("Error in client:\n", err)
+		return false
+	}
+
 	resp, err := client.Do(req)
 	if err != nil {
 		Error.Fatalln("Error connecting to token endpoint:\n", err)
@@ -431,7 +453,7 @@ func SetAccessToken() error {
 		} else {
 			//a token was passed, cache it
 			if checkAccessToken() {
-				writeAccessToken()
+				_ = writeAccessToken()
 				return nil
 			} else {
 				return fmt.Errorf("Token expired: request a new access token or pass the service account")

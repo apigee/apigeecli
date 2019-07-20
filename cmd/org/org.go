@@ -12,9 +12,6 @@ var Cmd = &cobra.Command{
 	Long:  "Manage Apigee Orgs",
 }
 
-var expand = false
-var count string
-
 func init() {
 
 	Cmd.AddCommand(listorgs.Cmd)
