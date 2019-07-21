@@ -11,10 +11,10 @@ var Cmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Deletes an API proxy",
 	Long:  "Deletes an API proxy and all associated endpoints, policies, resources, and revisions. The proxy must be undeployed first.",
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		u, _ := url.Parse(shared.BaseURL)
 		u.Path = path.Join(u.Path, shared.RootArgs.Org, "apis", name)
-		_ = shared.HttpClient(u.String(), "", "DELETE")
+		return shared.HttpClient(u.String(), "", "DELETE")
 	},
 }
 

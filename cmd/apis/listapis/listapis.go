@@ -11,7 +11,7 @@ var Cmd = &cobra.Command{
 	Use:   "list",
 	Short: "List APIs in an Apigee Org",
 	Long:  "List APIs in an Apigee Org",
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		u, _ := url.Parse(shared.BaseURL)
 		if shared.RootArgs.Env != "" {
 			u.Path = path.Join(u.Path, shared.RootArgs.Org, "environments", shared.RootArgs.Env, "deployments")
@@ -19,7 +19,7 @@ var Cmd = &cobra.Command{
 			u.Path = path.Join(u.Path, shared.RootArgs.Org, "apis")
 		}
 
-		_ = shared.HttpClient(u.String())
+		return shared.HttpClient(u.String())
 	},
 }
 

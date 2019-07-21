@@ -11,10 +11,10 @@ var Cmd = &cobra.Command{
 	Use:   "get",
 	Short: "Get App in an Organization by App ID",
 	Long:  "Returns the app profile for the specified app ID.",
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		u, _ := url.Parse(shared.BaseURL)
 		u.Path = path.Join(u.Path, shared.RootArgs.Org, "apps", name)
-		_ = shared.HttpClient(u.String())
+		return shared.HttpClient(u.String())
 	},
 }
 

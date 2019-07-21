@@ -11,10 +11,10 @@ var Cmd = &cobra.Command{
 	Use:   "listdeploy",
 	Short: "Lists all deployments of an API proxy",
 	Long:  "Lists all deployments of an API proxy",
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		u, _ := url.Parse(shared.BaseURL)
 		u.Path = path.Join(u.Path, shared.RootArgs.Org, "apis", name, "deployments")
-		_ = shared.HttpClient(u.String())
+		return shared.HttpClient(u.String())
 	},
 }
 

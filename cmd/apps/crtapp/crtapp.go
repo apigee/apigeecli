@@ -12,7 +12,7 @@ var Cmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a Developer App",
 	Long:  "Create a Developer App",
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		u, _ := url.Parse(shared.BaseURL)
 
 		app := []string{}
@@ -34,7 +34,7 @@ var Cmd = &cobra.Command{
 
 		payload := "{" + strings.Join(app, ",") + "}"
 		u.Path = path.Join(u.Path, shared.RootArgs.Org, "developers", email, "apps")
-		_ = shared.HttpClient(u.String(), payload)
+		return shared.HttpClient(u.String(), payload)
 	},
 }
 
