@@ -11,10 +11,10 @@ var Cmd = &cobra.Command{
 	Use:   "get",
 	Short: "Gets an API product from an organization",
 	Long:  "Gets an API product from an organization",
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		u, _ := url.Parse(shared.BaseURL)
 		u.Path = path.Join(u.Path, shared.RootArgs.Org, "apiproducts", name)
-		_ = shared.HttpClient(u.String())
+		return shared.HttpClient(u.String())
 	},
 }
 

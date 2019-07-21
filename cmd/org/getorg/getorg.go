@@ -11,10 +11,10 @@ var Cmd = &cobra.Command{
 	Use:   "get",
 	Short: "Show details of an Apigee Org",
 	Long:  "Show details of an Apigee Org",
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		u, _ := url.Parse(shared.BaseURL)
 		u.Path = path.Join(u.Path, shared.RootArgs.Org)
-		_ = shared.HttpClient(u.String())
+		return shared.HttpClient(u.String())
 	},
 }
 

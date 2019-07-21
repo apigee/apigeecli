@@ -29,7 +29,7 @@ var Cmd = &cobra.Command{
 			return fmt.Errorf("identity[0] must have .iam.gserviceaccount.com suffix and should not be a Google managed service account: %s", identity)
 		}
 	},
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		u, _ := url.Parse(shared.BaseURL)
 		u.Path = path.Join(u.Path, shared.RootArgs.Org+":setSyncAuthorization")
 		identity = validate(identity)
@@ -37,7 +37,7 @@ var Cmd = &cobra.Command{
 		identities.Identities = append(identities.Identities, identity)
 		payload, _ := json.Marshal(&identities)
 		fmt.Println(string(payload))
-		_ = shared.HttpClient(u.String(), string(payload))
+		return shared.HttpClient(u.String(), string(payload))
 	},
 }
 

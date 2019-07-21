@@ -11,7 +11,7 @@ var Cmd = &cobra.Command{
 	Use:   "list",
 	Short: "Returns a list of API products",
 	Long:  "Returns a list of API products with a filter by attribute names and values if provided",
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		u, _ := url.Parse(shared.BaseURL)
 		u.Path = path.Join(u.Path, shared.RootArgs.Org, "apiproducts")
 		q := u.Query()
@@ -24,7 +24,7 @@ var Cmd = &cobra.Command{
 			q.Set("count", count)
 		}
 		u.RawQuery = q.Encode()
-		_ = shared.HttpClient(u.String())
+		return shared.HttpClient(u.String())
 	},
 }
 

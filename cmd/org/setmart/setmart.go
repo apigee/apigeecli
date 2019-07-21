@@ -11,7 +11,7 @@ var Cmd = &cobra.Command{
 	Use:   "setmart",
 	Short: "Set MART endpoint for an Apigee Org",
 	Long:  "Set MART endpoint for an Apigee Org",
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		u, _ := url.Parse(shared.BaseURL)
 		orgname := "\"name\":\"" + shared.RootArgs.Org + "\","
 		martprop := "{\"name\":\"features.mart.server.endpoint\","
@@ -19,7 +19,7 @@ var Cmd = &cobra.Command{
 		props := "\"properties\": {" + "\"property\": [" + martprop + martpropvalue + "]}"
 		payload := "{" + orgname + props + "}"
 		u.Path = path.Join(u.Path, shared.RootArgs.Org)
-		_ = shared.HttpClient(u.String(), payload)
+		return shared.HttpClient(u.String(), payload)
 	},
 }
 
