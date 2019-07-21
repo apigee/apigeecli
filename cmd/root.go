@@ -18,7 +18,7 @@ import (
 )
 
 var RootCmd = &cobra.Command{
-	Use:     "apigeeapi",
+	Use:     "apigeecli",
 	Version: "0.2",
 	Short:   "Utility to work with Apigee APIs.",
 	Long:    "This command lets you interact with Apigee APIs.",
