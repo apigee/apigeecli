@@ -19,7 +19,7 @@ import (
 
 var RootCmd = &cobra.Command{
 	Use:     "apigeeapi",
-	Version: "0.1",
+	Version: "0.2",
 	Short:   "Utility to work with Apigee APIs.",
 	Long:    "This command lets you interact with Apigee APIs.",
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
