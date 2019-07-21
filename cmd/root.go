@@ -18,10 +18,9 @@ import (
 )
 
 var RootCmd = &cobra.Command{
-	Use:     "apigeecli",
-	Version: "0.2",
-	Short:   "Utility to work with Apigee APIs.",
-	Long:    "This command lets you interact with Apigee APIs.",
+	Use:   "apigeecli",
+	Short: "Utility to work with Apigee APIs.",
+	Long:  "This command lets you interact with Apigee APIs.",
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 
 		shared.Init()
