@@ -13,6 +13,7 @@ import (
 	"./sharedflows"
 	"./sync"
 	targetservers "./targetservers"
+	"./token"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -53,6 +54,7 @@ func init() {
 	RootCmd.AddCommand(kvm.Cmd)
 	RootCmd.AddCommand(flowhooks.Cmd)
 	RootCmd.AddCommand(targetservers.Cmd)
+	RootCmd.AddCommand(token.Cmd)
 }
 
 func initConfig() {

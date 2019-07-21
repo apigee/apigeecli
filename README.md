@@ -4,7 +4,7 @@ This is a tool to interact with [Apigee APIs](https://apigee.googleapis.com). Th
 
 # Installation
 
-`apigeecli` is a binary and you can download the appropriate one for your platform from [here](https://github.com/srinandan/apigeepi/releases)
+`apigeecli` is a binary and you can download the appropriate one for your platform from [here](https://github.com/srinandan/apigeeapi/releases)
 
 NOTE: Supported platforms are:
 * Darwin
@@ -106,6 +106,8 @@ ___
 * [sharedflows](#sf)
 * [sync](#sync)
 * [targetservers](#target)
+* [token](#token)
+* [TODO](#todo)
 
 ---
 
@@ -854,3 +856,29 @@ The following parameters are supported. See Common Reference for a list of addit
 * `--org -o` (required) Apigee organization name
 * `--env -e` (required) Apigee environment name
 
+---
+
+## <a name="token"/> token
+
+* [gen](#gentk)
+
+### <a name ="gettk"/> gen
+
+Geenerate a new access token
+
+```
+apigeecli token gen -a serviceaccount.json 
+```
+
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--account -a` (required) Service Account in json format
+
+---
+
+## <a name="todo"/> TODO
+
+* `apigeecli clean`
+* `apigeecli import`
+* `apigeecli export`
