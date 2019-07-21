@@ -26,7 +26,7 @@ var Cmd = &cobra.Command{
 
 		flowhook = append(flowhook, "\"sharedFlow\":\""+sharedflow+"\"")
 
-		if continueOnErr  {
+		if continueOnErr {
 			flowhook = append(flowhook, "\"continueOnError\":"+strconv.FormatBool(continueOnErr))
 		}
 
@@ -53,4 +53,3 @@ func init() {
 	_ = Cmd.MarkFlagRequired("name")
 	_ = Cmd.MarkFlagRequired("sharedflow")
 }
-

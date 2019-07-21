@@ -22,7 +22,7 @@ func init() {
 		"", "Apigee organization name")
 
 	_ = Cmd.MarkPersistentFlagRequired("org")
-	
+
 	Cmd.AddCommand(listdev.Cmd)
 	Cmd.AddCommand(getdev.Cmd)
 	Cmd.AddCommand(deldev.Cmd)

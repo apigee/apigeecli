@@ -13,11 +13,11 @@ var Cmd = &cobra.Command{
 	Long:  "Set MART endpoint for an Apigee Org",
 	Run: func(cmd *cobra.Command, args []string) {
 		u, _ := url.Parse(shared.BaseURL)
-		orgname := "\"name\":\""+shared.RootArgs.Org+"\","
+		orgname := "\"name\":\"" + shared.RootArgs.Org + "\","
 		martprop := "{\"name\":\"features.mart.server.endpoint\","
-		martpropvalue := "\"value\":\""+mart+"\"}"
+		martpropvalue := "\"value\":\"" + mart + "\"}"
 		props := "\"properties\": {" + "\"property\": [" + martprop + martpropvalue + "]}"
-		payload := "{" + orgname + props +"}"
+		payload := "{" + orgname + props + "}"
 		u.Path = path.Join(u.Path, shared.RootArgs.Org)
 		_ = shared.HttpClient(u.String(), payload)
 	},
@@ -31,7 +31,6 @@ func init() {
 		"", "Apigee organization name")
 	Cmd.Flags().StringVarP(&mart, "mart", "m",
 		"", "MART Endpoint")
-
 
 	_ = Cmd.MarkFlagRequired("org")
 }

@@ -27,4 +27,3 @@ func init() {
 
 	_ = Cmd.MarkFlagRequired("name")
 }
-

@@ -1,4 +1,4 @@
-package crtapis
+package crtsf
 
 import (
 	"../../shared"
@@ -9,11 +9,11 @@ import (
 
 var Cmd = &cobra.Command{
 	Use:   "create",
-	Short: "Creates an API proxy in an Apigee Org",
-	Long:  "Creates an API proxy in an Apigee Org",
+	Short: "Creates a sharedflow in an Apigee Org",
+	Long:  "Creates a sharedflow in an Apigee Org",
 	Run: func(cmd *cobra.Command, args []string) {
 		u, _ := url.Parse(shared.BaseURL)
-		u.Path = path.Join(u.Path, shared.RootArgs.Org, "apis")
+		u.Path = path.Join(u.Path, shared.RootArgs.Org, "sharedflows")
 
 		if proxy != "" {
 			q := u.Query()
@@ -36,9 +36,9 @@ var name, proxy string
 func init() {
 
 	Cmd.Flags().StringVarP(&name, "name", "n",
-		"", "API Proxy name")
+		"", "Sharedflow name")
 	Cmd.Flags().StringVarP(&proxy, "proxy", "p",
-		"", "API Proxy Bundle path")
+		"", "Sharedflow bundle path")
 
 	_ = Cmd.MarkFlagRequired("name")
 }

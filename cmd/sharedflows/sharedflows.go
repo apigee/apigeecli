@@ -2,6 +2,7 @@ package sharedflows
 
 import (
 	"../shared"
+	"./crtsf"
 	"./delsf"
 	"./depsf"
 	"./fetchsf"
@@ -29,4 +30,5 @@ func init() {
 	Cmd.AddCommand(delsf.Cmd)
 	Cmd.AddCommand(undepsf.Cmd)
 	Cmd.AddCommand(depsf.Cmd)
+	Cmd.AddCommand(crtsf.Cmd)
 }

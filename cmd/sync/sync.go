@@ -19,6 +19,6 @@ func init() {
 		"", "Apigee organization name")
 
 	_ = Cmd.MarkPersistentFlagRequired("org")
-	 Cmd.AddCommand(setsync.Cmd)
+	Cmd.AddCommand(setsync.Cmd)
 	Cmd.AddCommand(getsync.Cmd)
 }

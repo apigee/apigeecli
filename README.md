@@ -13,12 +13,8 @@ NOTE: Supported platforms are:
 
 # What you need to know about apigeecli
 
-You must have an account on [Apigee Hybrid](https://docs.apigee.com/hybrid/beta2) to perform any `apigeecli` functions. These functions include:
-
-* Manage API proxies,
-* Manage API Products,
-* Manage Apigee Environments,
-* View Org details etc.
+You must have an account on [Apigee Hybrid](https://docs.apigee.com/hybrid/beta2) to perform any `apigeecli` functions. These functions include: proxies, API Products, Environments,
+Org details etc.
 
 You need to be familiar with basic concepts and features of Apigee Edge such as API proxies, organizations, and environments.
 
@@ -60,8 +56,8 @@ apigeecli -a orgadmin.json
 
 `apigeecli` caches the OAuth Access token for subsequent calls (until the token expires). The access token is stored in `$HOME/.access_token`. This path must be readable/writeable by the `apigeecli` process. 
 
-### Example 1
-
+<details><summary> Example 1 </summary>
+<p>
 First command
 
 ```
@@ -73,7 +69,13 @@ Subsequent command (no token or service account)
 ```
 apigeecli orgs get -o org
 ```
-### Example 2
+</p>
+</details>
+
+
+<details><summary> Example 2 </summary>
+<p>
+
 
 First command
 
@@ -86,135 +88,97 @@ Subsequent command (no token or service account)
 ```
 apigeecli orgs get -o org
 ```
+</p>
+</details>
+
+___
 
 ## Supported entites
 
-* [org](#org)
-* [prods](#prods)
 * [apis](#apis)
-* [envs](#env)
-* [sharedflows](#sf)
 * [apps](#apps)
-* [devs](#devs)
-* [sync](#sync)
-* [kvm](#kvm)
+* [developers](#devs)
+* [envs](#env)
 * [flowhooks](#flow)
+* [kvms](#kvm)
+* [org](#org)
+* [products](#prods)
+* [sharedflows](#sf)
+* [sync](#sync)
 * [targetservers](#target)
 
-## <a name="org"/> org
-
-* [list](#listorgs)
-* [get](#getorg)
-
-### <a name="listorgs"/> list
-
-List all the orgs available to the identity (service account)
-
-```
-apigeecli org list 
-```
-
-### <a name="getorg"/> get
-
-Get org details for an Apigee Org
-
-```
-apigeecli org get -o org 
-```
-Parameters
-The following parameters are supported. See Common Reference for a list of additional parameters.
-
-* `--org -o` (required) Apigee organization name
-
-
-## <a name="prods"/> prods
-
-Supported alias `products`
-
-* [list](#listproducts)
-* [get](#getproduct)
-* [create](#crtproduct)
-* [delete](#delproduct)
-
-### <a name="listproducts"/> list
-
-List all API Products in the org
-
-Parameters
-The following parameters are supported. See Common Reference for a list of additional parameters.
-
-* `--expand -x` (optional) Returns an expanded list of products for the organization.
-* `--count -c` (optional) Number of app ids to return. Default is 1000
-
-```
-apigeecli prods list -o org 
-```
-Required parameters
-The following parameters are required. See Common Reference for a list of additional parameters.
-
-`--org -o` (required) Apigee organization name
-
-
-### <a name ="getproduct"/> get
-
-Get details of an API product
-
-```
-apigeecli prods list -o org -n name 
-```
-Required parameters
-The following parameters are required. See Common Reference for a list of additional parameters.
-
-`--org -o` (required) Apigee organization name
-`--name -n` (required) API product name
-
-### <a name="crtproduct"/> create
-
-Create an API product
-
-```
-apigeecli prods create -o org -n name -e test,prod -p proxy1,proxy2 -f auto
-```
-Parameters
-The following parameters are supported. See Common Reference for a list of additional parameters.
-
-* `--org -o` (required) Apigee organization name
-* `--name -n` (required) API product name
-* `--displayName -m` (optional) Display name for API product
-* `--approval -f` (required) Approval type for API product
-* `--desc -d` (optional) Description for API product
-* `--envs -e` (required) A comma separated list of environments to enable
-* `--proxies -p` (required) A comma separated list of API proxies
-* `--scopes -s` (optional) A comma separated list of OAuth scopes
-* `--quota -q` (optional) Quota Amount
-* `--interval -i` (optional) Quota Time Interval
-* `--unit -u` (optional) Quota Time Unit
-
-### <a name="delprodct"/> delete
-
-Delete an API Product
-
-Get details of an API product
-
-```
-apigeecli prods delete -o org -n name 
-```
-Parameters
-The following parameters are supported. See Common Reference for a list of additional parameters.
-
-* `--org -o` (required) Apigee organization name
-* `--name -n` (required) API product name
-
+---
 
 ## <a name="apis"/> apis
 
-* [list](#listorgs)
-* [listdeploy](#listdeploy)
 * [create](#createapi)
+* [delete](#delapi)
 * [deploy](#depapi)
 * [fetch](#fetchapi)
-* [delete](#delapi)
+* [list](#listorgs)
+* [listdeploy](#listdeploy)
 * [undeploy](#undepapi)
+
+### <a name="createapi"/> create
+
+Import or create an API Proxy. If a bundle (zip) is supplied, it is imported else, it creates an empty proxy in the Org
+
+```
+apigeecli apis create -o org -n proxy
+```
+
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+* `--name -n` (required) API proxy name
+* `--proxy -p` (required) API proxy bundle (zip)
+
+### <a name="delapi"/> delete
+
+Deletes an API proxy and all associated endpoints, policies, resources, and revisions. The API proxy must be undeployed before you can delete it.
+
+```
+apigeecli apis delete -o org -n proxy
+```
+
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+* `--name -n` (required) API proxy name 
+
+### <a name="depapi"/> deploy
+
+Deploys a revision of an existing API proxy to an environment in an organization.
+
+```
+apigeecli apis deploy -o org -e env -n proxy -v 1
+```
+
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+* `--name -n` (required) API proxy name 
+* `--revision -v` (required) API proxy revision
+* `--ovr -r` (optional) Forces deployment of the new revision.
+
+
+### <a name="fetchapi"/> fetch
+
+Returns a zip-formatted proxy bundle of code and config files.
+
+```
+apigeecli apis fetch -o org -e env -n proxy -v 1
+```
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+* `--name -n` (required) API proxy name 
+* `--revision -v` (required) API proxy revision
+* `--ovr -r` (optional) Forces deployment of the new revision.
 
 ### <a name="listorgs"/> list
 
@@ -246,73 +210,6 @@ The following parameters are supported. See Common Reference for a list of addit
 * `--expand -x` (optional) Returns an expanded list of proxies for the organization.
 * `--count -c` (optional) Number of apis to return
 
-
-### <a name="createapi"/> create
-
-Import or create an API Proxy. If a bundle (zip) is supplied, it is imported else, it creates an empty proxy in the Org
-
-```
-apigeecli apis create -o org -n proxy
-```
-
-Parameters
-The following parameters are supported. See Common Reference for a list of additional parameters.
-
-* `--org -o` (required) Apigee organization name
-* `--name -n` (required) API proxy name
-* `--proxy -p` (required) API proxy bundle (zip)
-
-### <a name="depapi"/> deploy
-
-Deploys a revision of an existing API proxy to an environment in an organization.
-
-```
-apigeecli apis deploy -o org -e env -n proxy -v 1
-```
-
-Parameters
-The following parameters are supported. See Common Reference for a list of additional parameters.
-
-* `--org -o` (required) Apigee organization name
-* `--name -n` (required) API proxy name 
-* `--revision -v` (required) API proxy revision
-* `--ovr -r` (optional) Forces deployment of the new revision.
-
-
-### <a name="fetchapi"/> fetch
-
-Returns a zip-formatted proxy bundle of code and config files.
-
-```
-apigeecli apis fetch -o org -e env -n proxy -v 1
-```
-
-<<<<<<< HEAD
-Parameters
-The following parameters are supported. See Common Reference for a list of additional parameters.
-
-* `--org -o` (required) Apigee organization name
-* `--name -n` (required) API proxy name 
-* `--revision -v` (required) API proxy revision
-
-=======
->>>>>>> delapi
-The downloaded file is {proxyname}.zip and in the folder where the command is executed
-
-### <a name="delapi"/> delete
-
-Deletes an API proxy and all associated endpoints, policies, resources, and revisions. The API proxy must be undeployed before you can delete it.
-
-```
-apigeecli apis delete -o org -n proxy
-```
-
-Parameters
-The following parameters are supported. See Common Reference for a list of additional parameters.
-
-* `--org -o` (required) Apigee organization name
-* `--name -n` (required) API proxy name 
-
 ### <a name="undepapi"/> undeploy
 
 Undeploys a revision of an existing API proxy to an environment in an organization.
@@ -328,98 +225,21 @@ The following parameters are supported. See Common Reference for a list of addit
 * `--name -n` (required) API proxy name
 * `--revision -v` (required) API proxy revision
 
-## <a name="devs"/> developers
-
-Supported alias `developers`
-
-* [list](#listdevs)
-* [get](#getdev)
-* [create](#crtdev)
-* [delete](#deldev)
-
-### <a name="listdevs"/> list
-
-List all App Developers in an org
-
-```
-apigeecli devs list -o org 
-```
-
-Parameters
-The following parameters are supported. See Common Reference for a list of additional parameters.
-
-* `--org -o` (required) Apigee organization name
-
-### <a name ="getdev"/> get
-
-Get details of an App Developer
-
-```
-apigeecli devs get -o org -n name 
-```
-
-Parameters
-The following parameters are supported. See Common Reference for a list of additional parameters.
-
-* `--org -o` (required) Apigee organization name
-* `--name -n` (required) Developer email
+---
 
 ## <a name="apps"/> apps
 
 Supported alias `applications`
 
-* [list](#listapps)
-* [get](#getapp)
 * [create](#crtapp)
 * [delete](#delapp)
 * [genkey](#genkey)
-
-### <a name="listapps"/> list
-
-List all developer apps in an org
-
-```
-apigeecli apps list -o org 
-```
-
-Parameters
-The following parameters are supported. See Common Reference for a list of additional parameters.
-
-* `--org -o` (required) Apigee organization name
-* `--expand -x` (optional) Returns an expanded list of apps for the organization.
-* `--count -c` (optional) Number of app ids to return.
-
-### <a name ="getapp"/> get
-
-Get details of a developer app
-
-```
-apigeecli apps get -o org -n name 
-```
-
-Parameters
-The following parameters are supported. See Common Reference for a list of additional parameters.
-
-* `--org -o` (required) Apigee organization name
-* `--name -n` (required) Developer App name
-
-### <a name ="delapp"/> delete
-
-Delete a developer app
-
-```
-apigeecli apps delete -o org -n name 
-```
-
-Parameters
-The following parameters are supported. See Common Reference for a list of additional parameters.
-
-* `--org -o` (required) Apigee organization name
-* `--name -n` (required) Developer App name
+* [get](#getapp)
+* [list](#listapps)
 
 ### <a name ="crtapp"/> create
 
-Delete a developer app
+Create a developer app
 
 ```
 apigeecli apps create -o org -n name -e test,prod -p proxy1 
@@ -435,6 +255,20 @@ The following parameters are supported. See Common Reference for a list of addit
 * `--callabck -c` (optional) OAuth callback url
 * `--prods -p` (required) A comma separated list of products
 * `--scopes -s` (optional) OAuthe scopes
+
+### <a name ="delapp"/> delete
+
+Delete a developer app
+
+```
+apigeecli apps delete -o org -n name 
+```
+
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+* `--name -n` (required) Developer App name
 
 ### <a name ="genkey"/> genkey
 
@@ -454,183 +288,33 @@ The following parameters are supported. See Common Reference for a list of addit
 * `--prods -p` (required) A comma separated list of products
 * `--scopes -s` (optional) OAuthe scopes
 
-## <a name="sf"/> sharedflows
+### <a name ="getapp"/> get
 
-* [list](#listsf)
-* [get](#getsf)
-* [deploy](#depsf)
-* [undeploy](#undepsf)
-
-### <a name="listsf"/> list
-
-List all shared flows in an org
+Get details of a developer app
 
 ```
-apigeecli sharedflows list -o org 
-```
-Parameters
-The following parameters are supported. See Common Reference for a list of additional parameters.
-
-* `--org -o` (required) Apigee organization name
-* `--env -e` (optional) Apigee environment name
-
-When the environment name is passed, list the deployed shared flows in the environment
-
-### <a name ="getsf"/> get
-
-Get details of a shared flow
-
-```
-apigeecli sharedflow get -o org -n name 
-```
-Parameters
-The following parameters are supported. See Common Reference for a list of additional parameters.
-
-* `--org -o` (required) Apigee organization name
-* `--name -n` (required) Shared flow name
-
-### <a name ="depsf"/> deploy
-
-Deploy a shared flow
-
-```
-apigeecli sharedflow deploy -o org -n name -v 1 
-```
-Parameters
-The following parameters are supported. See Common Reference for a list of additional parameters.
-
-* `--org -o` (required) Apigee organization name
-* `--env -e` (required) Apigee environment name
-* `--name -n` (required) Shared flow name
-* `--revision -v` (required) Shared flow revision
-
-### <a name ="undepsf"/> undeploy
-
-Deploy a shared flow
-
-```
-apigeecli sharedflow undeploy -o org -n name -v 1 
-```
-Parameters
-The following parameters are supported. See Common Reference for a list of additional parameters.
-
-* `--org -o` (required) Apigee organization name
-* `--env -e` (required) Apigee environment name
-* `--name -n` (required) Shared flow name
-* `--revision -v` (required) Shared flow revision
-
-## <a name="env"/> envs
-
-Supported alias `environments`
-
-* [list](#listenv)
-* [get](#getenv)
-
-### <a name="listenv"/> list
-
-List all environments in an org
-
-```
-apigeecli envs list -o org 
-```
-Parameters
-The following parameters are supported. See Common Reference for a list of additional parameters.
-
-* `--org -o` (required) Apigee organization name
-
-### <a name ="getenv"/> get
-
-Get details of an environment
-
-```
-apigeecli envs get -o org -e env 
+apigeecli apps get -o org -n name 
 ```
 
 Parameters
 The following parameters are supported. See Common Reference for a list of additional parameters.
 
 * `--org -o` (required) Apigee organization name
-* `--name -n` (required) environment name
+* `--name -n` (required) Developer App name
 
-## <a name="sync"/> sync
+### <a name="listapps"/> list
 
-* [set](#setsync)
-* [get](#getsync)
-
-### <a name="listorgs"/> set
-
-Set identity with access to control plane resources
+List all developer apps in an org
 
 ```
-apigeecli sync set -o org -i identity 
+apigeecli apps list -o org 
 ```
 
 Parameters
 The following parameters are supported. See Common Reference for a list of additional parameters.
 
 * `--org -o` (required) Apigee organization name
-* `--ity -i` (required) IAM Identity
+* `--expand -x` (optional) Returns an expanded list of apps for the organization.
+* `--count -c` (optional) Number of app ids to return.
 
-### <a name="listorgs"/> get
-
-List all the orgs available to the identity (service account)
-
-```
-apigeecli sync set -o org
-```
-
-Parameters
-The following parameters are supported. See Common Reference for a list of additional parameters.
-
-* `--org -o` (required) Apigee organization name
-
-
-## <a name="kvm"/> kvm
-
-* [create](#crtkvm)
-* [list](#listkvm)
-* [delete](#delkvm)
-
-### <a name="crtkvm"/> create
-
-Create a new environment scoped KVM Map
-
-```
-apigeecli kvms create -o org -e env -n name 
-```
-
-Parameters
-The following parameters are supported. See Common Reference for a list of additional parameters.
-
-* `--org -o` (required) Apigee organization name
-* `--env -e` (required) Apigee environment name
-* `--name -n` (required) KVM Map name
-* `--encrypt -c` (optional) Enable encrypted KVM
-
-### <a name="listkvm"/> list
-
-List all the KVM Maps in an environment
-
-```
-apigeecli kvms create -o org -e env
-```
-
-Parameters
-The following parameters are supported. See Common Reference for a list of additional parameters.
-
-* `--org -o` (required) Apigee organization name
-* `--env -e` (required) Apigee environment name
-
-### <a name="delkvm"/> delete
-
-Delete a KVM Map
-
-```
-apigeecli kvms create -o org -e env
-```
-
-Parameters
-The following parameters are supported. See Common Reference for a list of additional parameters.
-
-* `--org -o` (required) Apigee organization name
-* `--env -e` (required) Apigee environment name
+---

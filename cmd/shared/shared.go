@@ -1,6 +1,7 @@
 package shared
 
 import (
+	"archive/zip"
 	"bytes"
 	"crypto/x509"
 	"encoding/json"
@@ -112,7 +113,7 @@ func PostHttpOctet(url string, proxyName string) error {
 	if err != nil {
 		Error.Fatalln("Error in client:\n", err)
 		return err
-	}	
+	}
 
 	Info.Println("Setting token : ", RootArgs.Token)
 	req.Header.Add("Authorization", "Bearer "+RootArgs.Token)
@@ -161,7 +162,7 @@ func DownloadResource(url string, name string) error {
 		Error.Fatalln("Error in client:\n", err)
 		return err
 	}
-	
+
 	Info.Println("Setting token : ", RootArgs.Token)
 	req.Header.Add("Authorization", "Bearer "+RootArgs.Token)
 
@@ -213,7 +214,7 @@ func HttpClient(params ...string) error {
 	} else {
 		return errors.New("Incorrect parameters to invoke the method")
 	}
-	
+
 	if err != nil {
 		Error.Fatalln("Error in client:\n", err)
 		return err
@@ -460,4 +461,34 @@ func SetAccessToken() error {
 			}
 		}
 	}
+}
+
+func ReadBundle(filename string) error {
+
+	if !strings.HasSuffix(filename, ".zip") {
+		Error.Fatalln("Proxy bundle must be a zip file")
+		return errors.New("source must be a zipfile")
+	}
+
+	file, err := os.Open(filename)
+
+	if err != nil {
+		Error.Fatalln("Cannot open/read API Proxy Bundle: ", err)
+		return err
+	}
+
+	fi, err := file.Stat()
+	if err != nil {
+		Error.Fatalln("Error accessing file: ", err)
+		return err
+	}
+	_, err = zip.NewReader(file, fi.Size())
+
+	if err != nil {
+		Error.Fatalln("Invalid API Proxy Bundle: ", err)
+		return err
+	}
+
+	defer file.Close()
+	return nil
 }

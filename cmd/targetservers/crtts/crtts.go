@@ -27,7 +27,7 @@ var Cmd = &cobra.Command{
 		targetserver = append(targetserver, "\"host\":\""+host+"\"")
 		targetserver = append(targetserver, "\"port\":"+strconv.Itoa(port))
 
-		if enable  {
+		if enable {
 			targetserver = append(targetserver, "\"isEnabled\":"+strconv.FormatBool(enable))
 		}
 
@@ -57,4 +57,3 @@ func init() {
 	_ = Cmd.MarkFlagRequired("name")
 	_ = Cmd.MarkFlagRequired("host")
 }
-
