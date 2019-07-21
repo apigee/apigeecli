@@ -13,7 +13,7 @@ var Cmd = &cobra.Command{
 	Use:   "attach",
 	Short: "Attach a flowhook",
 	Long:  "Attach a flowhook",
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		u, _ := url.Parse(shared.BaseURL)
 
 		flowhook := []string{}
@@ -32,7 +32,7 @@ var Cmd = &cobra.Command{
 
 		payload := "{" + strings.Join(flowhook, ",") + "}"
 		u.Path = path.Join(u.Path, shared.RootArgs.Org, "environments", shared.RootArgs.Env, "flowhooks", name)
-		_ = shared.HttpClient(u.String(), payload, "PUT")
+		return shared.HttpClient(u.String(), payload, "PUT")
 	},
 }
 

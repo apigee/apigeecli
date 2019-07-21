@@ -11,10 +11,10 @@ var Cmd = &cobra.Command{
 	Use:   "get",
 	Short: "Returns the profile for a developer by email address or ID",
 	Long:  "Returns the profile for a developer by email address or ID",
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		u, _ := url.Parse(shared.BaseURL)
 		u.Path = path.Join(u.Path, shared.RootArgs.Org, "developers", name)
-		_ = shared.HttpClient(u.String())
+		return shared.HttpClient(u.String())
 	},
 }
 
