@@ -11,13 +11,13 @@ var Cmd = &cobra.Command{
 	Use:   "fetch",
 	Short: "Returns a zip-formatted shared flow bundle ",
 	Long:  "Returns a zip-formatted shared flow bundle of code and config files",
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		u, _ := url.Parse(shared.BaseURL)
 		q := u.Query()
 		q.Set("format", "bundle")
 		u.RawQuery = q.Encode()
 		u.Path = path.Join(u.Path, shared.RootArgs.Org, "sharedflows", name, "revisions", revision)
-		_ = shared.DownloadResource(u.String(), name)
+		return shared.DownloadResource(u.String(), name)
 	},
 }
 

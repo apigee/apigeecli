@@ -11,10 +11,10 @@ var Cmd = &cobra.Command{
 	Use:   "undeploy",
 	Short: "Undeploys a revision of an existing API proxy",
 	Long:  "Undeploys a revision of an existing API proxy to an environment in an organization",
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		u, _ := url.Parse(shared.BaseURL)
 		u.Path = path.Join(u.Path, shared.RootArgs.Org, "environments", shared.RootArgs.Env, "sharedflows", name, "revisions", revision, "deployments")
-		_ = shared.HttpClient(u.String(), "", "DELETE")
+		return shared.HttpClient(u.String(), "", "DELETE")
 	},
 }
 

@@ -11,7 +11,7 @@ var Cmd = &cobra.Command{
 	Use:   "list",
 	Short: "Lists all shared flows in the organization.",
 	Long:  "Lists all shared flows in the organization.",
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		u, _ := url.Parse(shared.BaseURL)
 		if shared.RootArgs.Env != "" {
 			q := u.Query()
@@ -20,7 +20,7 @@ var Cmd = &cobra.Command{
 		} else {
 			u.Path = path.Join(u.Path, shared.RootArgs.Org, "sharedflows")
 		}
-		_ = shared.HttpClient(u.String())
+		return shared.HttpClient(u.String())
 	},
 }
 

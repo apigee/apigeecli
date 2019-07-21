@@ -11,10 +11,10 @@ var Cmd = &cobra.Command{
 	Use:   "list",
 	Short: "List Target Servers",
 	Long:  "List Target Servers",
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		u, _ := url.Parse(shared.BaseURL)
 		u.Path = path.Join(u.Path, shared.RootArgs.Org, "environments", shared.RootArgs.Env, "targetservers")
-		_ = shared.HttpClient(u.String())
+		return shared.HttpClient(u.String())
 	},
 }
 

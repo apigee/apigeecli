@@ -11,7 +11,7 @@ var Cmd = &cobra.Command{
 	Use:   "deploy",
 	Short: "Deploys a revision of an existing Sharedflow",
 	Long:  "Deploys a revision of an existing Sharedflow to an environment in an organization",
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		u, _ := url.Parse(shared.BaseURL)
 		if overrides {
 			q := u.Query()
@@ -19,7 +19,7 @@ var Cmd = &cobra.Command{
 			u.RawQuery = q.Encode()
 		}
 		u.Path = path.Join(u.Path, shared.RootArgs.Org, "environments", shared.RootArgs.Env, "sharedflows", name, "revisions", revision, "deployments")
-		_ = shared.HttpClient(u.String(), "")
+		return shared.HttpClient(u.String(), "")
 	},
 }
 

@@ -11,10 +11,10 @@ var Cmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete a Target Server",
 	Long:  "Delete a Target Server",
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		u, _ := url.Parse(shared.BaseURL)
 		u.Path = path.Join(u.Path, shared.RootArgs.Org, "environments", shared.RootArgs.Env, "targetservers", name)
-		_ = shared.HttpClient(u.String(), "", "DELETE")
+		return shared.HttpClient(u.String(), "", "DELETE")
 	},
 }
 
