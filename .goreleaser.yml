@@ -7,6 +7,8 @@ builds:
       - linux
       - darwin
       - windows
+    ldflags:
+    - -s -w -X main.Version={{.Commit}}
 archive:
   name_template: "{{ .ProjectName }}_{{.Tag}}_{{ .Os }}_{{ .Arch }}"
   replacements:
