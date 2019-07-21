@@ -11,5 +11,5 @@ notifications:
   email: false
 
 script:
-  - go build
-  - go test -v -race 
+  - go build -o apigeecli -ldflags "-w -s -X cmd/cmd.GitVersion=test"
+  - go test -v -race
