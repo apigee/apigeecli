@@ -1,12 +1,19 @@
-dist: xenial
+sudo: required
+dist: trusty
 language: go
+
 env:
-  - GO111MODULE=on GOFLAGS='-mod vendor'
+  global: 
+    - GOX_FLAGS="-arch amd64"
+    - TRAVIS_GO_VERSION=$(cat .go-version) 
+
+go_import_path: github.com/srinandan/apigeecli
+
 go:
   - 1.12.x
-git:
-  depth: 1
+
 install: true
+
 notifications:
   email: false
 
