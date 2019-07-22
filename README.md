@@ -4,7 +4,7 @@ This is a tool to interact with [Apigee APIs](https://apigee.googleapis.com). Th
 
 # Installation
 
-`apigeecli` is a binary and you can download the appropriate one for your platform from [here](https://github.com/srinandan/apigeeapi/releases)
+`apigeecli` is a binary and you can download the appropriate one for your platform from [here](https://github.com/srinandan/apigeecli/releases)
 
 NOTE: Supported platforms are:
 * Darwin
