@@ -292,3 +292,47 @@ func TestDeleteDeveloper(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+func TestCreateTS(t *testing.T) {
+	name := "test"
+	host := "example.com"
+
+	cmd := exec.Command(apigeecli, "targetservers", "create", "-o", org, "-n", name, "-e", env, "-s", host, "-t", token)
+	err := cmd.Run()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+}
+
+func TestGetTS(t *testing.T) {
+	name := "test"
+
+	cmd := exec.Command(apigeecli, "targetservers", "get", "-o", org, "-e", env, "-n", name, "-t", token)
+	err := cmd.Run()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+}
+
+func TestListTS(t *testing.T) {
+
+	cmd := exec.Command(apigeecli, "targetservers", "get", "-o", org, "-e", env, "-t", token)
+	err := cmd.Run()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+}
+
+func TestDeleteTS(t *testing.T) {
+	name := "test"
+
+	cmd := exec.Command(apigeecli, "targetservers", "delete", "-o", org, "-e", env, "-n", name, "-t", token)
+	err := cmd.Run()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+}
