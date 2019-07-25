@@ -115,16 +115,6 @@ func TestListExpandDeveloper(t *testing.T) {
 	}
 }
 
-func TestDeleteDeveloper(t *testing.T) {
-	email := "test@example.com"
-
-	cmd := exec.Command(apigeecli, "developers", "delete", "-o", org, "-n", email, "-t", token)
-	err := cmd.Run()
-	if err != nil {
-		t.Fatal(err)
-	}
-}
-
 // kvm test
 func TestCreateKVM(t *testing.T) {
 	name := "test"
@@ -192,5 +182,113 @@ func TestSetSync(t *testing.T) {
 	err := cmd.Run()
 	if err == nil {
 		t.Fatal("Invalid identity test should have failed")
+	}
+}
+
+func TestCreateProxy(t *testing.T) {
+	name := "test"
+
+	cmd := exec.Command(apigeecli, "apis", "create", "-o", org, "-n", name, "-t", token)
+	err := cmd.Run()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+}
+
+func TestCreateProduct(t *testing.T) {
+	name := "test"
+	envs := "test"
+	proxy := "test"
+	approval := "auto"
+
+	cmd := exec.Command(apigeecli, "products", "create", "-o", org, "-n", name, "-e", envs, "-p", proxy, "-f", approval, "-t", token)
+	err := cmd.Run()
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCreateApp(t *testing.T) {
+	name := "test"
+	email := "test@example.com"
+	product := "test"
+
+	cmd := exec.Command(apigeecli, "apps", "create", "-o", org, "-n", name, "-e", email, "-p", product, "-t", token)
+	err := cmd.Run()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+}
+
+func TestGetApp(t *testing.T) {
+	name := "test"
+
+	cmd := exec.Command(apigeecli, "apps", "get", "-o", org, "-n", name, "-t", token)
+	err := cmd.Run()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+}
+
+func TestListApp(t *testing.T) {
+
+	cmd := exec.Command(apigeecli, "apps", "get", "-o", org, "-t", token)
+	err := cmd.Run()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+}
+
+func TestDeleteApp(t *testing.T) {
+	name := "test"
+
+	cmd := exec.Command(apigeecli, "apps", "delete", "-o", org, "-n", name, "-t", token)
+	err := cmd.Run()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+}
+
+func TestGetProduct(t *testing.T) {
+	name := "test"
+
+	cmd := exec.Command(apigeecli, "products", "list", "-o", org, "-n", name, "-t", token)
+	err := cmd.Run()
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestListProduct(t *testing.T) {
+
+	cmd := exec.Command(apigeecli, "products", "list", "-o", org, "-t", token)
+	err := cmd.Run()
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestDeleteProduct(t *testing.T) {
+	name := "test"
+
+	cmd := exec.Command(apigeecli, "kvms", "create", "-o", org, "-n", name, "-t", token)
+	err := cmd.Run()
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestDeleteDeveloper(t *testing.T) {
+	email := "test@example.com"
+
+	cmd := exec.Command(apigeecli, "developers", "delete", "-o", org, "-n", email, "-t", token)
+	err := cmd.Run()
+	if err != nil {
+		t.Fatal(err)
 	}
 }
