@@ -555,6 +555,7 @@ The following parameters are supported. See Common Reference for a list of addit
 
 * [list](#listorgs)
 * [get](#getorg)
+* [setmart](#setmart)
 
 ### <a name="listorgs"/> list
 
@@ -575,6 +576,20 @@ Parameters
 The following parameters are supported. See Common Reference for a list of additional parameters.
 
 * `--org -o` (required) Apigee organization name
+
+### <a name="setmart"/> setmart
+
+Configure MART endpoint for an Apigee Org
+
+```
+apigeecli org get -o org -m http://endpoint
+```
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+* `--mart -m` (required) MART endpoint
+* `--whitelist -w` (optional) Enable/disable whitelisting of GCP IP for source connections to MART
 
 ---
 

@@ -46,6 +46,15 @@ func TestSetMart(t *testing.T) {
 	}
 }
 
+func TestSetMartWhiteList(t *testing.T) {
+	mart := os.Getenv("MART")
+	cmd := exec.Command(apigeecli, "orgs", "setmart", "-o", org, "-m", mart, "-w", "false", "-t", token)
+	err := cmd.Run()
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
 // env tests
 func TestListEnvs(t *testing.T) {
 	cmd := exec.Command(apigeecli, "envs", "list", "-o", org, "-t", token)
