@@ -11,7 +11,13 @@ go_import_path: github.com/srinandan/apigeecli
 go:
   - 1.12.x
 
-install: true
+before_script:
+  - go vet ./...
+  
+install: 
+  # Add Godeps dependencies to GOPATH and PATH
+  - export GOPATH="${TRAVIS_BUILD_DIR}/Godeps/_workspace:$GOPATH"
+  - export PATH="${TRAVIS_BUILD_DIR}/Godeps/_workspace/bin:$PATH"
 
 notifications:
   email: false
