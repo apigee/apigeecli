@@ -12,8 +12,8 @@ go_import_path: github.com/srinandan/apigeecli
 go:
   - 1.12.x
 
-before_script:
-  - go vet ./...
+#before_script:
+#  - go vet ./...
   
 install: 
   # Add Godeps dependencies to GOPATH and PATH
