@@ -5,24 +5,17 @@ language: go
 env:
   global: 
     - GOX_FLAGS="-arch amd64"
-    - GO111MODULE=auto
 
 go_import_path: github.com/srinandan/apigeecli
 
 go:
   - 1.12.x
-
-#before_script:
-#  - go vet ./...
   
-install: 
-  # Add Godeps dependencies to GOPATH and PATH
-  - export GOPATH="${TRAVIS_BUILD_DIR}/Godeps/_workspace:$GOPATH"
-  - export PATH="${TRAVIS_BUILD_DIR}/Godeps/_workspace/bin:$PATH"
+install: true
 
 notifications:
   email: false
 
 script:
-  - go build -o apigeecli
-  - go test -v -race
+  - env GO111MODULE=on go build -o apigeecli
+  - env GO111MODULE=on go test -v
