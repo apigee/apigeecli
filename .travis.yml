@@ -5,6 +5,7 @@ language: go
 env:
   global: 
     - GOX_FLAGS="-arch amd64"
+    - GO111MODULE=on
 
 go_import_path: github.com/srinandan/apigeecli
 
