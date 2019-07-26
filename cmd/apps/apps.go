@@ -1,13 +1,13 @@
 package apps
 
 import (
-	"../shared"
-	crtapp "./crtapp"
-	delapp "./delapp"
-	genkey "./genkey"
-	getapp "./getapp"
-	listapp "./listapp"
 	"github.com/spf13/cobra"
+	crtapp "github.com/srinandan/apigeecli/cmd/apps/crtapp"
+	delapp "github.com/srinandan/apigeecli/cmd/apps/delapp"
+	genkey "github.com/srinandan/apigeecli/cmd/apps/genkey"
+	getapp "github.com/srinandan/apigeecli/cmd/apps/getapp"
+	listapp "github.com/srinandan/apigeecli/cmd/apps/listapp"
+	"github.com/srinandan/apigeecli/cmd/shared"
 )
 
 var Cmd = &cobra.Command{

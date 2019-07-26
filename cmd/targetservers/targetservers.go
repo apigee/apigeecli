@@ -1,12 +1,12 @@
 package targetservers
 
 import (
-	"../shared"
-	"./crtts"
-	"./delts"
-	"./getts"
-	"./listts"
 	"github.com/spf13/cobra"
+	"github.com/srinandan/apigeecli/cmd/shared"
+	"github.com/srinandan/apigeecli/cmd/targetservers/crtts"
+	"github.com/srinandan/apigeecli/cmd/targetservers/delts"
+	"github.com/srinandan/apigeecli/cmd/targetservers/getts"
+	"github.com/srinandan/apigeecli/cmd/targetservers/listts"
 )
 
 var Cmd = &cobra.Command{

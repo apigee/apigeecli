@@ -1,8 +1,8 @@
 package delfh
 
 import (
-	"../../shared"
 	"github.com/spf13/cobra"
+	"github.com/srinandan/apigeecli/cmd/shared"
 	"net/url"
 	"path"
 )

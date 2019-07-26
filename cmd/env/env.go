@@ -1,10 +1,10 @@
 package env
 
 import (
-	"../shared"
-	"./getenv"
-	"./listenv"
 	"github.com/spf13/cobra"
+	"github.com/srinandan/apigeecli/cmd/env/getenv"
+	"github.com/srinandan/apigeecli/cmd/env/listenv"
+	"github.com/srinandan/apigeecli/cmd/shared"
 )
 
 var Cmd = &cobra.Command{

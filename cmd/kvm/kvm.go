@@ -1,11 +1,11 @@
 package kvm
 
 import (
-	"../shared"
-	"./crtkvm"
-	"./delkvm"
-	"./listkvm"
 	"github.com/spf13/cobra"
+	"github.com/srinandan/apigeecli/cmd/kvm/crtkvm"
+	"github.com/srinandan/apigeecli/cmd/kvm/delkvm"
+	"github.com/srinandan/apigeecli/cmd/kvm/listkvm"
+	"github.com/srinandan/apigeecli/cmd/shared"
 )
 
 var Cmd = &cobra.Command{

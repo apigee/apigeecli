@@ -1,10 +1,10 @@
 package setsync
 
 import (
-	"../../shared"
 	"encoding/json"
 	"fmt"
 	"github.com/spf13/cobra"
+	"github.com/srinandan/apigeecli/cmd/shared"
 	"net/url"
 	"path"
 	"strings"

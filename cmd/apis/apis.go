@@ -1,15 +1,15 @@
 package apis
 
 import (
-	"../shared"
-	crtapi "./crtapi"
-	delapi "./delapi"
-	"./depapi"
-	fetch "./fetchapi"
-	"./listapis"
-	"./listdeploy"
-	"./undepapi"
 	"github.com/spf13/cobra"
+	crtapi "github.com/srinandan/apigeecli/cmd/apis/crtapi"
+	delapi "github.com/srinandan/apigeecli/cmd/apis/delapi"
+	"github.com/srinandan/apigeecli/cmd/apis/depapi"
+	fetch "github.com/srinandan/apigeecli/cmd/apis/fetchapi"
+	"github.com/srinandan/apigeecli/cmd/apis/listapis"
+	"github.com/srinandan/apigeecli/cmd/apis/listdeploy"
+	"github.com/srinandan/apigeecli/cmd/apis/undepapi"
+	"github.com/srinandan/apigeecli/cmd/shared"
 )
 
 var Cmd = &cobra.Command{

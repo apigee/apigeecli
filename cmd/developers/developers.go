@@ -1,12 +1,12 @@
 package developers
 
 import (
-	"../shared"
-	"./crtdev"
-	"./deldev"
-	"./getdev"
-	"./listdev"
 	"github.com/spf13/cobra"
+	"github.com/srinandan/apigeecli/cmd/developers/crtdev"
+	"github.com/srinandan/apigeecli/cmd/developers/deldev"
+	"github.com/srinandan/apigeecli/cmd/developers/getdev"
+	"github.com/srinandan/apigeecli/cmd/developers/listdev"
+	"github.com/srinandan/apigeecli/cmd/shared"
 )
 
 var Cmd = &cobra.Command{

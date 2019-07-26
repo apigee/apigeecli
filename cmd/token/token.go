@@ -1,8 +1,8 @@
 package token
 
 import (
-	"./gettk"
 	"github.com/spf13/cobra"
+	"github.com/srinandan/apigeecli/cmd/token/gettk"
 )
 
 var Cmd = &cobra.Command{

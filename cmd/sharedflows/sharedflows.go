@@ -1,15 +1,15 @@
 package sharedflows
 
 import (
-	"../shared"
-	"./crtsf"
-	"./delsf"
-	"./depsf"
-	"./fetchsf"
-	getsf "./getsf"
-	listsf "./listsf"
-	"./undepsf"
 	"github.com/spf13/cobra"
+	"github.com/srinandan/apigeecli/cmd/shared"
+	"github.com/srinandan/apigeecli/cmd/sharedflows/crtsf"
+	"github.com/srinandan/apigeecli/cmd/sharedflows/delsf"
+	"github.com/srinandan/apigeecli/cmd/sharedflows/depsf"
+	"github.com/srinandan/apigeecli/cmd/sharedflows/fetchsf"
+	getsf "github.com/srinandan/apigeecli/cmd/sharedflows/getsf"
+	listsf "github.com/srinandan/apigeecli/cmd/sharedflows/listsf"
+	"github.com/srinandan/apigeecli/cmd/sharedflows/undepsf"
 )
 
 var Cmd = &cobra.Command{

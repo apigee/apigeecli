@@ -1,12 +1,12 @@
 package targetservers
 
 import (
-	"../shared"
-	"./crtfh"
-	"./delfh"
-	"./getfh"
-	"./listfh"
 	"github.com/spf13/cobra"
+	"github.com/srinandan/apigeecli/cmd/flowhooks/crtfh"
+	"github.com/srinandan/apigeecli/cmd/flowhooks/delfh"
+	"github.com/srinandan/apigeecli/cmd/flowhooks/getfh"
+	"github.com/srinandan/apigeecli/cmd/flowhooks/listfh"
+	"github.com/srinandan/apigeecli/cmd/shared"
 )
 
 var Cmd = &cobra.Command{

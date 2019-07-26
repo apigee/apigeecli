@@ -1,12 +1,12 @@
 package products
 
 import (
-	"../shared"
-	"./crtprod"
-	"./delprod"
-	"./getprod"
-	"./listproducts"
 	"github.com/spf13/cobra"
+	"github.com/srinandan/apigeecli/cmd/products/crtprod"
+	"github.com/srinandan/apigeecli/cmd/products/delprod"
+	"github.com/srinandan/apigeecli/cmd/products/getprod"
+	"github.com/srinandan/apigeecli/cmd/products/listproducts"
+	"github.com/srinandan/apigeecli/cmd/shared"
 )
 
 var Cmd = &cobra.Command{

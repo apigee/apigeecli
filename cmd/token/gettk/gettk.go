@@ -1,9 +1,9 @@
 package gettk
 
 import (
-	"../../shared"
 	"fmt"
 	"github.com/spf13/cobra"
+	"github.com/srinandan/apigeecli/cmd/shared"
 )
 
 var Cmd = &cobra.Command{

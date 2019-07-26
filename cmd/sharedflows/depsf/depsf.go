@@ -1,7 +1,7 @@
 package depsf
 
 import (
-	"../../shared"
+	"github.com/srinandan/apigeecli/cmd/shared"
 	"github.com/spf13/cobra"
 	"net/url"
 	"path"

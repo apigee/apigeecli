@@ -1,10 +1,10 @@
 package sync
 
 import (
-	"../shared"
-	"./getsync"
-	"./setsync"
 	"github.com/spf13/cobra"
+	"github.com/srinandan/apigeecli/cmd/shared"
+	"github.com/srinandan/apigeecli/cmd/sync/getsync"
+	"github.com/srinandan/apigeecli/cmd/sync/setsync"
 )
 
 var Cmd = &cobra.Command{

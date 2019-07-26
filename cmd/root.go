@@ -1,21 +1,21 @@
 package cmd
 
 import (
-	"./apis"
-	"./apps"
-	"./developers"
-	"./env"
-	flowhooks "./flowhooks"
-	"./kvm"
-	"./org"
-	"./products"
-	"./shared"
-	"./sharedflows"
-	"./sync"
-	targetservers "./targetservers"
-	"./token"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"github.com/srinandan/apigeecli/cmd/apis"
+	"github.com/srinandan/apigeecli/cmd/apps"
+	"github.com/srinandan/apigeecli/cmd/developers"
+	"github.com/srinandan/apigeecli/cmd/env"
+	flowhooks "github.com/srinandan/apigeecli/cmd/flowhooks"
+	"github.com/srinandan/apigeecli/cmd/kvm"
+	"github.com/srinandan/apigeecli/cmd/org"
+	"github.com/srinandan/apigeecli/cmd/products"
+	"github.com/srinandan/apigeecli/cmd/shared"
+	"github.com/srinandan/apigeecli/cmd/sharedflows"
+	"github.com/srinandan/apigeecli/cmd/sync"
+	targetservers "github.com/srinandan/apigeecli/cmd/targetservers"
+	"github.com/srinandan/apigeecli/cmd/token"
 )
 
 var RootCmd = &cobra.Command{
