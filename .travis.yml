@@ -5,7 +5,6 @@ language: go
 env:
   global: 
     - GOX_FLAGS="-arch amd64"
-    - TRAVIS_GO_VERSION=$(cat .go-version) 
 
 go_import_path: github.com/srinandan/apigeecli
 
@@ -18,5 +17,5 @@ notifications:
   email: false
 
 script:
-  - go build -o apigeecli -ldflags "-w -s -X cmd/cmd.GitVersion=test"
+  - go build -o apigeecli
   - go test -v -race
