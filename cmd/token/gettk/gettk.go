@@ -2,6 +2,7 @@ package gettk
 
 import (
 	"fmt"
+
 	"github.com/spf13/cobra"
 	"github.com/srinandan/apigeecli/cmd/shared"
 )
@@ -11,11 +12,11 @@ var Cmd = &cobra.Command{
 	Short: "Generate a new access token",
 	Long:  "Generate a new access token",
 	Args: func(cmd *cobra.Command, args []string) error {
-		if shared.RootArgs.ServiceAccount != "" {
-			return nil
-		} else {
+		if shared.RootArgs.ServiceAccount == "" {
 			return fmt.Errorf("Service account cannot be empty")
 		}
+
+		return nil
 	},
 
 	RunE: func(cmd *cobra.Command, args []string) error {

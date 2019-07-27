@@ -298,8 +298,8 @@ func generateJWT() (string, error) {
 
 func GenerateAccessToken() (string, error) {
 
-	const token_endpoint = "https://www.googleapis.com/oauth2/v4/token"
-	const grant_type = "urn:ietf:params:oauth:grant-type:jwt-bearer"
+	const tokenEndpoint = "https://www.googleapis.com/oauth2/v4/token"
+	const grantType = "urn:ietf:params:oauth:grant-type:jwt-bearer"
 
 	token, err := generateJWT()
 
@@ -308,11 +308,11 @@ func GenerateAccessToken() (string, error) {
 	}
 
 	form := url.Values{}
-	form.Add("grant_type", grant_type)
+	form.Add("grant_type", grantType)
 	form.Add("assertion", token)
 
 	client := &http.Client{}
-	req, err := http.NewRequest("POST", token_endpoint, strings.NewReader(form.Encode()))
+	req, err := http.NewRequest("POST", tokenEndpoint, strings.NewReader(form.Encode()))
 	if err != nil {
 		Error.Fatalln("Error in client:\n", err)
 		return "", err

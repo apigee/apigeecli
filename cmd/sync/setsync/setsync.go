@@ -24,11 +24,11 @@ var Cmd = &cobra.Command{
 	Short: "Set identity with access to control plane resources",
 	Long:  "Set identity with access to control plane resources",
 	Args: func(cmd *cobra.Command, args []string) error {
-		if strings.Contains(identity, ".iam.gserviceaccount.com") {
-			return nil
-		} else {
+		if !strings.Contains(identity, ".iam.gserviceaccount.com") {
 			return fmt.Errorf("identity[0] must have .iam.gserviceaccount.com suffix and should not be a Google managed service account: %s", identity)
 		}
+
+		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		u, _ := url.Parse(shared.BaseURL)

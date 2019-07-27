@@ -1,10 +1,11 @@
 package crtsf
 
 import (
-	"github.com/srinandan/apigeecli/cmd/shared"
-	"github.com/spf13/cobra"
 	"net/url"
 	"path"
+
+	"github.com/spf13/cobra"
+	"github.com/srinandan/apigeecli/cmd/shared"
 )
 
 var Cmd = &cobra.Command{
@@ -21,11 +22,11 @@ var Cmd = &cobra.Command{
 			q.Set("action", "import")
 			u.RawQuery = q.Encode()
 			err := shared.ReadBundle(name)
-			if err == nil {
-				return shared.PostHttpOctet(u.String(), proxy)
-			} else {
+			if err != nil {
 				return err
 			}
+
+			return shared.PostHttpOctet(u.String(), proxy)
 		} else {
 			proxyName := "{\"name\":\"" + name + "\"}"
 			return shared.HttpClient(u.String(), proxyName)
