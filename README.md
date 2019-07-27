@@ -246,7 +246,7 @@ Supported alias `applications`
 Create a developer app
 
 ```
-apigeecli apps create -o org -n name -e test,prod -p proxy1 
+apigeecli apps create -o org -n name -e test,prod -p proxy1 --attrs "foo1=bar1,foo2=bar2"
 ```
 
 Parameters
@@ -254,11 +254,12 @@ The following parameters are supported. See Common Reference for a list of addit
 
 * `--org -o` (required) Apigee organization name
 * `--name -n` (required) Developer App name
-* `--email -e` (required) Developer's email* 
+* `--email -e` (required) Developer's email 
 * `--expires -x` (optional) Lifetime of the consumer's key
 * `--callabck -c` (optional) OAuth callback url
 * `--prods -p` (required) A comma separated list of products
 * `--scopes -s` (optional) OAuthe scopes
+* `--attrs` (optional) Custom Attributes
 
 ### <a name ="delapp"/> delete
 
@@ -337,7 +338,7 @@ Supported alias `developers`
 Create a new App Developer
 
 ```
-apigeecli devs create -o org -n email -f firstname -s lastname -u username 
+apigeecli devs create -o org -n email -f firstname -s lastname -u username --attrs "foo1=bar1,foo2=bar2"
 ```
 
 Parameters
@@ -348,6 +349,7 @@ The following parameters are supported. See Common Reference for a list of addit
 * `--first -f` (required) Developer firstname
 * `--last -s` (required) Developer lastname
 * `--user -u` (required) Developer username
+* `--attrs` (optional) Custom Attributes
 
 ### <a name ="deldev"/> delete
 
@@ -609,7 +611,7 @@ Supported alias `prods`
 Create an API product
 
 ```
-apigeecli prods create -o org -n name -e test,prod -p proxy1,proxy2 -f auto
+apigeecli prods create -o org -n name -e test,prod -p proxy1,proxy2 -f auto --attrs "foo1=bar1,foo2=bar2"
 ```
 Parameters
 The following parameters are supported. See Common Reference for a list of additional parameters.
@@ -625,6 +627,7 @@ The following parameters are supported. See Common Reference for a list of addit
 * `--quota -q` (optional) Quota Amount
 * `--interval -i` (optional) Quota Time Interval
 * `--unit -u` (optional) Quota Time Unit
+* `--attrs` (optional) Custom Attributes
 
 ### <a name="delprodct"/> delete
 

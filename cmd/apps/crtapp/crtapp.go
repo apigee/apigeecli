@@ -1,11 +1,12 @@
 package crtapp
 
 import (
-	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/cmd/shared"
 	"net/url"
 	"path"
 	"strings"
+
+	"github.com/spf13/cobra"
+	"github.com/srinandan/apigeecli/cmd/shared"
 )
 
 var Cmd = &cobra.Command{
@@ -32,6 +33,15 @@ var Cmd = &cobra.Command{
 			app = append(app, "\"scopes\":[\""+getArrayStr(scopes)+"\"]")
 		}
 
+		if len(attrs) != 0 {
+			attributes := []string{}
+			for key, value := range attrs {
+				attributes = append(attributes, "{\"name\":\""+key+"\",\"value\":\""+value+"\"}")
+			}
+			attributesStr := "\"attributes\":[" + strings.Join(attributes, ",") + "]"
+			app = append(app, attributesStr)
+		}
+
 		payload := "{" + strings.Join(app, ",") + "}"
 		u.Path = path.Join(u.Path, shared.RootArgs.Org, "developers", email, "apps")
 		return shared.HttpClient(u.String(), payload)
@@ -40,6 +50,7 @@ var Cmd = &cobra.Command{
 
 var name, email, expires, callback string
 var apiProducts, scopes []string
+var attrs map[string]string
 
 func init() {
 
@@ -55,6 +66,8 @@ func init() {
 		[]string{}, "A list of api products")
 	Cmd.Flags().StringArrayVarP(&scopes, "scopes", "s",
 		[]string{}, "OAuth scopes")
+	Cmd.Flags().StringToStringVar(&attrs, "attrs",
+		nil, "Custom attributes")
 
 	_ = Cmd.MarkFlagRequired("name")
 	_ = Cmd.MarkFlagRequired("email")

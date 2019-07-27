@@ -1,11 +1,12 @@
 package crtprod
 
 import (
-	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/cmd/shared"
 	"net/url"
 	"path"
 	"strings"
+
+	"github.com/spf13/cobra"
+	"github.com/srinandan/apigeecli/cmd/shared"
 )
 
 var Cmd = &cobra.Command{
@@ -46,6 +47,15 @@ var Cmd = &cobra.Command{
 		if quotaUnit != "" {
 			product = append(product, "\"quotaTimeUnit\":\""+quotaUnit+"\"")
 		}
+		if len(attrs) != 0 {
+			attributes := []string{}
+			for key, value := range attrs {
+				attributes = append(attributes, "{\"name\":\""+key+"\",\"value\":\""+value+"\"}")
+			}
+			attributesStr := "\"attributes\":[" + strings.Join(attributes, ",") + "]"
+			product = append(product, attributesStr)
+		}
+
 		payload := "{" + strings.Join(product, ",") + "}"
 		u.Path = path.Join(u.Path, shared.RootArgs.Org, "apiproducts")
 		return shared.HttpClient(u.String(), payload)
@@ -54,6 +64,7 @@ var Cmd = &cobra.Command{
 
 var name, description, approval, displayName, quota, quotaInterval, quotaUnit string
 var environments, proxies, scopes []string
+var attrs map[string]string
 
 func init() {
 
@@ -77,6 +88,9 @@ func init() {
 		"", "Quota Unit")
 	Cmd.Flags().StringVarP(&approval, "approval", "f",
 		"", "Approval type")
+	Cmd.Flags().StringToStringVar(&attrs, "attrs",
+		nil, "Custom attributes")
+
 	//TODO: apiresource -r later
 
 	_ = Cmd.MarkFlagRequired("name")

@@ -1,11 +1,12 @@
 package crtdev
 
 import (
-	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/cmd/shared"
 	"net/url"
 	"path"
 	"strings"
+
+	"github.com/spf13/cobra"
+	"github.com/srinandan/apigeecli/cmd/shared"
 )
 
 var Cmd = &cobra.Command{
@@ -22,6 +23,15 @@ var Cmd = &cobra.Command{
 		developer = append(developer, "\"lastName\":\""+lastName+"\"")
 		developer = append(developer, "\"userName\":\""+userName+"\"")
 
+		if len(attrs) != 0 {
+			attributes := []string{}
+			for key, value := range attrs {
+				attributes = append(attributes, "{\"name\":\""+key+"\",\"value\":\""+value+"\"}")
+			}
+			attributesStr := "\"attributes\":[" + strings.Join(attributes, ",") + "]"
+			developer = append(developer, attributesStr)
+		}
+
 		payload := "{" + strings.Join(developer, ",") + "}"
 		u.Path = path.Join(u.Path, shared.RootArgs.Org, "developers")
 		return shared.HttpClient(u.String(), payload)
@@ -29,6 +39,7 @@ var Cmd = &cobra.Command{
 }
 
 var email, lastName, firstName, userName string
+var attrs map[string]string
 
 func init() {
 
@@ -40,6 +51,8 @@ func init() {
 		"", "The last name of the developer")
 	Cmd.Flags().StringVarP(&userName, "user", "u",
 		"", "The username of the developer")
+	Cmd.Flags().StringToStringVar(&attrs, "attrs",
+		nil, "Custom attributes")
 
 	_ = Cmd.MarkFlagRequired("email")
 	_ = Cmd.MarkFlagRequired("first")
