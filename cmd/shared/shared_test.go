@@ -28,7 +28,7 @@ func TestHttpPost(t *testing.T) {
 }
 
 func TestHttpDelete(t *testing.T) {
-	err := HttpClient("https://httpbin.org/post", "", "DELETE")
+	err := HttpClient("https://httpbin.org/delete", "", "DELETE")
 	if err != nil {
 		t.Fatal(err)
 	}
