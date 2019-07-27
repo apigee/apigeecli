@@ -1,10 +1,11 @@
 package getdev
 
 import (
-	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/cmd/shared"
 	"net/url"
 	"path"
+
+	"github.com/spf13/cobra"
+	"github.com/srinandan/apigeecli/cmd/shared"
 )
 
 var Cmd = &cobra.Command{
@@ -13,17 +14,17 @@ var Cmd = &cobra.Command{
 	Long:  "Returns the app profile for the specified app ID.",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		u, _ := url.Parse(shared.BaseURL)
-		u.Path = path.Join(u.Path, shared.RootArgs.Org, "apps", name)
+		u.Path = path.Join(u.Path, shared.RootArgs.Org, "apps", appId)
 		return shared.HttpClient(u.String())
 	},
 }
 
-var name string
+var appId string
 
 func init() {
 
-	Cmd.Flags().StringVarP(&name, "name", "n",
-		"", "Name of of the developer app")
+	Cmd.Flags().StringVarP(&appId, "appId", "i",
+		"", "Developer app id")
 
-	_ = Cmd.MarkFlagRequired("name")
+	_ = Cmd.MarkFlagRequired("appId")
 }
