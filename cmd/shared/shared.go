@@ -29,7 +29,7 @@ import (
 const BaseURL = "https://apigee.googleapis.com/v1/organizations/"
 
 // Arguements is the base struct to hold all command arguments
-type Arguments struct {
+type Arguements struct {
 	Verbose        bool
 	Org            string
 	Env            string
@@ -37,7 +37,7 @@ type Arguments struct {
 	ServiceAccount string
 }
 
-var RootArgs = Arguments{}
+var RootArgs = Arguements{}
 
 //log levels, default is error
 var (

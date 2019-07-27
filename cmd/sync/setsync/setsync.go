@@ -3,16 +3,17 @@ package setsync
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/cmd/shared"
 	"net/url"
 	"path"
 	"strings"
+
+	"github.com/spf13/cobra"
+	"github.com/srinandan/apigeecli/cmd/shared"
 )
 
 //{"identities":["serviceAccount:srinandans-apigee@srinandans-apigee.iam.gserviceaccount.com"]}
 
-type IAMIdentities struct {
+type iAMIdentities struct {
 	Identities []string `json:"identities,omitempty"`
 }
 
@@ -33,7 +34,7 @@ var Cmd = &cobra.Command{
 		u, _ := url.Parse(shared.BaseURL)
 		u.Path = path.Join(u.Path, shared.RootArgs.Org+":setSyncAuthorization")
 		identity = validate(identity)
-		identities := IAMIdentities{}
+		identities := iAMIdentities{}
 		identities.Identities = append(identities.Identities, identity)
 		payload, _ := json.Marshal(&identities)
 		fmt.Println(string(payload))
