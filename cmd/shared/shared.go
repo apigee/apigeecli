@@ -8,9 +8,6 @@ import (
 	"encoding/pem"
 	"errors"
 	"fmt"
-	"github.com/lestrrat/go-jwx/jwa"
-	"github.com/lestrrat/go-jwx/jwt"
-	"github.com/spf13/viper"
 	"io"
 	"io/ioutil"
 	"log"
@@ -23,6 +20,10 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/lestrrat/go-jwx/jwa"
+	"github.com/lestrrat/go-jwx/jwt"
+	"github.com/spf13/viper"
 )
 
 const BaseURL = "https://apigee.googleapis.com/v1/organizations/"
@@ -197,11 +198,12 @@ func HttpClient(params ...string) error {
 	var err error
 
 	client := &http.Client{}
-	Info.Println("Connecting to : ", params[0])
+	Info.Println("Connecting to: ", params[0])
 
 	if len(params) == 1 {
 		req, err = http.NewRequest("GET", params[0], nil)
 	} else if len(params) == 2 {
+		Info.Println("Payload: ", params[1])
 		req, err = http.NewRequest("POST", params[0], bytes.NewBuffer([]byte(params[1])))
 	} else if len(params) == 3 {
 		if params[2] == "DELETE" {
@@ -222,6 +224,7 @@ func HttpClient(params ...string) error {
 
 	Info.Println("Setting token : ", RootArgs.Token)
 	req.Header.Add("Authorization", "Bearer "+RootArgs.Token)
+	req.Header.Set("Content-Type", "application/json")
 
 	resp, err := client.Do(req)
 
