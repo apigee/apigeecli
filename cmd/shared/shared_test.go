@@ -33,3 +33,12 @@ func TestHttpDelete(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+func TestDownloadResource(t *testing.T) {
+	//download 1000 bytes
+	Init()
+	err := DownloadResource("https://httpbin.org/stream-bytes/1000", "test")
+	if err != nil {
+		t.Fatal(err)
+	}
+}
