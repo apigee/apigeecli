@@ -605,6 +605,7 @@ Supported alias `prods`
 * [delete](#delproduct)
 * [get](#getproduct)
 * [list](#listproducts)
+* [import](#impproducts)
 
 ### <a name="crtproduct"/> create
 
@@ -656,6 +657,21 @@ The following parameters are required. See Common Reference for a list of additi
 
 `--org -o` (required) Apigee organization name
 `--name -n` (required) API product name
+
+### <a name ="impproducts"/> import
+
+Import API products from a configuration file
+
+```
+apigeecli prods list -o org -f file -c connections 
+```
+Required parameters
+The following parameters are required. See Common Reference for a list of additional parameters.
+
+`--org -o` (required) Apigee organization name
+`--file -f` (required) File containing API products
+`--conn -c` (optional) Number of connections to establish; default is 4
+
 
 ---
 

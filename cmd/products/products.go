@@ -5,6 +5,7 @@ import (
 	"github.com/srinandan/apigeecli/cmd/products/crtprod"
 	"github.com/srinandan/apigeecli/cmd/products/delprod"
 	"github.com/srinandan/apigeecli/cmd/products/getprod"
+	"github.com/srinandan/apigeecli/cmd/products/impprod"
 	"github.com/srinandan/apigeecli/cmd/products/listproducts"
 	"github.com/srinandan/apigeecli/cmd/shared"
 )
@@ -27,4 +28,5 @@ func init() {
 	Cmd.AddCommand(getprod.Cmd)
 	Cmd.AddCommand(delprod.Cmd)
 	Cmd.AddCommand(crtprod.Cmd)
+	Cmd.AddCommand(impprod.Cmd)
 }
