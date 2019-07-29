@@ -31,13 +31,15 @@ const BaseURL = "https://apigee.googleapis.com/v1/organizations/"
 // Arguments is the base struct to hold all command arguments
 type Arguments struct {
 	Verbose        bool
+	Print          bool
 	Org            string
 	Env            string
 	Token          string
 	ServiceAccount string
+	Body           []byte
 }
 
-var RootArgs = Arguments{}
+var RootArgs = Arguments{Print: true}
 
 //log levels, default is error
 var (
@@ -233,25 +235,32 @@ func HttpClient(params ...string) error {
 		return err
 	} else {
 		defer resp.Body.Close()
-		body, err := ioutil.ReadAll(resp.Body)
+		RootArgs.Body, err = ioutil.ReadAll(resp.Body)
 		if err != nil {
 			Error.Fatalln("Error in response:\n", err)
 			return err
 		} else if resp.StatusCode > 299 {
 			Error.Fatalln("Response Code:\n", resp.StatusCode)
-			Error.Fatalln("Error in response:\n", string(body))
+			Error.Fatalln("Error in response:\n", string(RootArgs.Body))
 			return errors.New("Error in response")
 		} else {
-			var prettyJSON bytes.Buffer
-			err = json.Indent(&prettyJSON, body, "", "\t")
-			if err != nil {
-				Error.Fatalln("Error parsing response:\n", err)
-				return err
-			}
-			fmt.Println(prettyJSON.String())
-			return nil
+			return PrettyPrint(RootArgs.Body)
 		}
 	}
+}
+
+func PrettyPrint(body []byte) error {
+	if RootArgs.Print == false {
+		return nil
+	}
+	var prettyJSON bytes.Buffer
+	err := json.Indent(&prettyJSON, body, "", "\t")
+	if err != nil {
+		Error.Fatalln("Error parsing response:\n", err)
+		return err
+	}
+	fmt.Println(prettyJSON.String())
+	return nil
 }
 
 func getPrivateKey() (interface{}, error) {
