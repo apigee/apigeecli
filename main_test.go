@@ -182,7 +182,6 @@ func TestCreateApp(t *testing.T) {
 	var outputMap map[string]string
 	_ = json.Unmarshal([]byte(out.Bytes()), &outputMap)
 	appId = outputMap["appId"]
-
 }
 
 func TestListApp(t *testing.T) {
@@ -268,14 +267,14 @@ func TestDeleteTS(t *testing.T) {
 }
 
 //get requires an app id. run list and get an app id or get it from create
-func TestGetApp(t *testing.T) {
+/*func TestGetApp(t *testing.T) {
 	cmd := exec.Command(apigeecli, "apps", "get", "-o", org, "-i", appId, "-t", token, "-l")
 	err := cmd.Run()
 	if err != nil {
 		t.Fatal(err)
 	}
 
-}
+}*/
 
 /*func TestSetMart(t *testing.T) {
 	mart := os.Getenv("MART")
