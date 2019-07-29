@@ -1,6 +1,7 @@
 # apigeecli
 [![TravisCI](https://travis-ci.org/srinandan/apigeecli.svg?branch=master)](https://travis-ci.org/srinandan/apigeecli)
 [![Go Report Card](https://goreportcard.com/badge/github.com/srinandan/apigeecli)](https://goreportcard.com/report/github.com/srinandan/apigeecli)
+[![Version](https://img.shields.io/badge/version-v0.2-green.svg)](https://github.com/srinandan/apigeecli/releases)
 
 This is a tool to interact with [Apigee APIs](https://apigee.googleapis.com). The tool lets you manage (get, list) environments, proxies, etc.
 
@@ -305,7 +306,10 @@ Parameters
 The following parameters are supported. See Common Reference for a list of additional parameters.
 
 * `--org -o` (required) Apigee organization name
-* `--name -n` (required) Developer App name
+* `--appId -i` (optional) Developer App Id
+* `--name -n` (optional) Developer App Name
+
+NOTE: Either appId or Name must be passed
 
 ### <a name="listapps"/> list
 
@@ -320,7 +324,7 @@ The following parameters are supported. See Common Reference for a list of addit
 
 * `--org -o` (required) Apigee organization name
 * `--expand -x` (optional) Returns an expanded list of apps for the organization.
-* `--count -c` (optional) Number of app ids to return.
+* `--count -c` (optional) Number of app ids to return. Default is 10000
 
 ---
 
