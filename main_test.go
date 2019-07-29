@@ -185,16 +185,6 @@ func TestCreateApp(t *testing.T) {
 
 }
 
-//get requires an app id. run list and get an app id or get it from create
-func TestGetApp(t *testing.T) {
-	cmd := exec.Command(apigeecli, "apps", "get", "-o", org, "-i", appId, "-t", token, "-l")
-	err := cmd.Run()
-	if err != nil {
-		t.Fatal(err)
-	}
-
-}
-
 func TestListApp(t *testing.T) {
 
 	cmd := exec.Command(apigeecli, "apps", "list", "-o", org, "-t", token, "-l")
@@ -270,6 +260,16 @@ func TestDeleteTS(t *testing.T) {
 	name := "test"
 
 	cmd := exec.Command(apigeecli, "targetservers", "delete", "-o", org, "-e", env, "-n", name, "-t", token, "-l")
+	err := cmd.Run()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+}
+
+//get requires an app id. run list and get an app id or get it from create
+func TestGetApp(t *testing.T) {
+	cmd := exec.Command(apigeecli, "apps", "get", "-o", org, "-i", appId, "-t", token, "-l")
 	err := cmd.Run()
 	if err != nil {
 		t.Fatal(err)
