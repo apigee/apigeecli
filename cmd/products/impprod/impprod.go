@@ -11,25 +11,17 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/srinandan/apigeecli/cmd/shared"
+	types "github.com/srinandan/apigeecli/cmd/types"
 )
 
 type Product struct {
-	Name         string      `json:"name,omitempty"`
-	DisplayName  string      `json:"displayName,omitempty"`
-	ApprovalType string      `json:"approvalType,omitempty"`
-	Attributes   []Attribute `json:"attributes,omitempty"`
-	ApiResources []string    `json:"apiResources,omitempty"`
-	Environments []string    `json:"environments,omitempty"`
-	Proxies      []string    `json:"proxies,omitempty"`
-}
-
-type Attribute struct {
-	Name  string `json:"name,omitempty"`
-	Value string `json:"value,omitempty"`
-}
-
-type ProductError struct {
-	Err error
+	Name         string            `json:"name,omitempty"`
+	DisplayName  string            `json:"displayName,omitempty"`
+	ApprovalType string            `json:"approvalType,omitempty"`
+	Attributes   []types.Attribute `json:"attributes,omitempty"`
+	ApiResources []string          `json:"apiResources,omitempty"`
+	Environments []string          `json:"environments,omitempty"`
+	Proxies      []string          `json:"proxies,omitempty"`
 }
 
 var Cmd = &cobra.Command{
@@ -56,25 +48,25 @@ func init() {
 	_ = Cmd.MarkFlagRequired("file")
 }
 
-func createAsyncProduct(url string, product Product, wg *sync.WaitGroup, errChan chan<- *ProductError) {
+func createAsyncProduct(url string, product Product, wg *sync.WaitGroup, errChan chan<- *types.ImportError) {
 	defer wg.Done()
 	out, err := json.Marshal(product)
 	if err != nil {
-		errChan <- &ProductError{Err: err}
+		errChan <- &types.ImportError{Err: err}
 		return
 	}
 	err = shared.HttpClient(url, string(out))
 	if err != nil {
-		errChan <- &ProductError{Err: err}
+		errChan <- &types.ImportError{Err: err}
 		return
 	}
 
-	errChan <- &ProductError{Err: nil}
+	errChan <- &types.ImportError{Err: nil}
 }
 
 func createProducts(url string) error {
 
-	var errChan = make(chan *ProductError)
+	var errChan = make(chan *types.ImportError)
 	var wg sync.WaitGroup
 
 	products, err := readProductsFile()

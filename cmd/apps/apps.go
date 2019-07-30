@@ -6,6 +6,7 @@ import (
 	delapp "github.com/srinandan/apigeecli/cmd/apps/delapp"
 	genkey "github.com/srinandan/apigeecli/cmd/apps/genkey"
 	getapp "github.com/srinandan/apigeecli/cmd/apps/getapp"
+	impapps "github.com/srinandan/apigeecli/cmd/apps/impapps"
 	listapp "github.com/srinandan/apigeecli/cmd/apps/listapp"
 	"github.com/srinandan/apigeecli/cmd/shared"
 )
@@ -28,4 +29,5 @@ func init() {
 	Cmd.AddCommand(delapp.Cmd)
 	Cmd.AddCommand(crtapp.Cmd)
 	Cmd.AddCommand(genkey.Cmd)
+	Cmd.AddCommand(impapps.Cmd)
 }

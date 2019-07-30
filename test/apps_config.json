@@ -1,0 +1,39 @@
+WARNING: 2019/07/29 19:34:45 shared.go:393: skipping token validity
+[
+	{
+		"appId": "4441fc0d-ba86-48d3-a2ed-06626db42a14",
+		"createdAt": "1560286840954",
+		"credentials": [
+			{
+				"apiProducts": [
+					{
+						"apiproduct": "sample_product",
+						"status": "approved"
+					}
+				],
+				"consumerKey": "4L5cSr7vhCUDZA5xWWbedsqFpsuK3GHy",
+				"consumerSecret": "977MQtDJAzBPHTU9",
+				"expiresAt": "-1",
+				"issuedAt": "1560286841089",
+				"status": "approved"
+			},
+			{
+				"apiProducts": [
+					{
+						"apiproduct": "sample_product",
+						"status": "approved"
+					}
+				],
+				"consumerKey": "oflw6CNAg35ityfwmd5GvlwdwGLqfWIL",
+				"consumerSecret": "K8eHCLNplXBHBOvm",
+				"expiresAt": "-1",
+				"issuedAt": "1563344565797",
+				"status": "approved"
+			}
+		],
+		"developerId": "69e4d4cb-04e5-4636-9973-5b95e8464cae",
+		"lastModifiedAt": "1563344565781",
+		"name": "sample_app",
+		"status": "approved"
+	}
+]

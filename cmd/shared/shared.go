@@ -390,7 +390,7 @@ func writeAccessToken() error {
 func checkAccessToken() bool {
 
 	if skipCheck {
-		Warning.Println("skipping token validity")
+		Info.Println("skipping token validity")
 		return true
 	}
 

@@ -57,7 +57,7 @@ func init() {
 	Cmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of the developer app")
 	Cmd.Flags().StringVarP(&email, "email", "e",
-		"", "The developer's email")
+		"", "The developer's email or id")
 	Cmd.Flags().StringVarP(&expires, "expires", "x",
 		"", "A setting, in milliseconds, for the lifetime of the consumer key")
 	Cmd.Flags().StringVarP(&callback, "callback", "c",
