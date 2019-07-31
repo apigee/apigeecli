@@ -241,6 +241,7 @@ Supported alias `applications`
 * [genkey](#genkey)
 * [get](#getapp)
 * [list](#listapps)
+* [import](#impapps)
 
 ### <a name ="crtapp"/> create
 
@@ -258,7 +259,7 @@ The following parameters are supported. See Common Reference for a list of addit
 * `--email -e` (required) Developer's email 
 * `--expires -x` (optional) Lifetime of the consumer's key
 * `--callabck -c` (optional) OAuth callback url
-* `--prods -p` (required) A comma separated list of products
+* `--prods -p` (optional) A comma separated list of products
 * `--scopes -s` (optional) OAuthe scopes
 * `--attrs` (optional) Custom Attributes
 
@@ -325,6 +326,23 @@ The following parameters are supported. See Common Reference for a list of addit
 * `--org -o` (required) Apigee organization name
 * `--expand -x` (optional) Returns an expanded list of apps for the organization.
 * `--count -c` (optional) Number of app ids to return. Default is 10000
+
+### <a name="impapps"/> import
+
+Import Developer app entities into an org
+NOTE: This feature is a WIP. It is not fully implemented
+
+```
+apigeecli apps import -o org -f filepath.json
+```
+
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+* `--file -f` (required) A json file containing apps
+
+A sample file format can be found [here](https://github.com/srinandan/apigeecli/blob/master/test/apps_config.json)
 
 ---
 
@@ -676,6 +694,7 @@ The following parameters are required. See Common Reference for a list of additi
 `--file -f` (required) File containing API products
 `--conn -c` (optional) Number of connections to establish; default is 4
 
+A sample file format can be found [here](https://github.com/srinandan/apigeecli/blob/master/test/products_config.json)
 
 ---
 

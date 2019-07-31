@@ -1,39 +1,42 @@
-WARNING: 2019/07/29 19:34:45 shared.go:393: skipping token validity
 [
-	{
-		"appId": "4441fc0d-ba86-48d3-a2ed-06626db42a14",
-		"createdAt": "1560286840954",
-		"credentials": [
-			{
-				"apiProducts": [
-					{
-						"apiproduct": "sample_product",
-						"status": "approved"
-					}
-				],
-				"consumerKey": "4L5cSr7vhCUDZA5xWWbedsqFpsuK3GHy",
-				"consumerSecret": "977MQtDJAzBPHTU9",
-				"expiresAt": "-1",
-				"issuedAt": "1560286841089",
-				"status": "approved"
-			},
-			{
-				"apiProducts": [
-					{
-						"apiproduct": "sample_product",
-						"status": "approved"
-					}
-				],
-				"consumerKey": "oflw6CNAg35ityfwmd5GvlwdwGLqfWIL",
-				"consumerSecret": "K8eHCLNplXBHBOvm",
-				"expiresAt": "-1",
-				"issuedAt": "1563344565797",
-				"status": "approved"
-			}
-		],
-		"developerId": "69e4d4cb-04e5-4636-9973-5b95e8464cae",
-		"lastModifiedAt": "1563344565781",
-		"name": "sample_app",
-		"status": "approved"
-	}
+  {
+    "appFamily": "default",
+    "appId": "f7d0434d-39aa-406c-ba91-93cb13d4e162",
+    "attributes": [
+      {
+        "name": "DisplayName",
+        "value": "Inventory"
+      },
+      {
+        "name": "Notes",
+        "value": ""
+      }
+    ],
+    "callbackUrl": "",
+    "createdAt": 1554568492202,
+    "createdBy": "nandanks@gmail.com",
+    "credentials": [
+      {
+        "apiProducts": [
+          {
+            "apiproduct": "inventory",
+            "status": "approved"
+          }
+        ],
+        "attributes": [],
+        "consumerKey": "vX54G8uX1clxOJhZuEKDRuw3xZxaG8Gv",
+        "consumerSecret": "9xRWKKp83mDRtDoT",
+        "expiresAt": -1,
+        "issuedAt": 1554568496578,
+        "scopes": [],
+        "status": "approved"
+      }
+    ],
+    "developerId": "nandanks@gmail.com",
+    "lastModifiedAt": 1554568492202,
+    "lastModifiedBy": "nandanks@gmail.com",
+    "name": "inventory1",
+    "scopes": [],
+    "status": "approved"
+  }
 ]

@@ -29,14 +29,20 @@ type Credential struct {
 	ApiProducts    []ApiProduct `json:"apiProducts,omitempty"`
 	ConsumerKey    string       `json:"consumerKey,omitempty"`
 	ConsumerSecret string       `json:"consumerSecret,omitempty"`
-	ExpiresAt      string       `json:"expiresAt,omitempty"`
-	IssuedAt       string       `json:"issuedAt,omitempty"`
+	ExpiresAt      int          `json:"expiresAt,omitempty"`
 	Status         string       `json:"status,omitempty"`
+	Scopes         []string     `json:"scopes,omitempty"`
 }
 
 type ApiProduct struct {
-	Name   string `json:"apiproduct,omitempty"`
-	Status string `json:"status,omitempty"`
+	Name string `json:"apiproduct,omitempty"`
+}
+
+type ImportCredential struct {
+	ApiProducts    []string `json:"apiProducts,omitempty"`
+	ConsumerKey    string   `json:"consumerKey,omitempty"`
+	ConsumerSecret string   `json:"consumerSecret,omitempty"`
+	Scopes         []string `json:"scopes,omitempty"`
 }
 
 var Cmd = &cobra.Command{
@@ -44,9 +50,9 @@ var Cmd = &cobra.Command{
 	Short: "Import a file containing Developer Apps",
 	Long:  "Import a file containing Developer Apps",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		u, _ := url.Parse(shared.BaseURL)
-		u.Path = path.Join(u.Path, shared.RootArgs.Org, "apps")
-		return createApps(u.String())
+		//u, _ := url.Parse(shared.BaseURL)
+		//u.Path = path.Join(u.Path, shared.RootArgs.Org, "apps")
+		return createApps(shared.BaseURL)
 	},
 }
 
@@ -63,19 +69,60 @@ func init() {
 	_ = Cmd.MarkFlagRequired("file")
 }
 
-func createAsyncApp(url string, app App, wg *sync.WaitGroup, errChan chan<- *types.ImportError) {
+func createAsyncApp(app App, wg *sync.WaitGroup, errChan chan<- *types.ImportError) {
 	defer wg.Done()
+
+	//importing an app will be a two step process.
+	//1. create the app without the credential
+	//2. create/import the credential
+	u, _ := url.Parse(shared.BaseURL)
+	//store the developer and the credential
+	developerId := *app.DeveloperId
+	credentials := *app.Credentials
+
+	//remove the developer id and credentials from the payload
+	app.DeveloperId = nil
+	app.Credentials = nil
+
 	out, err := json.Marshal(app)
 	if err != nil {
 		errChan <- &types.ImportError{Err: err}
 		return
 	}
-	err = shared.HttpClient(url, string(out))
+
+	u.Path = path.Join(u.Path, shared.RootArgs.Org, "developers", developerId, "apps")
+	err = shared.HttpClient(u.String(), string(out))
 	if err != nil {
 		errChan <- &types.ImportError{Err: err}
 		return
 	}
+	u, _ = url.Parse(shared.BaseURL)
+	u.Path = path.Join(u.Path, shared.RootArgs.Org, "developers", developerId, "apps", app.Name, "keys", "create")
+	for _, credential := range credentials {
+		//construct a []string for products
+		var products []string
+		for _, apiProduct := range credential.ApiProducts {
+			products = append(products, apiProduct.Name)
+		}
+		//create a new credential
+		importCredential := ImportCredential{}
+		importCredential.ApiProducts = products
+		importCredential.ConsumerKey = credential.ConsumerKey
+		importCredential.ConsumerSecret = credential.ConsumerSecret
+		importCredential.Scopes = credential.Scopes
 
+		impCred, err := json.Marshal(importCredential)
+		if err != nil {
+			errChan <- &types.ImportError{Err: err}
+			return
+		}
+		err = shared.HttpClient(u.String(), string(impCred))
+		if err != nil {
+			errChan <- &types.ImportError{Err: err}
+			return
+		}
+		shared.Warning("NOTE: apiProducts are not associated with the app")
+	}
 	errChan <- &types.ImportError{Err: nil}
 }
 
@@ -97,7 +144,7 @@ func createApps(url string) error {
 	if numApp < conn {
 		wg.Add(numApp)
 		for i := 0; i < numApp; i++ {
-			go createAsyncApp(url, apps[i], &wg, errChan)
+			go createAsyncApp(apps[i], &wg, errChan)
 		}
 		go func() {
 			wg.Wait()
@@ -109,7 +156,7 @@ func createApps(url string) error {
 			shared.Info.Printf("Create %d batch of apps\n", i)
 			wg.Add(conn)
 			for j := 0; j < conn; j++ {
-				go createAsyncApp(url, apps[j+(i*conn)], &wg, errChan)
+				go createAsyncApp(apps[j+(i*conn)], &wg, errChan)
 			}
 			go func() {
 				wg.Wait()
@@ -120,7 +167,7 @@ func createApps(url string) error {
 		wg.Add(remaining)
 		shared.Info.Printf("Create remaining %d apps\n", remaining)
 		for i := (numApp - remaining); i < numApp; i++ {
-			go createAsyncApp(url, apps[i], &wg, errChan)
+			go createAsyncApp(apps[i], &wg, errChan)
 		}
 		go func() {
 			wg.Wait()
