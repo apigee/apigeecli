@@ -1,16 +1,17 @@
 package main
 
 import (
-	"github.com/srinandan/apigeecli/cmd"
 	"os"
+
+	"github.com/srinandan/apigeecli/cmd"
 )
 
-var GitVersion string
+var Version string
 
 func main() {
 
 	rootCmd := cmd.GetRootCmd()
-	rootCmd.Version = "0.2, Git: " + GitVersion
+	rootCmd.Version = "0.3, Git: " + Version
 
 	if err := rootCmd.Execute(); err != nil {
 		os.Exit(-1)
