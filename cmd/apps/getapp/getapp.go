@@ -45,6 +45,9 @@ var Cmd = &cobra.Command{
 			jq := gojsonq.New().JSONString(string(shared.RootArgs.Body)).From("app").Where("name", "eq", name)
 			out := jq.Get()
 			outBytes, err := json.Marshal(out)
+			if err != nil {
+				return err
+			}
 			//print the item
 			shared.RootArgs.Print = true
 			return shared.PrettyPrint(outBytes)
