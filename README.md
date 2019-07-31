@@ -354,6 +354,7 @@ Supported alias `developers`
 * [delete](#deldev)
 * [get](#getdev)
 * [list](#listdevs)
+* [import](#impdev)
 
 ### <a name ="crtdev"/> create
 
@@ -414,6 +415,21 @@ Parameters
 The following parameters are supported. See Common Reference for a list of additional parameters.
 
 * `--org -o` (required) Apigee organization name
+
+### <a name="impdev"/> import
+
+Import Developer entities into an org
+NOTE: This feature is a WIP. It is not fully implemented
+
+```
+apigeecli devs import -o org -f filepath.json
+```
+
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+* `--file -f` (required) A json file containing developers
 
 ---
 

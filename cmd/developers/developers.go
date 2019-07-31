@@ -5,6 +5,7 @@ import (
 	"github.com/srinandan/apigeecli/cmd/developers/crtdev"
 	"github.com/srinandan/apigeecli/cmd/developers/deldev"
 	"github.com/srinandan/apigeecli/cmd/developers/getdev"
+	"github.com/srinandan/apigeecli/cmd/developers/impdev"
 	"github.com/srinandan/apigeecli/cmd/developers/listdev"
 	"github.com/srinandan/apigeecli/cmd/shared"
 )
@@ -27,4 +28,5 @@ func init() {
 	Cmd.AddCommand(getdev.Cmd)
 	Cmd.AddCommand(deldev.Cmd)
 	Cmd.AddCommand(crtdev.Cmd)
+	Cmd.AddCommand(impdev.Cmd)
 }
