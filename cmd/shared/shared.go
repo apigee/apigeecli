@@ -101,18 +101,18 @@ func PostHttpOctet(url string, proxyName string) error {
 	writer := multipart.NewWriter(body)
 	part, err := writer.CreateFormFile("proxy", proxyName)
 	if err != nil {
-		Error.Fatalln("Error writing multi-part:\n", err)
+		Error.Fatalln("Error writing multi-part: ", err)
 		return err
 	}
 	_, err = io.Copy(part, file)
 	if err != nil {
-		Error.Fatalln("Error copying multi-part:\n", err)
+		Error.Fatalln("error copying multi-part: ", err)
 		return err
 	}
 
 	err = writer.Close()
 	if err != nil {
-		Error.Fatalln("Error closing multi-part:\n", err)
+		Error.Fatalln("error closing multi-part: ", err)
 		return err
 	}
 	client := &http.Client{}
@@ -120,7 +120,7 @@ func PostHttpOctet(url string, proxyName string) error {
 	Info.Println("Connecting to : ", url)
 	req, err := http.NewRequest("POST", url, body)
 	if err != nil {
-		Error.Fatalln("Error in client:\n", err)
+		Error.Fatalln("error in client: ", err)
 		return err
 	}
 
@@ -130,22 +130,22 @@ func PostHttpOctet(url string, proxyName string) error {
 	resp, err := client.Do(req)
 
 	if err != nil {
-		Error.Fatalln("Error connecting:\n", err)
+		Error.Fatalln("error connecting: ", err)
 		return err
 	} else {
 		defer resp.Body.Close()
 		body, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
-			Error.Fatalln("Error in response:\n", err)
+			Error.Fatalln("error in response: ", err)
 			return err
 		} else if resp.StatusCode != 200 {
-			Error.Fatalln("Error in response:\n", string(body))
+			Error.Fatalln("error in response: ", string(body))
 			return errors.New("Error in response")
 		} else {
 			var prettyJSON bytes.Buffer
 			err = json.Indent(&prettyJSON, body, "", "\t")
 			if err != nil {
-				Error.Fatalln("Error parsing response:\n", err)
+				Error.Fatalln("error parsing response: ", err)
 				return err
 			}
 			fmt.Println(prettyJSON.String())
@@ -159,7 +159,7 @@ func DownloadResource(url string, name string) error {
 
 	out, err := os.Create(name + ".zip")
 	if err != nil {
-		Error.Fatalln("Error creating file:\n", err)
+		Error.Fatalln("error creating file: ", err)
 		return err
 	}
 	defer out.Close()
@@ -169,7 +169,7 @@ func DownloadResource(url string, name string) error {
 	Info.Println("Connecting to : ", url)
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		Error.Fatalln("Error in client:\n", err)
+		Error.Fatalln("error in client: ", err)
 		return err
 	}
 
@@ -179,17 +179,17 @@ func DownloadResource(url string, name string) error {
 	resp, err := client.Do(req)
 
 	if err != nil {
-		Error.Fatalln("Error connecting:\n", err)
+		Error.Fatalln("error connecting: ", err)
 		return err
 	} else if resp.StatusCode > 299 {
-		Error.Fatalln("Response Code:\n", resp.StatusCode)
-		Error.Fatalln("Error in response:\n", resp.Body)
-		return errors.New("Error in response")
+		Error.Fatalln("response Code: ", resp.StatusCode)
+		Error.Fatalln("error in response: ", resp.Body)
+		return errors.New("error in response")
 	} else {
 		defer resp.Body.Close()
 		_, err = io.Copy(out, resp.Body)
 		if err != nil {
-			Error.Fatalln("Error writing response to file:\n", err)
+			Error.Fatalln("error writing response to file: ", err)
 			return err
 		}
 
@@ -229,7 +229,7 @@ func HttpClient(params ...string) error {
 	}
 
 	if err != nil {
-		Error.Fatalln("Error in client:\n", err)
+		Error.Fatalln("error in client: ", err)
 		return err
 	}
 
@@ -240,22 +240,22 @@ func HttpClient(params ...string) error {
 	resp, err := client.Do(req)
 
 	if err != nil {
-		Error.Fatalln("Error connecting:\n", err)
+		Error.Fatalln("error connecting: ", err)
 		return err
-	} else {
-		defer resp.Body.Close()
-		RootArgs.Body, err = ioutil.ReadAll(resp.Body)
-		if err != nil {
-			Error.Fatalln("Error in response:\n", err)
-			return err
-		} else if resp.StatusCode > 299 {
-			Error.Fatalln("Response Code:\n", resp.StatusCode)
-			Error.Fatalln("Error in response:\n", string(RootArgs.Body))
-			return errors.New("Error in response")
-		}
-
-		return PrettyPrint(RootArgs.Body)
 	}
+
+	defer resp.Body.Close()
+	RootArgs.Body, err = ioutil.ReadAll(resp.Body)
+	if err != nil {
+		Error.Fatalln("error in response: ", err)
+		return err
+	} else if resp.StatusCode > 299 {
+		Error.Fatalln("response Code: ", resp.StatusCode)
+		Error.Fatalln("error in response: ", string(RootArgs.Body))
+		return errors.New("Error in response")
+	}
+
+	return PrettyPrint(RootArgs.Body)
 }
 
 func PrettyPrint(body []byte) error {
@@ -265,7 +265,7 @@ func PrettyPrint(body []byte) error {
 	var prettyJSON bytes.Buffer
 	err := json.Indent(&prettyJSON, body, "", "\t")
 	if err != nil {
-		Error.Fatalln("Error parsing response:\n", err)
+		Error.Fatalln("error parsing response: ", err)
 		return err
 	}
 	fmt.Println(prettyJSON.String())
@@ -277,11 +277,10 @@ func getPrivateKey() (interface{}, error) {
 	block, _ := pem.Decode([]byte(pemPrivateKey))
 	privKey, err := x509.ParsePKCS8PrivateKey(block.Bytes)
 	if err != nil {
-		Error.Fatalln("Error parsing Private Key:\n", err)
+		Error.Fatalln("error parsing Private Key: ", err)
 		return nil, err
-	} else {
-		return privKey, nil
 	}
+	return privKey, nil
 }
 
 func generateJWT() (string, error) {
@@ -306,12 +305,11 @@ func generateJWT() (string, error) {
 
 	payload, err := token.Sign(jwa.RS256, privKey)
 	if err != nil {
-		Error.Fatalln("Error parsing Private Key:\n", err)
+		Error.Fatalln("error parsing Private Key: ", err)
 		return "", err
-	} else {
-		Info.Println("jwt token : ", string(payload))
-		return string(payload), nil
 	}
+	Info.Println("jwt token : ", string(payload))
+	return string(payload), nil
 }
 
 func GenerateAccessToken() (string, error) {
@@ -332,7 +330,7 @@ func GenerateAccessToken() (string, error) {
 	client := &http.Client{}
 	req, err := http.NewRequest("POST", tokenEndpoint, strings.NewReader(form.Encode()))
 	if err != nil {
-		Error.Fatalln("Error in client:\n", err)
+		Error.Fatalln("error in client: ", err)
 		return "", err
 	}
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
@@ -341,27 +339,25 @@ func GenerateAccessToken() (string, error) {
 	resp, err := client.Do(req)
 
 	if err != nil {
-		Error.Fatalln("Failed to generate oauth token: \n", err)
+		Error.Fatalln("failed to generate oauth token: ", err)
 		return "", err
-	} else {
-		defer resp.Body.Close()
-		if resp.StatusCode != 200 {
-			bodyBytes, _ := ioutil.ReadAll(resp.Body)
-			Error.Fatalln("Error in response: \n", string(bodyBytes))
-			return "", errors.New("Error in response")
-		} else {
-			decoder := json.NewDecoder(resp.Body)
-			accessToken := OAuthAccessToken{}
-			if err := decoder.Decode(&accessToken); err != nil {
-				Error.Fatalln("Error in response: \n", err)
-				return "", errors.New("Error in response")
-			}
-			Info.Println("access token : ", accessToken)
-			RootArgs.Token = accessToken.AccessToken
-			_ = writeAccessToken()
-			return accessToken.AccessToken, nil
-		}
 	}
+	defer resp.Body.Close()
+	if resp.StatusCode != 200 {
+		bodyBytes, _ := ioutil.ReadAll(resp.Body)
+		Error.Fatalln("error in response: ", string(bodyBytes))
+		return "", errors.New("Error in response")
+	}
+	decoder := json.NewDecoder(resp.Body)
+	accessToken := OAuthAccessToken{}
+	if err := decoder.Decode(&accessToken); err != nil {
+		Error.Fatalln("error in response: ", err)
+		return "", errors.New("Error in response")
+	}
+	Info.Println("access token : ", accessToken)
+	RootArgs.Token = accessToken.AccessToken
+	_ = writeAccessToken()
+	return accessToken.AccessToken, nil
 }
 
 func readAccessToken() error {
@@ -373,11 +369,10 @@ func readAccessToken() error {
 	if err != nil {
 		Info.Println("Cached access token was not found")
 		return err
-	} else {
-		Info.Println("Using cached access token: ", string(content))
-		RootArgs.Token = string(content)
-		return nil
 	}
+	Info.Println("Using cached access token: ", string(content))
+	RootArgs.Token = string(content)
+	return nil
 }
 
 func writeAccessToken() error {
@@ -413,29 +408,27 @@ func checkAccessToken() bool {
 	Info.Println("Connecting to : ", u.String())
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
-		Error.Fatalln("Error in client:\n", err)
+		Error.Fatalln("error in client:", err)
 		return false
 	}
 
 	resp, err := client.Do(req)
 	if err != nil {
-		Error.Fatalln("Error connecting to token endpoint:\n", err)
+		Error.Fatalln("error connecting to token endpoint: ", err)
 		return false
-	} else {
-		defer resp.Body.Close()
-		body, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			Error.Fatalln("Token info error:\n", err)
-			return false
-		} else if resp.StatusCode != 200 {
-			Error.Fatalln("Token expired:\n", string(body))
-			return false
-		} else {
-			Info.Println("Response: ", string(body))
-			Info.Println("Reusing the cached token: ", RootArgs.Token)
-			return true
-		}
 	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		Error.Fatalln("token info error: ", err)
+		return false
+	} else if resp.StatusCode != 200 {
+		Error.Fatalln("token expired: ", string(body))
+		return false
+	}
+	Info.Println("Response: ", string(body))
+	Info.Println("Reusing the cached token: ", RootArgs.Token)
+	return true
 }
 
 func SetAccessToken() error {
@@ -443,42 +436,37 @@ func SetAccessToken() error {
 	if RootArgs.Token == "" && RootArgs.ServiceAccount == "" {
 		err := readAccessToken() //try to read from config
 		if err != nil {
-			return fmt.Errorf("Either token or service account must be provided")
-		} else {
-			if checkAccessToken() { //check if the token is still valid
-				return nil
-			}
-			return fmt.Errorf("Token expired: request a new access token or pass the service account")
+			return fmt.Errorf("either token or service account must be provided")
 		}
-	} else {
-		if RootArgs.ServiceAccount != "" {
-			viper.SetConfigFile(RootArgs.ServiceAccount)
-			err := viper.ReadInConfig() // Find and read the config file
-			if err != nil {             // Handle errors reading the config file
-				return fmt.Errorf("Fatal error config file: %s \n", err)
-			} else {
-				if viper.Get("private_key") == "" {
-					return fmt.Errorf("Fatal error: Private key missing in the service account")
-				}
-				if viper.Get("client_email") == "" {
-					return fmt.Errorf("Fatal error: client email missing in the service account")
-				}
-				_, err = GenerateAccessToken()
-				if err != nil {
-					return fmt.Errorf("Fatal error generating access token: %s \n", err)
-				}
-
-				return nil
-			}
-		} else {
-			//a token was passed, cache it
-			if checkAccessToken() {
-				_ = writeAccessToken()
-				return nil
-			}
-			return fmt.Errorf("Token expired: request a new access token or pass the service account")
+		if checkAccessToken() { //check if the token is still valid
+			return nil
 		}
+		return fmt.Errorf("token expired: request a new access token or pass the service account")
 	}
+	if RootArgs.ServiceAccount != "" {
+		viper.SetConfigFile(RootArgs.ServiceAccount)
+		err := viper.ReadInConfig() // Find and read the config file
+		if err != nil {             // Handle errors reading the config file
+			return fmt.Errorf("error reading config file: %s", err)
+		}
+		if viper.Get("private_key") == "" {
+			return fmt.Errorf("private key missing in the service account")
+		}
+		if viper.Get("client_email") == "" {
+			return fmt.Errorf("client email missing in the service account")
+		}
+		_, err = GenerateAccessToken()
+		if err != nil {
+			return fmt.Errorf("Fatal error generating access token: %s", err)
+		}
+		return nil
+	}
+	//a token was passed, cache it
+	if checkAccessToken() {
+		_ = writeAccessToken()
+		return nil
+	}
+	return fmt.Errorf("token expired: request a new access token or pass the service account")
 }
 
 func ReadBundle(filename string) error {
