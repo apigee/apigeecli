@@ -18,15 +18,15 @@ type App struct {
 	Name        string            `json:"name,omitempty"`
 	Status      string            `json:"status,omitempty"`
 	Credentials *[]Credential     `json:"credentials,omitempty"`
-	DeveloperId *string           `json:"developerId,omitempty"`
+	DeveloperID *string           `json:"developerId,omitempty"`
 	DisplayName string            `json:"displayName,omitempty"`
 	Attributes  []types.Attribute `json:"attributes,omitempty"`
-	CallbackUrl string            `json:"callbackUrl,omitempty"`
+	CallbackURL string            `json:"callbackUrl,omitempty"`
 	Scopes      []string          `json:"scopes,omitempty"`
 }
 
 type Credential struct {
-	ApiProducts    []ApiProduct `json:"apiProducts,omitempty"`
+	APIProducts    []APIProduct `json:"apiProducts,omitempty"`
 	ConsumerKey    string       `json:"consumerKey,omitempty"`
 	ConsumerSecret string       `json:"consumerSecret,omitempty"`
 	ExpiresAt      int          `json:"expiresAt,omitempty"`
@@ -34,12 +34,12 @@ type Credential struct {
 	Scopes         []string     `json:"scopes,omitempty"`
 }
 
-type ApiProduct struct {
+type APIProduct struct {
 	Name string `json:"apiproduct,omitempty"`
 }
 
 type ImportCredential struct {
-	ApiProducts    []string `json:"apiProducts,omitempty"`
+	APIProducts    []string `json:"apiProducts,omitempty"`
 	ConsumerKey    string   `json:"consumerKey,omitempty"`
 	ConsumerSecret string   `json:"consumerSecret,omitempty"`
 	Scopes         []string `json:"scopes,omitempty"`
@@ -75,11 +75,11 @@ func createAsyncApp(app App, wg *sync.WaitGroup, errChan chan<- *types.ImportErr
 	//2. create/import the credential
 	u, _ := url.Parse(shared.BaseURL)
 	//store the developer and the credential
-	developerId := *app.DeveloperId
+	developerID := *app.DeveloperID
 	credentials := *app.Credentials
 
 	//remove the developer id and credentials from the payload
-	app.DeveloperId = nil
+	app.DeveloperID = nil
 	app.Credentials = nil
 
 	out, err := json.Marshal(app)
@@ -88,23 +88,23 @@ func createAsyncApp(app App, wg *sync.WaitGroup, errChan chan<- *types.ImportErr
 		return
 	}
 
-	u.Path = path.Join(u.Path, shared.RootArgs.Org, "developers", developerId, "apps")
+	u.Path = path.Join(u.Path, shared.RootArgs.Org, "developers", developerID, "apps")
 	err = shared.HttpClient(u.String(), string(out))
 	if err != nil {
 		errChan <- &types.ImportError{Err: err}
 		return
 	}
 	u, _ = url.Parse(shared.BaseURL)
-	u.Path = path.Join(u.Path, shared.RootArgs.Org, "developers", developerId, "apps", app.Name, "keys", "create")
+	u.Path = path.Join(u.Path, shared.RootArgs.Org, "developers", developerID, "apps", app.Name, "keys", "create")
 	for _, credential := range credentials {
 		//construct a []string for products
 		var products []string
-		for _, apiProduct := range credential.ApiProducts {
+		for _, apiProduct := range credential.APIProducts {
 			products = append(products, apiProduct.Name)
 		}
 		//create a new credential
 		importCredential := ImportCredential{}
-		importCredential.ApiProducts = products
+		importCredential.APIProducts = products
 		importCredential.ConsumerKey = credential.ConsumerKey
 		importCredential.ConsumerSecret = credential.ConsumerSecret
 		importCredential.Scopes = credential.Scopes

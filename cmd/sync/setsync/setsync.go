@@ -53,7 +53,6 @@ func init() {
 func validate(i string) string {
 	if strings.Contains(i, "serviceAccount:") {
 		return i
-	} else {
-		return "serviceAccount:" + i
 	}
+	return "serviceAccount:" + i
 }

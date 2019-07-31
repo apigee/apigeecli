@@ -27,10 +27,10 @@ var Cmd = &cobra.Command{
 			}
 
 			return shared.PostHttpOctet(u.String(), proxy)
-		} else {
-			proxyName := "{\"name\":\"" + name + "\"}"
-			return shared.HttpClient(u.String(), proxyName)
 		}
+
+		proxyName := "{\"name\":\"" + name + "\"}"
+		return shared.HttpClient(u.String(), proxyName)
 	},
 }
 

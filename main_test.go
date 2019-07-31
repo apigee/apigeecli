@@ -14,7 +14,7 @@ var token = os.Getenv("APIGEE_TOKEN")
 var env = os.Getenv("APIGEE_ENV")
 var org = os.Getenv("APIGEE_ORG")
 var email = "test@gmail.com"
-var appId string
+var appID string
 
 func TestMain(t *testing.T) {
 	cmd := exec.Command(apigeecli)
@@ -181,7 +181,7 @@ func TestCreateApp(t *testing.T) {
 
 	var outputMap map[string]string
 	_ = json.Unmarshal([]byte(out.Bytes()), &outputMap)
-	appId = outputMap["appId"]
+	appID = outputMap["appId"]
 }
 
 func TestListApp(t *testing.T) {
@@ -268,7 +268,7 @@ func TestDeleteTS(t *testing.T) {
 
 //get requires an app id. run list and get an app id or get it from create
 /*func TestGetApp(t *testing.T) {
-	cmd := exec.Command(apigeecli, "apps", "get", "-o", org, "-i", appId, "-t", token, "-l")
+	cmd := exec.Command(apigeecli, "apps", "get", "-o", org, "-i", appID, "-t", token, "-l")
 	err := cmd.Run()
 	if err != nil {
 		t.Fatal(err)

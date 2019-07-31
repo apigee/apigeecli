@@ -19,7 +19,7 @@ type Product struct {
 	DisplayName  string            `json:"displayName,omitempty"`
 	ApprovalType string            `json:"approvalType,omitempty"`
 	Attributes   []types.Attribute `json:"attributes,omitempty"`
-	ApiResources []string          `json:"apiResources,omitempty"`
+	APIResources []string          `json:"apiResources,omitempty"`
 	Environments []string          `json:"environments,omitempty"`
 	Proxies      []string          `json:"proxies,omitempty"`
 }

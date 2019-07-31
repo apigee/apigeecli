@@ -48,8 +48,13 @@ var (
 	Error   *log.Logger
 )
 
+//LogInfo controls the log level
 var LogInfo = false
+
+//skip checking access token expiry
 var skipCheck = true
+
+//skip writing access token to file
 var skipCache = false
 
 // Structure to hold OAuth response
@@ -59,7 +64,7 @@ type OAuthAccessToken struct {
 	TokenType   string `json:"token_type,omitempty"`
 }
 
-const access_token_file = ".access_token"
+const accessTokenFile = ".access_token"
 
 //Init function initializes the logger objects
 func Init() {
@@ -86,6 +91,7 @@ func Init() {
 		log.Ldate|log.Ltime|log.Lshortfile)
 }
 
+//This method is use dto send resources, proxy bundles, shared flows etc.
 func PostHttpOctet(url string, proxyName string) error {
 
 	file, _ := os.Open(proxyName)
@@ -148,6 +154,7 @@ func PostHttpOctet(url string, proxyName string) error {
 	}
 }
 
+//This method is used to download resources, proxy bundles, sharedflows
 func DownloadResource(url string, name string) error {
 
 	out, err := os.Create(name + ".zip")
@@ -202,6 +209,10 @@ func HttpClient(params ...string) error {
 	client := &http.Client{}
 	Info.Println("Connecting to: ", params[0])
 
+	if len(params) > 3 {
+		return errors.New("Incorrect parameters to invoke the method")
+	}
+
 	if len(params) == 1 {
 		req, err = http.NewRequest("GET", params[0], nil)
 	} else if len(params) == 2 {
@@ -215,8 +226,6 @@ func HttpClient(params ...string) error {
 		} else {
 			return errors.New("Unsupported method")
 		}
-	} else {
-		return errors.New("Incorrect parameters to invoke the method")
 	}
 
 	if err != nil {
@@ -243,9 +252,9 @@ func HttpClient(params ...string) error {
 			Error.Fatalln("Response Code:\n", resp.StatusCode)
 			Error.Fatalln("Error in response:\n", string(RootArgs.Body))
 			return errors.New("Error in response")
-		} else {
-			return PrettyPrint(RootArgs.Body)
 		}
+
+		return PrettyPrint(RootArgs.Body)
 	}
 }
 
@@ -346,12 +355,11 @@ func GenerateAccessToken() (string, error) {
 			if err := decoder.Decode(&accessToken); err != nil {
 				Error.Fatalln("Error in response: \n", err)
 				return "", errors.New("Error in response")
-			} else {
-				Info.Println("access token : ", accessToken)
-				RootArgs.Token = accessToken.AccessToken
-				_ = writeAccessToken()
-				return accessToken.AccessToken, nil
 			}
+			Info.Println("access token : ", accessToken)
+			RootArgs.Token = accessToken.AccessToken
+			_ = writeAccessToken()
+			return accessToken.AccessToken, nil
 		}
 	}
 }
@@ -361,7 +369,7 @@ func readAccessToken() error {
 	if err != nil {
 		return err
 	}
-	content, err := ioutil.ReadFile(path.Join(usr.HomeDir, access_token_file))
+	content, err := ioutil.ReadFile(path.Join(usr.HomeDir, accessTokenFile))
 	if err != nil {
 		Info.Println("Cached access token was not found")
 		return err
@@ -382,7 +390,7 @@ func writeAccessToken() error {
 		Warning.Println(err)
 	} else {
 		Info.Println("Cache access token: ", RootArgs.Token)
-		err = ioutil.WriteFile(path.Join(usr.HomeDir, access_token_file), []byte(RootArgs.Token), 0644)
+		err = ioutil.WriteFile(path.Join(usr.HomeDir, accessTokenFile), []byte(RootArgs.Token), 0644)
 	}
 	return err
 }
@@ -439,9 +447,8 @@ func SetAccessToken() error {
 		} else {
 			if checkAccessToken() { //check if the token is still valid
 				return nil
-			} else {
-				return fmt.Errorf("Token expired: request a new access token or pass the service account")
 			}
+			return fmt.Errorf("Token expired: request a new access token or pass the service account")
 		}
 	} else {
 		if RootArgs.ServiceAccount != "" {
@@ -459,18 +466,17 @@ func SetAccessToken() error {
 				_, err = GenerateAccessToken()
 				if err != nil {
 					return fmt.Errorf("Fatal error generating access token: %s \n", err)
-				} else {
-					return nil
 				}
+
+				return nil
 			}
 		} else {
 			//a token was passed, cache it
 			if checkAccessToken() {
 				_ = writeAccessToken()
 				return nil
-			} else {
-				return fmt.Errorf("Token expired: request a new access token or pass the service account")
 			}
+			return fmt.Errorf("Token expired: request a new access token or pass the service account")
 		}
 	}
 }
