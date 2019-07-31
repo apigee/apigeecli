@@ -250,7 +250,7 @@ func HttpClient(params ...string) error {
 }
 
 func PrettyPrint(body []byte) error {
-	if RootArgs.Print == false {
+	if !RootArgs.Print {
 		return nil
 	}
 	var prettyJSON bytes.Buffer
