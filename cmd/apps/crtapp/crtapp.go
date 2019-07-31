@@ -19,7 +19,10 @@ var Cmd = &cobra.Command{
 		app := []string{}
 
 		app = append(app, "\"name\":\""+name+"\"")
-		app = append(app, "\"apiProducts\":[\""+getArrayStr(apiProducts)+"\"]")
+
+		if len(apiProducts) > 0 {
+			app = append(app, "\"apiProducts\":[\""+getArrayStr(apiProducts)+"\"]")
+		}
 
 		if callback != "" {
 			app = append(app, "\"callbackUrl\":\""+callback+"\"")
@@ -71,7 +74,6 @@ func init() {
 
 	_ = Cmd.MarkFlagRequired("name")
 	_ = Cmd.MarkFlagRequired("email")
-	_ = Cmd.MarkFlagRequired("prods")
 }
 
 func getArrayStr(str []string) string {
