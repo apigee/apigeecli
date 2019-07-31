@@ -50,8 +50,6 @@ var Cmd = &cobra.Command{
 	Short: "Import a file containing Developer Apps",
 	Long:  "Import a file containing Developer Apps",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		//u, _ := url.Parse(shared.BaseURL)
-		//u.Path = path.Join(u.Path, shared.RootArgs.Org, "apps")
 		return createApps(shared.BaseURL)
 	},
 }
@@ -121,7 +119,7 @@ func createAsyncApp(app App, wg *sync.WaitGroup, errChan chan<- *types.ImportErr
 			errChan <- &types.ImportError{Err: err}
 			return
 		}
-		shared.Warning("NOTE: apiProducts are not associated with the app")
+		shared.Warning.Println("NOTE: apiProducts are not associated with the app")
 	}
 	errChan <- &types.ImportError{Err: nil}
 }
