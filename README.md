@@ -120,6 +120,7 @@ ___
 * [delete](#delapi)
 * [deploy](#depapi)
 * [fetch](#fetchapi)
+* [import](#impapis)
 * [list](#listorgs)
 * [listdeploy](#listdeploy)
 * [undeploy](#undepapi)
@@ -184,6 +185,19 @@ The following parameters are supported. See Common Reference for a list of addit
 * `--name -n` (required) API proxy name 
 * `--rev -v` (required) API proxy revision
 * `--ovr -r` (optional) Forces deployment of the new revision.
+
+### <a name="impapis"/> import
+
+Upload a folder containing API proxy bundles
+
+```
+apigeecli apis fetch -o org -f /tmp
+```
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+* `--folder -f` (required) path containing API proxy bundles
 
 ### <a name="listorgs"/> list
 
