@@ -29,14 +29,17 @@ Create a service account with appropriate persmissions. Refer to this [link](htt
 
 ## Access Token
 
-`apigeecli` can use the service account directly and obtain an access token. However, the user can also provide an access token. 
-
-Print the access token 
+`apigeecli` can use the service account directly and obtain an access token. 
 
 ```
-export GOOGLE_APPLICATION_CREDENTIALS=orgadmin.json
-gcloud auth application-default print-access-token
+apigeecli token gen -a serviceaccount.json 
 ```
+
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--account -a` (required) Service Account in json format
+
 
 Use this access token for all subsequent calls (token expires in 1 hour)
 
@@ -46,13 +49,13 @@ The following options are available for security
 
 Pass the access token
 ```
-apigeecli -t $TOKEN
+apigeecli <flags> -t $TOKEN
 ```
 
 Pass the service account
 
 ```
-apigeecli -a orgadmin.json
+apigeecli <flags> -a orgadmin.json
 ```
 
 ## Access Token Caching
@@ -953,7 +956,7 @@ The following parameters are supported. See Common Reference for a list of addit
 
 ### <a name ="gettk"/> gen
 
-Geenerate a new access token
+Generate a new access token
 
 ```
 apigeecli token gen -a serviceaccount.json 
