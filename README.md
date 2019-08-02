@@ -924,6 +924,7 @@ The following parameters are supported. See Common Reference for a list of addit
 ## <a name="token"/> token
 
 * [gen](#gentk)
+* [cache](#cachetk)
 
 ### <a name ="gettk"/> gen
 
@@ -931,6 +932,19 @@ Generate a new access token
 
 ```
 apigeecli token gen -a serviceaccount.json 
+```
+
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--account -a` (required) Service Account in json format
+
+### <a name ="cachetk"/> cache
+
+Caches a new access token. Writes the access token to $HOME/.access_token for use by subsequent calls
+
+```
+apigeecli token cache -a serviceaccount.json 
 ```
 
 Parameters
