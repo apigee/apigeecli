@@ -62,40 +62,11 @@ apigeecli <flags> -a orgadmin.json
 
 `apigeecli` caches the OAuth Access token for subsequent calls (until the token expires). The access token is stored in `$HOME/.access_token`. This path must be readable/writeable by the `apigeecli` process. 
 
-<details><summary> Example 1 </summary>
-<p>
-First command
-
 ```
-apigeecli orgs list -a orgadmin.json
+apigeecli token cache -a serviceaccount.json
 ```
 
-Subsequent command (no token or service account)
-
-```
-apigeecli orgs get -o org
-```
-</p>
-</details>
-
-
-<details><summary> Example 2 </summary>
-<p>
-
-
-First command
-
-```
-apigeecli orgs list -t $TOKEN
-```
-
-Subsequent command (no token or service account)
-
-```
-apigeecli orgs get -o org
-```
-</p>
-</details>
+Subsequent commands do not need the token flag
 
 ___
 
@@ -972,5 +943,4 @@ The following parameters are supported. See Common Reference for a list of addit
 ## <a name="todo"/> TODO
 
 * `apigeecli clean`
-* `apigeecli import`
 * `apigeecli export`
