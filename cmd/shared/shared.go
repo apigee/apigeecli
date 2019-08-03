@@ -30,16 +30,13 @@ const BaseURL = "https://apigee.googleapis.com/v1/organizations/"
 
 // Arguments is the base struct to hold all command arguments
 type Arguments struct {
-	Verbose        bool
-	Print          bool
 	Org            string
 	Env            string
 	Token          string
 	ServiceAccount string
-	Body           []byte
 }
 
-var RootArgs = Arguments{Print: true}
+var RootArgs = Arguments{}
 
 //log levels, default is error
 var (
@@ -91,8 +88,8 @@ func Init() {
 		log.Ldate|log.Ltime|log.Lshortfile)
 }
 
-//This method is use dto send resources, proxy bundles, shared flows etc.
-func PostHttpOctet(url string, proxyName string) error {
+//This method is used to send resources, proxy bundles, shared flows etc.
+func PostHttpOctet(print bool, url string, proxyName string) (respBody []byte, err error) {
 
 	file, _ := os.Open(proxyName)
 	defer file.Close()
@@ -102,18 +99,18 @@ func PostHttpOctet(url string, proxyName string) error {
 	part, err := writer.CreateFormFile("proxy", proxyName)
 	if err != nil {
 		Error.Fatalln("Error writing multi-part: ", err)
-		return err
+		return nil, err
 	}
 	_, err = io.Copy(part, file)
 	if err != nil {
 		Error.Fatalln("error copying multi-part: ", err)
-		return err
+		return nil, err
 	}
 
 	err = writer.Close()
 	if err != nil {
 		Error.Fatalln("error closing multi-part: ", err)
-		return err
+		return nil, err
 	}
 	client := &http.Client{}
 
@@ -121,7 +118,7 @@ func PostHttpOctet(url string, proxyName string) error {
 	req, err := http.NewRequest("POST", url, body)
 	if err != nil {
 		Error.Fatalln("error in client: ", err)
-		return err
+		return nil, err
 	}
 
 	Info.Println("Setting token : ", RootArgs.Token)
@@ -131,26 +128,21 @@ func PostHttpOctet(url string, proxyName string) error {
 
 	if err != nil {
 		Error.Fatalln("error connecting: ", err)
-		return err
+		return nil, err
 	} else {
 		defer resp.Body.Close()
-		body, err := ioutil.ReadAll(resp.Body)
+		respBody, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
 			Error.Fatalln("error in response: ", err)
-			return err
+			return nil, err
 		} else if resp.StatusCode != 200 {
-			Error.Fatalln("error in response: ", string(body))
-			return errors.New("Error in response")
-		} else {
-			var prettyJSON bytes.Buffer
-			err = json.Indent(&prettyJSON, body, "", "\t")
-			if err != nil {
-				Error.Fatalln("error parsing response: ", err)
-				return err
-			}
-			fmt.Println(prettyJSON.String())
-			return nil
+			Error.Fatalln("error in response: ", string(respBody))
+			return nil, errors.New("Error in response")
 		}
+		if print {
+			return respBody, PrettyPrint(respBody)
+		}
+		return respBody, nil
 	}
 }
 
@@ -198,19 +190,19 @@ func DownloadResource(url string, name string) error {
 	}
 }
 
-// The first parameter is url. If only one parameter is sent, assume GET
-// The second parameter is the payload. The two parameters are sent, assume POST
-// THe third parammeter is the method. If three parameters are sent, assume method in param
-func HttpClient(params ...string) error {
+// The first parameter instructs whether the output should be printed
+// The second parameter is url. If only one parameter is sent, assume GET
+// The third parameter is the payload. The two parameters are sent, assume POST
+// THe fourth parammeter is the method. If three parameters are sent, assume method in param
+func HttpClient(print bool, params ...string) (respBody []byte, err error) {
 
 	var req *http.Request
-	var err error
 
 	client := &http.Client{}
 	Info.Println("Connecting to: ", params[0])
 
 	if len(params) > 3 {
-		return errors.New("Incorrect parameters to invoke the method")
+		return nil, errors.New("Incorrect parameters to invoke the method")
 	}
 
 	if len(params) == 1 {
@@ -224,13 +216,13 @@ func HttpClient(params ...string) error {
 		} else if params[2] == "PUT" {
 			req, err = http.NewRequest("PUT", params[0], bytes.NewBuffer([]byte(params[1])))
 		} else {
-			return errors.New("Unsupported method")
+			return nil, errors.New("Unsupported method")
 		}
 	}
 
 	if err != nil {
 		Error.Fatalln("error in client: ", err)
-		return err
+		return nil, err
 	}
 
 	Info.Println("Setting token : ", RootArgs.Token)
@@ -241,27 +233,27 @@ func HttpClient(params ...string) error {
 
 	if err != nil {
 		Error.Fatalln("error connecting: ", err)
-		return err
+		return nil, err
 	}
 
 	defer resp.Body.Close()
-	RootArgs.Body, err = ioutil.ReadAll(resp.Body)
+	respBody, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
 		Error.Fatalln("error in response: ", err)
-		return err
+		return nil, err
 	} else if resp.StatusCode > 299 {
 		Error.Fatalln("response Code: ", resp.StatusCode)
-		Error.Fatalln("error in response: ", string(RootArgs.Body))
-		return errors.New("Error in response")
+		Error.Fatalln("error in response: ", string(respBody))
+		return nil, errors.New("Error in response")
 	}
-
-	return PrettyPrint(RootArgs.Body)
+	if print {
+		return respBody, PrettyPrint(respBody)
+	}
+	return respBody, nil
 }
 
 func PrettyPrint(body []byte) error {
-	if !RootArgs.Print {
-		return nil
-	}
+
 	var prettyJSON bytes.Buffer
 	err := json.Indent(&prettyJSON, body, "", "\t")
 	if err != nil {
