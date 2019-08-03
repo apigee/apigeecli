@@ -24,11 +24,12 @@ var Cmd = &cobra.Command{
 		}
 		return nil
 	},
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		u, _ := url.Parse(shared.BaseURL)
 		if appID != "" {
 			u.Path = path.Join(u.Path, shared.RootArgs.Org, "apps", appID)
-			return shared.HttpClient(u.String())
+			_, err = shared.HttpClient(true, u.String())
+			return
 		}
 		//search by name is not implement; use list and return the appropriate app
 		u.Path = path.Join(u.Path, shared.RootArgs.Org, "apps")
@@ -37,19 +38,17 @@ var Cmd = &cobra.Command{
 		q.Set("includeCred", "false")
 		u.RawQuery = q.Encode()
 		//don't print the list
-		shared.RootArgs.Print = false
-		err := shared.HttpClient(u.String())
+		respBody, err := shared.HttpClient(false, u.String())
 		if err != nil {
 			return err
 		}
-		jq := gojsonq.New().JSONString(string(shared.RootArgs.Body)).From("app").Where("name", "eq", name)
+		jq := gojsonq.New().JSONString(string(respBody)).From("app").Where("name", "eq", name)
 		out := jq.Get()
 		outBytes, err := json.Marshal(out)
 		if err != nil {
 			return err
 		}
 		//print the item
-		shared.RootArgs.Print = true
 		return shared.PrettyPrint(outBytes)
 	},
 }

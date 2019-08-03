@@ -11,10 +11,11 @@ var Cmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Deletes a shared flow",
 	Long:  "Deletes a shared flow and all associated policies, resources, and revisions. The flow must be undeployed first.",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		u, _ := url.Parse(shared.BaseURL)
 		u.Path = path.Join(u.Path, shared.RootArgs.Org, "sharedflows", name)
-		return shared.HttpClient(u.String(), "", "DELETE")
+		_, err = shared.HttpClient(true, u.String(), "", "DELETE") 
+		return 
 	},
 }
 

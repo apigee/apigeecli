@@ -89,7 +89,7 @@ func createAsyncApp(app App, wg *sync.WaitGroup, errChan chan<- *types.ImportErr
 	}
 
 	u.Path = path.Join(u.Path, shared.RootArgs.Org, "developers", developerID, "apps")
-	err = shared.HttpClient(u.String(), string(out))
+	_, err = shared.HttpClient(true, u.String(), string(out))
 	if err != nil {
 		errChan <- &types.ImportError{Err: err}
 		return
@@ -114,7 +114,7 @@ func createAsyncApp(app App, wg *sync.WaitGroup, errChan chan<- *types.ImportErr
 			errChan <- &types.ImportError{Err: err}
 			return
 		}
-		err = shared.HttpClient(u.String(), string(impCred))
+		_, err = shared.HttpClient(true, u.String(), string(impCred))
 		if err != nil {
 			errChan <- &types.ImportError{Err: err}
 			return

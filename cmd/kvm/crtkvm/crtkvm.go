@@ -13,7 +13,7 @@ var Cmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create an environment scoped KVM Map",
 	Long:  "Create an environment scoped KVM Map",
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		u, _ := url.Parse(shared.BaseURL)
 		kvm := []string{}
 
@@ -24,7 +24,8 @@ var Cmd = &cobra.Command{
 		payload := "{" + strings.Join(kvm, ",") + "}"
 		shared.Info.Println(payload)
 		u.Path = path.Join(u.Path, shared.RootArgs.Org, "environments", shared.RootArgs.Env, "keyvaluemaps")
-		_ = shared.HttpClient(u.String(), payload)
+		_, err = shared.HttpClient(true, u.String(), payload) 
+		return 		
 	},
 }
 

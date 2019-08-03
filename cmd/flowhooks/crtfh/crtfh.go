@@ -1,19 +1,20 @@
 package crtfh
 
 import (
-	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/cmd/shared"
 	"net/url"
 	"path"
 	"strconv"
 	"strings"
+
+	"github.com/spf13/cobra"
+	"github.com/srinandan/apigeecli/cmd/shared"
 )
 
 var Cmd = &cobra.Command{
 	Use:   "attach",
 	Short: "Attach a flowhook",
 	Long:  "Attach a flowhook",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		u, _ := url.Parse(shared.BaseURL)
 
 		flowhook := []string{}
@@ -32,7 +33,8 @@ var Cmd = &cobra.Command{
 
 		payload := "{" + strings.Join(flowhook, ",") + "}"
 		u.Path = path.Join(u.Path, shared.RootArgs.Org, "environments", shared.RootArgs.Env, "flowhooks", name)
-		return shared.HttpClient(u.String(), payload, "PUT")
+		_, err = shared.HttpClient(true, u.String(), payload, "PUT")
+		return
 	},
 }
 

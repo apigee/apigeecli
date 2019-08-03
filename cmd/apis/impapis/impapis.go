@@ -18,7 +18,7 @@ var Cmd = &cobra.Command{
 	Use:   "import",
 	Short: "Import a folder containing an API proxy bundles",
 	Long:  "Import a folder containing an API proxy bundles",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		u, _ := url.Parse(shared.BaseURL)
 		return createAPIs(u)
 	},
@@ -53,7 +53,7 @@ func createAsyncAPI(u *url.URL, bundlePath string, wg *sync.WaitGroup, errChan c
 		return
 	}
 
-	err = shared.PostHttpOctet(u.String(), bundlePath)
+	_, err = shared.PostHttpOctet(true, u.String(), bundlePath)
 	if err != nil {
 		errChan <- &types.ImportError{Err: err}
 		return
@@ -94,12 +94,12 @@ func createAPIs(u *url.URL) error {
 		for i := 0; i < numAPIs; i++ {
 			go createAsyncAPI(u, proxyBundles[i], &wg, errChan)
 		}
-		fmt.Println(("Here B"))
+
 		go func() {
 			wg.Wait()
 			close(errChan)
 		}()
-		fmt.Println("Here C")
+
 	} else {
 		numOfLoops, remaining := numAPIs/conn, numAPIs%conn
 		for i := 0; i < numOfLoops; i++ {

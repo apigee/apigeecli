@@ -30,15 +30,16 @@ var Cmd = &cobra.Command{
 
 		return nil
 	},
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		u, _ := url.Parse(shared.BaseURL)
 		u.Path = path.Join(u.Path, shared.RootArgs.Org+":setSyncAuthorization")
 		identity = validate(identity)
 		identities := iAMIdentities{}
 		identities.Identities = append(identities.Identities, identity)
 		payload, _ := json.Marshal(&identities)
-		fmt.Println(string(payload))
-		return shared.HttpClient(u.String(), string(payload))
+		_, err = shared.HttpClient(true, u.String(), string(payload))
+		return
+
 	},
 }
 

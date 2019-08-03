@@ -11,7 +11,7 @@ var Cmd = &cobra.Command{
 	Use:   "get",
 	Short: "Get properties of an environment",
 	Long:  "Get properties of an environment",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		u, _ := url.Parse(shared.BaseURL)
 
 		if config {
@@ -19,7 +19,8 @@ var Cmd = &cobra.Command{
 		} else {
 			u.Path = path.Join(u.Path, shared.RootArgs.Org, "environments", shared.RootArgs.Env)
 		}
-		return shared.HttpClient(u.String())
+		_, err = shared.HttpClient(true, u.String()) 
+		return 
 	},
 }
 

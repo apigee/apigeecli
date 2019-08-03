@@ -13,7 +13,7 @@ var Cmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a Target Server",
 	Long:  "Create a Target Server",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		u, _ := url.Parse(shared.BaseURL)
 
 		targetserver := []string{}
@@ -33,7 +33,9 @@ var Cmd = &cobra.Command{
 
 		payload := "{" + strings.Join(targetserver, ",") + "}"
 		u.Path = path.Join(u.Path, shared.RootArgs.Org, "environments", shared.RootArgs.Env, "targetservers")
-		return shared.HttpClient(u.String(), payload)
+		_, err = shared.HttpClient(true, u.String(), payload) 
+		return 
+
 	},
 }
 

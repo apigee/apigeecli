@@ -11,10 +11,11 @@ var Cmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Deletes a Developer App from an organization",
 	Long:  "Deletes a Developer Appfrom an organization",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		u, _ := url.Parse(shared.BaseURL)
 		u.Path = path.Join(u.Path, shared.RootArgs.Org, "developers", id, "apps", name)
-		return shared.HttpClient(u.String(), "", "DELETE")
+		_, err = shared.HttpClient(true, u.String(), "", "DELETE") 
+		return 		
 	},
 }
 

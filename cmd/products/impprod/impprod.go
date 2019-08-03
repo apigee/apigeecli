@@ -55,7 +55,7 @@ func createAsyncProduct(url string, product Product, wg *sync.WaitGroup, errChan
 		errChan <- &types.ImportError{Err: err}
 		return
 	}
-	err = shared.HttpClient(url, string(out))
+	_, err = shared.HttpClient(true, url, string(out))
 	if err != nil {
 		errChan <- &types.ImportError{Err: err}
 		return

@@ -11,7 +11,7 @@ var Cmd = &cobra.Command{
 	Use:   "list",
 	Short: "Returns a list of Developer Applications",
 	Long:  "Returns a list of app IDs within an organization based on app status",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		u, _ := url.Parse(shared.BaseURL)
 		u.Path = path.Join(u.Path, shared.RootArgs.Org, "apps")
 		q := u.Query()
@@ -24,7 +24,8 @@ var Cmd = &cobra.Command{
 			q.Set("row", count)
 		}
 		u.RawQuery = q.Encode()
-		return shared.HttpClient(u.String())
+		_, err = shared.HttpClient(true, u.String()) 
+		return 
 	},
 }
 

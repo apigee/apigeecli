@@ -53,7 +53,7 @@ func createAsyncDeveloper(url string, developer Developer, wg *sync.WaitGroup, e
 		errChan <- &types.ImportError{Err: err}
 		return
 	}
-	err = shared.HttpClient(url, string(out))
+	_, err = shared.HttpClient(true, url, string(out))
 	if err != nil {
 		errChan <- &types.ImportError{Err: err}
 		return

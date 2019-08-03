@@ -1,17 +1,18 @@
 package depapi
 
 import (
-	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/cmd/shared"
 	"net/url"
 	"path"
+
+	"github.com/spf13/cobra"
+	"github.com/srinandan/apigeecli/cmd/shared"
 )
 
 var Cmd = &cobra.Command{
 	Use:   "deploy",
 	Short: "Deploys a revision of an existing API proxy",
 	Long:  "Deploys a revision of an existing API proxy to an environment in an organization",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		u, _ := url.Parse(shared.BaseURL)
 		if overrides {
 			q := u.Query()
@@ -19,7 +20,8 @@ var Cmd = &cobra.Command{
 			u.RawQuery = q.Encode()
 		}
 		u.Path = path.Join(u.Path, shared.RootArgs.Org, "environments", shared.RootArgs.Env, "apis", name, "revisions", revision, "deployments")
-		return shared.HttpClient(u.String(), "")
+		_, err = shared.HttpClient(true, u.String(), "")
+		return
 	},
 }
 

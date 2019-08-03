@@ -11,10 +11,11 @@ var Cmd = &cobra.Command{
 	Use:   "detach",
 	Short: "Detach a flowhook",
 	Long:  "Detach a flowhook",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		u, _ := url.Parse(shared.BaseURL)
 		u.Path = path.Join(u.Path, shared.RootArgs.Org, "environments", shared.RootArgs.Env, "flowhooks", name)
-		return shared.HttpClient(u.String(), "", "DELETE")
+		_, err = shared.HttpClient(true, u.String(), "", "DELETE") 
+		return 		
 	},
 }
 

@@ -13,7 +13,7 @@ var Cmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create an API product",
 	Long:  "Create an API product",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		u, _ := url.Parse(shared.BaseURL)
 
 		product := []string{}
@@ -58,7 +58,8 @@ var Cmd = &cobra.Command{
 
 		payload := "{" + strings.Join(product, ",") + "}"
 		u.Path = path.Join(u.Path, shared.RootArgs.Org, "apiproducts")
-		return shared.HttpClient(u.String(), payload)
+		_, err = shared.HttpClient(true, u.String(), payload)
+		return
 	},
 }
 

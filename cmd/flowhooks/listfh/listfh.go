@@ -1,20 +1,22 @@
 package listfh
 
 import (
-	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/cmd/shared"
 	"net/url"
 	"path"
+
+	"github.com/spf13/cobra"
+	"github.com/srinandan/apigeecli/cmd/shared"
 )
 
 var Cmd = &cobra.Command{
 	Use:   "list",
 	Short: "List Flowhooks",
 	Long:  "List Flowhooks",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		u, _ := url.Parse(shared.BaseURL)
 		u.Path = path.Join(u.Path, shared.RootArgs.Org, "environments", shared.RootArgs.Env, "flowhooks")
-		return shared.HttpClient(u.String())
+		_, err = shared.HttpClient(true, u.String())
+		return
 	},
 }
 

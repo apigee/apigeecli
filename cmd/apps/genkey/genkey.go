@@ -12,7 +12,7 @@ var Cmd = &cobra.Command{
 	Use:   "genkey",
 	Short: "Generate a new developer KeyPair",
 	Long:  "Generate a new developer KeyPair",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		u, _ := url.Parse(shared.BaseURL)
 
 		key := []string{}
@@ -34,7 +34,8 @@ var Cmd = &cobra.Command{
 
 		payload := "{" + strings.Join(key, ",") + "}"
 		u.Path = path.Join(u.Path, shared.RootArgs.Org, "developers", devid, "apps", name)
-		return shared.HttpClient(u.String(), payload)
+		_, err = shared.HttpClient(true, u.String(), payload) 
+		return 		
 	},
 }
 

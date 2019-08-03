@@ -12,7 +12,7 @@ var Cmd = &cobra.Command{
 	Use:   "create",
 	Short: "Creates a sharedflow in an Apigee Org",
 	Long:  "Creates a sharedflow in an Apigee Org",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		u, _ := url.Parse(shared.BaseURL)
 		u.Path = path.Join(u.Path, shared.RootArgs.Org, "sharedflows")
 
@@ -21,15 +21,16 @@ var Cmd = &cobra.Command{
 			q.Set("name", name)
 			q.Set("action", "import")
 			u.RawQuery = q.Encode()
-			err := shared.ReadBundle(name)
+			err = shared.ReadBundle(name)
 			if err != nil {
 				return err
 			}
-
-			return shared.PostHttpOctet(u.String(), proxy)
+			_, err = shared.PostHttpOctet(true, u.String(), proxy)
+			return
 		}
 		proxyName := "{\"name\":\"" + name + "\"}"
-		return shared.HttpClient(u.String(), proxyName)
+		_, err = shared.HttpClient(true, u.String(), proxyName)
+		return
 	},
 }
 
