@@ -56,7 +56,7 @@ type oAuthAccessToken struct {
 }
 
 //EntityPayloadList stores list of entities
-var EntityPayloadList types.EntityPayloadList
+var EntityPayloadList [][]byte //types.EntityPayloadList
 
 const accessTokenFile = ".access_token"
 
@@ -489,7 +489,7 @@ func ReadBundle(filename string) error {
 }
 
 //WriteJSONArrayToFile acceptes [][]bytes and writes as a json array
-func WriteJSONArrayToFile(exportFile string, payloadArray [][]byte) error {
+func WriteJSONArrayToFile(exportFile string) error {
 
 	f, err := os.OpenFile(exportFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 
@@ -506,7 +506,7 @@ func WriteJSONArrayToFile(exportFile string, payloadArray [][]byte) error {
 		return err
 	}
 
-	payload := bytes.Join(payloadArray, []byte(","))
+	payload := bytes.Join(EntityPayloadList, []byte(","))
 	//add json array terminate
 	payload = append(payload, byte(']'))
 
@@ -525,6 +525,7 @@ func GetAsyncEntity(entityName string, entityType string, wg *sync.WaitGroup, mu
 
 	//this is a two step process - 1) get entity details 2) store in byte[][]
 	defer wg.Done()
+	var respBody []byte
 
 	u, _ := url.Parse(BaseURL)
 	u.Path = path.Join(u.Path, RootArgs.Org, entityType, entityName)

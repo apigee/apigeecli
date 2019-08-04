@@ -18,6 +18,3 @@ type Arguments struct {
 	Token          string
 	ServiceAccount string
 }
-
-//EntityPayList holds each entity from aynsc operations
-type EntityPayloadList [][]byte

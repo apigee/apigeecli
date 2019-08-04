@@ -23,7 +23,7 @@ var Cmd = &cobra.Command{
 		if err != nil {
 			return
 		}
-		return shared.WriteJSONArrayToFile(exportFileName, shared.EntityPayloadList)
+		return shared.WriteJSONArrayToFile(exportFileName)
 	},
 }
 
@@ -47,6 +47,7 @@ func init() {
 func exportProducts() error {
 
 	var errChan = make(chan *types.ImportError)
+	//parent workgroup
 	var wg sync.WaitGroup
 	var mu sync.Mutex
 	const entityType = "apiproducts"
@@ -67,7 +68,7 @@ func exportProducts() error {
 
 	numProd := len(products.APIProducts)
 	shared.Info.Printf("Found %d products in the org\n", numProd)
-	shared.Info.Printf("Importing products with %d connections\n", conn)
+	shared.Info.Printf("Exporting products with %d connections\n", conn)
 
 	if numProd < conn {
 		wg.Add(numProd)
@@ -81,7 +82,7 @@ func exportProducts() error {
 	} else {
 		numOfLoops, remaining := numProd/conn, numProd%conn
 		for i := 0; i < numOfLoops; i++ {
-			shared.Info.Printf("Create %d batch of products\n", i)
+			shared.Info.Printf("Query %d batch of %d products\n", i+1, numProd)
 			wg.Add(conn)
 			for j := 0; j < conn; j++ {
 				go shared.GetAsyncEntity(url.PathEscape(products.APIProducts[j+(i*conn)].Name), entityType, &wg, &mu, errChan)
@@ -92,7 +93,7 @@ func exportProducts() error {
 		}
 
 		wg.Add(remaining)
-		shared.Info.Printf("Create remaining %d products\n", remaining)
+		shared.Info.Printf("Query remaining %d products\n", remaining)
 		for i := (numProd - remaining); i < numProd; i++ {
 			go shared.GetAsyncEntity(url.PathEscape(products.APIProducts[i].Name), entityType, &wg, &mu, errChan)
 		}
