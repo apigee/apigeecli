@@ -42,3 +42,12 @@ func TestDownloadResource(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+func TestWriteJSONArrayToFile(t *testing.T) {
+	Init()
+	var entityPayloadList = [][]byte{{'g', 'o'}, {'l', 'a', 'n', 'g'}}
+	err := WriteJSONArrayToFile("test.json", entityPayloadList)
+	if err != nil {
+		t.Fatal(err)
+	}
+}

@@ -105,7 +105,6 @@ func TestListExpandDeveloper(t *testing.T) {
 
 // kvm test
 func TestCreateKVM(t *testing.T) {
-	name := "test"
 
 	cmd := exec.Command(apigeecli, "kvms", "create", "-o", org, "-e", env, "-n", name, "-t", token, "-l")
 	err := cmd.Run()
@@ -259,6 +258,15 @@ func TestDeleteTS(t *testing.T) {
 		t.Fatal(err)
 	}
 
+}
+
+func TestExportProducts(t *testing.T) {
+
+	cmd := exec.Command(apigeecli, "products", "export", "-o", org, "-t", token, "-l")
+	err := cmd.Run()
+	if err != nil {
+		t.Fatal(err)
+	}
 }
 
 //get requires an app id. run list and get an app id or get it from create

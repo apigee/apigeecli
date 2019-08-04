@@ -700,6 +700,19 @@ The following parameters are required. See Common Reference for a list of additi
 
 A sample file format can be found [here](https://github.com/srinandan/apigeecli/blob/master/test/products_config.json)
 
+### <a name ="expproducts"/> export
+
+Export API products to a file
+
+```
+apigeecli prods export -o org -c connections 
+```
+Required parameters
+The following parameters are required. See Common Reference for a list of additional parameters.
+
+`--org -o` (required) Apigee organization name
+`--conn -c` (optional) Number of connections to establish; default is 4
+
 ---
 
 ## <a name="sf"/> sharedflows
