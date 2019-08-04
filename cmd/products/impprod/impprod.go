@@ -98,7 +98,6 @@ func createProducts(url string) error {
 			}
 			go func() {
 				wg.Wait()
-				close(errChan)
 			}()
 		}
 

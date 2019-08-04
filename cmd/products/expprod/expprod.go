@@ -78,6 +78,28 @@ func exportProducts() error {
 			wg.Wait()
 			close(errChan)
 		}()
+	} else {
+		numOfLoops, remaining := numProd/conn, numProd%conn
+		for i := 0; i < numOfLoops; i++ {
+			shared.Info.Printf("Create %d batch of products\n", i)
+			wg.Add(conn)
+			for j := 0; j < conn; j++ {
+				go shared.GetAsyncEntity(url.PathEscape(products.APIProducts[j+(i*conn)].Name), entityType, &wg, &mu, errChan)
+			}
+			go func() {
+				wg.Wait()
+			}()
+		}
+
+		wg.Add(remaining)
+		shared.Info.Printf("Create remaining %d products\n", remaining)
+		for i := (numProd - remaining); i < numProd; i++ {
+			go shared.GetAsyncEntity(url.PathEscape(products.APIProducts[i].Name), entityType, &wg, &mu, errChan)
+		}
+		go func() {
+			wg.Wait()
+			close(errChan)
+		}()
 	}
 
 	//print any errors and return an err

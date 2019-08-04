@@ -96,7 +96,6 @@ func createDevelopers(url string) error {
 			}
 			go func() {
 				wg.Wait()
-				close(errChan)
 			}()
 		}
 

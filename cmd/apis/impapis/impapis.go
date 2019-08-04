@@ -110,7 +110,6 @@ func createAPIs(u *url.URL) error {
 			}
 			go func() {
 				wg.Wait()
-				close(errChan)
 			}()
 		}
 

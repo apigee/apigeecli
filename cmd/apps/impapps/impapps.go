@@ -158,7 +158,6 @@ func createApps() error {
 			}
 			go func() {
 				wg.Wait()
-				close(errChan)
 			}()
 		}
 
