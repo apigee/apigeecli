@@ -13,7 +13,11 @@ const apigeecli = "./apigeecli"
 var token = os.Getenv("APIGEE_TOKEN")
 var env = os.Getenv("APIGEE_ENV")
 var org = os.Getenv("APIGEE_ORG")
-var email = "test@gmail.com"
+
+const email = "test@gmail.com"
+const name = "test"
+const attrs = "\"foo1=bar1,foo2=bar2\""
+
 var appID string
 
 func TestMain(t *testing.T) {
@@ -63,7 +67,6 @@ func TestCreateDeveloper(t *testing.T) {
 	first := "frstname"
 	last := "lastname"
 	user := "username"
-	attrs := "\"foo1=bar1,foo2=bar2\""
 
 	cmd := exec.Command(apigeecli, "developers", "create", "-o", org, "-n", email, "-f", first, "-s", last, "-u", user, "--attrs", attrs, "-t", token, "-l")
 	err := cmd.Run()
@@ -151,11 +154,9 @@ func TestCreateProxy(t *testing.T) {
 }
 
 func TestCreateProduct(t *testing.T) {
-	name := "test"
 	envs := "test"
 	proxy := "test"
 	approval := "auto"
-	attrs := "\"foo1=bar1,foo2=bar2\""
 
 	cmd := exec.Command(apigeecli, "products", "create", "-o", org, "-n", name, "-e", envs, "-p", proxy, "-f", approval, "--attrs", attrs, "-t", token, "-l")
 	err := cmd.Run()
@@ -165,9 +166,7 @@ func TestCreateProduct(t *testing.T) {
 }
 
 func TestCreateApp(t *testing.T) {
-	name := "test"
 	product := "test"
-	attrs := "\"foo1=bar1,foo2=bar2\""
 
 	cmd := exec.Command(apigeecli, "apps", "create", "-o", org, "-n", name, "-e", email, "-p", product, "--attrs", attrs, "-t", token, "-l")
 
@@ -180,7 +179,7 @@ func TestCreateApp(t *testing.T) {
 	}
 
 	var outputMap map[string]string
-	_ = json.Unmarshal([]byte(out.Bytes()), &outputMap)
+	_ = json.Unmarshal(out.Bytes(), &outputMap)
 	appID = outputMap["appId"]
 }
 
@@ -195,7 +194,6 @@ func TestListApp(t *testing.T) {
 }
 
 func TestGetProduct(t *testing.T) {
-	name := "test"
 
 	cmd := exec.Command(apigeecli, "products", "get", "-o", org, "-n", name, "-t", token, "-l")
 	err := cmd.Run()
@@ -223,7 +221,6 @@ func TestDeleteDeveloper(t *testing.T) {
 }
 
 func TestCreateTS(t *testing.T) {
-	name := "test"
 	host := "example.com"
 
 	cmd := exec.Command(apigeecli, "targetservers", "create", "-o", org, "-n", name, "-e", env, "-s", host, "-t", token, "-l")
@@ -235,7 +232,6 @@ func TestCreateTS(t *testing.T) {
 }
 
 func TestGetTS(t *testing.T) {
-	name := "test"
 
 	cmd := exec.Command(apigeecli, "targetservers", "get", "-o", org, "-e", env, "-n", name, "-t", token, "-l")
 	err := cmd.Run()
@@ -256,7 +252,6 @@ func TestListTS(t *testing.T) {
 }
 
 func TestDeleteTS(t *testing.T) {
-	name := "test"
 
 	cmd := exec.Command(apigeecli, "targetservers", "delete", "-o", org, "-e", env, "-n", name, "-t", token, "-l")
 	err := cmd.Run()
@@ -314,7 +309,6 @@ func TestSetMartWhiteList(t *testing.T) {
 }*/
 
 /*func TestDeleteKVM(t *testing.T) {
-	name := "test"
 
 	cmd := exec.Command(apigeecli, "kvms", "create", "-o", org, "-e", env, "-n", name, "-t", token, "-l")
 	err := cmd.Run()
@@ -334,7 +328,6 @@ func TestDeleteEncKVM(t *testing.T) {
 }*/
 
 /*func TestDeleteApp(t *testing.T) {
-	name := "test"
 
 	cmd := exec.Command(apigeecli, "apps", "delete", "-o", org, "-n", name, "-t", token, "-l")
 	err := cmd.Run()
@@ -345,7 +338,6 @@ func TestDeleteEncKVM(t *testing.T) {
 }*/
 
 /*func TestDeleteProduct(t *testing.T) {
-	name := "test"
 
 	cmd := exec.Command(apigeecli, "kvms", "create", "-o", org, "-n", name, "-t", token, "-l")
 	err := cmd.Run()

@@ -14,8 +14,8 @@ var Cmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		u, _ := url.Parse(shared.BaseURL)
 		u.Path = path.Join(u.Path, shared.RootArgs.Org, "sharedflows", name)
-		_, err = shared.HttpClient(true, u.String(), "", "DELETE") 
-		return 
+		_, err = shared.HttpClient(true, u.String(), "", "DELETE")
+		return
 	},
 }
 

@@ -24,8 +24,8 @@ var Cmd = &cobra.Command{
 		payload := "{" + strings.Join(kvm, ",") + "}"
 		shared.Info.Println(payload)
 		u.Path = path.Join(u.Path, shared.RootArgs.Org, "environments", shared.RootArgs.Env, "keyvaluemaps")
-		_, err = shared.HttpClient(true, u.String(), payload) 
-		return 		
+		_, err = shared.HttpClient(true, u.String(), payload)
+		return
 	},
 }
 

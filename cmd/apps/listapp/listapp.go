@@ -24,8 +24,8 @@ var Cmd = &cobra.Command{
 			q.Set("row", count)
 		}
 		u.RawQuery = q.Encode()
-		_, err = shared.HttpClient(true, u.String()) 
-		return 
+		_, err = shared.HttpClient(true, u.String())
+		return
 	},
 }
 

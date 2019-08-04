@@ -19,8 +19,8 @@ var Cmd = &cobra.Command{
 		} else {
 			u.Path = path.Join(u.Path, shared.RootArgs.Org, "environments", shared.RootArgs.Env)
 		}
-		_, err = shared.HttpClient(true, u.String()) 
-		return 
+		_, err = shared.HttpClient(true, u.String())
+		return
 	},
 }
 

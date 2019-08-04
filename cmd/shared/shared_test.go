@@ -13,7 +13,7 @@ func TestInit(t *testing.T) {
 
 func TestHttpGet(t *testing.T) {
 	Init()
-	err := HttpClient("https://httpbin.org/get")
+	_, err := HttpClient(true, "https://httpbin.org/get")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -21,14 +21,14 @@ func TestHttpGet(t *testing.T) {
 
 func TestHttpPost(t *testing.T) {
 	payload := "test"
-	err := HttpClient("https://httpbin.org/post", payload)
+	_, err := HttpClient(true, "https://httpbin.org/post", payload)
 	if err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestHttpDelete(t *testing.T) {
-	err := HttpClient("https://httpbin.org/delete", "", "DELETE")
+	_, err := HttpClient(true, "https://httpbin.org/delete", "", "DELETE")
 	if err != nil {
 		t.Fatal(err)
 	}

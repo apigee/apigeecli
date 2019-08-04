@@ -11,11 +11,11 @@ var Cmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete a KVM map",
 	Long:  "Delete a KVM map",
-	RunE: func(cmd *cobra.Command, args []string) (err error){
+	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		u, _ := url.Parse(shared.BaseURL)
 		u.Path = path.Join(u.Path, shared.RootArgs.Org, "environments", shared.RootArgs.Env, "keyvaluemaps", name)
-		_, err = shared.HttpClient(true, u.String(), "", "DELETE") 
-		return 
+		_, err = shared.HttpClient(true, u.String(), "", "DELETE")
+		return
 	},
 }
 

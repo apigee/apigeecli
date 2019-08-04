@@ -19,24 +19,18 @@ import (
 	"path"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/lestrrat/go-jwx/jwa"
 	"github.com/lestrrat/go-jwx/jwt"
 	"github.com/spf13/viper"
+	types "github.com/srinandan/apigeecli/cmd/types"
 )
 
 const BaseURL = "https://apigee.googleapis.com/v1/organizations/"
 
-// Arguments is the base struct to hold all command arguments
-type Arguments struct {
-	Org            string
-	Env            string
-	Token          string
-	ServiceAccount string
-}
-
-var RootArgs = Arguments{}
+var RootArgs = types.Arguments{}
 
 //log levels, default is error
 var (
@@ -55,11 +49,14 @@ var skipCheck = true
 var skipCache = false
 
 // Structure to hold OAuth response
-type OAuthAccessToken struct {
+type oAuthAccessToken struct {
 	AccessToken string `json:"access_token,omitempty"`
 	ExpiresIn   int    `json:"expires_in,omitempty"`
 	TokenType   string `json:"token_type,omitempty"`
 }
+
+//EntityPayloadList stores list of entities
+var EntityPayloadList types.EntityPayloadList
 
 const accessTokenFile = ".access_token"
 
@@ -341,7 +338,7 @@ func GenerateAccessToken() (string, error) {
 		return "", errors.New("Error in response")
 	}
 	decoder := json.NewDecoder(resp.Body)
-	accessToken := OAuthAccessToken{}
+	accessToken := oAuthAccessToken{}
 	if err := decoder.Decode(&accessToken); err != nil {
 		Error.Fatalln("error in response: ", err)
 		return "", errors.New("Error in response")
@@ -489,4 +486,58 @@ func ReadBundle(filename string) error {
 
 	defer file.Close()
 	return nil
+}
+
+//WriteJSONArrayToFile acceptes [][]bytes and writes as a json array
+func WriteJSONArrayToFile(exportFile string, payloadArray [][]byte) error {
+
+	f, err := os.OpenFile(exportFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+
+	if err != nil {
+		return err
+	}
+
+	defer f.Close()
+
+	//begin json array
+	_, err = f.Write([]byte("["))
+	if err != nil {
+		Warning.Println("error writing to file ", err)
+		return err
+	}
+
+	payload := bytes.Join(payloadArray, []byte(","))
+	//add json array terminate
+	payload = append(payload, byte(']'))
+
+	_, err = f.Write(payload)
+
+	if err != nil {
+		Warning.Println("error writing to file ", err)
+		return err
+	}
+
+	return nil
+}
+
+//GetAsync stores results for each entity in a list
+func GetAsyncEntity(entityName string, entityType string, wg *sync.WaitGroup, mu *sync.Mutex, errChan chan<- *types.ImportError) {
+
+	//this is a two step process - 1) get entity details 2) store in byte[][]
+	defer wg.Done()
+
+	u, _ := url.Parse(BaseURL)
+	u.Path = path.Join(u.Path, RootArgs.Org, entityType, entityName)
+	//don't print to sysout
+	respBody, err := HttpClient(false, u.String())
+	if err != nil {
+		errChan <- &types.ImportError{Err: err}
+		return
+	}
+
+	mu.Lock()
+	EntityPayloadList = append(EntityPayloadList, respBody)
+	mu.Unlock()
+
+	errChan <- &types.ImportError{Err: nil}
 }

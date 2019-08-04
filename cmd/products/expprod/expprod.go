@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/url"
-	"os"
 	"path"
 	"sync"
 
@@ -17,8 +16,14 @@ var Cmd = &cobra.Command{
 	Use:   "export",
 	Short: "Export API products to a file",
 	Long:  "Export API products to a file",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		return exportProducts()
+	RunE: func(cmd *cobra.Command, args []string) (err error) {
+
+		const exportFileName = "products.json"
+		err = exportProducts()
+		if err != nil {
+			return
+		}
+		return shared.WriteJSONArrayToFile(exportFileName, shared.EntityPayloadList)
 	},
 }
 
@@ -32,8 +37,6 @@ type apiProduct struct {
 
 var conn int
 
-const file = "products.json"
-
 func init() {
 
 	Cmd.Flags().IntVarP(&conn, "conn", "c",
@@ -41,43 +44,15 @@ func init() {
 
 }
 
-func writeAsyncProduct(product string, wg *sync.WaitGroup, errChan chan<- *types.ImportError) {
-	//this is a two step process - 1) get product details 2) write details to file
-	defer wg.Done()
-
-	u, _ := url.Parse(shared.BaseURL)
-	u.Path = path.Join(u.Path, shared.RootArgs.Org, "apiproducts", product)
-	//don't print to sysout
-	respBody, err := shared.HttpClient(false, u.String())
-	if err != nil {
-		errChan <- &types.ImportError{Err: err}
-		return
-	}
-
-	f, err := os.OpenFile(file, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-
-	if err != nil {
-		errChan <- &types.ImportError{Err: err}
-		return
-	}
-
-	defer f.Close()
-	_, err = f.Write(respBody)
-	if err != nil {
-		errChan <- &types.ImportError{Err: err}
-		return
-	}
-
-	errChan <- &types.ImportError{Err: nil}
-}
-
 func exportProducts() error {
 
 	var errChan = make(chan *types.ImportError)
 	var wg sync.WaitGroup
+	var mu sync.Mutex
+	const entityType = "apiproducts"
 
 	u, _ := url.Parse(shared.BaseURL)
-	u.Path = path.Join(u.Path, shared.RootArgs.Org, "apiproducts")
+	u.Path = path.Join(u.Path, shared.RootArgs.Org, entityType)
 	//don't print to sysout
 	respBody, err := shared.HttpClient(false, u.String())
 	if err != nil {
@@ -97,7 +72,7 @@ func exportProducts() error {
 	if numProd < conn {
 		wg.Add(numProd)
 		for i := 0; i < numProd; i++ {
-			go writeAsyncProduct(url.PathEscape(products.APIProducts[i].Name), &wg, errChan)
+			go shared.GetAsyncEntity(url.PathEscape(products.APIProducts[i].Name), entityType, &wg, &mu, errChan)
 		}
 		go func() {
 			wg.Wait()

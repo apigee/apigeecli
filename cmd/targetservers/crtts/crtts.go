@@ -33,8 +33,8 @@ var Cmd = &cobra.Command{
 
 		payload := "{" + strings.Join(targetserver, ",") + "}"
 		u.Path = path.Join(u.Path, shared.RootArgs.Org, "environments", shared.RootArgs.Env, "targetservers")
-		_, err = shared.HttpClient(true, u.String(), payload) 
-		return 
+		_, err = shared.HttpClient(true, u.String(), payload)
+		return
 
 	},
 }

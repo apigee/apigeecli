@@ -27,7 +27,7 @@ var Cmd = &cobra.Command{
 			}
 
 			_, err = shared.PostHttpOctet(true, u.String(), proxy)
-			return                                                                                                                             
+			return
 		}
 
 		proxyName := "{\"name\":\"" + name + "\"}"

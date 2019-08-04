@@ -50,7 +50,7 @@ var Cmd = &cobra.Command{
 	Short: "Import a file containing Developer Apps",
 	Long:  "Import a file containing Developer Apps",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return createApps(shared.BaseURL)
+		return createApps()
 	},
 }
 
@@ -124,7 +124,7 @@ func createAsyncApp(app App, wg *sync.WaitGroup, errChan chan<- *types.ImportErr
 	errChan <- &types.ImportError{Err: nil}
 }
 
-func createApps(url string) error {
+func createApps() error {
 
 	var errChan = make(chan *types.ImportError)
 	var wg sync.WaitGroup
