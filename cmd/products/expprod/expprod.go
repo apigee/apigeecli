@@ -21,7 +21,7 @@ var Cmd = &cobra.Command{
 		if err != nil {
 			return
 		}
-		return shared.WriteJSONArrayToFile(exportFileName)
+		return shared.WriteByteArrayToFile(exportFileName, false, nil)
 	},
 }
 
