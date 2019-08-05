@@ -2,7 +2,6 @@ package impdev
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/url"
 	"os"
@@ -46,82 +45,76 @@ func init() {
 	_ = Cmd.MarkFlagRequired("file")
 }
 
-func createAsyncDeveloper(url string, developer Developer, wg *sync.WaitGroup, errChan chan<- *types.ImportError) {
+func createAsyncDeveloper(url string, developer Developer, wg *sync.WaitGroup) {
 	defer wg.Done()
 	out, err := json.Marshal(developer)
 	if err != nil {
-		errChan <- &types.ImportError{Err: err}
+		shared.Error.Fatalln(err)
 		return
 	}
 	_, err = shared.HttpClient(true, url, string(out))
 	if err != nil {
-		errChan <- &types.ImportError{Err: err}
+		shared.Error.Fatalln(err)
 		return
 	}
 
-	errChan <- &types.ImportError{Err: nil}
+	shared.Info.Printf("Completed entity: %s", developer.EMail)
+}
+
+//batch creates a batch of developers to create
+func batch(url string, entities []Developer, pwg *sync.WaitGroup) {
+
+	defer pwg.Done()
+	//batch workgroup
+	var bwg sync.WaitGroup
+
+	bwg.Add(len(entities))
+
+	for _, entity := range entities {
+		go createAsyncDeveloper(url, entity, &bwg)
+	}
+	bwg.Wait()
 }
 
 func createDevelopers(url string) error {
 
-	var errChan = make(chan *types.ImportError)
-	var wg sync.WaitGroup
+	var pwg sync.WaitGroup
 
-	developers, err := readDevelopersFile()
+	entities, err := readDevelopersFile()
 	if err != nil {
 		shared.Error.Fatalln("Error reading file: ", err)
 		return err
 	}
 
-	numDev := len(developers)
-	shared.Info.Printf("Found %d products in the file\n", numDev)
-	shared.Info.Printf("Create products with %d connections\n", conn)
+	numEntities := len(entities)
+	shared.Info.Printf("Found %d developers in the file\n", numEntities)
+	shared.Info.Printf("Create developers with %d connections\n", conn)
 
-	if numDev < conn {
-		wg.Add(numDev)
-		for i := 0; i < numDev; i++ {
-			go createAsyncDeveloper(url, developers[i], &wg, errChan)
-		}
-		go func() {
-			wg.Wait()
-			close(errChan)
-		}()
-	} else {
-		numOfLoops, remaining := numDev/conn, numDev%conn
-		for i := 0; i < numOfLoops; i++ {
-			shared.Info.Printf("Create %d batch of products\n", i)
-			wg.Add(conn)
-			for j := 0; j < conn; j++ {
-				go createAsyncDeveloper(url, developers[j+(i*conn)], &wg, errChan)
-			}
-			go func() {
-				wg.Wait()
-			}()
-		}
+	numOfLoops, remaining := numEntities/conn, numEntities%conn
 
-		wg.Add(remaining)
-		shared.Info.Printf("Create remaining %d products\n", remaining)
-		for i := (numDev - remaining); i < numDev; i++ {
-			go createAsyncDeveloper(url, developers[i], &wg, errChan)
-		}
-		go func() {
-			wg.Wait()
-			close(errChan)
-		}()
+	//ensure connections aren't greater than products
+	if conn > numEntities {
+		conn = numEntities
 	}
 
-	//print any errors and return an err
-	var errs = false
-	for errProd := range errChan {
-		if errProd.Err != nil {
-			shared.Error.Fatalln(errProd.Err)
-			errs = true
-		}
+	start := 0
+
+	for i, end := 0, 0; i < numOfLoops; i++ {
+		pwg.Add(1)
+		end = (i * conn) + conn
+		shared.Info.Printf("Creating batch %d of developers\n", (i + 1))
+		go batch(url, entities[start:end], &pwg)
+		start = end
+		pwg.Wait()
 	}
 
-	if errs {
-		return fmt.Errorf("problem creating one of more products")
+	if remaining > 0 {
+		pwg.Add(1)
+		shared.Info.Printf("Creating remaining %d developers\n", remaining)
+		go batch(url, entities[start:numEntities], &pwg)
+		pwg.Wait()
 	}
+
 	return nil
 }
 
