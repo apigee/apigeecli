@@ -123,7 +123,7 @@ func createAsyncApp(app App, wg *sync.WaitGroup) {
 	shared.Info.Printf("Completed entity: %s", app.Name)
 }
 
-//batch created a batch of products to query
+//batch creates a batch of apps to create
 func batch(entities []App, pwg *sync.WaitGroup) {
 
 	defer pwg.Done()
@@ -154,7 +154,7 @@ func createApps() error {
 
 	numOfLoops, remaining := numEntities/conn, numEntities%conn
 
-	//ensure connections aren't greater then products
+	//ensure connections aren't greater than products
 	if conn > numEntities {
 		conn = numEntities
 	}
