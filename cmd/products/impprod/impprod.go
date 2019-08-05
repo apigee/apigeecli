@@ -2,7 +2,6 @@ package impprod
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/url"
 	"os"
@@ -48,82 +47,75 @@ func init() {
 	_ = Cmd.MarkFlagRequired("file")
 }
 
-func createAsyncProduct(url string, product Product, wg *sync.WaitGroup, errChan chan<- *types.ImportError) {
+func createAsyncProduct(url string, entity Product, wg *sync.WaitGroup) {
 	defer wg.Done()
-	out, err := json.Marshal(product)
+	out, err := json.Marshal(entity)
 	if err != nil {
-		errChan <- &types.ImportError{Err: err}
+		shared.Error.Fatalln(err)
 		return
 	}
 	_, err = shared.HttpClient(true, url, string(out))
 	if err != nil {
-		errChan <- &types.ImportError{Err: err}
+		shared.Error.Fatalln(err)
 		return
 	}
+	shared.Info.Printf("Completed entity: %s", entity.Name)
+}
 
-	errChan <- &types.ImportError{Err: nil}
+//batch created a batch of products to query
+func batch(url string, entities []Product, pwg *sync.WaitGroup) {
+
+	defer pwg.Done()
+	//batch workgroup
+	var bwg sync.WaitGroup
+
+	bwg.Add(len(entities))
+
+	for _, entity := range entities {
+		go createAsyncProduct(url, entity, &bwg)
+	}
+	bwg.Wait()
 }
 
 func createProducts(url string) error {
 
-	var errChan = make(chan *types.ImportError)
-	var wg sync.WaitGroup
+	var pwg sync.WaitGroup
 
-	products, err := readProductsFile()
+	entities, err := readProductsFile()
 	if err != nil {
 		shared.Error.Fatalln("Error reading file: ", err)
 		return err
 	}
 
-	numProd := len(products)
-	shared.Info.Printf("Found %d products in the file\n", numProd)
+	numEntities := len(entities)
+	shared.Info.Printf("Found %d products in the file\n", numEntities)
 	shared.Info.Printf("Create products with %d connections\n", conn)
 
-	if numProd < conn {
-		wg.Add(numProd)
-		for i := 0; i < numProd; i++ {
-			go createAsyncProduct(url, products[i], &wg, errChan)
-		}
-		go func() {
-			wg.Wait()
-			close(errChan)
-		}()
-	} else {
-		numOfLoops, remaining := numProd/conn, numProd%conn
-		for i := 0; i < numOfLoops; i++ {
-			shared.Info.Printf("Create %d batch of products\n", i)
-			wg.Add(conn)
-			for j := 0; j < conn; j++ {
-				go createAsyncProduct(url, products[j+(i*conn)], &wg, errChan)
-			}
-			go func() {
-				wg.Wait()
-			}()
-		}
+	numOfLoops, remaining := numEntities/conn, numEntities%conn
 
-		wg.Add(remaining)
-		shared.Info.Printf("Create remaining %d products\n", remaining)
-		for i := (numProd - remaining); i < numProd; i++ {
-			go createAsyncProduct(url, products[i], &wg, errChan)
-		}
-		go func() {
-			wg.Wait()
-			close(errChan)
-		}()
+	//ensure connections aren't greater then products
+	if conn > numEntities {
+		conn = numEntities
 	}
 
-	//print any errors and return an err
-	var errs = false
-	for errProd := range errChan {
-		if errProd.Err != nil {
-			shared.Error.Fatalln(errProd.Err)
-			errs = true
-		}
+	start := 0
+
+	for i, end := 0, 0; i < numOfLoops; i++ {
+		pwg.Add(1)
+		end = (i * conn) + conn
+		shared.Info.Printf("Creating batch %d of products\n", (i + 1))
+		go batch(url, entities[start:end], &pwg)
+		start = end
+		pwg.Wait()
 	}
 
-	if errs {
-		return fmt.Errorf("problem creating one of more products")
+	if remaining > 0 {
+		pwg.Add(1)
+		shared.Info.Printf("Creating remaining %d products\n", remaining)
+		go batch(url, entities[start:numEntities], &pwg)
+		pwg.Wait()
 	}
+
 	return nil
 }
 

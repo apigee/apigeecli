@@ -502,7 +502,7 @@ func WriteJSONArrayToFile(exportFile string) error {
 	//begin json array
 	_, err = f.Write([]byte("["))
 	if err != nil {
-		Warning.Println("error writing to file ", err)
+		Error.Fatalln("error writing to file ", err)
 		return err
 	}
 
@@ -513,7 +513,7 @@ func WriteJSONArrayToFile(exportFile string) error {
 	_, err = f.Write(payload)
 
 	if err != nil {
-		Warning.Println("error writing to file ", err)
+		Error.Fatalln("error writing to file: ", err)
 		return err
 	}
 
@@ -521,7 +521,7 @@ func WriteJSONArrayToFile(exportFile string) error {
 }
 
 //GetAsync stores results for each entity in a list
-func GetAsyncEntity(entityName string, entityType string, wg *sync.WaitGroup, mu *sync.Mutex, errChan chan<- *types.ImportError) {
+func GetAsyncEntity(entityName string, entityType string, wg *sync.WaitGroup, mu *sync.Mutex) { 
 
 	//this is a two step process - 1) get entity details 2) store in byte[][]
 	defer wg.Done()
@@ -531,14 +531,15 @@ func GetAsyncEntity(entityName string, entityType string, wg *sync.WaitGroup, mu
 	u.Path = path.Join(u.Path, RootArgs.Org, entityType, entityName)
 	//don't print to sysout
 	respBody, err := HttpClient(false, u.String())
+
 	if err != nil {
-		errChan <- &types.ImportError{Err: err}
+		Error.Fatalln("Error with entity: %s", entityName)
+		Error.Fatalln(err)
 		return
 	}
 
 	mu.Lock()
 	EntityPayloadList = append(EntityPayloadList, respBody)
 	mu.Unlock()
-
-	errChan <- &types.ImportError{Err: nil}
+	Info.Printf("Completed entity: %s", entityName)
 }
