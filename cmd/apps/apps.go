@@ -4,6 +4,7 @@ import (
 	"github.com/spf13/cobra"
 	crtapp "github.com/srinandan/apigeecli/cmd/apps/crtapp"
 	delapp "github.com/srinandan/apigeecli/cmd/apps/delapp"
+	expapp "github.com/srinandan/apigeecli/cmd/apps/expapp"
 	genkey "github.com/srinandan/apigeecli/cmd/apps/genkey"
 	getapp "github.com/srinandan/apigeecli/cmd/apps/getapp"
 	impapps "github.com/srinandan/apigeecli/cmd/apps/impapps"
@@ -30,4 +31,5 @@ func init() {
 	Cmd.AddCommand(crtapp.Cmd)
 	Cmd.AddCommand(genkey.Cmd)
 	Cmd.AddCommand(impapps.Cmd)
+	Cmd.AddCommand(expapp.Cmd)
 }

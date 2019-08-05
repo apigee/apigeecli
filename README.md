@@ -230,6 +230,7 @@ Supported alias `applications`
 * [get](#getapp)
 * [list](#listapps)
 * [import](#impapps)
+* [export](#expapps)
 
 ### <a name ="crtapp"/> create
 
@@ -318,7 +319,6 @@ The following parameters are supported. See Common Reference for a list of addit
 ### <a name="impapps"/> import
 
 Import Developer app entities into an org
-NOTE: This feature is a WIP. It is not fully implemented
 
 ```
 apigeecli apps import -o org -f filepath.json
@@ -332,6 +332,19 @@ The following parameters are supported. See Common Reference for a list of addit
 
 A sample file format can be found [here](https://github.com/srinandan/apigeecli/blob/master/test/apps_config.json)
 
+### <a name="expapps"/> export
+
+Export Developer app entities from an org
+
+```
+apigeecli apps export -o org 
+```
+
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+
 ---
 
 ## <a name="devs"/> developers
@@ -343,6 +356,7 @@ Supported alias `developers`
 * [get](#getdev)
 * [list](#listdevs)
 * [import](#impdev)
+* [export](#expdev)
 
 ### <a name ="crtdev"/> create
 
@@ -407,7 +421,6 @@ The following parameters are supported. See Common Reference for a list of addit
 ### <a name="impdev"/> import
 
 Import Developer entities into an org
-NOTE: This feature is a WIP. It is not fully implemented
 
 ```
 apigeecli devs import -o org -f filepath.json
@@ -418,6 +431,19 @@ The following parameters are supported. See Common Reference for a list of addit
 
 * `--org -o` (required) Apigee organization name
 * `--file -f` (required) A json file containing developers
+
+### <a name="expdev"/> export
+
+Import Developer entities into an org
+
+```
+apigeecli devs export -o org 
+```
+
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
 
 ---
 
