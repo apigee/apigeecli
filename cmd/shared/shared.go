@@ -369,14 +369,15 @@ func writeAccessToken() error {
 	if skipCache {
 		return nil
 	}
+
 	usr, err := user.Current()
 	if err != nil {
 		Warning.Println(err)
-	} else {
-		Info.Println("Cache access token: ", RootArgs.Token)
-		err = ioutil.WriteFile(path.Join(usr.HomeDir, accessTokenFile), []byte(RootArgs.Token), 0644)
+		return err
 	}
-	return err
+	Info.Println("Cache access token: ", RootArgs.Token)
+	//don't append access token
+	return WriteByteArrayToFile(path.Join(usr.HomeDir, accessTokenFile), false, []byte(RootArgs.Token))
 }
 
 func checkAccessToken() bool {
@@ -488,16 +489,31 @@ func ReadBundle(filename string) error {
 	return nil
 }
 
-//WriteJSONArrayToFile acceptes [][]bytes and writes as a json array
-func WriteJSONArrayToFile(exportFile string) error {
+//WriteByteArrayToFile accepts []bytes and writes to a file
+func WriteByteArrayToFile(exportFile string, fileAppend bool, payload []byte) error {
 
-	f, err := os.OpenFile(exportFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	var fileFlags = os.O_CREATE | os.O_WRONLY
 
+	if fileAppend {
+		fileFlags = fileFlags | os.O_APPEND
+	}
+
+	f, err := os.OpenFile(exportFile, fileFlags, 0644)
 	if err != nil {
 		return err
 	}
 
 	defer f.Close()
+
+	//if payload is nil, use internal variable
+	if payload != nil {
+		_, err = f.Write(payload)
+		if err != nil {
+			Error.Fatalln("error writing to file: ", err)
+			return err
+		}
+		return nil
+	}
 
 	//begin json array
 	_, err = f.Write([]byte("["))
@@ -506,11 +522,11 @@ func WriteJSONArrayToFile(exportFile string) error {
 		return err
 	}
 
-	payload := bytes.Join(EntityPayloadList, []byte(","))
+	payloadFromArray := bytes.Join(EntityPayloadList, []byte(","))
 	//add json array terminate
-	payload = append(payload, byte(']'))
+	payloadFromArray = append(payloadFromArray, byte(']'))
 
-	_, err = f.Write(payload)
+	_, err = f.Write(payloadFromArray)
 
 	if err != nil {
 		Error.Fatalln("error writing to file: ", err)
@@ -521,7 +537,7 @@ func WriteJSONArrayToFile(exportFile string) error {
 }
 
 //GetAsync stores results for each entity in a list
-func GetAsyncEntity(entityName string, entityType string, wg *sync.WaitGroup, mu *sync.Mutex) { 
+func GetAsyncEntity(entityName string, entityType string, wg *sync.WaitGroup, mu *sync.Mutex) {
 
 	//this is a two step process - 1) get entity details 2) store in byte[][]
 	defer wg.Done()
