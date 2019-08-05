@@ -92,7 +92,7 @@ func createDevelopers(url string) error {
 
 	numOfLoops, remaining := numEntities/conn, numEntities%conn
 
-	//ensure connections aren't greater than products
+	//ensure connections aren't greater than entities
 	if conn > numEntities {
 		conn = numEntities
 	}
