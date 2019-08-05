@@ -2,7 +2,6 @@ package impapps
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/url"
 	"os"
@@ -15,10 +14,10 @@ import (
 )
 
 type App struct {
-	Name        string            `json:"name,omitempty"`
-	Status      string            `json:"status,omitempty"`
+	Name        string            `json:"name"`
+	Status      string            `json:"status"`
 	Credentials *[]Credential     `json:"credentials,omitempty"`
-	DeveloperID *string           `json:"developerId,omitempty"`
+	DeveloperID *string           `json:"developerId"`
 	DisplayName string            `json:"displayName,omitempty"`
 	Attributes  []types.Attribute `json:"attributes,omitempty"`
 	CallbackURL string            `json:"callbackUrl,omitempty"`
@@ -27,8 +26,8 @@ type App struct {
 
 type Credential struct {
 	APIProducts    []APIProduct `json:"apiProducts,omitempty"`
-	ConsumerKey    string       `json:"consumerKey,omitempty"`
-	ConsumerSecret string       `json:"consumerSecret,omitempty"`
+	ConsumerKey    string       `json:"consumerKey`
+	ConsumerSecret string       `json:"consumerSecret`
 	ExpiresAt      int          `json:"expiresAt,omitempty"`
 	Status         string       `json:"status,omitempty"`
 	Scopes         []string     `json:"scopes,omitempty"`
@@ -67,7 +66,7 @@ func init() {
 	_ = Cmd.MarkFlagRequired("file")
 }
 
-func createAsyncApp(app App, wg *sync.WaitGroup, errChan chan<- *types.ImportError) {
+func createAsyncApp(app App, wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	//importing an app will be a two step process.
@@ -84,14 +83,14 @@ func createAsyncApp(app App, wg *sync.WaitGroup, errChan chan<- *types.ImportErr
 
 	out, err := json.Marshal(app)
 	if err != nil {
-		errChan <- &types.ImportError{Err: err}
+		shared.Error.Fatalln(err)
 		return
 	}
 
 	u.Path = path.Join(u.Path, shared.RootArgs.Org, "developers", developerID, "apps")
 	_, err = shared.HttpClient(true, u.String(), string(out))
 	if err != nil {
-		errChan <- &types.ImportError{Err: err}
+		shared.Error.Fatalln(err)
 		return
 	}
 	u, _ = url.Parse(shared.BaseURL)
@@ -111,79 +110,73 @@ func createAsyncApp(app App, wg *sync.WaitGroup, errChan chan<- *types.ImportErr
 
 		impCred, err := json.Marshal(importCredential)
 		if err != nil {
-			errChan <- &types.ImportError{Err: err}
+			shared.Error.Fatalln(err)
 			return
 		}
 		_, err = shared.HttpClient(true, u.String(), string(impCred))
 		if err != nil {
-			errChan <- &types.ImportError{Err: err}
+			shared.Error.Fatalln(err)
 			return
 		}
 		shared.Warning.Println("NOTE: apiProducts are not associated with the app")
 	}
-	errChan <- &types.ImportError{Err: nil}
+	shared.Info.Printf("Completed entity: %s", app.Name)
+}
+
+//batch created a batch of products to query
+func batch(entities []App, pwg *sync.WaitGroup) {
+
+	defer pwg.Done()
+	//batch workgroup
+	var bwg sync.WaitGroup
+
+	bwg.Add(len(entities))
+
+	for _, entity := range entities {
+		go createAsyncApp(entity, &bwg)
+	}
+	bwg.Wait()
 }
 
 func createApps() error {
 
-	var errChan = make(chan *types.ImportError)
-	var wg sync.WaitGroup
+	var pwg sync.WaitGroup
 
-	apps, err := readAppsFile()
+	entities, err := readAppsFile()
 	if err != nil {
 		shared.Error.Fatalln("Error reading file: ", err)
 		return err
 	}
 
-	numApp := len(apps)
-	shared.Info.Printf("Found %d apps in the file\n", numApp)
+	numEntities := len(entities)
+	shared.Info.Printf("Found %d apps in the file\n", numEntities)
 	shared.Info.Printf("Create apps with %d connections\n", conn)
 
-	if numApp < conn {
-		wg.Add(numApp)
-		for i := 0; i < numApp; i++ {
-			go createAsyncApp(apps[i], &wg, errChan)
-		}
-		go func() {
-			wg.Wait()
-			close(errChan)
-		}()
-	} else {
-		numOfLoops, remaining := numApp/conn, numApp%conn
-		for i := 0; i < numOfLoops; i++ {
-			shared.Info.Printf("Create %d batch of apps\n", i)
-			wg.Add(conn)
-			for j := 0; j < conn; j++ {
-				go createAsyncApp(apps[j+(i*conn)], &wg, errChan)
-			}
-			go func() {
-				wg.Wait()
-			}()
-		}
+	numOfLoops, remaining := numEntities/conn, numEntities%conn
 
-		wg.Add(remaining)
-		shared.Info.Printf("Create remaining %d apps\n", remaining)
-		for i := (numApp - remaining); i < numApp; i++ {
-			go createAsyncApp(apps[i], &wg, errChan)
-		}
-		go func() {
-			wg.Wait()
-			close(errChan)
-		}()
+	//ensure connections aren't greater then products
+	if conn > numEntities {
+		conn = numEntities
 	}
 
-	//print any errors and return an err
-	var errs = false
-	for errApp := range errChan {
-		if errApp.Err != nil {
-			shared.Error.Fatalln(errApp.Err)
-			errs = true
-		}
+	start := 0
+
+	for i, end := 0, 0; i < numOfLoops; i++ {
+		pwg.Add(1)
+		end = (i * conn) + conn
+		shared.Info.Printf("Creating batch %d of apps\n", (i + 1))
+		go batch(entities[start:end], &pwg)
+		start = end
+		pwg.Wait()
 	}
 
-	if errs {
-		return fmt.Errorf("problem creating one of more apps")
+	if remaining > 0 {
+		pwg.Add(1)
+		shared.Info.Printf("Creating remaining %d apps\n", remaining)
+		go batch(entities[start:numEntities], &pwg)
+		pwg.Wait()
 	}
+
 	return nil
 }
 
