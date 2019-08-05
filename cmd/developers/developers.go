@@ -4,6 +4,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/srinandan/apigeecli/cmd/developers/crtdev"
 	"github.com/srinandan/apigeecli/cmd/developers/deldev"
+	"github.com/srinandan/apigeecli/cmd/developers/expdev"
 	"github.com/srinandan/apigeecli/cmd/developers/getdev"
 	"github.com/srinandan/apigeecli/cmd/developers/impdev"
 	"github.com/srinandan/apigeecli/cmd/developers/listdev"
@@ -29,4 +30,5 @@ func init() {
 	Cmd.AddCommand(deldev.Cmd)
 	Cmd.AddCommand(crtdev.Cmd)
 	Cmd.AddCommand(impdev.Cmd)
+	Cmd.AddCommand(expdev.Cmd)
 }
