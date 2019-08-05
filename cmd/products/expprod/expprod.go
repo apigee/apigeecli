@@ -43,16 +43,16 @@ func init() {
 }
 
 //batch created a batch of products to query
-func batch(apiProductNames []apiProduct, entityType string, pwg *sync.WaitGroup, mu *sync.Mutex) {
+func batch(entities []apiProduct, entityType string, pwg *sync.WaitGroup, mu *sync.Mutex) {
 
 	defer pwg.Done()
 	//batch workgroup
 	var bwg sync.WaitGroup
 
-	bwg.Add(len(apiProductNames))
+	bwg.Add(len(entities))
 
-	for _, apiProductName := range apiProductNames {
-		go shared.GetAsyncEntity(url.PathEscape(apiProductName.Name), entityType, &bwg, mu)
+	for _, entity := range entities {
+		go shared.GetAsyncEntity(url.PathEscape(entity.Name), entityType, &bwg, mu)
 	}
 	bwg.Wait()
 }
@@ -84,7 +84,7 @@ func exportProducts() error {
 
 	numOfLoops, remaining := numProd/conn, numProd%conn
 
-	//ensure connections aren't greater then products
+	//ensure connections aren't greater than products
 	if conn > numProd {
 		conn = numProd
 	}
