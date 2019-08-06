@@ -5,6 +5,7 @@ import (
 	crtapi "github.com/srinandan/apigeecli/cmd/apis/crtapi"
 	delapi "github.com/srinandan/apigeecli/cmd/apis/delapi"
 	"github.com/srinandan/apigeecli/cmd/apis/depapi"
+	"github.com/srinandan/apigeecli/cmd/apis/expapis"
 	fetch "github.com/srinandan/apigeecli/cmd/apis/fetchapi"
 	impapis "github.com/srinandan/apigeecli/cmd/apis/impapis"
 	"github.com/srinandan/apigeecli/cmd/apis/listapis"
@@ -29,6 +30,7 @@ func init() {
 	Cmd.AddCommand(listapis.Cmd)
 	Cmd.AddCommand(listdeploy.Cmd)
 	Cmd.AddCommand(crtapi.Cmd)
+	Cmd.AddCommand(expapis.Cmd)
 	Cmd.AddCommand(depapi.Cmd)
 	Cmd.AddCommand(delapi.Cmd)
 	Cmd.AddCommand(fetch.Cmd)

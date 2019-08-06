@@ -95,6 +95,7 @@ ___
 * [deploy](#depapi)
 * [fetch](#fetchapi)
 * [import](#impapis)
+* [export](#expapis)
 * [list](#listorgs)
 * [listdeploy](#listdeploy)
 * [undeploy](#undepapi)
@@ -165,13 +166,26 @@ The following parameters are supported. See Common Reference for a list of addit
 Upload a folder containing API proxy bundles
 
 ```
-apigeecli apis fetch -o org -f /tmp
+apigeecli apis import -o org -f /tmp
 ```
 Parameters
 The following parameters are supported. See Common Reference for a list of additional parameters.
 
 * `--org -o` (required) Apigee organization name
 * `--folder -f` (required) path containing API proxy bundles
+
+### <a name="expapis"/> export
+
+Export latest revisions of API proxy bundles from an org
+
+```
+apigeecli apis export -o org
+```
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+
 
 ### <a name="listorgs"/> list
 
@@ -185,8 +199,10 @@ The following parameters are supported. See Common Reference for a list of addit
 
 * `--org -o` (required) Apigee organization name
 * `--env -e` (optional) Apigee environment name
+* `--rev -r` (optional) Include proxy revisions
 
 If the environment name is passed, lists the deployed proxies in the environment
+If the revision flag is enabled, lists all the revisions for the proxy
 
 ### <a name="listdeploy"/> listdeploy
 
