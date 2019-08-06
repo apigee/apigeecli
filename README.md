@@ -801,7 +801,7 @@ The following parameters are supported. See Common Reference for a list of addit
 Deploys a revision of an existing sharedflow to an environment in an organization.
 
 ```
-apigeecli sharedflow deploy -o org -e env -n sharedflow1 -v 1
+apigeecli sharedflows deploy -o org -e env -n sharedflow1 -v 1
 ```
 
 Parameters
@@ -853,7 +853,8 @@ Parameters
 The following parameters are supported. See Common Reference for a list of additional parameters.
 
 * `--org -o` (required) Apigee organization name
-* `--name -n` (required) sharedflow name 
+* `--env -e` (optional) Apigee environment name
+* `--rev -r` (optional) Include shared flow revisions 
 
 ### <a name="undepsf"/> undeploy
 
