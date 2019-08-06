@@ -762,6 +762,7 @@ The following parameters are required. See Common Reference for a list of additi
 * [create](#createsf)
 * [delete](#delsf)
 * [deploy](#depsf)
+* [export](#expsf)
 * [fetch](#fetchsf)
 * [get](#gettsf)
 * [list](#listsf)
@@ -811,6 +812,19 @@ The following parameters are supported. See Common Reference for a list of addit
 * `--name -n` (required) sharedflow name 
 * `--rev -v` (required) sharedflow revision
 * `--ovr -r` (optional) Forces deployment of the new revision.
+
+### <a name="expsf"/> export
+
+Export sharedflows as bundles from an organization.
+
+```
+apigeecli sharedflows export -o org
+```
+
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
 
 ### <a name="fetchsf"/> fetch
 

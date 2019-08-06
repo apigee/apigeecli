@@ -6,6 +6,7 @@ import (
 	"github.com/srinandan/apigeecli/cmd/sharedflows/crtsf"
 	"github.com/srinandan/apigeecli/cmd/sharedflows/delsf"
 	"github.com/srinandan/apigeecli/cmd/sharedflows/depsf"
+	"github.com/srinandan/apigeecli/cmd/sharedflows/expsf"
 	"github.com/srinandan/apigeecli/cmd/sharedflows/fetchsf"
 	getsf "github.com/srinandan/apigeecli/cmd/sharedflows/getsf"
 	listsf "github.com/srinandan/apigeecli/cmd/sharedflows/listsf"
@@ -31,4 +32,5 @@ func init() {
 	Cmd.AddCommand(undepsf.Cmd)
 	Cmd.AddCommand(depsf.Cmd)
 	Cmd.AddCommand(crtsf.Cmd)
+	Cmd.AddCommand(expsf.Cmd)
 }
