@@ -1,10 +1,12 @@
 package listsf
 
 import (
-	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/cmd/shared"
 	"net/url"
 	"path"
+	"strconv"
+
+	"github.com/spf13/cobra"
+	"github.com/srinandan/apigeecli/cmd/shared"
 )
 
 var Cmd = &cobra.Command{
@@ -18,6 +20,11 @@ var Cmd = &cobra.Command{
 			q.Set("sharedFlows", "true")
 			u.Path = path.Join(u.Path, shared.RootArgs.Org, "environments", shared.RootArgs.Env, "deployments")
 		} else {
+			if revisions {
+				q := u.Query()
+				q.Set("includeRevisions", strconv.FormatBool(revisions))
+				u.RawQuery = q.Encode()
+			}
 			u.Path = path.Join(u.Path, shared.RootArgs.Org, "sharedflows")
 		}
 		_, err = shared.HttpClient(true, u.String())
@@ -25,9 +32,13 @@ var Cmd = &cobra.Command{
 	},
 }
 
+var revisions bool
+
 func init() {
 
 	Cmd.Flags().StringVarP(&shared.RootArgs.Env, "env", "e",
 		"", "Apigee environment name")
+	Cmd.Flags().BoolVarP(&revisions, "rev", "r",
+		false, "Include revisions")
 
 }
