@@ -7,6 +7,7 @@ import (
 	"github.com/srinandan/apigeecli/cmd/apis/depapi"
 	"github.com/srinandan/apigeecli/cmd/apis/expapis"
 	fetch "github.com/srinandan/apigeecli/cmd/apis/fetchapi"
+	"github.com/srinandan/apigeecli/cmd/apis/getapi"
 	impapis "github.com/srinandan/apigeecli/cmd/apis/impapis"
 	"github.com/srinandan/apigeecli/cmd/apis/listapis"
 	"github.com/srinandan/apigeecli/cmd/apis/listdeploy"
@@ -34,6 +35,7 @@ func init() {
 	Cmd.AddCommand(depapi.Cmd)
 	Cmd.AddCommand(delapi.Cmd)
 	Cmd.AddCommand(fetch.Cmd)
+	Cmd.AddCommand(getapi.Cmd)
 	Cmd.AddCommand(impapis.Cmd)
 	Cmd.AddCommand(undepapi.Cmd)
 }

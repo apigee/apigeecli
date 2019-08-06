@@ -95,6 +95,7 @@ ___
 * [deploy](#depapi)
 * [fetch](#fetchapi)
 * [import](#impapis)
+* [get](#getapi)
 * [export](#expapis)
 * [list](#listorgs)
 * [listdeploy](#listdeploy)
@@ -160,6 +161,19 @@ The following parameters are supported. See Common Reference for a list of addit
 * `--name -n` (required) API proxy name 
 * `--rev -v` (required) API proxy revision
 * `--ovr -r` (optional) Forces deployment of the new revision.
+
+### <a name="getapi"/> get
+
+Get API Proxy information
+
+```
+apigeecli apis get -o org -n proxy
+```
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+* `--name -n` (required) API proxy name 
 
 ### <a name="impapis"/> import
 
