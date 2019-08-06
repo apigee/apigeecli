@@ -561,10 +561,17 @@ func GetAsyncEntity(entityURL string, wg *sync.WaitGroup, mu *sync.Mutex) {
 }
 
 //FetchAyncBundle can download a shared flow or a proxy bundle
+//this method is meant to be called asynchronously
 func FetchAsyncBundle(entityType string, name string, revision string, wg *sync.WaitGroup) {
 
 	defer wg.Done()
 
+	FetchBundle(entityType, name, revision)
+
+}
+
+//FetchBundle can download a shared flow or proxy bundle
+func FetchBundle(entityType string, name string, revision string) error {
 	u, _ := url.Parse(BaseURL)
 	q := u.Query()
 	q.Set("format", "bundle")
@@ -575,5 +582,7 @@ func FetchAsyncBundle(entityType string, name string, revision string, wg *sync.
 	if err != nil {
 		Error.Fatalln("Error with entity: %s", name)
 		Error.Fatalln(err)
+		return err
 	}
+	return nil
 }

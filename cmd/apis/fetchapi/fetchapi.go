@@ -1,9 +1,6 @@
 package fetchapi
 
 import (
-	"net/url"
-	"path"
-
 	"github.com/spf13/cobra"
 	"github.com/srinandan/apigeecli/cmd/shared"
 )
@@ -13,12 +10,7 @@ var Cmd = &cobra.Command{
 	Short: "Returns a zip-formatted proxy bundle ",
 	Long:  "Returns a zip-formatted proxy bundle of code and config files",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		u, _ := url.Parse(shared.BaseURL)
-		q := u.Query()
-		q.Set("format", "bundle")
-		u.RawQuery = q.Encode()
-		u.Path = path.Join(u.Path, shared.RootArgs.Org, "apis", name, "revisions", revision)
-		return shared.DownloadResource(u.String(), name)
+		return shared.FetchBundle("apis", name, revision)
 	},
 }
 
