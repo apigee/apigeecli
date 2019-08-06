@@ -543,8 +543,6 @@ func GetAsyncEntity(entityURL string, wg *sync.WaitGroup, mu *sync.Mutex) {
 	defer wg.Done()
 	var respBody []byte
 
-	//u, _ := url.Parse(BaseURL)
-	//u.Path = path.Join(u.Path, RootArgs.Org, entityType, entityName)
 	//don't print to sysout
 	respBody, err := HttpClient(false, entityURL)
 
