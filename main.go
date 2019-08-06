@@ -11,7 +11,7 @@ var Version string
 func main() {
 
 	rootCmd := cmd.GetRootCmd()
-	rootCmd.Version = "0.3, Git: " + Version
+	rootCmd.Version = "0.4, Git: " + Version
 
 	if err := rootCmd.Execute(); err != nil {
 		os.Exit(-1)
