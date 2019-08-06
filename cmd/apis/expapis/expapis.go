@@ -36,22 +36,6 @@ func init() {
 		4, "Number of connections")
 }
 
-func fetchProxy(entityType string, name string, revision string, wg *sync.WaitGroup) {
-
-	defer wg.Done()
-
-	u, _ := url.Parse(shared.BaseURL)
-	q := u.Query()
-	q.Set("format", "bundle")
-	u.RawQuery = q.Encode()
-	u.Path = path.Join(u.Path, shared.RootArgs.Org, entityType, name, "revisions", revision)
-
-	err := shared.DownloadResource(u.String(), name)
-	if err != nil {
-		shared.Error.Fatalln("Error with entity: %s", name)
-		shared.Error.Fatalln(err)
-	}
-}
 
 func batch(entities []proxy, entityType string, pwg *sync.WaitGroup) {
 
@@ -64,7 +48,7 @@ func batch(entities []proxy, entityType string, pwg *sync.WaitGroup) {
 	for _, entity := range entities {
 		//download only the last revision
 		lastRevision := len(entity.Revision)
-		go fetchProxy(entityType, entity.Name, entity.Revision[lastRevision-1], &bwg)
+		go shared.FetchAsyncBundle(entityType, entity.Name, entity.Revision[lastRevision-1], &bwg)
 	}
 	bwg.Wait()
 }

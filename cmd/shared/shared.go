@@ -559,3 +559,21 @@ func GetAsyncEntity(entityName string, entityType string, wg *sync.WaitGroup, mu
 	mu.Unlock()
 	Info.Printf("Completed entity: %s", entityName)
 }
+
+//FetchAyncBundle can download a shared flow or a proxy bundle
+func FetchAsyncBundle(entityType string, name string, revision string, wg *sync.WaitGroup) {
+
+	defer wg.Done()
+
+	u, _ := url.Parse(BaseURL)
+	q := u.Query()
+	q.Set("format", "bundle")
+	u.RawQuery = q.Encode()
+	u.Path = path.Join(u.Path, RootArgs.Org, entityType, name, "revisions", revision)
+
+	err := DownloadResource(u.String(), name)
+	if err != nil {
+		Error.Fatalln("Error with entity: %s", name)
+		Error.Fatalln(err)
+	}
+}
