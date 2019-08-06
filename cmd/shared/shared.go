@@ -537,19 +537,19 @@ func WriteByteArrayToFile(exportFile string, fileAppend bool, payload []byte) er
 }
 
 //GetAsync stores results for each entity in a list
-func GetAsyncEntity(entityName string, entityType string, wg *sync.WaitGroup, mu *sync.Mutex) {
+func GetAsyncEntity(entityURL string, wg *sync.WaitGroup, mu *sync.Mutex) {
 
 	//this is a two step process - 1) get entity details 2) store in byte[][]
 	defer wg.Done()
 	var respBody []byte
 
-	u, _ := url.Parse(BaseURL)
-	u.Path = path.Join(u.Path, RootArgs.Org, entityType, entityName)
+	//u, _ := url.Parse(BaseURL)
+	//u.Path = path.Join(u.Path, RootArgs.Org, entityType, entityName)
 	//don't print to sysout
-	respBody, err := HttpClient(false, u.String())
+	respBody, err := HttpClient(false, entityURL)
 
 	if err != nil {
-		Error.Fatalln("Error with entity: %s", entityName)
+		Error.Fatalln("Error with entity: %s", entityURL)
 		Error.Fatalln(err)
 		return
 	}
@@ -557,7 +557,7 @@ func GetAsyncEntity(entityName string, entityType string, wg *sync.WaitGroup, mu
 	mu.Lock()
 	EntityPayloadList = append(EntityPayloadList, respBody)
 	mu.Unlock()
-	Info.Printf("Completed entity: %s", entityName)
+	Info.Printf("Completed entity: %s", entityURL)
 }
 
 //FetchAyncBundle can download a shared flow or a proxy bundle

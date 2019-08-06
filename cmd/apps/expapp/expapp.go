@@ -42,7 +42,7 @@ func init() {
 
 }
 
-//batch created a batch of products to query
+//batch created a batch of apps to query
 func batch(entities []app, entityType string, pwg *sync.WaitGroup, mu *sync.Mutex) {
 
 	defer pwg.Done()
@@ -52,7 +52,9 @@ func batch(entities []app, entityType string, pwg *sync.WaitGroup, mu *sync.Mute
 	bwg.Add(len(entities))
 
 	for _, entity := range entities {
-		go shared.GetAsyncEntity(entity.AppID, entityType, &bwg, mu)
+		u, _ := url.Parse(shared.BaseURL)
+		u.Path = path.Join(u.Path, shared.RootArgs.Org, entityType, entity.AppID)
+		go shared.GetAsyncEntity(u.String(), &bwg, mu)
 	}
 	bwg.Wait()
 }

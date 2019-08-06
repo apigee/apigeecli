@@ -52,7 +52,9 @@ func batch(entities []apiProduct, entityType string, pwg *sync.WaitGroup, mu *sy
 	bwg.Add(len(entities))
 
 	for _, entity := range entities {
-		go shared.GetAsyncEntity(url.PathEscape(entity.Name), entityType, &bwg, mu)
+		u, _ := url.Parse(shared.BaseURL)
+		u.Path = path.Join(u.Path, shared.RootArgs.Org, entityType, url.PathEscape(entity.Name))
+		go shared.GetAsyncEntity(u.String(), &bwg, mu)
 	}
 	bwg.Wait()
 }
