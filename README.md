@@ -937,6 +937,8 @@ Supported alias `ts`
 
 * [create](#crtts)
 * [delete](#delts)
+* [export](#expts)
+* [import](#impts)
 * [get](#getts)
 * [list](#listts)
 
@@ -973,6 +975,20 @@ The following parameters are supported. See Common Reference for a list of addit
 * `--org -o` (required) Apigee organization name
 * `--env -e` (required) Apigee environment name
 * `--name -n` (required) Target server name
+
+### <a name ="expts"/> export
+
+Export a target servers from an environment
+
+```
+apigeecli targetservers export -o org -e env
+```
+
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+* `--env -e` (required) Apigee environment name
 
 ### <a name ="getts"/> get
 

@@ -5,6 +5,7 @@ import (
 	"github.com/srinandan/apigeecli/cmd/shared"
 	"github.com/srinandan/apigeecli/cmd/targetservers/crtts"
 	"github.com/srinandan/apigeecli/cmd/targetservers/delts"
+	"github.com/srinandan/apigeecli/cmd/targetservers/expts"
 	"github.com/srinandan/apigeecli/cmd/targetservers/getts"
 	"github.com/srinandan/apigeecli/cmd/targetservers/listts"
 )
@@ -29,5 +30,6 @@ func init() {
 	Cmd.AddCommand(listts.Cmd)
 	Cmd.AddCommand(getts.Cmd)
 	Cmd.AddCommand(delts.Cmd)
+	Cmd.AddCommand(expts.Cmd)
 	Cmd.AddCommand(crtts.Cmd)
 }
