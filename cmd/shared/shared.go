@@ -548,7 +548,7 @@ func GetAsyncEntity(entityURL string, wg *sync.WaitGroup, mu *sync.Mutex) {
 	respBody, err := HttpClient(false, entityURL)
 
 	if err != nil {
-		Error.Fatalln("Error with entity: %s", entityURL)
+		Error.Fatalf("error with entity: %s", entityURL)
 		Error.Fatalln(err)
 		return
 	}
@@ -579,7 +579,7 @@ func FetchBundle(entityType string, name string, revision string) error {
 
 	err := DownloadResource(u.String(), name)
 	if err != nil {
-		Error.Fatalln("Error with entity: %s", name)
+		Error.Fatalf("error with entity: %s", name)
 		Error.Fatalln(err)
 		return err
 	}

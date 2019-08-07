@@ -17,6 +17,7 @@ var org = os.Getenv("APIGEE_ORG")
 const email = "test@gmail.com"
 const name = "test"
 const attrs = "\"foo1=bar1,foo2=bar2\""
+const envs = "test"
 
 var appID string
 
@@ -142,7 +143,6 @@ func TestSetSync(t *testing.T) {
 }
 
 func TestCreateProxy(t *testing.T) {
-	name := "test"
 
 	cmd := exec.Command(apigeecli, "apis", "create", "-o", org, "-n", name, "-t", token, "-l")
 	err := cmd.Run()
@@ -153,7 +153,6 @@ func TestCreateProxy(t *testing.T) {
 }
 
 func TestCreateProduct(t *testing.T) {
-	envs := "test"
 	proxy := "test"
 	approval := "auto"
 

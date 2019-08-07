@@ -14,10 +14,10 @@ import (
 )
 
 type App struct {
-	Name        string            `json:"name"`
-	Status      string            `json:"status"`
+	Name        string            `json:"name,omitempty"`
+	Status      string            `json:"status,omitempty"`
 	Credentials *[]Credential     `json:"credentials,omitempty"`
-	DeveloperID *string           `json:"developerId"`
+	DeveloperID *string           `json:"developerId,omitempty"`
 	DisplayName string            `json:"displayName,omitempty"`
 	Attributes  []types.Attribute `json:"attributes,omitempty"`
 	CallbackURL string            `json:"callbackUrl,omitempty"`
@@ -26,8 +26,8 @@ type App struct {
 
 type Credential struct {
 	APIProducts    []APIProduct `json:"apiProducts,omitempty"`
-	ConsumerKey    string       `json:"consumerKey`
-	ConsumerSecret string       `json:"consumerSecret`
+	ConsumerKey    string       `json:"consumerKey,omitempty"`
+	ConsumerSecret string       `json:"consumerSecret,omitempty"`
 	ExpiresAt      int          `json:"expiresAt,omitempty"`
 	Status         string       `json:"status,omitempty"`
 	Scopes         []string     `json:"scopes,omitempty"`
