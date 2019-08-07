@@ -778,6 +778,7 @@ The following parameters are required. See Common Reference for a list of additi
 * [deploy](#depsf)
 * [export](#expsf)
 * [fetch](#fetchsf)
+* [import](#impsf)
 * [get](#gettsf)
 * [list](#listsf)
 * [undeploy](#undepsf)
@@ -868,6 +869,20 @@ The following parameters are supported. See Common Reference for a list of addit
 
 * `--org -o` (required) Apigee organization name
 * `--name -n` (required) sharedflow name 
+
+### <a name="impsf"/> import
+
+Import sharedflows from dir to an organization.
+
+```
+apigeecli sharedflows import -o org -f /tmp
+```
+
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+* `--folder -f` (required) Folder containing sharedflow bundles
 
 ### <a name="listsf"/> list
 
