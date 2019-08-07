@@ -45,11 +45,11 @@ func init() {
 		"", "Path Service Account private key in JSON")
 	_ = viper.BindPFlag("account", RootCmd.PersistentFlags().Lookup("account"))
 
-	RootCmd.PersistentFlags().BoolVar(&shared.RootArgs.SkipCache, "skipCache", 
+	RootCmd.PersistentFlags().BoolVar(&shared.RootArgs.SkipCache, "skipCache",
 		false, "Skip caching Google OAuth Token")
 
-	RootCmd.PersistentFlags().BoolVar(&shared.RootArgs.SkipCheck, "skipCheck", 
-		true, "Skip checking expiry for Google OAuth Token")		
+	RootCmd.PersistentFlags().BoolVar(&shared.RootArgs.SkipCheck, "skipCheck",
+		true, "Skip checking expiry for Google OAuth Token")
 
 	RootCmd.AddCommand(apis.Cmd)
 	RootCmd.AddCommand(org.Cmd)

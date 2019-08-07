@@ -36,7 +36,6 @@ func init() {
 		4, "Number of connections")
 }
 
-
 func batch(entities []proxy, entityType string, pwg *sync.WaitGroup) {
 
 	defer pwg.Done()
