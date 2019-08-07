@@ -13,7 +13,7 @@ import (
 	types "github.com/srinandan/apigeecli/cmd/types"
 )
 
-type Developer struct {
+type developer struct {
 	EMail      string            `json:"email,omitempty"`
 	FirstName  string            `json:"firstName,omitempty"`
 	LastName   string            `json:"lastName,omitempty"`
@@ -45,9 +45,9 @@ func init() {
 	_ = Cmd.MarkFlagRequired("file")
 }
 
-func createAsyncDeveloper(url string, developer Developer, wg *sync.WaitGroup) {
+func createAsyncDeveloper(url string, dev developer, wg *sync.WaitGroup) {
 	defer wg.Done()
-	out, err := json.Marshal(developer)
+	out, err := json.Marshal(dev)
 	if err != nil {
 		shared.Error.Fatalln(err)
 		return
@@ -58,11 +58,11 @@ func createAsyncDeveloper(url string, developer Developer, wg *sync.WaitGroup) {
 		return
 	}
 
-	shared.Info.Printf("Completed entity: %s", developer.EMail)
+	shared.Info.Printf("Completed entity: %s", dev.EMail)
 }
 
 //batch creates a batch of developers to create
-func batch(url string, entities []Developer, pwg *sync.WaitGroup) {
+func batch(url string, entities []developer, pwg *sync.WaitGroup) {
 
 	defer pwg.Done()
 	//batch workgroup
@@ -118,14 +118,14 @@ func createDevelopers(url string) error {
 	return nil
 }
 
-func readDevelopersFile() ([]Developer, error) {
+func readDevelopersFile() ([]developer, error) {
 
-	developers := []Developer{}
+	devs := []developer{}
 
 	jsonFile, err := os.Open(file)
 
 	if err != nil {
-		return developers, err
+		return devs, err
 	}
 
 	defer jsonFile.Close()
@@ -133,15 +133,15 @@ func readDevelopersFile() ([]Developer, error) {
 	byteValue, err := ioutil.ReadAll(jsonFile)
 
 	if err != nil {
-		return developers, err
+		return devs, err
 	}
 
-	err = json.Unmarshal(byteValue, &developers)
+	err = json.Unmarshal(byteValue, &devs)
 
 	if err != nil {
-		return developers, err
+		return devs, err
 	}
 
-	return developers, nil
+	return devs, nil
 
 }

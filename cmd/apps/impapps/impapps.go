@@ -13,10 +13,10 @@ import (
 	types "github.com/srinandan/apigeecli/cmd/types"
 )
 
-type App struct {
+type application struct {
 	Name        string            `json:"name,omitempty"`
 	Status      string            `json:"status,omitempty"`
-	Credentials *[]Credential     `json:"credentials,omitempty"`
+	Credentials *[]credential     `json:"credentials,omitempty"`
 	DeveloperID *string           `json:"developerId,omitempty"`
 	DisplayName string            `json:"displayName,omitempty"`
 	Attributes  []types.Attribute `json:"attributes,omitempty"`
@@ -24,8 +24,8 @@ type App struct {
 	Scopes      []string          `json:"scopes,omitempty"`
 }
 
-type Credential struct {
-	APIProducts    []APIProduct `json:"apiProducts,omitempty"`
+type credential struct {
+	APIProducts    []apiProduct `json:"apiProducts,omitempty"`
 	ConsumerKey    string       `json:"consumerKey,omitempty"`
 	ConsumerSecret string       `json:"consumerSecret,omitempty"`
 	ExpiresAt      int          `json:"expiresAt,omitempty"`
@@ -33,11 +33,11 @@ type Credential struct {
 	Scopes         []string     `json:"scopes,omitempty"`
 }
 
-type APIProduct struct {
+type apiProduct struct {
 	Name string `json:"apiproduct,omitempty"`
 }
 
-type ImportCredential struct {
+type importCredential struct {
 	APIProducts    []string `json:"apiProducts,omitempty"`
 	ConsumerKey    string   `json:"consumerKey,omitempty"`
 	ConsumerSecret string   `json:"consumerSecret,omitempty"`
@@ -66,7 +66,7 @@ func init() {
 	_ = Cmd.MarkFlagRequired("file")
 }
 
-func createAsyncApp(app App, wg *sync.WaitGroup) {
+func createAsyncApp(app application, wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	//importing an app will be a two step process.
@@ -102,18 +102,18 @@ func createAsyncApp(app App, wg *sync.WaitGroup) {
 			products = append(products, apiProduct.Name)
 		}
 		//create a new credential
-		importCredential := ImportCredential{}
-		importCredential.APIProducts = products
-		importCredential.ConsumerKey = credential.ConsumerKey
-		importCredential.ConsumerSecret = credential.ConsumerSecret
-		importCredential.Scopes = credential.Scopes
+		importCred := importCredential{}
+		importCred.APIProducts = products
+		importCred.ConsumerKey = credential.ConsumerKey
+		importCred.ConsumerSecret = credential.ConsumerSecret
+		importCred.Scopes = credential.Scopes
 
-		impCred, err := json.Marshal(importCredential)
+		impCredJSON, err := json.Marshal(importCred)
 		if err != nil {
 			shared.Error.Fatalln(err)
 			return
 		}
-		_, err = shared.HttpClient(true, u.String(), string(impCred))
+		_, err = shared.HttpClient(true, u.String(), string(impCredJSON))
 		if err != nil {
 			shared.Error.Fatalln(err)
 			return
@@ -124,7 +124,7 @@ func createAsyncApp(app App, wg *sync.WaitGroup) {
 }
 
 //batch creates a batch of apps to create
-func batch(entities []App, pwg *sync.WaitGroup) {
+func batch(entities []application, pwg *sync.WaitGroup) {
 
 	defer pwg.Done()
 	//batch workgroup
@@ -180,9 +180,9 @@ func createApps() error {
 	return nil
 }
 
-func readAppsFile() ([]App, error) {
+func readAppsFile() ([]application, error) {
 
-	apps := []App{}
+	apps := []application{}
 
 	jsonFile, err := os.Open(file)
 

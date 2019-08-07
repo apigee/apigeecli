@@ -13,7 +13,7 @@ import (
 	types "github.com/srinandan/apigeecli/cmd/types"
 )
 
-type Product struct {
+type product struct {
 	Name         string            `json:"name,omitempty"`
 	DisplayName  string            `json:"displayName,omitempty"`
 	ApprovalType string            `json:"approvalType,omitempty"`
@@ -47,7 +47,7 @@ func init() {
 	_ = Cmd.MarkFlagRequired("file")
 }
 
-func createAsyncProduct(url string, entity Product, wg *sync.WaitGroup) {
+func createAsyncProduct(url string, entity product, wg *sync.WaitGroup) {
 	defer wg.Done()
 	out, err := json.Marshal(entity)
 	if err != nil {
@@ -63,7 +63,7 @@ func createAsyncProduct(url string, entity Product, wg *sync.WaitGroup) {
 }
 
 //batch creates a batch of products to create
-func batch(url string, entities []Product, pwg *sync.WaitGroup) {
+func batch(url string, entities []product, pwg *sync.WaitGroup) {
 
 	defer pwg.Done()
 	//batch workgroup
@@ -119,9 +119,9 @@ func createProducts(url string) error {
 	return nil
 }
 
-func readProductsFile() ([]Product, error) {
+func readProductsFile() ([]product, error) {
 
-	products := []Product{}
+	products := []product{}
 
 	jsonFile, err := os.Open(file)
 
