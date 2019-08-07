@@ -17,6 +17,7 @@ import (
 	"os"
 	"os/user"
 	"path"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"sync"
@@ -564,7 +565,7 @@ func FetchAsyncBundle(entityType string, name string, revision string, wg *sync.
 
 	defer wg.Done()
 
-	FetchBundle(entityType, name, revision)
+	_ = FetchBundle(entityType, name, revision)
 
 }
 
@@ -582,5 +583,53 @@ func FetchBundle(entityType string, name string, revision string) error {
 		Error.Fatalln(err)
 		return err
 	}
+	return nil
+}
+
+//ImportBundle imports a sharedflow or api proxy bundle meantot be called asynchronously
+func ImportBundleAsync(entityType string, name, string, bundlePath string, wg *sync.WaitGroup) {
+
+	defer wg.Done()
+
+	_ = ImportBundle(entityType, name, bundlePath)
+
+}
+
+//ImportBundle imports a sharedflow or api proxy bundle
+func ImportBundle(entityType string, name string, bundlePath string) error {
+
+	err := ReadBundle(bundlePath)
+	if err != nil {
+		return err
+	}
+
+	//when importing from a folder, proxy name = file name
+	if name == "" {
+		_, fileName := filepath.Split(bundlePath)
+		names := strings.Split(fileName, ".")
+		name = names[0]
+	}
+
+	u, _ := url.Parse(BaseURL)
+	u.Path = path.Join(u.Path, RootArgs.Org, entityType)
+
+	q := u.Query()
+	q.Set("name", name)
+	q.Set("action", "import")
+	u.RawQuery = q.Encode()
+
+	err = ReadBundle(bundlePath)
+	if err != nil {
+		Error.Fatalln(err)
+		return err
+	}
+
+	_, err = PostHttpOctet(true, u.String(), bundlePath)
+	if err != nil {
+		Error.Fatalln(err)
+		return err
+	}
+
+	Info.Printf("Completed entity: %s", u.String())
 	return nil
 }

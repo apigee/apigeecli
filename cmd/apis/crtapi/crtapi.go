@@ -13,23 +13,12 @@ var Cmd = &cobra.Command{
 	Short: "Creates an API proxy in an Apigee Org",
 	Long:  "Creates an API proxy in an Apigee Org",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		u, _ := url.Parse(shared.BaseURL)
-		u.Path = path.Join(u.Path, shared.RootArgs.Org, "apis")
 
 		if proxy != "" {
-			q := u.Query()
-			q.Set("name", name)
-			q.Set("action", "import")
-			u.RawQuery = q.Encode()
-			err = shared.ReadBundle(name)
-			if err != nil {
-				return err
-			}
-
-			_, err = shared.PostHttpOctet(true, u.String(), proxy)
-			return
+			return shared.ImportBundle("apis", name, proxy)
 		}
-
+		u, _ := url.Parse(shared.BaseURL)
+		u.Path = path.Join(u.Path, shared.RootArgs.Org, "apis")
 		proxyName := "{\"name\":\"" + name + "\"}"
 		_, err = shared.HttpClient(true, u.String(), proxyName)
 		return

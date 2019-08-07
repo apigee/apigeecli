@@ -5,7 +5,6 @@ import (
 	"os"
 	"path"
 	"path/filepath"
-	"strings"
 	"sync"
 
 	"github.com/spf13/cobra"
@@ -35,31 +34,6 @@ func init() {
 	_ = Cmd.MarkFlagRequired("folder")
 }
 
-func createAsyncAPI(u *url.URL, bundlePath string, wg *sync.WaitGroup) {
-
-	defer wg.Done()
-	_, fileName := filepath.Split(bundlePath)
-	name := strings.Split(fileName, ".")
-
-	q := u.Query()
-	q.Set("name", name[0])
-	q.Set("action", "import")
-	u.RawQuery = q.Encode()
-	err := shared.ReadBundle(bundlePath)
-	if err != nil {
-		shared.Error.Fatalln(err)
-		return
-	}
-
-	_, err = shared.PostHttpOctet(true, u.String(), bundlePath)
-	if err != nil {
-		shared.Error.Fatalln(err)
-		return
-	}
-
-	shared.Info.Printf("Completed entity: %s", u.String())
-}
-
 //batch creates a batch of proxies to import
 func batch(u *url.URL, entities []string, pwg *sync.WaitGroup) {
 
@@ -70,7 +44,7 @@ func batch(u *url.URL, entities []string, pwg *sync.WaitGroup) {
 	bwg.Add(len(entities))
 
 	for _, entity := range entities {
-		go createAsyncAPI(u, entity, &bwg)
+		go shared.ImportBundleAsync(u, entity, &bwg)
 	}
 	bwg.Wait()
 }
