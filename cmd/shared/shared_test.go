@@ -34,6 +34,20 @@ func TestHttpDelete(t *testing.T) {
 	}
 }
 
+func TestHttpInvalidParam(t *testing.T) {
+	_, err := HttpClient(true, "https://httpbin.org/delete", "", "DELTE")
+	if err == nil {
+		t.Fatal(err)
+	}
+}
+
+func TestHttpInvalidNumberOfParams(t *testing.T) {
+	_, err := HttpClient(true, "https://httpbin.org/delete", "", "DELETE", "SOMETHING ELSE")
+	if err == nil {
+		t.Fatal(err)
+	}
+}
+
 func TestDownloadResource(t *testing.T) {
 	//download 1000 bytes
 	Init()

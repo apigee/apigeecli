@@ -160,41 +160,37 @@ func DownloadResource(url string, name string) error {
 		Error.Fatalln("response Code: ", resp.StatusCode)
 		Error.Fatalln("error in response: ", resp.Body)
 		return errors.New("error in response")
-	} else {
-		defer resp.Body.Close()
-		_, err = io.Copy(out, resp.Body)
-		if err != nil {
-			Error.Fatalln("error writing response to file: ", err)
-			return err
-		}
-
-		fmt.Println("Proxy bundle " + name + ".zip completed")
-		return nil
 	}
+	defer resp.Body.Close()
+	_, err = io.Copy(out, resp.Body)
+	if err != nil {
+		Error.Fatalln("error writing response to file: ", err)
+		return err
+	}
+
+	fmt.Println("Proxy bundle " + name + ".zip completed")
+	return nil
 }
 
 //HttpClient method is used to GET,POST,PUT or DELETE JSON data
-// The first parameter instructs whether the output should be printed
-// The second parameter is url. If only one parameter is sent, assume GET
-// The third parameter is the payload. The two parameters are sent, assume POST
-// THe fourth parammeter is the method. If three parameters are sent, assume method in param
 func HttpClient(print bool, params ...string) (respBody []byte, err error) {
+	// The first parameter instructs whether the output should be printed
+	// The second parameter is url. If only one parameter is sent, assume GET
+	// The third parameter is the payload. The two parameters are sent, assume POST
+	// THe fourth parammeter is the method. If three parameters are sent, assume method in param
 
 	var req *http.Request
 
 	client := &http.Client{}
 	Info.Println("Connecting to: ", params[0])
 
-	if len(params) > 3 {
-		return nil, errors.New("Incorrect parameters to invoke the method")
-	}
-
-	if len(params) == 1 {
+	switch paramLen := len(params); paramLen {
+	case 1:
 		req, err = http.NewRequest("GET", params[0], nil)
-	} else if len(params) == 2 {
+	case 2:
 		Info.Println("Payload: ", params[1])
 		req, err = http.NewRequest("POST", params[0], bytes.NewBuffer([]byte(params[1])))
-	} else if len(params) == 3 {
+	case 3:
 		if params[2] == "DELETE" {
 			req, err = http.NewRequest("DELETE", params[0], nil)
 		} else if params[2] == "PUT" {
@@ -202,6 +198,8 @@ func HttpClient(print bool, params ...string) (respBody []byte, err error) {
 		} else {
 			return nil, errors.New("Unsupported method")
 		}
+	default:
+		return nil, errors.New("Unsupported method")
 	}
 
 	if err != nil {
@@ -484,7 +482,7 @@ func WriteByteArrayToFile(exportFile string, fileAppend bool, payload []byte) er
 	var fileFlags = os.O_CREATE | os.O_WRONLY
 
 	if fileAppend {
-		fileFlags = fileFlags | os.O_APPEND
+		fileFlags |= os.O_APPEND
 	}
 
 	f, err := os.OpenFile(exportFile, fileFlags, 0644)
