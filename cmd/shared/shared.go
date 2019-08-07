@@ -70,7 +70,7 @@ func Init() {
 		log.Ldate|log.Ltime|log.Lshortfile)
 }
 
-//This method is used to send resources, proxy bundles, shared flows etc.
+//PostHttpOctet method is used to send resources, proxy bundles, shared flows etc.
 func PostHttpOctet(print bool, url string, proxyName string) (respBody []byte, err error) {
 
 	file, _ := os.Open(proxyName)
@@ -111,24 +111,25 @@ func PostHttpOctet(print bool, url string, proxyName string) (respBody []byte, e
 	if err != nil {
 		Error.Fatalln("error connecting: ", err)
 		return nil, err
-	} else {
-		defer resp.Body.Close()
-		respBody, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			Error.Fatalln("error in response: ", err)
-			return nil, err
-		} else if resp.StatusCode != 200 {
-			Error.Fatalln("error in response: ", string(respBody))
-			return nil, errors.New("Error in response")
-		}
-		if print {
-			return respBody, PrettyPrint(respBody)
-		}
-		return respBody, nil
 	}
+
+	defer resp.Body.Close()
+	respBody, err = ioutil.ReadAll(resp.Body)
+	if err != nil {
+		Error.Fatalln("error in response: ", err)
+		return nil, err
+	} else if resp.StatusCode != 200 {
+		Error.Fatalln("error in response: ", string(respBody))
+		return nil, errors.New("Error in response")
+	}
+	if print {
+		return respBody, PrettyPrint(respBody)
+	}
+
+	return respBody, nil
 }
 
-//This method is used to download resources, proxy bundles, sharedflows
+//DownloadResource method is used to download resources, proxy bundles, sharedflows
 func DownloadResource(url string, name string) error {
 
 	out, err := os.Create(name + ".zip")
@@ -172,6 +173,7 @@ func DownloadResource(url string, name string) error {
 	}
 }
 
+//HttpClient method is used to GET,POST,PUT or DELETE JSON data
 // The first parameter instructs whether the output should be printed
 // The second parameter is url. If only one parameter is sent, assume GET
 // The third parameter is the payload. The two parameters are sent, assume POST
@@ -234,6 +236,7 @@ func HttpClient(print bool, params ...string) (respBody []byte, err error) {
 	return respBody, nil
 }
 
+//PrettyPrint method prints formatted json
 func PrettyPrint(body []byte) error {
 
 	var prettyJSON bytes.Buffer
@@ -286,6 +289,7 @@ func generateJWT() (string, error) {
 	return string(payload), nil
 }
 
+//GenerateAccessToken generates a Google OAuth access token from a service account
 func GenerateAccessToken() (string, error) {
 
 	const tokenEndpoint = "https://www.googleapis.com/oauth2/v4/token"
@@ -521,7 +525,7 @@ func WriteByteArrayToFile(exportFile string, fileAppend bool, payload []byte) er
 	return nil
 }
 
-//GetAsync stores results for each entity in a list
+//GetAsyncEntity stores results for each entity in a list
 func GetAsyncEntity(entityURL string, wg *sync.WaitGroup, mu *sync.Mutex) {
 
 	//this is a two step process - 1) get entity details 2) store in byte[][]
@@ -570,7 +574,7 @@ func FetchBundle(entityType string, name string, revision string) error {
 	return nil
 }
 
-//ImportBundle imports a sharedflow or api proxy bundle meantot be called asynchronously
+//ImportBundleAsync imports a sharedflow or api proxy bundle meantot be called asynchronously
 func ImportBundleAsync(entityType string, name string, bundlePath string, wg *sync.WaitGroup) {
 
 	defer wg.Done()
