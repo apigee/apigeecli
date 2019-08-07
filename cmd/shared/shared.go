@@ -29,8 +29,10 @@ import (
 	types "github.com/srinandan/apigeecli/cmd/types"
 )
 
+//BaseURL is the Apigee control plane endpoint
 const BaseURL = "https://apigee.googleapis.com/v1/organizations/"
 
+//RootArgs is used to hold basic arugments used by all commands
 var RootArgs = types.Arguments{SkipCache: false, SkipCheck: true, LogInfo: false}
 
 //log levels, default is error
@@ -408,6 +410,7 @@ func checkAccessToken() bool {
 	return true
 }
 
+//SetAccessToken read from cache or if not found or expired will generate a new one
 func SetAccessToken() error {
 
 	if RootArgs.Token == "" && RootArgs.ServiceAccount == "" {
@@ -446,6 +449,7 @@ func SetAccessToken() error {
 	return fmt.Errorf("token expired: request a new access token or pass the service account")
 }
 
+//ReadBundle confirms if the file format is a zip file
 func ReadBundle(filename string) error {
 
 	if !strings.HasSuffix(filename, ".zip") {
@@ -546,8 +550,8 @@ func GetAsyncEntity(entityURL string, wg *sync.WaitGroup, mu *sync.Mutex) {
 }
 
 //FetchAyncBundle can download a shared flow or a proxy bundle
-//this method is meant to be called asynchronously
 func FetchAsyncBundle(entityType string, name string, revision string, wg *sync.WaitGroup) {
+	//this method is meant to be called asynchronously
 
 	defer wg.Done()
 
