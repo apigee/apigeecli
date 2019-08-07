@@ -1,6 +1,6 @@
 package types
 
-//Attributes to used to hold custom attributes for entities
+//Attribute to used to hold custom attributes for entities
 type Attribute struct {
 	Name  string `json:"name,omitempty"`
 	Value string `json:"value,omitempty"`
