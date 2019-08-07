@@ -8,6 +8,8 @@ import (
 	"github.com/srinandan/apigeecli/cmd/developers"
 	"github.com/srinandan/apigeecli/cmd/env"
 	flowhooks "github.com/srinandan/apigeecli/cmd/flowhooks"
+	"github.com/srinandan/apigeecli/cmd/keyaliases"
+	"github.com/srinandan/apigeecli/cmd/keystores"
 	"github.com/srinandan/apigeecli/cmd/kvm"
 	"github.com/srinandan/apigeecli/cmd/org"
 	"github.com/srinandan/apigeecli/cmd/products"
@@ -32,7 +34,7 @@ var RootCmd = &cobra.Command{
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	RootCmd.PersistentFlags().BoolVarP(&shared.LogInfo, "log", "l",
+	RootCmd.PersistentFlags().BoolVarP(&shared.RootArgs.LogInfo, "log", "l",
 		false, "Log Information")
 
 	RootCmd.PersistentFlags().StringVarP(&shared.RootArgs.Token, "token", "t",
@@ -42,6 +44,12 @@ func init() {
 	RootCmd.PersistentFlags().StringVarP(&shared.RootArgs.ServiceAccount, "account", "a",
 		"", "Path Service Account private key in JSON")
 	_ = viper.BindPFlag("account", RootCmd.PersistentFlags().Lookup("account"))
+
+	RootCmd.PersistentFlags().BoolVar(&shared.RootArgs.SkipCache, "skipCache", 
+		false, "Skip caching Google OAuth Token")
+
+	RootCmd.PersistentFlags().BoolVar(&shared.RootArgs.SkipCheck, "skipCheck", 
+		true, "Skip checking expiry for Google OAuth Token")		
 
 	RootCmd.AddCommand(apis.Cmd)
 	RootCmd.AddCommand(org.Cmd)
@@ -55,6 +63,8 @@ func init() {
 	RootCmd.AddCommand(flowhooks.Cmd)
 	RootCmd.AddCommand(targetservers.Cmd)
 	RootCmd.AddCommand(token.Cmd)
+	RootCmd.AddCommand(keystores.Cmd)
+	RootCmd.AddCommand(keyaliases.Cmd)
 }
 
 func initConfig() {

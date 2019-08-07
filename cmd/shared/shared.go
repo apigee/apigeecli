@@ -31,7 +31,7 @@ import (
 
 const BaseURL = "https://apigee.googleapis.com/v1/organizations/"
 
-var RootArgs = types.Arguments{}
+var RootArgs = types.Arguments{SkipCache: false, SkipCheck: true, LogInfo: false}
 
 //log levels, default is error
 var (
@@ -39,22 +39,6 @@ var (
 	Warning *log.Logger
 	Error   *log.Logger
 )
-
-//LogInfo controls the log level
-var LogInfo = false
-
-//skip checking access token expiry
-var skipCheck = true
-
-//skip writing access token to file
-var skipCache = false
-
-// Structure to hold OAuth response
-type oAuthAccessToken struct {
-	AccessToken string `json:"access_token,omitempty"`
-	ExpiresIn   int    `json:"expires_in,omitempty"`
-	TokenType   string `json:"token_type,omitempty"`
-}
 
 //EntityPayloadList stores list of entities
 var EntityPayloadList [][]byte //types.EntityPayloadList
@@ -66,7 +50,7 @@ func Init() {
 
 	var infoHandle = ioutil.Discard
 
-	if LogInfo {
+	if RootArgs.LogInfo {
 		infoHandle = os.Stdout
 	}
 
@@ -339,7 +323,7 @@ func GenerateAccessToken() (string, error) {
 		return "", errors.New("Error in response")
 	}
 	decoder := json.NewDecoder(resp.Body)
-	accessToken := oAuthAccessToken{}
+	accessToken := types.OAuthAccessToken{}
 	if err := decoder.Decode(&accessToken); err != nil {
 		Error.Fatalln("error in response: ", err)
 		return "", errors.New("Error in response")
@@ -367,7 +351,7 @@ func readAccessToken() error {
 
 func writeAccessToken() error {
 
-	if skipCache {
+	if RootArgs.SkipCache {
 		return nil
 	}
 
@@ -383,7 +367,7 @@ func writeAccessToken() error {
 
 func checkAccessToken() bool {
 
-	if skipCheck {
+	if RootArgs.SkipCheck {
 		Info.Println("skipping token validity")
 		return true
 	}
