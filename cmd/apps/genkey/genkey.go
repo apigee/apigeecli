@@ -1,11 +1,12 @@
 package crtkey
 
 import (
-	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/cmd/shared"
 	"net/url"
 	"path"
 	"strings"
+
+	"github.com/spf13/cobra"
+	"github.com/srinandan/apigeecli/cmd/shared"
 )
 
 var Cmd = &cobra.Command{
@@ -33,20 +34,20 @@ var Cmd = &cobra.Command{
 		}
 
 		payload := "{" + strings.Join(key, ",") + "}"
-		u.Path = path.Join(u.Path, shared.RootArgs.Org, "developers", devid, "apps", name)
+		u.Path = path.Join(u.Path, shared.RootArgs.Org, "developers", devID, "apps", name)
 		_, err = shared.HttpClient(true, u.String(), payload)
 		return
 	},
 }
 
-var name, devid, expires, callback string
+var name, devID, expires, callback string
 var apiProducts, scopes []string
 
 func init() {
 
 	Cmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of the developer app")
-	Cmd.Flags().StringVarP(&devid, "devid", "d",
+	Cmd.Flags().StringVarP(&devID, "devid", "d",
 		"", "Developer Id")
 	Cmd.Flags().StringVarP(&expires, "expires", "x",
 		"", "A setting, in milliseconds, for the lifetime of the consumer key")
