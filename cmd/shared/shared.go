@@ -587,7 +587,7 @@ func FetchBundle(entityType string, name string, revision string) error {
 }
 
 //ImportBundle imports a sharedflow or api proxy bundle meantot be called asynchronously
-func ImportBundleAsync(entityType string, name, string, bundlePath string, wg *sync.WaitGroup) {
+func ImportBundleAsync(entityType string, name string, bundlePath string, wg *sync.WaitGroup) {
 
 	defer wg.Done()
 

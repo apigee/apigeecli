@@ -1,4 +1,4 @@
-package impapis
+package impsfs
 
 import (
 	"os"
@@ -11,8 +11,8 @@ import (
 
 var Cmd = &cobra.Command{
 	Use:   "import",
-	Short: "Import a folder containing API proxy bundles",
-	Long:  "Import a folder containing API proxy bundles",
+	Short: "Import a folder containing sharedflow bundles",
+	Long:  "Import a folder containing sharedflow bundles",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		return createAPIs()
 	},
@@ -24,14 +24,14 @@ var conn int
 func init() {
 
 	Cmd.Flags().StringVarP(&folder, "folder", "f",
-		"", "folder containing API proxy bundles")
+		"", "folder containing sharedflow bundles")
 	Cmd.Flags().IntVarP(&conn, "conn", "c",
 		4, "Number of connections")
 
 	_ = Cmd.MarkFlagRequired("folder")
 }
 
-//batch creates a batch of proxies to import
+//batch creates a batch of sharedflow to import
 func batch(entities []string, pwg *sync.WaitGroup) {
 
 	defer pwg.Done()
@@ -41,8 +41,8 @@ func batch(entities []string, pwg *sync.WaitGroup) {
 	bwg.Add(len(entities))
 
 	for _, entity := range entities {
-		//api proxy name is empty; same as filename
-		go shared.ImportBundleAsync("apis", "", entity, &bwg)
+		//sharedflow name is empty; same as filename
+		go shared.ImportBundleAsync("sharedflows", "", entity, &bwg)
 	}
 	bwg.Wait()
 }
