@@ -18,7 +18,7 @@ var Cmd = &cobra.Command{
 	Long:  "Returns the app profile for the specified app ID.",
 	Args: func(cmd *cobra.Command, args []string) error {
 		if appID == "" && name == "" {
-			return fmt.Errorf("Pass either name or appId")
+			return fmt.Errorf("pass either name or appId")
 		}
 		if appID != "" && name != "" {
 			return fmt.Errorf("name and appId cannot be used together")

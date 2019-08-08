@@ -122,7 +122,7 @@ func PostHttpOctet(print bool, url string, proxyName string) (respBody []byte, e
 		return nil, err
 	} else if resp.StatusCode != 200 {
 		Error.Fatalln("error in response: ", string(respBody))
-		return nil, errors.New("Error in response")
+		return nil, errors.New("error in response")
 	}
 	if print {
 		return respBody, PrettyPrint(respBody)
@@ -198,10 +198,10 @@ func HttpClient(print bool, params ...string) (respBody []byte, err error) {
 		} else if params[2] == "PUT" {
 			req, err = http.NewRequest("PUT", params[0], bytes.NewBuffer([]byte(params[1])))
 		} else {
-			return nil, errors.New("Unsupported method")
+			return nil, errors.New("unsupported method")
 		}
 	default:
-		return nil, errors.New("Unsupported method")
+		return nil, errors.New("unsupported method")
 	}
 
 	if err != nil {
