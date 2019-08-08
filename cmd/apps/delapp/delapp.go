@@ -1,12 +1,14 @@
 package deldev
 
 import (
-	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/cmd/shared"
 	"net/url"
 	"path"
+
+	"github.com/spf13/cobra"
+	"github.com/srinandan/apigeecli/cmd/shared"
 )
 
+//Cmd to delete app
 var Cmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Deletes a Developer App from an organization",

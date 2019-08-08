@@ -8,6 +8,7 @@ import (
 	"github.com/srinandan/apigeecli/cmd/shared"
 )
 
+//Cmd to list envs
 var Cmd = &cobra.Command{
 	Use:   "list",
 	Short: "List environments in an Apigee Org",

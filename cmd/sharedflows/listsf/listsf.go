@@ -9,6 +9,7 @@ import (
 	"github.com/srinandan/apigeecli/cmd/shared"
 )
 
+//Cmd to list shared flow
 var Cmd = &cobra.Command{
 	Use:   "list",
 	Short: "Lists all shared flows in the organization.",

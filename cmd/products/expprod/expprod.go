@@ -10,6 +10,7 @@ import (
 	"github.com/srinandan/apigeecli/cmd/shared"
 )
 
+//Cmd to export products
 var Cmd = &cobra.Command{
 	Use:   "export",
 	Short: "Export API products to a file",

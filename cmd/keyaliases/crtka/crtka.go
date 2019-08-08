@@ -4,6 +4,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
+//Cmd to create key aliases
 var Cmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a Key Alias",

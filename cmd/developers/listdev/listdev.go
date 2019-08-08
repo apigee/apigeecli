@@ -8,6 +8,7 @@ import (
 	"github.com/srinandan/apigeecli/cmd/shared"
 )
 
+//Cmd to list developer
 var Cmd = &cobra.Command{
 	Use:   "list",
 	Short: "Returns a list of App Developers",

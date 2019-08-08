@@ -8,6 +8,7 @@ import (
 	"github.com/srinandan/apigeecli/cmd/shared"
 )
 
+//Cmd to get flow hooks
 var Cmd = &cobra.Command{
 	Use:   "get",
 	Short: "Get a flowhook",

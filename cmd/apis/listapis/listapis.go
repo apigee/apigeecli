@@ -9,6 +9,7 @@ import (
 	"github.com/srinandan/apigeecli/cmd/shared"
 )
 
+//Cmd to list api
 var Cmd = &cobra.Command{
 	Use:   "list",
 	Short: "List APIs in an Apigee Org",

@@ -7,6 +7,7 @@ import (
 	"path"
 )
 
+//Cmd to delete shared flow
 var Cmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Deletes a shared flow",

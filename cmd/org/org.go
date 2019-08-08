@@ -7,6 +7,7 @@ import (
 	"github.com/srinandan/apigeecli/cmd/org/setmart"
 )
 
+//Cmd to manage orgs
 var Cmd = &cobra.Command{
 	Use:   "orgs",
 	Short: "Manage Apigee Orgs",

@@ -19,6 +19,7 @@ type proxy struct {
 	Revision []string `json:"revision,omitempty"`
 }
 
+//Cmd to export apis
 var Cmd = &cobra.Command{
 	Use:   "export",
 	Short: "export API proxy bundles from an org",

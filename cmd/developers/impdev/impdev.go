@@ -21,6 +21,7 @@ type developer struct {
 	Username   string            `json:"userName,omitempty"`
 }
 
+//Cmd to import developer
 var Cmd = &cobra.Command{
 	Use:   "import",
 	Short: "Import a file containing App Developers",

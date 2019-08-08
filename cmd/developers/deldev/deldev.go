@@ -7,6 +7,7 @@ import (
 	"path"
 )
 
+//Cmd to delete developer
 var Cmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Deletes an App Developer from an organization",

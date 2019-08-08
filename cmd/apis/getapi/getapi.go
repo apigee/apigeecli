@@ -8,6 +8,7 @@ import (
 	"github.com/srinandan/apigeecli/cmd/shared"
 )
 
+//Cmd to get api details
 var Cmd = &cobra.Command{
 	Use:   "get",
 	Short: "Gets an API Proxy by name",

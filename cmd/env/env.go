@@ -7,6 +7,7 @@ import (
 	"github.com/srinandan/apigeecli/cmd/shared"
 )
 
+//Cmd to manage envs
 var Cmd = &cobra.Command{
 	Use:     "envs",
 	Aliases: []string{"environments"},

@@ -23,6 +23,7 @@ type product struct {
 	Proxies      []string          `json:"proxies,omitempty"`
 }
 
+//Cmd to import products
 var Cmd = &cobra.Command{
 	Use:   "import",
 	Short: "Import a file containing API products",

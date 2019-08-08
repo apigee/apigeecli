@@ -7,6 +7,7 @@ import (
 	"path"
 )
 
+//Cmd to delete kvm
 var Cmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete a KVM map",

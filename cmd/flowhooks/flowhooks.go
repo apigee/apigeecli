@@ -9,6 +9,7 @@ import (
 	"github.com/srinandan/apigeecli/cmd/shared"
 )
 
+//Cmd to manage flow hooks
 var Cmd = &cobra.Command{
 	Use:     "flowhooks",
 	Aliases: []string{"fs"},

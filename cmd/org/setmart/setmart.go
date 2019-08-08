@@ -8,6 +8,7 @@ import (
 	"github.com/srinandan/apigeecli/cmd/shared"
 )
 
+//Cmd to set mart endpoint
 var Cmd = &cobra.Command{
 	Use:   "setmart",
 	Short: "Set MART endpoint for an Apigee Org",

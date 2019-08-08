@@ -12,6 +12,7 @@ import (
 	"github.com/srinandan/apigeecli/cmd/shared"
 )
 
+//Cmd to manage apps
 var Cmd = &cobra.Command{
 	Use:     "apps",
 	Aliases: []string{"applications"},

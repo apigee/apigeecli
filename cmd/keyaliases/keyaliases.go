@@ -9,6 +9,7 @@ import (
 	"github.com/srinandan/apigeecli/cmd/shared"
 )
 
+//Cmd to manage key aliases
 var Cmd = &cobra.Command{
 	Use:     "keyaliases",
 	Aliases: []string{"ka"},

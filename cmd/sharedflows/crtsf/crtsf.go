@@ -8,6 +8,7 @@ import (
 	"github.com/srinandan/apigeecli/cmd/shared"
 )
 
+//Cmd to create shared flow
 var Cmd = &cobra.Command{
 	Use:   "create",
 	Short: "Creates a sharedflow in an Apigee Org",

@@ -8,6 +8,7 @@ import (
 	"github.com/srinandan/apigeecli/cmd/shared"
 )
 
+//Cmd to export developer
 var Cmd = &cobra.Command{
 	Use:   "export",
 	Short: "Export Developers to a file",

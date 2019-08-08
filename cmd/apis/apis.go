@@ -15,6 +15,7 @@ import (
 	"github.com/srinandan/apigeecli/cmd/shared"
 )
 
+//Cmd to manage apis
 var Cmd = &cobra.Command{
 	Use:   "apis",
 	Short: "Manage Apigee API proxies in an org",

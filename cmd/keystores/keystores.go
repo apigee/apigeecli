@@ -9,6 +9,7 @@ import (
 	"github.com/srinandan/apigeecli/cmd/shared"
 )
 
+//Cmd to manage key stores
 var Cmd = &cobra.Command{
 	Use:     "keystores",
 	Aliases: []string{"ks"},

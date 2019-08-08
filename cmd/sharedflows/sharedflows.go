@@ -14,6 +14,7 @@ import (
 	"github.com/srinandan/apigeecli/cmd/sharedflows/undepsf"
 )
 
+//Cmd to manage shared flows
 var Cmd = &cobra.Command{
 	Use:   "sharedflows",
 	Short: "Manage Apigee shared flows in an org",

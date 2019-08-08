@@ -7,6 +7,7 @@ import (
 	"path"
 )
 
+//Cmd to deploy shared flow
 var Cmd = &cobra.Command{
 	Use:   "deploy",
 	Short: "Deploys a revision of an existing Sharedflow",

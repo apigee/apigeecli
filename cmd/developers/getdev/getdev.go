@@ -7,6 +7,7 @@ import (
 	"path"
 )
 
+//Cmd to get developer
 var Cmd = &cobra.Command{
 	Use:   "get",
 	Short: "Returns the profile for a developer by email address or ID",

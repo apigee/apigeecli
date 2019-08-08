@@ -7,6 +7,7 @@ import (
 	"path"
 )
 
+//Cmd to delete flow hooks
 var Cmd = &cobra.Command{
 	Use:   "detach",
 	Short: "Detach a flowhook",

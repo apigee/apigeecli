@@ -7,6 +7,7 @@ import (
 	"path"
 )
 
+//Cmd to get shared flow
 var Cmd = &cobra.Command{
 	Use:   "get",
 	Short: "Gets a shared flow by name",

@@ -8,6 +8,7 @@ import (
 	"github.com/srinandan/apigeecli/cmd/shared"
 )
 
+//Cmd to delete key stores
 var Cmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete a Key Store",

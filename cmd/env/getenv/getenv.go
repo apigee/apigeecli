@@ -7,6 +7,7 @@ import (
 	"path"
 )
 
+//Cmd to get env details
 var Cmd = &cobra.Command{
 	Use:   "get",
 	Short: "Get properties of an environment",

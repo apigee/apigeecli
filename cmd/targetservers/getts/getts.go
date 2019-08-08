@@ -7,6 +7,7 @@ import (
 	"path"
 )
 
+//Cmd to get target servers
 var Cmd = &cobra.Command{
 	Use:   "get",
 	Short: "Get a Target Server",

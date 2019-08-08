@@ -8,6 +8,7 @@ import (
 	"github.com/srinandan/apigeecli/cmd/shared"
 )
 
+//Cmd to undeloy api
 var Cmd = &cobra.Command{
 	Use:   "undeploy",
 	Short: "Undeploys a revision of an existing API proxy",

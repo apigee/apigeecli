@@ -11,6 +11,7 @@ import (
 	"github.com/srinandan/apigeecli/cmd/shared"
 )
 
+//Cmd to manage developers
 var Cmd = &cobra.Command{
 	Use:     "devs",
 	Aliases: []string{"developers"},

@@ -5,6 +5,7 @@ import (
 	"github.com/srinandan/apigeecli/cmd/shared"
 )
 
+//Cmd to download api
 var Cmd = &cobra.Command{
 	Use:   "fetch",
 	Short: "Returns a zip-formatted proxy bundle ",

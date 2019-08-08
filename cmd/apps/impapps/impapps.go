@@ -44,6 +44,7 @@ type importCredential struct {
 	Scopes         []string `json:"scopes,omitempty"`
 }
 
+//Cmd to import apps
 var Cmd = &cobra.Command{
 	Use:   "import",
 	Short: "Import a file containing Developer Apps",

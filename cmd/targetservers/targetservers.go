@@ -10,6 +10,7 @@ import (
 	"github.com/srinandan/apigeecli/cmd/targetservers/listts"
 )
 
+//Cmd to manage targetservers
 var Cmd = &cobra.Command{
 	Use:     "targetservers",
 	Aliases: []string{"ts"},

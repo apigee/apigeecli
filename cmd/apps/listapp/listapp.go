@@ -7,6 +7,7 @@ import (
 	"path"
 )
 
+//Cmd to list apps
 var Cmd = &cobra.Command{
 	Use:   "list",
 	Short: "Returns a list of Developer Applications",

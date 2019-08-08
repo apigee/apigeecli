@@ -1,7 +1,7 @@
 # apigeecli
 [![TravisCI](https://travis-ci.org/srinandan/apigeecli.svg?branch=master)](https://travis-ci.org/srinandan/apigeecli)
 [![Go Report Card](https://goreportcard.com/badge/github.com/srinandan/apigeecli)](https://goreportcard.com/report/github.com/srinandan/apigeecli)
-[![Version](https://img.shields.io/badge/version-v0.4-green.svg)](https://github.com/srinandan/apigeecli/releases)
+[![Version](https://img.shields.io/badge/version-v0.5-green.svg)](https://github.com/srinandan/apigeecli/releases)
 
 This is a tool to interact with [Apigee APIs](https://apigee.googleapis.com). The tool lets you manage (get, list) environments, proxies, etc.
 
@@ -77,6 +77,8 @@ ___
 * [developers](#devs)
 * [envs](#env)
 * [flowhooks](#flow)
+* [keystores](#keystores)
+* [keyaliases](#keyaliases)
 * [kvms](#kvm)
 * [org](#org)
 * [products](#prods)
@@ -84,7 +86,6 @@ ___
 * [sync](#sync)
 * [targetservers](#target)
 * [token](#token)
-* [TODO](#todo)
 
 ---
 
@@ -584,6 +585,146 @@ The following parameters are supported. See Common Reference for a list of addit
 
 ---
 
+## <a name="keystores"/> keystores
+
+* [create](#crtks)
+* [delete](#delks)
+* [get](#getks)
+* [list](#listks)
+
+### <a name="crtks"/> create
+
+Create a new key store
+
+```
+apigeecli keystores create -o org -e env -n name
+```
+
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+* `--env -e` (required) Apigee environment name
+* `--name -n` (required) Key Store name
+
+### <a name ="delks"/> delete
+
+Delete a key store
+
+```
+apigeecli keystores delete -o org -e env -n name 
+```
+
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+* `--env -e` (required) Apigee environment name
+* `--name -n` (required) Key store name
+
+### <a name ="getks"/> get
+
+Get details of a key store
+
+```
+apigeecli keystores get -o org -e env -n name 
+```
+
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+* `--env -e` (required) Apigee environment name
+* `--name -n` (required) Key store name
+
+### <a name ="listks"/> list
+
+List key stores in an environment
+
+```
+apigeecli keystores get -o org -e env
+```
+
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+* `--env -e` (required) Apigee environment name
+
+---
+
+## <a name="keylaliases"/> keyaliases
+
+* [create](#crtka)
+* [delete](#delka)
+* [get](#getka)
+* [list](#listka)
+
+### <a name="crtka"/> create
+
+Create a new key aliases
+
+```
+apigeecli keyaliases create -o org -e env -n name -s alias
+```
+
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+* `--env -e` (required) Apigee environment name
+* `--name -n` (required) Key Store name
+* `--alias -s` (required) Key Alias name
+
+### <a name ="delka"/> delete
+
+Delete a key aliases
+
+```
+apigeecli keyaliases delete -o org -e env -n name -s alias
+```
+
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+* `--env -e` (required) Apigee environment name
+* `--name -n` (required) Key store name
+* `--alias -s` (required) Key Alias name
+
+### <a name ="getka"/> get
+
+Get details of a key aliases
+
+```
+apigeecli keyaliases get -o org -e env -n name -s alias
+```
+
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+* `--env -e` (required) Apigee environment name
+* `--name -n` (required) Key store name
+* `--alias -s` (required) Key Alias name
+
+### <a name ="listka"/> list
+
+List key aliases in a key store
+
+```
+apigeecli keyaliases get -o org -e env -n name
+```
+
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+* `--env -e` (required) Apigee environment name
+* `--name -n` (required) Key store name
+
+---
+
 ## <a name="kvm"/> kvms
 
 * [create](#crtkvm)
@@ -981,7 +1122,7 @@ The following parameters are supported. See Common Reference for a list of addit
 Delete a target server
 
 ```
-apigeecli targetservers get -o org -e env -n name 
+apigeecli targetservers delete -o org -e env -n name 
 ```
 
 Parameters
@@ -1069,6 +1210,3 @@ The following parameters are supported. See Common Reference for a list of addit
 
 ---
 
-## <a name="todo"/> TODO
-
-* `apigeecli clean`

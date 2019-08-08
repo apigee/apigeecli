@@ -11,6 +11,7 @@ import (
 	"github.com/srinandan/apigeecli/cmd/shared"
 )
 
+//Cmd to manage products
 var Cmd = &cobra.Command{
 	Use:     "products",
 	Aliases: []string{"prods"},

@@ -19,6 +19,7 @@ type iAMIdentities struct {
 
 var identity string
 
+//Cmd to set identities
 var Cmd = &cobra.Command{
 	Use:   "set",
 	Short: "Set identity with access to control plane resources",

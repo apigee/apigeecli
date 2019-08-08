@@ -20,6 +20,7 @@ import (
 	"github.com/srinandan/apigeecli/cmd/token"
 )
 
+//RootCmd to manage apigeecli
 var RootCmd = &cobra.Command{
 	Use:   "apigeecli",
 	Short: "Utility to work with Apigee APIs.",

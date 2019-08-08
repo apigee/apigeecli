@@ -8,6 +8,7 @@ import (
 	"github.com/srinandan/apigeecli/cmd/shared"
 )
 
+//Cmd to get key aliases
 var Cmd = &cobra.Command{
 	Use:   "get",
 	Short: "Get a Key Store",

@@ -9,6 +9,7 @@ import (
 	"github.com/srinandan/apigeecli/cmd/shared"
 )
 
+//Cmd to create developer
 var Cmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a developer",

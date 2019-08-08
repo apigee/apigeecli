@@ -7,6 +7,7 @@ import (
 	"path"
 )
 
+//Cmd to delete target servers
 var Cmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete a Target Server",

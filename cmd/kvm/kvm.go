@@ -8,6 +8,7 @@ import (
 	"github.com/srinandan/apigeecli/cmd/shared"
 )
 
+//Cmd to manage kvms
 var Cmd = &cobra.Command{
 	Use:   "kvms",
 	Short: "Manage Key Value Maps",

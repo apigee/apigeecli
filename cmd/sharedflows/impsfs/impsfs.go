@@ -9,6 +9,7 @@ import (
 	"github.com/srinandan/apigeecli/cmd/shared"
 )
 
+//Cmd to import shared flow
 var Cmd = &cobra.Command{
 	Use:   "import",
 	Short: "Import a folder containing sharedflow bundles",

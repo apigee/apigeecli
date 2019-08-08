@@ -8,6 +8,7 @@ import (
 	"github.com/srinandan/apigeecli/cmd/shared"
 )
 
+//Cmd to list key aliases
 var Cmd = &cobra.Command{
 	Use:   "list",
 	Short: "List Key Aliases",

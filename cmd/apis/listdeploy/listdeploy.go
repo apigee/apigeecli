@@ -8,6 +8,7 @@ import (
 	"github.com/srinandan/apigeecli/cmd/shared"
 )
 
+//Cmd to list deployed api
 var Cmd = &cobra.Command{
 	Use:   "listdeploy",
 	Short: "Lists all deployments of an API proxy",

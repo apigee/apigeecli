@@ -19,6 +19,7 @@ type sharedflow struct {
 	Revision []string `json:"revision,omitempty"`
 }
 
+//Cmd to export shared flows
 var Cmd = &cobra.Command{
 	Use:   "export",
 	Short: "export Sharedflow bundles from an org",

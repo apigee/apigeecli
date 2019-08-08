@@ -9,6 +9,7 @@ import (
 	"strings"
 )
 
+//Cmd to create kvms
 var Cmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create an environment scoped KVM Map",

@@ -7,6 +7,7 @@ import (
 	"path"
 )
 
+//Cmd to get org details
 var Cmd = &cobra.Command{
 	Use:   "get",
 	Short: "Show details of an Apigee Org",

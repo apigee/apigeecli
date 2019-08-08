@@ -7,6 +7,7 @@ import (
 	"github.com/srinandan/apigeecli/cmd/sync/setsync"
 )
 
+//Cmd to manage identities
 var Cmd = &cobra.Command{
 	Use:   "sync",
 	Short: "Manage identities with grant access to control plane resources",

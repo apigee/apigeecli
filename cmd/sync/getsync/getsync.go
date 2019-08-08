@@ -7,6 +7,7 @@ import (
 	"path"
 )
 
+//Cmd to get list of identities
 var Cmd = &cobra.Command{
 	Use:   "get",
 	Short: "Show the list of identities with access to control plane resources",

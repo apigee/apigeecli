@@ -6,6 +6,7 @@ import (
 	"net/url"
 )
 
+//Cmd to list orgs
 var Cmd = &cobra.Command{
 	Use:   "list",
 	Short: "List the Apigee organizations",

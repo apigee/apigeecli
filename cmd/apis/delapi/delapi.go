@@ -8,6 +8,7 @@ import (
 	"github.com/srinandan/apigeecli/cmd/shared"
 )
 
+//Cmd to delete api
 var Cmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Deletes an API proxy",

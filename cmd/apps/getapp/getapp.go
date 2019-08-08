@@ -11,6 +11,7 @@ import (
 	"github.com/thedevsaddam/gojsonq"
 )
 
+//Cmd to get app
 var Cmd = &cobra.Command{
 	Use:   "get",
 	Short: "Get App in an Organization by App ID",

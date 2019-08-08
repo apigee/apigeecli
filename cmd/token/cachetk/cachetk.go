@@ -7,6 +7,7 @@ import (
 	"github.com/srinandan/apigeecli/cmd/shared"
 )
 
+//Cmd to cache token
 var Cmd = &cobra.Command{
 	Use:   "cache",
 	Short: "Generate and cache a new access token",
