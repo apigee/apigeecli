@@ -25,8 +25,22 @@ type OAuthAccessToken struct {
 	TokenType   string `json:"token_type,omitempty"`
 }
 
+//KeyAlias hold the name of the key alias
 type KeyAliasName string
 
 func (a KeyAliasName) String() string {
 	return string(a)
+}
+
+//ResourceTypes contains a list of valid resources
+var resourceTypes = [7]string{"js", "jsc", "properties", "java", "wsdl", "xsd", "py"}
+
+//IsValidResource returns true is the resource type is valid
+func IsValidResource(resType string) bool {
+	for _, n := range resourceTypes {
+		if n == resType {
+			return true
+		}
+	}
+	return false
 }

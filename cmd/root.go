@@ -5,6 +5,7 @@ import (
 	"github.com/spf13/viper"
 	"github.com/srinandan/apigeecli/cmd/apis"
 	"github.com/srinandan/apigeecli/cmd/apps"
+	cache "github.com/srinandan/apigeecli/cmd/cache"
 	"github.com/srinandan/apigeecli/cmd/developers"
 	"github.com/srinandan/apigeecli/cmd/env"
 	flowhooks "github.com/srinandan/apigeecli/cmd/flowhooks"
@@ -13,6 +14,7 @@ import (
 	"github.com/srinandan/apigeecli/cmd/kvm"
 	"github.com/srinandan/apigeecli/cmd/org"
 	"github.com/srinandan/apigeecli/cmd/products"
+	res "github.com/srinandan/apigeecli/cmd/res"
 	"github.com/srinandan/apigeecli/cmd/shared"
 	"github.com/srinandan/apigeecli/cmd/sharedflows"
 	"github.com/srinandan/apigeecli/cmd/sync"
@@ -66,6 +68,8 @@ func init() {
 	RootCmd.AddCommand(token.Cmd)
 	RootCmd.AddCommand(keystores.Cmd)
 	RootCmd.AddCommand(keyaliases.Cmd)
+	RootCmd.AddCommand(cache.Cmd)
+	RootCmd.AddCommand(res.Cmd)
 }
 
 func initConfig() {

@@ -25,5 +25,5 @@ func init() {
 		"", "API Proxy revision")
 
 	_ = Cmd.MarkFlagRequired("name")
-	_ = Cmd.MarkFlagRequired("revision")
+	_ = Cmd.MarkFlagRequired("rev")
 }

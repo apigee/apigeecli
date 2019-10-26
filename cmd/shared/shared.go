@@ -132,9 +132,9 @@ func PostHttpOctet(print bool, url string, proxyName string) (respBody []byte, e
 }
 
 //DownloadResource method is used to download resources, proxy bundles, sharedflows
-func DownloadResource(url string, name string) error {
+func DownloadResource(url string, name string, resType string) error {
 
-	out, err := os.Create(name + ".zip")
+	out, err := os.Create(name + resType)
 	if err != nil {
 		Error.Fatalln("error creating file: ", err)
 		return err
@@ -170,7 +170,7 @@ func DownloadResource(url string, name string) error {
 		return err
 	}
 
-	fmt.Println("Proxy bundle " + name + ".zip completed")
+	fmt.Println("Resource " + name + resType + " completed")
 	return nil
 }
 
@@ -567,7 +567,7 @@ func FetchBundle(entityType string, name string, revision string) error {
 	u.RawQuery = q.Encode()
 	u.Path = path.Join(u.Path, RootArgs.Org, entityType, name, "revisions", revision)
 
-	err := DownloadResource(u.String(), name)
+	err := DownloadResource(u.String(), name, ".zip")
 	if err != nil {
 		Error.Fatalf("error with entity: %s", name)
 		Error.Fatalln(err)

@@ -11,6 +11,7 @@ import (
 	impapis "github.com/srinandan/apigeecli/cmd/apis/impapis"
 	"github.com/srinandan/apigeecli/cmd/apis/listapis"
 	"github.com/srinandan/apigeecli/cmd/apis/listdeploy"
+	traceapi "github.com/srinandan/apigeecli/cmd/apis/traceapi"
 	"github.com/srinandan/apigeecli/cmd/apis/undepapi"
 	"github.com/srinandan/apigeecli/cmd/shared"
 )
@@ -39,4 +40,5 @@ func init() {
 	Cmd.AddCommand(getapi.Cmd)
 	Cmd.AddCommand(impapis.Cmd)
 	Cmd.AddCommand(undepapi.Cmd)
+	Cmd.AddCommand(traceapi.Cmd)
 }

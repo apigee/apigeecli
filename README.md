@@ -74,6 +74,7 @@ ___
 
 * [apis](#apis)
 * [apps](#apps)
+* [cache](#cache)
 * [developers](#devs)
 * [envs](#env)
 * [flowhooks](#flow)
@@ -100,6 +101,7 @@ ___
 * [export](#expapis)
 * [list](#listorgs)
 * [listdeploy](#listdeploy)
+* [trace](#trace)
 * [undeploy](#undepapi)
 
 ### <a name="createapi"/> create
@@ -233,6 +235,62 @@ The following parameters are supported. See Common Reference for a list of addit
 * `--name -n` (required) API proxy name
 * `--expand -x` (optional) Returns an expanded list of proxies for the organization.
 * `--count -c` (optional) Number of apis to return
+
+### <a name="trace"/> trace
+
+Manage debug sessions/trace for API Proxy revisions
+
+* [create](#crttrcapi)
+* [get](#gettrcapi)
+* [list](#listtrcapi)
+
+#### <a name="crttrcapi"> create
+
+Create a new trace/debug session
+
+```
+apigeecli apis trace create -o org -e env -n name -v 1 -f "name1=value1,name2=value2"
+```
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+* `--env -e` (required) Apigee environment name
+* `--name -n` (required) API proxy name
+* `--rev -v` (required) API proxy revision
+* `--filter -f` (optional) Trace filter; format is: name1=value1,name2=value2
+
+#### <a name="getrcapi"> get
+
+Get details for trace/debug session
+
+```
+apigeecli apis trace create -o org -e env -n name -v 1 -s uuid
+```
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+* `--env -e` (required) Apigee environment name
+* `--name -n` (required) API proxy name
+* `--rev -v` (required) API proxy revision
+* `--ses -s` (required) Trace session ID
+* `--msg -m` (optional) Message ID
+
+#### <a name="listtrcapi"> list
+
+List all trace/debug session for a proxy revision in the last 24 hours
+
+```
+apigeecli apis trace create -o org -e env -n name -v 1
+```
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+* `--env -e` (required) Apigee environment name
+* `--name -n` (required) API proxy name
+* `--rev -v` (required) API proxy revision
 
 ### <a name="undepapi"/> undeploy
 
@@ -375,6 +433,40 @@ Parameters
 The following parameters are supported. See Common Reference for a list of additional parameters.
 
 * `--org -o` (required) Apigee organization name
+
+---
+
+## <name ="cache"/> cache
+
+* [delete](#delcache)
+* [list](#listlist)
+
+### <a name="delcache"/> delete
+
+Delete a cache resource from an environment
+
+```
+apigeecli cache delete -o org -e env -n name
+```
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+* `--env -e` (required) Apigee environment name
+* `--name -n` (required) Cache name
+
+### <a name="listcache"/> lsit
+
+List cache resources in an environment
+
+```
+apigeecli cache list -o org -e env
+```
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+* `--env -e` (required) Apigee environment name
 
 ---
 
