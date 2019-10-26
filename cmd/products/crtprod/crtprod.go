@@ -9,6 +9,7 @@ import (
 	"github.com/srinandan/apigeecli/cmd/shared"
 )
 
+//Cmd to create a new product
 var Cmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create an API product",

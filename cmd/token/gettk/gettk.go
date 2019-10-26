@@ -7,6 +7,7 @@ import (
 	"github.com/srinandan/apigeecli/cmd/shared"
 )
 
+//Cmd to generate a new access token
 var Cmd = &cobra.Command{
 	Use:   "gen",
 	Short: "Generate a new access token",

@@ -546,7 +546,7 @@ func GetAsyncEntity(entityURL string, wg *sync.WaitGroup, mu *sync.Mutex) {
 	Info.Printf("Completed entity: %s", entityURL)
 }
 
-//FetchAyncBundle can download a shared flow or a proxy bundle
+//FetchAsyncBundle can download a shared flow or a proxy bundle
 func FetchAsyncBundle(entityType string, name string, revision string, wg *sync.WaitGroup) {
 	//this method is meant to be called asynchronously
 

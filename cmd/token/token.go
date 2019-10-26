@@ -6,6 +6,7 @@ import (
 	"github.com/srinandan/apigeecli/cmd/token/gettk"
 )
 
+//Cmd to manage token to interact with apigee.googleapis.com
 var Cmd = &cobra.Command{
 	Use:   "token",
 	Short: "Manage OAuth 2.0 access tokens",

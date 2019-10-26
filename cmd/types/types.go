@@ -18,14 +18,14 @@ type Arguments struct {
 	SkipCache      bool   //skip writing access token to file
 }
 
-// Structure to hold OAuth response
+//OAuthAccessToken is a structure to hold OAuth response
 type OAuthAccessToken struct {
 	AccessToken string `json:"access_token,omitempty"`
 	ExpiresIn   int    `json:"expires_in,omitempty"`
 	TokenType   string `json:"token_type,omitempty"`
 }
 
-//KeyAlias hold the name of the key alias
+//KeyAliasName holds the name of the key alias
 type KeyAliasName string
 
 func (a KeyAliasName) String() string {
