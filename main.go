@@ -6,12 +6,13 @@ import (
 	"github.com/srinandan/apigeecli/cmd"
 )
 
+//Version contains the git hash
 var Version string
 
 func main() {
 
 	rootCmd := cmd.GetRootCmd()
-	rootCmd.Version = "0.5, Git: " + Version
+	rootCmd.Version = "0.6, Git: " + Version
 
 	if err := rootCmd.Execute(); err != nil {
 		os.Exit(-1)
