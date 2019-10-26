@@ -12,7 +12,8 @@ import (
 var Cmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Deletes an API proxy",
-	Long:  "Deletes an API proxy and all associated endpoints, policies, resources, and revisions. The proxy must be undeployed first.",
+	Long: "Deletes an API proxy and all associated endpoints, policies, resources, and revisions." +
+		"The proxy must be undeployed first.",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		u, _ := url.Parse(shared.BaseURL)
 		u.Path = path.Join(u.Path, shared.RootArgs.Org, "apis", name)
@@ -28,5 +29,4 @@ func init() {
 		"", "API proxy name")
 
 	_ = Cmd.MarkFlagRequired("name")
-
 }

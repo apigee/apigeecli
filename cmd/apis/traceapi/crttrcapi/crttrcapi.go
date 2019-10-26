@@ -17,12 +17,13 @@ var Cmd = &cobra.Command{
 	Long:  "Create a new debug session for Apigee API proxy revision deployed in an environment",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		u, _ := url.Parse(shared.BaseURL)
-		u.Path = path.Join(u.Path, shared.RootArgs.Org, "environments", shared.RootArgs.Env, "apis", name, "revisions", revision, "debugsessions")
+		u.Path = path.Join(u.Path, shared.RootArgs.Org, "environments", shared.RootArgs.Env,
+			"apis", name, "revisions", revision, "debugsessions")
 		q := u.Query()
 		q.Set("timeout", "567")
 		u.RawQuery = q.Encode()
 
-		var payload = ""
+		var payload string
 		if len(filter) != 0 {
 			payload = "{\"filter\":" + getFilterStr() + "}"
 		} else {

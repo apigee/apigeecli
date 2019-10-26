@@ -40,7 +40,6 @@ func init() {
 
 	Cmd.Flags().IntVarP(&conn, "conn", "c",
 		4, "Number of connections")
-
 }
 
 //batch created a batch of products to query

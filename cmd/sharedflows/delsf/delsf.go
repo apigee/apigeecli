@@ -1,17 +1,19 @@
 package delsf
 
 import (
-	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/cmd/shared"
 	"net/url"
 	"path"
+
+	"github.com/spf13/cobra"
+	"github.com/srinandan/apigeecli/cmd/shared"
 )
 
 //Cmd to delete shared flow
 var Cmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Deletes a shared flow",
-	Long:  "Deletes a shared flow and all associated policies, resources, and revisions. The flow must be undeployed first.",
+	Long: "Deletes a shared flow and all associated policies, resources, and revisions." +
+		"The flow must be undeployed first.",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		u, _ := url.Parse(shared.BaseURL)
 		u.Path = path.Join(u.Path, shared.RootArgs.Org, "sharedflows", name)

@@ -15,7 +15,8 @@ var Cmd = &cobra.Command{
 	Long:  "List Key Alises",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		u, _ := url.Parse(shared.BaseURL)
-		u.Path = path.Join(u.Path, shared.RootArgs.Org, "environments", shared.RootArgs.Env, "keystores", shared.RootArgs.AliasName, "aliases")
+		u.Path = path.Join(u.Path, shared.RootArgs.Org, "environments", shared.RootArgs.Env,
+			"keystores", shared.RootArgs.AliasName, "aliases")
 		_, err = shared.HttpClient(true, u.String())
 		return
 	},

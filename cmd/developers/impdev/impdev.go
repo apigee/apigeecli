@@ -144,5 +144,4 @@ func readDevelopersFile() ([]developer, error) {
 	}
 
 	return devs, nil
-
 }

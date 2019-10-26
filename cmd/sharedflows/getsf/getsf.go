@@ -1,10 +1,11 @@
 package getsf
 
 import (
-	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/cmd/shared"
 	"net/url"
 	"path"
+
+	"github.com/spf13/cobra"
+	"github.com/srinandan/apigeecli/cmd/shared"
 )
 
 //Cmd to get shared flow
@@ -27,5 +28,4 @@ func init() {
 		"", "Shared flow name")
 
 	_ = Cmd.MarkFlagRequired("name")
-
 }

@@ -39,8 +39,10 @@ var resourceTypes = [7]string{"js", "jsc", "properties", "java", "wsdl", "xsd", 
 func IsValidResource(resType string) bool {
 	for _, n := range resourceTypes {
 		if n == resType {
+
 			return true
 		}
 	}
+
 	return false
 }

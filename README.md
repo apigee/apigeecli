@@ -83,6 +83,7 @@ ___
 * [kvms](#kvm)
 * [org](#org)
 * [products](#prods)
+* [resources](#resources)
 * [sharedflows](#sf)
 * [sync](#sync)
 * [targetservers](#target)

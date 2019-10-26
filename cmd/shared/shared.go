@@ -32,7 +32,7 @@ import (
 //BaseURL is the Apigee control plane endpoint
 const BaseURL = "https://apigee.googleapis.com/v1/organizations/"
 
-//RootArgs is used to hold basic arugments used by all commands
+//RootArgs is used to hold basic arguments used by all commands
 var RootArgs = types.Arguments{SkipCache: false, SkipCheck: true, LogInfo: false}
 
 //log levels, default is error
@@ -49,7 +49,6 @@ const accessTokenFile = ".access_token"
 
 //Init function initializes the logger objects
 func Init() {
-
 	var infoHandle = ioutil.Discard
 
 	if RootArgs.LogInfo {
@@ -133,7 +132,6 @@ func PostHttpOctet(print bool, url string, proxyName string) (respBody []byte, e
 
 //DownloadResource method is used to download resources, proxy bundles, sharedflows
 func DownloadResource(url string, name string, resType string) error {
-
 	out, err := os.Create(name + resType)
 	if err != nil {
 		Error.Fatalln("error creating file: ", err)
@@ -228,7 +226,7 @@ func HttpClient(print bool, params ...string) (respBody []byte, err error) {
 	} else if resp.StatusCode > 299 {
 		Error.Fatalln("response Code: ", resp.StatusCode)
 		Error.Fatalln("error in response: ", string(respBody))
-		return nil, errors.New("Error in response")
+		return nil, errors.New("error in response")
 	}
 	if print {
 		return respBody, PrettyPrint(respBody)
@@ -238,7 +236,6 @@ func HttpClient(print bool, params ...string) (respBody []byte, err error) {
 
 //PrettyPrint method prints formatted json
 func PrettyPrint(body []byte) error {
-
 	var prettyJSON bytes.Buffer
 	err := json.Indent(&prettyJSON, body, "", "\t")
 	if err != nil {
@@ -324,13 +321,13 @@ func GenerateAccessToken() (string, error) {
 	if resp.StatusCode != 200 {
 		bodyBytes, _ := ioutil.ReadAll(resp.Body)
 		Error.Fatalln("error in response: ", string(bodyBytes))
-		return "", errors.New("Error in response")
+		return "", errors.New("error in response")
 	}
 	decoder := json.NewDecoder(resp.Body)
 	accessToken := types.OAuthAccessToken{}
 	if err := decoder.Decode(&accessToken); err != nil {
 		Error.Fatalln("error in response: ", err)
-		return "", errors.New("Error in response")
+		return "", errors.New("error in response")
 	}
 	Info.Println("access token : ", accessToken)
 	RootArgs.Token = accessToken.AccessToken
@@ -437,7 +434,7 @@ func SetAccessToken() error {
 		}
 		_, err = GenerateAccessToken()
 		if err != nil {
-			return fmt.Errorf("Fatal error generating access token: %s", err)
+			return fmt.Errorf("fatal error generating access token: %s", err)
 		}
 		return nil
 	}
@@ -556,7 +553,6 @@ func FetchAsyncBundle(entityType string, name string, revision string, wg *sync.
 	defer wg.Done()
 
 	_ = FetchBundle(entityType, name, revision)
-
 }
 
 //FetchBundle can download a shared flow or proxy bundle
@@ -582,12 +578,10 @@ func ImportBundleAsync(entityType string, name string, bundlePath string, wg *sy
 	defer wg.Done()
 
 	_ = ImportBundle(entityType, name, bundlePath)
-
 }
 
 //ImportBundle imports a sharedflow or api proxy bundle
 func ImportBundle(entityType string, name string, bundlePath string) error {
-
 	err := ReadBundle(bundlePath)
 	if err != nil {
 		return err

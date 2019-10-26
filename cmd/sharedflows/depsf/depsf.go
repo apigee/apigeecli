@@ -1,10 +1,11 @@
 package depsf
 
 import (
-	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/cmd/shared"
 	"net/url"
 	"path"
+
+	"github.com/spf13/cobra"
+	"github.com/srinandan/apigeecli/cmd/shared"
 )
 
 //Cmd to deploy shared flow
@@ -19,7 +20,8 @@ var Cmd = &cobra.Command{
 			q.Set("override", "true")
 			u.RawQuery = q.Encode()
 		}
-		u.Path = path.Join(u.Path, shared.RootArgs.Org, "environments", shared.RootArgs.Env, "sharedflows", name, "revisions", revision, "deployments")
+		u.Path = path.Join(u.Path, shared.RootArgs.Org, "environments", shared.RootArgs.Env,
+			"sharedflows", name, "revisions", revision, "deployments")
 		_, err = shared.HttpClient(true, u.String(), "")
 		return
 	},

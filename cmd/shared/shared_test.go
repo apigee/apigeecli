@@ -51,7 +51,7 @@ func TestHttpInvalidNumberOfParams(t *testing.T) {
 func TestDownloadResource(t *testing.T) {
 	//download 1000 bytes
 	Init()
-	err := DownloadResource("https://httpbin.org/stream-bytes/1000", "test")
+	err := DownloadResource("https://httpbin.org/stream-bytes/1000", "test", ".zip")
 	if err != nil {
 		t.Fatal(err)
 	}

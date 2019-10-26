@@ -16,12 +16,14 @@ var Cmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		u, _ := url.Parse(shared.BaseURL)
 		if messageID == "" {
-			u.Path = path.Join(u.Path, shared.RootArgs.Org, "environments", shared.RootArgs.Env, "apis", name, "revisions", revision, "debugsessions", sessionID, "data")
+			u.Path = path.Join(u.Path, shared.RootArgs.Org, "environments", shared.RootArgs.Env,
+				"apis", name, "revisions", revision, "debugsessions", sessionID, "data")
 			q := u.Query()
 			q.Set("limit", "20")
 			u.RawQuery = q.Encode()
 		} else {
-			u.Path = path.Join(u.Path, shared.RootArgs.Org, "environments", shared.RootArgs.Env, "apis", name, "revisions", revision, "debugsessions", sessionID, "data", messageID)
+			u.Path = path.Join(u.Path, shared.RootArgs.Org, "environments", shared.RootArgs.Env,
+				"apis", name, "revisions", revision, "debugsessions", sessionID, "data", messageID)
 		}
 
 		_, err = shared.HttpClient(true, u.String())
@@ -46,5 +48,4 @@ func init() {
 	_ = Cmd.MarkFlagRequired("name")
 	_ = Cmd.MarkFlagRequired("rev")
 	_ = Cmd.MarkFlagRequired("ses")
-
 }

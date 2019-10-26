@@ -69,7 +69,8 @@ func TestCreateDeveloper(t *testing.T) {
 	last := "lastname"
 	user := "username"
 
-	cmd := exec.Command(apigeecli, "developers", "create", "-o", org, "-n", email, "-f", first, "-s", last, "-u", user, "--attrs", attrs, "-t", token, "-l")
+	cmd := exec.Command(apigeecli, "developers", "create", "-o", org, "-n", email, "-f", first, "-s",
+		last, "-u", user, "--attrs", attrs, "-t", token, "-l")
 	err := cmd.Run()
 	if err != nil {
 		t.Fatal(err)
@@ -156,7 +157,8 @@ func TestCreateProduct(t *testing.T) {
 	proxy := "test"
 	approval := "auto"
 
-	cmd := exec.Command(apigeecli, "products", "create", "-o", org, "-n", name, "-e", envs, "-p", proxy, "-f", approval, "--attrs", attrs, "-t", token, "-l")
+	cmd := exec.Command(apigeecli, "products", "create", "-o", org, "-n", name, "-e", envs, "-p", proxy,
+		"-f", approval, "--attrs", attrs, "-t", token, "-l")
 	err := cmd.Run()
 	if err != nil {
 		t.Fatal(err)
@@ -166,7 +168,8 @@ func TestCreateProduct(t *testing.T) {
 func TestCreateApp(t *testing.T) {
 	product := "test"
 
-	cmd := exec.Command(apigeecli, "apps", "create", "-o", org, "-n", name, "-e", email, "-p", product, "--attrs", attrs, "-t", token, "-l")
+	cmd := exec.Command(apigeecli, "apps", "create", "-o", org, "-n", name, "-e", email, "-p", product,
+		"--attrs", attrs, "-t", token, "-l")
 
 	var out bytes.Buffer
 	cmd.Stdout = &out
@@ -221,7 +224,8 @@ func TestDeleteDeveloper(t *testing.T) {
 func TestCreateTS(t *testing.T) {
 	host := "example.com"
 
-	cmd := exec.Command(apigeecli, "targetservers", "create", "-o", org, "-n", name, "-e", env, "-s", host, "-t", token, "-l")
+	cmd := exec.Command(apigeecli, "targetservers", "create", "-o", org, "-n", name, "-e", env, "-s",
+		host, "-t", token, "-l")
 	err := cmd.Run()
 	if err != nil {
 		t.Fatal(err)

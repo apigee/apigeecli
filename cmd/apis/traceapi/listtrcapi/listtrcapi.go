@@ -15,7 +15,8 @@ var Cmd = &cobra.Command{
 	Long:  "List all debug sessions for an API proxy revision deployed in an environment",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		u, _ := url.Parse(shared.BaseURL)
-		u.Path = path.Join(u.Path, shared.RootArgs.Org, "environments", shared.RootArgs.Env, "apis", name, "revisions", revision, "debugsessions")
+		u.Path = path.Join(u.Path, shared.RootArgs.Org, "environments", shared.RootArgs.Env,
+			"apis", name, "revisions", revision, "debugsessions")
 		_, err = shared.HttpClient(true, u.String())
 		return
 

@@ -17,14 +17,14 @@ var Cmd = &cobra.Command{
 	Long:  "Get a resource file",
 	PreRunE: func(cmd *cobra.Command, args []string) (err error) {
 		if !types.IsValidResource(resType) {
-			return fmt.Errorf("Invalid resource type")
+			return fmt.Errorf("invalid resource type")
 		}
 		return err
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		u, _ := url.Parse(shared.BaseURL)
 		u.Path = path.Join(u.Path, shared.RootArgs.Org, "environments", shared.RootArgs.Env, "resourcefiles", resType, name)
-		_, err = shared.DownloadResource(u.String(), name, resType)
+		err = shared.DownloadResource(u.String(), name, resType)
 		return
 	},
 }
@@ -40,5 +40,4 @@ func init() {
 
 	_ = Cmd.MarkFlagRequired("name")
 	_ = Cmd.MarkFlagRequired("type")
-
 }

@@ -14,7 +14,7 @@ var Cmd = &cobra.Command{
 	Long:  "Generate and cache a new access token",
 	Args: func(cmd *cobra.Command, args []string) error {
 		if shared.RootArgs.ServiceAccount == "" {
-			return fmt.Errorf("Service account cannot be empty")
+			return fmt.Errorf("service account cannot be empty")
 		}
 
 		return nil

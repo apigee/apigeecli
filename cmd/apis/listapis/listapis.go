@@ -40,5 +40,4 @@ func init() {
 
 	Cmd.Flags().BoolVarP(&revisions, "rev", "r",
 		false, "Include revisions")
-
 }

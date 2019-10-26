@@ -17,7 +17,7 @@ var Cmd = &cobra.Command{
 	Long:  "List all resources in your environment",
 	PreRunE: func(cmd *cobra.Command, args []string) (err error) {
 		if !types.IsValidResource(resType) {
-			return fmt.Errorf("Invalid resource type")
+			return fmt.Errorf("invalid resource type")
 		}
 		return err
 	},

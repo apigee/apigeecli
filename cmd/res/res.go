@@ -2,8 +2,8 @@ package res
 
 import (
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/cmd/shared"
 	"github.com/srinandan/apigeecli/cmd/res/listres"
+	"github.com/srinandan/apigeecli/cmd/shared"
 )
 
 //Cmd to manage resources
