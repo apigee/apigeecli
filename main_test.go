@@ -144,13 +144,11 @@ func TestSetSync(t *testing.T) {
 }
 
 func TestCreateProxy(t *testing.T) {
-
 	cmd := exec.Command(apigeecli, "apis", "create", "-o", org, "-n", name, "-t", token, "-l")
 	err := cmd.Run()
 	if err != nil {
 		t.Fatal(err)
 	}
-
 }
 
 func TestCreateProduct(t *testing.T) {
@@ -272,6 +270,52 @@ func TestExportProducts(t *testing.T) {
 	}
 }
 
+func TestDeleteKVM(t *testing.T) {
+
+	cmd := exec.Command(apigeecli, "kvms", "delete", "-o", org, "-e", env, "-n", name, "-t", token, "-l")
+	err := cmd.Run()
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestDeleteProduct(t *testing.T) {
+
+	cmd := exec.Command(apigeecli, "products", "delete", "-o", org, "-n", name, "-t", token, "-l")
+	err := cmd.Run()
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCreateEncKVM(t *testing.T) {
+	name := "testEnc"
+
+	cmd := exec.Command(apigeecli, "kvms", "create", "-o", org, "-e", env, "-n", name, "-c", "-t", token, "-l")
+	err := cmd.Run()
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestDeleteEncKVM(t *testing.T) {
+	name := "testEnc"
+
+	cmd := exec.Command(apigeecli, "kvms", "delete", "-o", org, "-e", env, "-n", name, "-t", token, "-l")
+	err := cmd.Run()
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestDeleteProxy(t *testing.T) {
+	cmd := exec.Command(apigeecli, "apis", "delete", "-o", org, "-n", name, "-t", token, "-l")
+	err := cmd.Run()
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
 //get requires an app id. run list and get an app id or get it from create
 /*func TestGetApp(t *testing.T) {
 	cmd := exec.Command(apigeecli, "apps", "get", "-o", org, "-i", appID, "-t", token, "-l")
@@ -306,39 +350,9 @@ func TestSetMartWhiteList(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
-}*/
-
-/*func TestCreateEncKVM(t *testing.T) {
-	name := "testEnc"
-	enc := "true"
-
-	cmd := exec.Command(apigeecli, "kvms", "create", "-o", org, "-e", env, "-n", name, "-c", enc, "-t", token, "-l")
-	err := cmd.Run()
-	if err != nil {
-		t.Fatal(err)
-	}
-}*/
-
-/*func TestDeleteKVM(t *testing.T) {
-
-	cmd := exec.Command(apigeecli, "kvms", "create", "-o", org, "-e", env, "-n", name, "-t", token, "-l")
-	err := cmd.Run()
-	if err != nil {
-		t.Fatal(err)
-	}
 }
 
-func TestDeleteEncKVM(t *testing.T) {
-	name := "testEnc"
-
-	cmd := exec.Command(apigeecli, "kvms", "create", "-o", org, "-e", env, "-n", name, "-t", token, "-l")
-	err := cmd.Run()
-	if err != nil {
-		t.Fatal(err)
-	}
-}*/
-
-/*func TestDeleteApp(t *testing.T) {
+func TestDeleteApp(t *testing.T) {
 
 	cmd := exec.Command(apigeecli, "apps", "delete", "-o", org, "-n", name, "-t", token, "-l")
 	err := cmd.Run()
@@ -346,13 +360,5 @@ func TestDeleteEncKVM(t *testing.T) {
 		t.Fatal(err)
 	}
 
-}*/
-
-/*func TestDeleteProduct(t *testing.T) {
-
-	cmd := exec.Command(apigeecli, "kvms", "create", "-o", org, "-n", name, "-t", token, "-l")
-	err := cmd.Run()
-	if err != nil {
-		t.Fatal(err)
-	}
-}*/
+}
+*/
