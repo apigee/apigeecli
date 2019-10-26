@@ -1,4 +1,6 @@
 # .goreleaser.yml
+project_name: apigeecli
+
 builds:
   -
     main: ./main.go
@@ -21,8 +23,6 @@ archive:
   format_overrides:
   - goos: windows
     format: zip
-git:
-  short_hash: true
 release:
   draft: true
   prerelease: true
