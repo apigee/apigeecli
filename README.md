@@ -1,7 +1,7 @@
 # apigeecli
 [![TravisCI](https://travis-ci.org/srinandan/apigeecli.svg?branch=master)](https://travis-ci.org/srinandan/apigeecli)
 [![Go Report Card](https://goreportcard.com/badge/github.com/srinandan/apigeecli)](https://goreportcard.com/report/github.com/srinandan/apigeecli)
-[![Version](https://img.shields.io/badge/version-v0.6-green.svg)](https://github.com/srinandan/apigeecli/releases)
+[![Version](https://img.shields.io/badge/version-v0.7-green.svg)](https://github.com/srinandan/apigeecli/releases)
 
 This is a tool to interact with [Apigee APIs](https://apigee.googleapis.com). The tool lets you manage (get, list) environments, proxies, etc.
 
@@ -1002,6 +1002,75 @@ The following parameters are required. See Common Reference for a list of additi
 
 `--org -o` (required) Apigee organization name
 `--conn -c` (optional) Number of connections to establish; default is 4
+
+---
+
+## <a name="resources"/> resources
+
+* [create] (#crtres)
+* [delete] (#delres)
+* [get] (#getres)
+* [list] (#listres)
+
+### <a name="crtres"> create
+
+Create a resource to an environment
+
+```
+apigeecli resources create -o org -e env -n test.js -p jsc -r /tmp/test.js 
+```
+Required parameters
+The following parameters are required. See Common Reference for a list of additional parameters.
+
+`--org -o` (required) Apigee organization name
+`--env -e` (required) Apigee environment name
+`--name -n` (required) Resource name
+`--respath -r` (required) Resource path
+`--type -p` (required) Resource type
+
+### <a name="delres"> delete
+
+Delete a resource from an environment
+
+```
+apigeecli resources create -o org -e env -n test.js -p jsc
+```
+Required parameters
+The following parameters are required. See Common Reference for a list of additional parameters.
+
+`--org -o` (required) Apigee organization name
+`--env -e` (required) Apigee environment name
+`--name -n` (required) Resource name
+`--type -p` (required) Resource type
+
+### <a name="getres"> get
+
+Download a resource from an environment
+
+```
+apigeecli resources create -o org -e env -n test.js -p jsc
+```
+Required parameters
+The following parameters are required. See Common Reference for a list of additional parameters.
+
+`--org -o` (required) Apigee organization name
+`--env -e` (required) Apigee environment name
+`--name -n` (required) Resource name
+`--type -p` (required) Resource type
+
+### <a name="listres> list
+
+List resources in an environment
+
+```
+apigeecli prods list -o org -e env 
+```
+Required parameters
+The following parameters are required. See Common Reference for a list of additional parameters.
+
+`--org -o` (required) Apigee organization name
+`--env -e` (required) Apigee environment name
+`--type -p` (optional) Filter by resource type
 
 ---
 
