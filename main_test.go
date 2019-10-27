@@ -316,6 +316,45 @@ func TestDeleteProxy(t *testing.T) {
 	}
 }
 
+func TestCreateResource(t *testing.T) {
+	name := "test.js"
+	resType := "jsc"
+	resPath := "./test/test.js"
+	cmd := exec.Command(apigeecli, "resources", "create", "-o", org, "-e", env, "-n", name, "-p", resType, "-r", resPath)
+	err := cmd.Run()
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestGetResource(t *testing.T) {
+	name := "test.js"
+	resType := "jsc"
+	cmd := exec.Command(apigeecli, "resources", "get", "-o", org, "-e", env, "-n", name, "-p", resType)
+	err := cmd.Run()
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestListResources(t *testing.T) {
+	cmd := exec.Command(apigeecli, "resources", "list", "-o", org, "-e", env)
+	err := cmd.Run()
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestDeleteResource(t *testing.T) {
+	name := "test.js"
+	resType := "jsc"
+	cmd := exec.Command(apigeecli, "resources", "delete", "-o", org, "-e", env, "-n", name, "-p", resType)
+	err := cmd.Run()
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
 //get requires an app id. run list and get an app id or get it from create
 /*func TestGetApp(t *testing.T) {
 	cmd := exec.Command(apigeecli, "apps", "get", "-o", org, "-i", appID, "-t", token, "-l")
