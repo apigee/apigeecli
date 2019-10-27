@@ -145,5 +145,4 @@ func readProductsFile() ([]product, error) {
 	}
 
 	return products, nil
-
 }

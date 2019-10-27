@@ -43,5 +43,4 @@ func init() {
 
 	_ = Cmd.MarkFlagRequired("env")
 	_ = Cmd.MarkFlagRequired("name")
-
 }

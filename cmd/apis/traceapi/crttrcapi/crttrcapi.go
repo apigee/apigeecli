@@ -31,7 +31,6 @@ var Cmd = &cobra.Command{
 		}
 		_, err = shared.HttpClient(true, u.String(), payload)
 		return
-
 	},
 }
 
@@ -49,7 +48,6 @@ func init() {
 
 	_ = Cmd.MarkFlagRequired("name")
 	_ = Cmd.MarkFlagRequired("rev")
-
 }
 
 func getFilterStr() string {

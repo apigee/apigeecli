@@ -28,5 +28,4 @@ func init() {
 		"", "API Proxy name")
 
 	_ = Cmd.MarkFlagRequired("name")
-
 }

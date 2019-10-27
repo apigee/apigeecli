@@ -206,5 +206,4 @@ func readAppsFile() ([]application, error) {
 	}
 
 	return apps, nil
-
 }

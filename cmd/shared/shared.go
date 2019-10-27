@@ -132,7 +132,16 @@ func PostHttpOctet(print bool, url string, proxyName string) (respBody []byte, e
 
 //DownloadResource method is used to download resources, proxy bundles, sharedflows
 func DownloadResource(url string, name string, resType string) error {
-	out, err := os.Create(name + resType)
+
+	var filename string
+
+	if resType == ".zip" {
+		filename = name + ".zip"
+	} else {
+		filename = name
+	}
+
+	out, err := os.Create(filename)
 	if err != nil {
 		Error.Fatalln("error creating file: ", err)
 		return err
@@ -168,7 +177,7 @@ func DownloadResource(url string, name string, resType string) error {
 		return err
 	}
 
-	fmt.Println("Resource " + name + resType + " completed")
+	fmt.Println("Resource " + filename + " completed")
 	return nil
 }
 
