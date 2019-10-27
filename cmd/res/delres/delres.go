@@ -1,4 +1,4 @@
-package getres
+package delres
 
 import (
 	"fmt"
@@ -10,11 +10,11 @@ import (
 	"github.com/srinandan/apigeecli/cmd/types"
 )
 
-//Cmd to get a resource
+//Cmd to del a resource
 var Cmd = &cobra.Command{
-	Use:   "get",
-	Short: "Get a resource file",
-	Long:  "Get a resource file",
+	Use:   "delete",
+	Short: "Delete a resource file",
+	Long:  "Delete a resource file",
 	PreRunE: func(cmd *cobra.Command, args []string) (err error) {
 
 		if !types.IsValidResource(resType) {
@@ -25,7 +25,7 @@ var Cmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		u, _ := url.Parse(shared.BaseURL)
 		u.Path = path.Join(u.Path, shared.RootArgs.Org, "environments", shared.RootArgs.Env, "resourcefiles", resType, name)
-		err = shared.DownloadResource(u.String(), name, resType)
+		_, err = shared.HttpClient(true, u.String(), "", "DELETE")
 		return
 	},
 }

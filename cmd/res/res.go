@@ -2,6 +2,9 @@ package res
 
 import (
 	"github.com/spf13/cobra"
+	"github.com/srinandan/apigeecli/cmd/res/crtres"
+	"github.com/srinandan/apigeecli/cmd/res/delres"
+	"github.com/srinandan/apigeecli/cmd/res/getres"
 	"github.com/srinandan/apigeecli/cmd/res/listres"
 	"github.com/srinandan/apigeecli/cmd/shared"
 )
@@ -25,5 +28,8 @@ func init() {
 	_ = Cmd.MarkPersistentFlagRequired("org")
 	_ = Cmd.MarkPersistentFlagRequired("env")
 
+	Cmd.AddCommand(crtres.Cmd)
+	Cmd.AddCommand(delres.Cmd)
 	Cmd.AddCommand(listres.Cmd)
+	Cmd.AddCommand(getres.Cmd)
 }
