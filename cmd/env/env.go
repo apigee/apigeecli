@@ -2,7 +2,9 @@ package env
 
 import (
 	"github.com/spf13/cobra"
+	"github.com/srinandan/apigeecli/cmd/env/debugmask"
 	"github.com/srinandan/apigeecli/cmd/env/getenv"
+	"github.com/srinandan/apigeecli/cmd/env/iam"
 	"github.com/srinandan/apigeecli/cmd/env/listenv"
 	"github.com/srinandan/apigeecli/cmd/shared"
 )
@@ -24,4 +26,6 @@ func init() {
 
 	Cmd.AddCommand(listenv.Cmd)
 	Cmd.AddCommand(getenv.Cmd)
+	Cmd.AddCommand(iam.Cmd)
+	Cmd.AddCommand(debugmask.Cmd)
 }
