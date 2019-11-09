@@ -13,6 +13,7 @@ type Arguments struct {
 	Token          string //Google OAuth access token
 	ServiceAccount string //Google service account json
 	AliasName      string //AliasName for the key store
+	ProjectID      string //GCP Project ID
 	LogInfo        bool   //LogInfo controls the log level
 	SkipCheck      bool   //skip checking access token expiry
 	SkipCache      bool   //skip writing access token to file
