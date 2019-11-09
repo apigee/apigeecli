@@ -4,6 +4,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/srinandan/apigeecli/cmd/shared"
 	"github.com/srinandan/apigeecli/cmd/sync/getsync"
+	"github.com/srinandan/apigeecli/cmd/sync/resetsync"
 	"github.com/srinandan/apigeecli/cmd/sync/setsync"
 )
 
@@ -22,4 +23,5 @@ func init() {
 	_ = Cmd.MarkPersistentFlagRequired("org")
 	Cmd.AddCommand(setsync.Cmd)
 	Cmd.AddCommand(getsync.Cmd)
+	Cmd.AddCommand(resetsync.Cmd)
 }
