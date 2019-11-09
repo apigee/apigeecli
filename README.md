@@ -82,6 +82,7 @@ ___
 * [keyaliases](#keyaliases)
 * [kvms](#kvm)
 * [org](#org)
+* [projects](#projects)
 * [products](#prods)
 * [resources](#resources)
 * [sharedflows](#sf)
@@ -456,7 +457,7 @@ The following parameters are supported. See Common Reference for a list of addit
 * `--env -e` (required) Apigee environment name
 * `--name -n` (required) Cache name
 
-### <a name="listcache"/> lsit
+### <a name="listcache"/> list
 
 List cache resources in an environment
 
@@ -575,10 +576,82 @@ The following parameters are supported. See Common Reference for a list of addit
 
 Supported alias `environments`
 
-* [list](#listenv)
+* [debugmask] (#debugmask)
 * [get](#getenv)
+* [iam](#iam)
+* [list](#listenv)
 
-### <a name ="getenv"/> get
+### <a name="debugmask"/> debugmask
+
+* [get](#getdebug)
+* [set](#setdebug)
+
+#### <a name="getdebug"/> get
+
+Get debugmask settings for an environment
+
+```
+apigeecli envs debugmask get -o org -e env 
+```
+
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+* `--env -e` (required) Apigee environment name
+
+#### <a name="setdebug"/> set
+
+Set debugmask settings for an environment
+
+```
+apigeecli envs debugmask set -o org -e env -m "mask_settings_in_json"
+```
+
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+* `--env -e` (required) Apigee environment name
+* `--mask -m` (required) Mask settings in JSON format
+
+### <a name="iam"/> iam
+
+* [get](#getiam)
+* [set](#setiam)
+* [test](#testiam)
+
+#### <a name="getiam"/> get
+
+Get IAM settings for an environment
+
+```
+apigeecli envs iam get -o org -e env 
+```
+
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+* `--env -e` (required) Apigee environment name
+
+#### <a name="setiam"/> set
+
+Set IAM settings for an environment
+
+```
+apigeecli envs iam set -o org -e env -p "iam_policy_in_json"
+```
+
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+* `--env -e` (required) Apigee environment name
+* `--policy -p` (required) IAM policy in JSON format
+
+
+### <a name="getenv"/> get
 
 Get details of an environment
 
@@ -591,6 +664,7 @@ The following parameters are supported. See Common Reference for a list of addit
 
 * `--org -o` (required) Apigee organization name
 * `--name -n` (required) environment name
+* `--config -c` (optional) If set, returns environment configuration 
 
 ### <a name="listenv"/> list
 
@@ -910,6 +984,24 @@ The following parameters are supported. See Common Reference for a list of addit
 * `--org -o` (required) Apigee organization name
 * `--mart -m` (required) MART endpoint
 * `--whitelist -w` (optional) Enable/disable whitelisting of GCP IP for source connections to MART
+
+---
+
+## <a name="proejcts"/> projects
+
+* [testiam](#testiamp)
+
+### <a name="testiamp"/> testiam
+
+Test IAM permissions for a project
+
+```
+apigeecli projects testiam -p gcp-project-id
+```
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--prj -p` (required) GCP Project ID
 
 ---
 
