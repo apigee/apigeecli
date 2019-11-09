@@ -32,6 +32,9 @@ import (
 //BaseURL is the Apigee control plane endpoint
 const BaseURL = "https://apigee.googleapis.com/v1/organizations/"
 
+//CrmURL is the endpoint for cloud resource manager
+const CrmURL = "https://cloudresourcemanager.googleapis.com/v1/projects/"
+
 //RootArgs is used to hold basic arguments used by all commands
 var RootArgs = types.Arguments{SkipCache: false, SkipCheck: true, LogInfo: false}
 
