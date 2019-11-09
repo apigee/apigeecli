@@ -14,6 +14,7 @@ import (
 	"github.com/srinandan/apigeecli/cmd/kvm"
 	"github.com/srinandan/apigeecli/cmd/org"
 	"github.com/srinandan/apigeecli/cmd/products"
+	"github.com/srinandan/apigeecli/cmd/projects"
 	res "github.com/srinandan/apigeecli/cmd/res"
 	"github.com/srinandan/apigeecli/cmd/shared"
 	"github.com/srinandan/apigeecli/cmd/sharedflows"
@@ -70,6 +71,7 @@ func init() {
 	RootCmd.AddCommand(keyaliases.Cmd)
 	RootCmd.AddCommand(cache.Cmd)
 	RootCmd.AddCommand(res.Cmd)
+	RootCmd.AddCommand(projects.Cmd)
 }
 
 func initConfig() {
