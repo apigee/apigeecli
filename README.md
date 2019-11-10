@@ -947,6 +947,7 @@ The following parameters are supported. See Common Reference for a list of addit
 
 ## <a name="org"/> org
 
+* [create](#createorg)
 * [list](#listorgs)
 * [get](#getorg)
 * [setmart](#setmart)
