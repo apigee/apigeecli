@@ -4,6 +4,7 @@ import (
 	"archive/zip"
 	"bytes"
 	"crypto/x509"
+	"encoding/base64"
 	"encoding/json"
 	"encoding/pem"
 	"errors"
@@ -207,6 +208,8 @@ func HttpClient(print bool, params ...string) (respBody []byte, err error) {
 			req, err = http.NewRequest("DELETE", params[0], nil)
 		} else if params[2] == "PUT" {
 			req, err = http.NewRequest("PUT", params[0], bytes.NewBuffer([]byte(params[1])))
+		} else if params[2] == "PATCH" {
+			req, err = http.NewRequest("PATCH", params[0], bytes.NewBuffer([]byte(params[1])))
 		} else {
 			return nil, errors.New("unsupported method")
 		}
@@ -628,4 +631,168 @@ func ImportBundle(entityType string, name string, bundlePath string) error {
 
 	Info.Printf("Completed entity: %s", u.String())
 	return nil
+}
+
+//CreateIAMServiceAccount create a new IAM SA with the necessary roles for Apigee
+func CreateIAMServiceAccount(name string, iamRole string) (err error) {
+
+	type IamPolicy struct {
+		Version  int             `json:"version,omitempty"`
+		Etag     string          `json:"etag,omitempty"`
+		Bindings []types.Binding `json:"bindings,omitempty"`
+	}
+
+	type SetIamPolicy struct {
+		Policy IamPolicy `json:"policy,omitempty"`
+	}
+
+	type KeyResponse struct {
+		Name            string `json:"name,omitempty"`
+		PrivateKeyType  string `json:"privateKeyType,omitempty"`
+		PrivateKeyData  string `json:"privateKeyData,omitempty"`
+		ValidBeforeTime string `json:"validBeforeTime,omitempty"`
+		ValidAfterTime  string `json:"validAfterTime,omitempty"`
+		KeyAlgorithm    string `json:"keyAlgorithm,omitempty"`
+	}
+
+	const iamUrl = "https://iam.googleapis.com/v1/projects/"
+	const crmBetaUrl = "https://cloudresourcemanager.googleapis.com/v1beta1/projects/"
+	var role string
+
+	serviceAccountName := name + "@" + RootArgs.ProjectID + ".iam.gserviceaccount.com"
+
+	switch iamRole {
+	case "sync":
+		role = "roles/apigee.synchronizerManager"
+	case "analytics":
+		role = "roles/apigee.analyticsAgent"
+	case "metric":
+		role = "roles/monitoring.metricWriter"
+	case "logger":
+		role = "roles/logging.logWriter"
+	case "mart":
+		role = ""
+	case "cassandra":
+		role = "roles/storage.objectAdmin"
+	case "all":
+		role = "not-necessary-to-add-this"
+	default:
+		return fmt.Errorf("invalid service account role")
+	}
+
+	//Step 1: create a new service account
+	u, _ := url.Parse(iamUrl)
+	u.Path = path.Join(u.Path, RootArgs.ProjectID, "serviceAccounts")
+
+	iamPayload := []string{}
+	iamPayload = append(iamPayload, "\"accountId\":\""+name+"\"")
+	iamPayload = append(iamPayload, "\"serviceAccount\": {\"displayName\": \""+name+"\"}")
+
+	payload := "{" + strings.Join(iamPayload, ",") + "}"
+
+	_, err = HttpClient(false, u.String(), payload)
+
+	if err != nil {
+		Error.Fatalln(err)
+		return err
+	}
+
+	//Step 2: create a new service account key
+	u, _ = url.Parse(iamUrl)
+	u.Path = path.Join(u.Path, RootArgs.ProjectID, "serviceAccounts",
+		serviceAccountName, "keys")
+
+	respKeyBody, err := HttpClient(false, u.String(), "")
+
+	if err != nil {
+		Error.Fatalln(err)
+		return err
+	}
+
+	//Step 3: read the response
+	keyResponse := KeyResponse{}
+	err = json.Unmarshal(respKeyBody, &keyResponse)
+	if err != nil {
+		return err
+	}
+
+	//Step 4: base64 decode the response to get the private key.json
+	privateKey, err := base64.StdEncoding.DecodeString(keyResponse.PrivateKeyData)
+	if err != nil {
+		Error.Fatalln(err)
+		return err
+	}
+
+	//Step 5: Write the data to a file
+	file, err := os.Create(RootArgs.ProjectID + "-" + name + ".json")
+	if err != nil {
+		Error.Fatalln("cannot open private key file: ", err)
+		return err
+	}
+
+	defer file.Close()
+
+	_, err = file.Write([]byte(privateKey))
+	if err != nil {
+		Error.Fatalln("error writing to file: ", err)
+		return err
+	}
+
+	//mart doesn't need any roles, return here.
+	if iamRole == "mart" {
+		return err
+	}
+
+	//Step 6: get the current IAM policies for the project
+	u, _ = url.Parse(CrmURL)
+	u.Path = path.Join(u.Path, RootArgs.ProjectID+":getIamPolicy")
+	respBody, err := HttpClient(false, u.String(), "")
+
+	iamPolicy := IamPolicy{}
+
+	err = json.Unmarshal(respBody, &iamPolicy)
+	if err != nil {
+		Error.Fatalln(err)
+		return err
+	}
+
+	//Step 7: create a new policy binding for apigee
+	if iamRole == "all" {
+		bindings := createAllRoleBindings(serviceAccountName)
+		iamPolicy.Bindings = append(iamPolicy.Bindings, bindings...)
+	} else {
+		binding := types.Binding{}
+		binding.Role = role
+		binding.Members = append(binding.Members, "serviceAccount:"+serviceAccountName)
+
+		iamPolicy.Bindings = append(iamPolicy.Bindings, binding)
+	}
+
+	setIamPolicy := SetIamPolicy{}
+	setIamPolicy.Policy = iamPolicy
+	setIamPolicyBody, err := json.Marshal(setIamPolicy)
+
+	//Step 8: set the iam policy
+	u, _ = url.Parse(crmBetaUrl)
+	u.Path = path.Join(u.Path, RootArgs.ProjectID+":setIamPolicy")
+
+	_, err = HttpClient(false, u.String(), string(setIamPolicyBody))
+
+	return err
+}
+
+func createAllRoleBindings(name string) []types.Binding {
+	var roles = [...]string{"roles/apigee.synchronizerManager", "roles/apigee.analyticsAgent",
+		"roles/monitoring.metricWriter", "roles/logging.logWriter", "roles/storage.objectAdmin"}
+
+	bindings := []types.Binding{}
+
+	for _, role := range roles {
+		binding := types.Binding{}
+		binding.Role = role
+		binding.Members = append(binding.Members, "serviceAccount:"+name)
+		bindings = append(bindings, binding)
+	}
+
+	return bindings
 }

@@ -1,20 +1,22 @@
 # apigeecli
+
 [![TravisCI](https://travis-ci.org/srinandan/apigeecli.svg?branch=master)](https://travis-ci.org/srinandan/apigeecli)
 [![Go Report Card](https://goreportcard.com/badge/github.com/srinandan/apigeecli)](https://goreportcard.com/report/github.com/srinandan/apigeecli)
-[![Version](https://img.shields.io/badge/version-v0.7-green.svg)](https://github.com/srinandan/apigeecli/releases)
+[![Version](https://img.shields.io/badge/version-v0.8-green.svg)](https://github.com/srinandan/apigeecli/releases)
 
-This is a tool to interact with [Apigee APIs](https://apigee.googleapis.com). The tool lets you manage (get, list) environments, proxies, etc.
+This is a tool to interact with [Apigee APIs](https://apigee.googleapis.com). The tool lets you manage (get, list) environments, proxies, etc. The tools also helps you create Service Accounts in Google IAM to operate Apigee hybrid runtime.
 
-# Installation
+## Installation
 
 `apigeecli` is a binary and you can download the appropriate one for your platform from [here](https://github.com/srinandan/apigeecli/releases)
 
 NOTE: Supported platforms are:
+
 * Darwin
 * Windows
 * Linux
 
-# What you need to know about apigeecli
+## What you need to know about apigeecli
 
 You must have an account on [Apigee Hybrid](https://docs.apigee.com/hybrid/beta2) to perform any `apigeecli` functions. These functions include: proxies, API Products, Environments,
 Org details etc.
@@ -31,7 +33,7 @@ Create a service account with appropriate persmissions. Refer to this [link](htt
 
 `apigeecli` can use the service account directly and obtain an access token. 
 
-```
+```bash
 apigeecli token gen -a serviceaccount.json 
 ```
 
@@ -43,18 +45,19 @@ The following parameters are supported. See Common Reference for a list of addit
 
 Use this access token for all subsequent calls (token expires in 1 hour)
 
-# Command Reference
+## Command Reference
 
 The following options are available for security
 
 Pass the access token
-```
+
+```bash
 apigeecli <flags> -t $TOKEN
 ```
 
 Pass the service account
 
-```
+```bash
 apigeecli <flags> -a orgadmin.json
 ```
 
@@ -62,7 +65,7 @@ apigeecli <flags> -a orgadmin.json
 
 `apigeecli` caches the OAuth Access token for subsequent calls (until the token expires). The access token is stored in `$HOME/.access_token`. This path must be readable/writeable by the `apigeecli` process. 
 
-```
+```bash
 apigeecli token cache -a serviceaccount.json
 ```
 
@@ -78,6 +81,7 @@ ___
 * [developers](#devs)
 * [envs](#env)
 * [flowhooks](#flow)
+* [iam](#iam)
 * [keystores](#keystores)
 * [keyaliases](#keyaliases)
 * [kvms](#kvm)
@@ -90,7 +94,7 @@ ___
 * [targetservers](#target)
 * [token](#token)
 
----
+___
 
 ## <a name="apis"/> apis
 
@@ -110,7 +114,7 @@ ___
 
 Import or create an API Proxy. If a bundle (zip) is supplied, it is imported else, it creates an empty proxy in the Org
 
-```
+```bash
 apigeecli apis create -o org -n proxy
 ```
 
@@ -125,7 +129,7 @@ The following parameters are supported. See Common Reference for a list of addit
 
 Deletes an API proxy and all associated endpoints, policies, resources, and revisions. The API proxy must be undeployed before you can delete it.
 
-```
+```bash
 apigeecli apis delete -o org -n proxy
 ```
 
@@ -139,7 +143,7 @@ The following parameters are supported. See Common Reference for a list of addit
 
 Deploys a revision of an existing API proxy to an environment in an organization.
 
-```
+```bash
 apigeecli apis deploy -o org -e env -n proxy -v 1
 ```
 
@@ -156,9 +160,10 @@ The following parameters are supported. See Common Reference for a list of addit
 
 Returns a zip-formatted proxy bundle of code and config files.
 
-```
+```bash
 apigeecli apis fetch -o org -e env -n proxy -v 1
 ```
+
 Parameters
 The following parameters are supported. See Common Reference for a list of additional parameters.
 
@@ -171,9 +176,10 @@ The following parameters are supported. See Common Reference for a list of addit
 
 Get API Proxy information
 
-```
+```bash
 apigeecli apis get -o org -n proxy
 ```
+
 Parameters
 The following parameters are supported. See Common Reference for a list of additional parameters.
 
@@ -184,9 +190,10 @@ The following parameters are supported. See Common Reference for a list of addit
 
 Upload a folder containing API proxy bundles
 
-```
+```bash
 apigeecli apis import -o org -f /tmp
 ```
+
 Parameters
 The following parameters are supported. See Common Reference for a list of additional parameters.
 
@@ -197,9 +204,10 @@ The following parameters are supported. See Common Reference for a list of addit
 
 Export latest revisions of API proxy bundles from an org
 
-```
+```bash
 apigeecli apis export -o org
 ```
+
 Parameters
 The following parameters are supported. See Common Reference for a list of additional parameters.
 
@@ -210,9 +218,10 @@ The following parameters are supported. See Common Reference for a list of addit
 
 List APIs in an Apigee Org
 
+```bash
+apigeecli apis list -o org
 ```
-apigeecli apis list -o org 
-```
+
 Parameters
 The following parameters are supported. See Common Reference for a list of additional parameters.
 
@@ -227,9 +236,10 @@ If the revision flag is enabled, lists all the revisions for the proxy
 
 Lists all deployments of an API proxy
 
-```
+```bash
 apigeecli org listdeploy -o org -n name
 ```
+
 Parameters
 The following parameters are supported. See Common Reference for a list of additional parameters.
 
@@ -250,9 +260,10 @@ Manage debug sessions/trace for API Proxy revisions
 
 Create a new trace/debug session
 
-```
+```bash
 apigeecli apis trace create -o org -e env -n name -v 1 -f "name1=value1,name2=value2"
 ```
+
 Parameters
 The following parameters are supported. See Common Reference for a list of additional parameters.
 
@@ -266,9 +277,10 @@ The following parameters are supported. See Common Reference for a list of addit
 
 Get details for trace/debug session
 
-```
+```bash
 apigeecli apis trace create -o org -e env -n name -v 1 -s uuid
 ```
+
 Parameters
 The following parameters are supported. See Common Reference for a list of additional parameters.
 
@@ -283,9 +295,10 @@ The following parameters are supported. See Common Reference for a list of addit
 
 List all trace/debug session for a proxy revision in the last 24 hours
 
-```
+```bash
 apigeecli apis trace create -o org -e env -n name -v 1
 ```
+
 Parameters
 The following parameters are supported. See Common Reference for a list of additional parameters.
 
@@ -298,7 +311,7 @@ The following parameters are supported. See Common Reference for a list of addit
 
 Undeploys a revision of an existing API proxy to an environment in an organization.
 
-```
+```bash
 apigeecli apis undeploy -o org -e env -n proxy -v 1
 ```
 
@@ -309,7 +322,7 @@ The following parameters are supported. See Common Reference for a list of addit
 * `--name -n` (required) API proxy name
 * `--rev -v` (required) API proxy revision
 
----
+___
 
 ## <a name="apps"/> apps
 
@@ -327,7 +340,7 @@ Supported alias `applications`
 
 Create a developer app
 
-```
+```bash
 apigeecli apps create -o org -n name -e test,prod -p proxy1 --attrs "foo1=bar1,foo2=bar2"
 ```
 
@@ -347,7 +360,7 @@ The following parameters are supported. See Common Reference for a list of addit
 
 Delete a developer app
 
-```
+```bash
 apigeecli apps delete -o org -n name 
 ```
 
@@ -361,7 +374,7 @@ The following parameters are supported. See Common Reference for a list of addit
 
 Create new developer KeyPairs Generates a new consumer key and consumer secret for the named developer app
 
-```
+```bash
 apigeecli apps genkey -o org -n name -p proxy1
 ```
 
@@ -379,7 +392,7 @@ The following parameters are supported. See Common Reference for a list of addit
 
 Get details of a developer app
 
-```
+```bash
 apigeecli apps get -o org -n name 
 ```
 
@@ -396,7 +409,7 @@ NOTE: Either appId or Name must be passed
 
 List all developer apps in an org
 
-```
+```bash
 apigeecli apps list -o org 
 ```
 
@@ -411,7 +424,7 @@ The following parameters are supported. See Common Reference for a list of addit
 
 Import Developer app entities into an org
 
-```
+```bash
 apigeecli apps import -o org -f filepath.json
 ```
 
@@ -427,7 +440,7 @@ A sample file format can be found [here](https://github.com/srinandan/apigeecli/
 
 Export Developer app entities from an org
 
-```
+```bash
 apigeecli apps export -o org 
 ```
 
@@ -436,7 +449,7 @@ The following parameters are supported. See Common Reference for a list of addit
 
 * `--org -o` (required) Apigee organization name
 
----
+___
 
 ## <name ="cache"/> cache
 
@@ -447,7 +460,7 @@ The following parameters are supported. See Common Reference for a list of addit
 
 Delete a cache resource from an environment
 
-```
+```bash
 apigeecli cache delete -o org -e env -n name
 ```
 Parameters
@@ -461,16 +474,17 @@ The following parameters are supported. See Common Reference for a list of addit
 
 List cache resources in an environment
 
-```
+```bash
 apigeecli cache list -o org -e env
 ```
+
 Parameters
 The following parameters are supported. See Common Reference for a list of additional parameters.
 
 * `--org -o` (required) Apigee organization name
 * `--env -e` (required) Apigee environment name
 
----
+___
 
 ## <a name="devs"/> developers
 
@@ -487,7 +501,7 @@ Supported alias `developers`
 
 Create a new App Developer
 
-```
+```bash
 apigeecli devs create -o org -n email -f firstname -s lastname -u username --attrs "foo1=bar1,foo2=bar2"
 ```
 
@@ -505,7 +519,7 @@ The following parameters are supported. See Common Reference for a list of addit
 
 Delete an App Developer
 
-```
+```bash
 apigeecli devs get -o org -n name 
 ```
 
@@ -520,7 +534,7 @@ The following parameters are supported. See Common Reference for a list of addit
 
 Get details of an App Developer
 
-```
+```bash
 apigeecli devs get -o org -n name 
 ```
 
@@ -534,7 +548,7 @@ The following parameters are supported. See Common Reference for a list of addit
 
 List all App Developers in an org
 
-```
+```bash
 apigeecli devs list -o org 
 ```
 
@@ -547,7 +561,7 @@ The following parameters are supported. See Common Reference for a list of addit
 
 Import Developer entities into an org
 
-```
+```bash
 apigeecli devs import -o org -f filepath.json
 ```
 
@@ -561,7 +575,7 @@ The following parameters are supported. See Common Reference for a list of addit
 
 Import Developer entities into an org
 
-```
+```bash
 apigeecli devs export -o org 
 ```
 
@@ -570,7 +584,7 @@ The following parameters are supported. See Common Reference for a list of addit
 
 * `--org -o` (required) Apigee organization name
 
----
+___
 
 ## <a name="env"/> envs
 
@@ -578,7 +592,7 @@ Supported alias `environments`
 
 * [debugmask] (#debugmask)
 * [get](#getenv)
-* [iam](#iam)
+* [iam](#iamenv)
 * [list](#listenv)
 
 ### <a name="debugmask"/> debugmask
@@ -590,7 +604,7 @@ Supported alias `environments`
 
 Get debugmask settings for an environment
 
-```
+```bash
 apigeecli envs debugmask get -o org -e env 
 ```
 
@@ -604,7 +618,7 @@ The following parameters are supported. See Common Reference for a list of addit
 
 Set debugmask settings for an environment
 
-```
+```bash
 apigeecli envs debugmask set -o org -e env -m "mask_settings_in_json"
 ```
 
@@ -615,7 +629,7 @@ The following parameters are supported. See Common Reference for a list of addit
 * `--env -e` (required) Apigee environment name
 * `--mask -m` (required) Mask settings in JSON format
 
-### <a name="iam"/> iam
+### <a name="iamenv"/> iam
 
 * [get](#getiam)
 * [set](#setiam)
@@ -625,7 +639,7 @@ The following parameters are supported. See Common Reference for a list of addit
 
 Get IAM settings for an environment
 
-```
+```bash
 apigeecli envs iam get -o org -e env 
 ```
 
@@ -639,7 +653,7 @@ The following parameters are supported. See Common Reference for a list of addit
 
 Set IAM settings for an environment
 
-```
+```bash
 apigeecli envs iam set -o org -e env -p "iam_policy_in_json"
 ```
 
@@ -655,7 +669,7 @@ The following parameters are supported. See Common Reference for a list of addit
 
 Get details of an environment
 
-```
+```bash
 apigeecli envs get -o org -e env 
 ```
 
@@ -670,7 +684,7 @@ The following parameters are supported. See Common Reference for a list of addit
 
 List all environments in an org
 
-```
+```bash
 apigeecli envs list -o org 
 ```
 Parameters
@@ -678,9 +692,9 @@ The following parameters are supported. See Common Reference for a list of addit
 
 * `--org -o` (required) Apigee organization name
 
----
+___
 
-## <a name="flowhooks"/> flowhooks
+## <a name="flow"/> flowhooks
 
 * [attach](#crtfh)
 * [detach](#delfh)
@@ -691,7 +705,7 @@ The following parameters are supported. See Common Reference for a list of addit
 
 Attach a Flowhook
 
-```
+```bash
 apigeecli flowhooks attach -o org -e env -n PreFlow -n proxy 
 ```
 
@@ -709,7 +723,7 @@ The following parameters are supported. See Common Reference for a list of addit
 
 Detach a Flowhook
 
-```
+```bash
 apigeecli flowhooks detach -o org -e env -n PreFlow
 ```
 
@@ -725,7 +739,7 @@ The following parameters are supported. See Common Reference for a list of addit
 
 Get a details of a configured Flowhook
 
-```
+```bash
 apigeecli flowhooks get -o org -e env -n PreFlow
 ```
 
@@ -740,7 +754,7 @@ The following parameters are supported. See Common Reference for a list of addit
 
 List of configured Flowhooks
 
-```
+```bash
 apigeecli flowhooks list -o org -e env
 ```
 
@@ -750,7 +764,116 @@ The following parameters are supported. See Common Reference for a list of addit
 * `--org -o` (required) Apigee organization name
 * `--env -e` (required) Apigee environment name
 
----
+___
+
+## <a name="iam"/> iam
+
+* [createall] (#createall)
+* [createax] (#createax)
+* [createcass] (#createcass)
+* [createcass] (#createlogger)
+* [createmetric] (#createmetric)
+* [createsync] (#createsync)
+
+### <a name ="createall"/> createall
+
+Create a Google IAM Service Account with all the necessary roles to operate the hybrid runtime
+
+```bash
+apigeecli iam createall -p gcp-project-id -n service-account-name
+```
+
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--prj -p` (required) GCP Project ID
+* `--name -n` (required) Service Account Name
+
+### <a name ="createax"/> createax
+
+Create a Google IAM Service Account for Apigee Analytics Agent
+
+```bash
+apigeecli iam createax -p gcp-project-id -n service-account-name
+```
+
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--prj -p` (required) GCP Project ID
+* `--name -n` (required) Service Account Name
+
+### <a name ="createcass"/> createcass
+
+Create a Google IAM Service Account for Apigee hybrid Cassandra backup
+
+```bash
+apigeecli iam createcass -p gcp-project-id -n service-account-name
+```
+
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--prj -p` (required) GCP Project ID
+* `--name -n` (required) Service Account Name
+
+### <a name ="createlogger"/> createlogger
+
+Create a Google IAM Service Account for StackDriver logger
+
+```bash
+apigeecli iam createlogger -p gcp-project-id -n service-account-name
+```
+
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--prj -p` (required) GCP Project ID
+* `--name -n` (required) Service Account Name
+
+### <a name="createmart"/> createmart
+
+Create a Google IAM Service Account for Apigee MART
+
+```bash
+apigeecli iam createmart -p gcp-project-id -n service-account-name
+```
+
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--prj -p` (required) GCP Project ID
+* `--name -n` (required) Service Account Name
+
+### <a name="createmetrics"/> createmetrics
+
+Create a Google IAM Service Account for StackDriver Metrics
+
+```bash
+apigeecli iam createmetrics -p gcp-project-id -n service-account-name
+```
+
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--prj -p` (required) GCP Project ID
+* `--name -n` (required) Service Account Name
+
+### <a name="createsync"/> createsync
+
+Create a Google IAM Service Account for Apigee Sync
+
+```bash
+apigeecli iam createsync -p gcp-project-id -n service-account-name
+```
+
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--prj -p` (required) GCP Project ID
+* `--name -n` (required) Service Account Name
+
+___
 
 ## <a name="keystores"/> keystores
 
@@ -763,7 +886,7 @@ The following parameters are supported. See Common Reference for a list of addit
 
 Create a new key store
 
-```
+```bash
 apigeecli keystores create -o org -e env -n name
 ```
 
@@ -778,7 +901,7 @@ The following parameters are supported. See Common Reference for a list of addit
 
 Delete a key store
 
-```
+```bash
 apigeecli keystores delete -o org -e env -n name 
 ```
 
@@ -793,7 +916,7 @@ The following parameters are supported. See Common Reference for a list of addit
 
 Get details of a key store
 
-```
+```bash
 apigeecli keystores get -o org -e env -n name 
 ```
 
@@ -808,7 +931,7 @@ The following parameters are supported. See Common Reference for a list of addit
 
 List key stores in an environment
 
-```
+```bash
 apigeecli keystores get -o org -e env
 ```
 
@@ -818,7 +941,7 @@ The following parameters are supported. See Common Reference for a list of addit
 * `--org -o` (required) Apigee organization name
 * `--env -e` (required) Apigee environment name
 
----
+___
 
 ## <a name="keylaliases"/> keyaliases
 
@@ -831,7 +954,7 @@ The following parameters are supported. See Common Reference for a list of addit
 
 Create a new key aliases
 
-```
+```bash
 apigeecli keyaliases create -o org -e env -n name -s alias
 ```
 
@@ -847,7 +970,7 @@ The following parameters are supported. See Common Reference for a list of addit
 
 Delete a key aliases
 
-```
+```bash
 apigeecli keyaliases delete -o org -e env -n name -s alias
 ```
 
@@ -863,7 +986,7 @@ The following parameters are supported. See Common Reference for a list of addit
 
 Get details of a key aliases
 
-```
+```bash
 apigeecli keyaliases get -o org -e env -n name -s alias
 ```
 
@@ -879,7 +1002,7 @@ The following parameters are supported. See Common Reference for a list of addit
 
 List key aliases in a key store
 
-```
+```bash
 apigeecli keyaliases get -o org -e env -n name
 ```
 
@@ -890,7 +1013,7 @@ The following parameters are supported. See Common Reference for a list of addit
 * `--env -e` (required) Apigee environment name
 * `--name -n` (required) Key store name
 
----
+___
 
 ## <a name="kvm"/> kvms
 
@@ -902,7 +1025,7 @@ The following parameters are supported. See Common Reference for a list of addit
 
 Create a new KV Map
 
-```
+```bash
 apigeecli kvms create -o org -e env -n kvm1 -c true 
 ```
 
@@ -918,7 +1041,7 @@ The following parameters are supported. See Common Reference for a list of addit
 
 Delete a new KV Map
 
-```
+```bash
 apigeecli kvms delete -o org -e env -n kvm1 
 ```
 
@@ -933,7 +1056,7 @@ The following parameters are supported. See Common Reference for a list of addit
 
 List KVMs in an environment
 
-```
+```bash
 apigeecli kvms list -o org -e env 
 ```
 
@@ -943,7 +1066,7 @@ The following parameters are supported. See Common Reference for a list of addit
 * `--org -o` (required) Apigee organization name
 * `--env -e` (required) Apigee environment name
 
----
+___
 
 ## <a name="org"/> org
 
@@ -956,7 +1079,7 @@ The following parameters are supported. See Common Reference for a list of addit
 
 List all the orgs available to the identity (service account)
 
-```
+```bash
 apigeecli org list 
 ```
 
@@ -964,7 +1087,7 @@ apigeecli org list
 
 Get org details for an Apigee Org
 
-```
+```bash
 apigeecli org get -o org 
 ```
 Parameters
@@ -976,7 +1099,7 @@ The following parameters are supported. See Common Reference for a list of addit
 
 Configure MART endpoint for an Apigee Org
 
-```
+```bash
 apigeecli org get -o org -m http://endpoint
 ```
 Parameters
@@ -986,7 +1109,7 @@ The following parameters are supported. See Common Reference for a list of addit
 * `--mart -m` (required) MART endpoint
 * `--whitelist -w` (optional) Enable/disable whitelisting of GCP IP for source connections to MART
 
----
+___
 
 ## <a name="proejcts"/> projects
 
@@ -996,7 +1119,7 @@ The following parameters are supported. See Common Reference for a list of addit
 
 Test IAM permissions for a project
 
-```
+```bash
 apigeecli projects testiam -p gcp-project-id
 ```
 Parameters
@@ -1004,7 +1127,7 @@ The following parameters are supported. See Common Reference for a list of addit
 
 * `--prj -p` (required) GCP Project ID
 
----
+___
 
 ## <a name="prods"/> products
 
@@ -1020,7 +1143,7 @@ Supported alias `prods`
 
 Create an API product
 
-```
+```bash
 apigeecli prods create -o org -n name -e test,prod -p proxy1,proxy2 -f auto --attrs "foo1=bar1,foo2=bar2"
 ```
 Parameters
@@ -1045,7 +1168,7 @@ Delete an API Product
 
 Get details of an API product
 
-```
+```bash
 apigeecli prods delete -o org -n name 
 ```
 Parameters
@@ -1058,7 +1181,7 @@ The following parameters are supported. See Common Reference for a list of addit
 
 Get details of an API product
 
-```
+```bash
 apigeecli prods list -o org -n name 
 ```
 Required parameters
@@ -1071,7 +1194,7 @@ The following parameters are required. See Common Reference for a list of additi
 
 Import API products from a configuration file
 
-```
+```bash
 apigeecli prods list -o org -f file -c connections 
 ```
 Required parameters
@@ -1087,7 +1210,7 @@ A sample file format can be found [here](https://github.com/srinandan/apigeecli/
 
 Export API products to a file
 
-```
+```bash
 apigeecli prods export -o org -c connections 
 ```
 Required parameters
@@ -1096,7 +1219,7 @@ The following parameters are required. See Common Reference for a list of additi
 `--org -o` (required) Apigee organization name
 `--conn -c` (optional) Number of connections to establish; default is 4
 
----
+___
 
 ## <a name="resources"/> resources
 
@@ -1109,7 +1232,7 @@ The following parameters are required. See Common Reference for a list of additi
 
 Create a resource to an environment
 
-```
+```bash
 apigeecli resources create -o org -e env -n test.js -p jsc -r /tmp/test.js 
 ```
 Required parameters
@@ -1125,7 +1248,7 @@ The following parameters are required. See Common Reference for a list of additi
 
 Delete a resource from an environment
 
-```
+```bash
 apigeecli resources create -o org -e env -n test.js -p jsc
 ```
 Required parameters
@@ -1140,7 +1263,7 @@ The following parameters are required. See Common Reference for a list of additi
 
 Download a resource from an environment
 
-```
+```bash
 apigeecli resources create -o org -e env -n test.js -p jsc
 ```
 Required parameters
@@ -1155,7 +1278,7 @@ The following parameters are required. See Common Reference for a list of additi
 
 List resources in an environment
 
-```
+```bash
 apigeecli prods list -o org -e env 
 ```
 Required parameters
@@ -1165,7 +1288,7 @@ The following parameters are required. See Common Reference for a list of additi
 `--env -e` (required) Apigee environment name
 `--type -p` (optional) Filter by resource type
 
----
+___
 
 ## <a name="sf"/> sharedflows
 
@@ -1183,7 +1306,7 @@ The following parameters are required. See Common Reference for a list of additi
 
 Import or create a sharedflow. If a bundle (zip) is supplied, it is imported else, it creates an empty proxy in the Org
 
-```
+```bash
 apigeecli apis create -o org -n proxy
 ```
 
@@ -1198,7 +1321,7 @@ The following parameters are supported. See Common Reference for a list of addit
 
 Deletes a sharedflow and all policies, resources, and revisions. The sharedflow must be undeployed before you can delete it.
 
-```
+```bash
 apigeecli sharedflows delete -o org -n proxy
 ```
 
@@ -1212,7 +1335,7 @@ The following parameters are supported. See Common Reference for a list of addit
 
 Deploys a revision of an existing sharedflow to an environment in an organization.
 
-```
+```bash
 apigeecli sharedflows deploy -o org -e env -n sharedflow1 -v 1
 ```
 
@@ -1228,7 +1351,7 @@ The following parameters are supported. See Common Reference for a list of addit
 
 Export sharedflows as bundles from an organization.
 
-```
+```bash
 apigeecli sharedflows export -o org
 ```
 
@@ -1241,7 +1364,7 @@ The following parameters are supported. See Common Reference for a list of addit
 
 Returns a zip-formatted proxy bundle of code and config files.
 
-```
+```bash
 apigeecli apis fetch -o org -e env -n sharedflow -v 1
 ```
 
@@ -1256,7 +1379,7 @@ The following parameters are supported. See Common Reference for a list of addit
 
 Get a sharedflow's details
 
-```
+```bash
 apigeecli apis get -o org -e env -n sharedflow
 ```
 
@@ -1270,7 +1393,7 @@ The following parameters are supported. See Common Reference for a list of addit
 
 Import sharedflows from dir to an organization.
 
-```
+```bash
 apigeecli sharedflows import -o org -f /tmp
 ```
 
@@ -1284,7 +1407,7 @@ The following parameters are supported. See Common Reference for a list of addit
 
 List all sharedflows in an org
 
-```
+```bash
 apigeecli apis get -o org -e env -n sharedflow
 ```
 
@@ -1299,7 +1422,7 @@ The following parameters are supported. See Common Reference for a list of addit
 
 Undeploys a revision of an existing API proxy to an environment in an organization.
 
-```
+```bash
 apigeecli apis undeploy -o org -e env -n proxy -v 1
 ```
 
@@ -1310,7 +1433,7 @@ The following parameters are supported. See Common Reference for a list of addit
 * `--name -n` (required) sharedflow name
 * `--rev -v` (required) sharedflow revision
 
----
+___
 
 ## <a name="sync"/> sync
 
@@ -1322,7 +1445,7 @@ The following parameters are supported. See Common Reference for a list of addit
 
 List all the orgs available to the identity (service account)
 
-```
+```bash
 apigeecli sync get -o org
 ```
 
@@ -1330,7 +1453,7 @@ apigeecli sync get -o org
 
 Set identity with access to control plane resources
 
-```
+```bash
 apigeecli sync set -o org -i identity 
 ```
 
@@ -1340,7 +1463,7 @@ The following parameters are supported. See Common Reference for a list of addit
 * `--org -o` (required) Apigee organization name
 * `--ity -i` (required) IAM Identity
 
----
+___
 
 ## <a name="target"/> targetservers
 
@@ -1357,7 +1480,7 @@ Supported alias `ts`
 
 Create a new target server
 
-```
+```bash
 apigeecli targetservers create -o org -e env -h hostname -p 80 -n ts1
 ```
 
@@ -1376,7 +1499,7 @@ The following parameters are supported. See Common Reference for a list of addit
 
 Delete a target server
 
-```
+```bash
 apigeecli targetservers delete -o org -e env -n name 
 ```
 
@@ -1391,7 +1514,7 @@ The following parameters are supported. See Common Reference for a list of addit
 
 Export a target servers from an environment
 
-```
+```bash
 apigeecli targetservers export -o org -e env
 ```
 
@@ -1405,7 +1528,7 @@ The following parameters are supported. See Common Reference for a list of addit
 
 Get details of a target server
 
-```
+```bash
 apigeecli targetservers get -o org -e env -n name 
 ```
 
@@ -1420,7 +1543,7 @@ The following parameters are supported. See Common Reference for a list of addit
 
 List target servers in an environment
 
-```
+```bash
 apigeecli targetservers list -o org -e env 
 ```
 
@@ -1430,7 +1553,7 @@ The following parameters are supported. See Common Reference for a list of addit
 * `--org -o` (required) Apigee organization name
 * `--env -e` (required) Apigee environment name
 
----
+___
 
 ## <a name="token"/> token
 
@@ -1441,7 +1564,7 @@ The following parameters are supported. See Common Reference for a list of addit
 
 Generate a new access token
 
-```
+```bash
 apigeecli token gen -a serviceaccount.json 
 ```
 
@@ -1454,7 +1577,7 @@ The following parameters are supported. See Common Reference for a list of addit
 
 Caches a new access token. Writes the access token to $HOME/.access_token for use by subsequent calls
 
-```
+```bash
 apigeecli token cache -a serviceaccount.json 
 ```
 
@@ -1463,5 +1586,4 @@ The following parameters are supported. See Common Reference for a list of addit
 
 * `--account -a` (required) Service Account in json format
 
----
-
+___

@@ -29,6 +29,20 @@ type OAuthAccessToken struct {
 //KeyAliasName holds the name of the key alias
 type KeyAliasName string
 
+//Binding for IAM Roles
+type Binding struct {
+	Role      string     `json:"role,omitempty"`
+	Members   []string   `json:"members,omitempty"`
+	Condition *Condition `json:"condition,omitempty"`
+}
+
+//Condition for Bindings
+type Condition struct {
+	Title       string `json:"title,omitempty"`
+	Description string `json:"description,omitempty"`
+	Expression  string `json:"expression,omitempty"`
+}
+
 func (a KeyAliasName) String() string {
 	return string(a)
 }

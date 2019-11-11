@@ -9,6 +9,7 @@ import (
 	"github.com/srinandan/apigeecli/cmd/developers"
 	"github.com/srinandan/apigeecli/cmd/env"
 	flowhooks "github.com/srinandan/apigeecli/cmd/flowhooks"
+	"github.com/srinandan/apigeecli/cmd/iam"
 	"github.com/srinandan/apigeecli/cmd/keyaliases"
 	"github.com/srinandan/apigeecli/cmd/keystores"
 	"github.com/srinandan/apigeecli/cmd/kvm"
@@ -72,6 +73,7 @@ func init() {
 	RootCmd.AddCommand(cache.Cmd)
 	RootCmd.AddCommand(res.Cmd)
 	RootCmd.AddCommand(projects.Cmd)
+	RootCmd.AddCommand(iam.Cmd)
 }
 
 func initConfig() {
