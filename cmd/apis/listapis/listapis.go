@@ -19,9 +19,9 @@ var Cmd = &cobra.Command{
 		if shared.RootArgs.Env != "" {
 			u.Path = path.Join(u.Path, shared.RootArgs.Org, "environments", shared.RootArgs.Env, "deployments")
 		} else {
-			if revisions {
+			if includeRevisions {
 				q := u.Query()
-				q.Set("includeRevisions", strconv.FormatBool(revisions))
+				q.Set("includeRevisions", strconv.FormatBool(includeRevisions))
 				u.RawQuery = q.Encode()
 			}
 			u.Path = path.Join(u.Path, shared.RootArgs.Org, "apis")
@@ -31,13 +31,13 @@ var Cmd = &cobra.Command{
 	},
 }
 
-var revisions bool
+var includeRevisions bool
 
 func init() {
 
 	Cmd.Flags().StringVarP(&shared.RootArgs.Env, "env", "e",
 		"", "Apigee environment name")
 
-	Cmd.Flags().BoolVarP(&revisions, "rev", "r",
+	Cmd.Flags().BoolVarP(&includeRevisions, "incl", "i",
 		false, "Include revisions")
 }
