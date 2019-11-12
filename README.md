@@ -2,7 +2,7 @@
 
 [![TravisCI](https://travis-ci.org/srinandan/apigeecli.svg?branch=master)](https://travis-ci.org/srinandan/apigeecli)
 [![Go Report Card](https://goreportcard.com/badge/github.com/srinandan/apigeecli)](https://goreportcard.com/report/github.com/srinandan/apigeecli)
-[![Version](https://img.shields.io/badge/version-v0.8-green.svg)](https://github.com/srinandan/apigeecli/releases)
+[![Version](https://img.shields.io/badge/version-v0.9-green.svg)](https://github.com/srinandan/apigeecli/releases)
 
 This is a tool to interact with [Apigee APIs](https://apigee.googleapis.com). The tool lets you manage (get, list) environments, proxies, etc. The tools also helps you create Service Accounts in Google IAM to operate Apigee hybrid runtime.
 
@@ -227,7 +227,7 @@ The following parameters are supported. See Common Reference for a list of addit
 
 * `--org -o` (required) Apigee organization name
 * `--env -e` (optional) Apigee environment name
-* `--rev -r` (optional) Include proxy revisions
+* `--incl -i` (optional) Include proxy revisions
 
 If the environment name is passed, lists the deployed proxies in the environment
 If the revision flag is enabled, lists all the revisions for the proxy
@@ -244,9 +244,9 @@ Parameters
 The following parameters are supported. See Common Reference for a list of additional parameters.
 
 * `--org -o` (required) Apigee organization name
+* `--env -e` (optional) Apigee environment name
 * `--name -n` (required) API proxy name
-* `--expand -x` (optional) Returns an expanded list of proxies for the organization.
-* `--count -c` (optional) Number of apis to return
+* `--rev -r` (optional) API Proxy revision
 
 ### <a name="trace"/> trace
 
