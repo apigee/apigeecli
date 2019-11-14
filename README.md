@@ -2,7 +2,7 @@
 
 [![TravisCI](https://travis-ci.org/srinandan/apigeecli.svg?branch=master)](https://travis-ci.org/srinandan/apigeecli)
 [![Go Report Card](https://goreportcard.com/badge/github.com/srinandan/apigeecli)](https://goreportcard.com/report/github.com/srinandan/apigeecli)
-[![Version](https://img.shields.io/badge/version-v0.9-green.svg)](https://github.com/srinandan/apigeecli/releases)
+[![Version](https://img.shields.io/badge/version-v0.91-green.svg)](https://github.com/srinandan/apigeecli/releases)
 
 This is a tool to interact with [Apigee APIs](https://apigee.googleapis.com). The tool lets you manage (get, list) environments, proxies, etc. The tools also helps you create Service Accounts in Google IAM to operate Apigee hybrid runtime.
 
@@ -18,16 +18,16 @@ NOTE: Supported platforms are:
 
 ## What you need to know about apigeecli
 
-You must have an account on [Apigee Hybrid](https://docs.apigee.com/hybrid/beta2) to perform any `apigeecli` functions. These functions include: proxies, API Products, Environments,
+You must have an account on [Apigee Hybrid](https://docs.apigee.com/hybrid/) to perform any `apigeecli` functions. These functions include: proxies, API Products, Environments,
 Org details etc.
 
 You need to be familiar with basic concepts and features of Apigee Edge such as API proxies, organizations, and environments.
 
-For more information, refer to the [Apigee Hybrid API Reference](https://docs.apigee.com/hybrid/beta2/reference/apis/rest/index).
+For more information, refer to the [Apigee Hybrid API Reference](https://docs.apigee.com/hybrid/reference/apis/rest/index).
 
 ## Service Account
 
-Create a service account with appropriate persmissions. Refer to this [link](https://docs.apigee.com/hybrid/beta2/precog-serviceaccounts) for more details on how to download the JSON file.
+Create a service account with appropriate persmissions. Refer to this [link](https://docs.apigee.com/hybrid/precog-serviceaccounts) for more details on how to download the JSON file.
 
 ## Access Token
 
