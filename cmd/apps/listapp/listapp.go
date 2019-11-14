@@ -1,10 +1,11 @@
 package listapp
 
 import (
-	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/cmd/shared"
 	"net/url"
 	"path"
+
+	"github.com/spf13/cobra"
+	"github.com/srinandan/apigeecli/cmd/shared"
 )
 
 //Cmd to list apps
@@ -21,6 +22,11 @@ var Cmd = &cobra.Command{
 		} else {
 			q.Set("expand", "false")
 		}
+		if expand && includeCred {
+			q.Set("includeCred", "true")
+		} else if expand && !includeCred {
+			q.Set("includeCred", "false")
+		}
 		if count != "" {
 			q.Set("row", count)
 		}
@@ -31,13 +37,15 @@ var Cmd = &cobra.Command{
 }
 
 var expand = false
+var includeCred = false
 var count string
 
 func init() {
 
 	Cmd.Flags().StringVarP(&count, "count", "c",
 		"", "Number of apps; limit is 1000")
-
 	Cmd.Flags().BoolVarP(&expand, "expand", "x",
 		false, "Expand Details")
+	Cmd.Flags().BoolVarP(&includeCred, "inclCred", "i",
+		false, "Include Credentials")
 }

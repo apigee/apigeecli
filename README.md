@@ -419,6 +419,7 @@ The following parameters are supported. See Common Reference for a list of addit
 * `--org -o` (required) Apigee organization name
 * `--expand -x` (optional) Returns an expanded list of apps for the organization.
 * `--count -c` (optional) Number of app ids to return. Default is 10000
+* `--inclCred -i` (optional) Include Credentials; Default is false
 
 ### <a name="impapps"/> import
 
