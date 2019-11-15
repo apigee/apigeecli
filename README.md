@@ -633,7 +633,9 @@ The following parameters are supported. See Common Reference for a list of addit
 ### <a name="iamenv"/> iam
 
 * [get](#getiam)
-* [set](#setiam)
+* [setax](#setax)
+* [setdeploy](#setdeploy)
+* [setsync](#setsync)
 * [test](#testiam)
 
 #### <a name="getiam"/> get
@@ -650,12 +652,12 @@ The following parameters are supported. See Common Reference for a list of addit
 * `--org -o` (required) Apigee organization name
 * `--env -e` (required) Apigee environment name
 
-#### <a name="setiam"/> set
+#### <a name="setax"/> setax
 
-Set IAM settings for an environment
+Set Analytics Viewer permission for an SA on an Apigee environment
 
 ```bash
-apigeecli envs iam set -o org -e env -p "iam_policy_in_json"
+apigeecli envs iam setax -o org -e env -n service_account_name
 ```
 
 Parameters
@@ -663,8 +665,37 @@ The following parameters are supported. See Common Reference for a list of addit
 
 * `--org -o` (required) Apigee organization name
 * `--env -e` (required) Apigee environment name
-* `--policy -p` (required) IAM policy in JSON format
+* `--name -n` (required) Service Account Name
 
+#### <a name="setdeploy"/> setdeploy
+
+Set API Deployer permission for an SA on an Apigee environment
+
+```bash
+apigeecli envs iam setdeploy -o org -e env -n service_account_name
+```
+
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+* `--env -e` (required) Apigee environment name
+* `--name -n` (required) Service Account Name
+
+#### <a name="setax"/> setsync
+
+Set Synchronization Manager permission for an SA on an Apigee environment
+
+```bash
+apigeecli envs iam setsync -o org -e env -n service_account_name
+```
+
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+* `--env -e` (required) Apigee environment name
+* `--name -n` (required) Service Account Name
 
 ### <a name="getenv"/> get
 

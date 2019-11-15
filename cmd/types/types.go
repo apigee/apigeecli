@@ -43,6 +43,18 @@ type Condition struct {
 	Expression  string `json:"expression,omitempty"`
 }
 
+//IamPolicy
+type IamPolicy struct {
+	Version  int       `json:"version,omitempty"`
+	Etag     string    `json:"etag,omitempty"`
+	Bindings []Binding `json:"bindings,omitempty"`
+}
+
+//SetIamPolicy
+type SetIamPolicy struct {
+	Policy IamPolicy `json:"policy,omitempty"`
+}
+
 func (a KeyAliasName) String() string {
 	return string(a)
 }

@@ -11,7 +11,7 @@ var Cmd = &cobra.Command{
 	Short: "Create a new IAM Service Account for Apigee Analytics",
 	Long:  "Create a new IAM Service Account for Apigee Analytics",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		return shared.CreateIAMServiceAccount(name, "sync")
+		return shared.CreateIAMServiceAccount(name, "analytics")
 	},
 }
 

@@ -3,7 +3,9 @@ package iam
 import (
 	"github.com/spf13/cobra"
 	"github.com/srinandan/apigeecli/cmd/env/iam/getiam"
-	"github.com/srinandan/apigeecli/cmd/env/iam/setiam"
+	"github.com/srinandan/apigeecli/cmd/env/iam/setax"
+	"github.com/srinandan/apigeecli/cmd/env/iam/setdeploy"
+	"github.com/srinandan/apigeecli/cmd/env/iam/setsync"
 	"github.com/srinandan/apigeecli/cmd/env/iam/testiam"
 	"github.com/srinandan/apigeecli/cmd/shared"
 )
@@ -23,6 +25,8 @@ func init() {
 	_ = Cmd.MarkPersistentFlagRequired("env")
 
 	Cmd.AddCommand(getiam.Cmd)
-	Cmd.AddCommand(setiam.Cmd)
+	Cmd.AddCommand(setax.Cmd)
+	Cmd.AddCommand(setdeploy.Cmd)
+	Cmd.AddCommand(setsync.Cmd)
 	Cmd.AddCommand(testiam.Cmd)
 }

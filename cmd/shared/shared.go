@@ -636,16 +636,6 @@ func ImportBundle(entityType string, name string, bundlePath string) error {
 //CreateIAMServiceAccount create a new IAM SA with the necessary roles for Apigee
 func CreateIAMServiceAccount(name string, iamRole string) (err error) {
 
-	type IamPolicy struct {
-		Version  int             `json:"version,omitempty"`
-		Etag     string          `json:"etag,omitempty"`
-		Bindings []types.Binding `json:"bindings,omitempty"`
-	}
-
-	type SetIamPolicy struct {
-		Policy IamPolicy `json:"policy,omitempty"`
-	}
-
 	type KeyResponse struct {
 		Name            string `json:"name,omitempty"`
 		PrivateKeyType  string `json:"privateKeyType,omitempty"`
@@ -748,7 +738,7 @@ func CreateIAMServiceAccount(name string, iamRole string) (err error) {
 	u.Path = path.Join(u.Path, RootArgs.ProjectID+":getIamPolicy")
 	respBody, err := HttpClient(false, u.String(), "")
 
-	iamPolicy := IamPolicy{}
+	iamPolicy := types.IamPolicy{}
 
 	err = json.Unmarshal(respBody, &iamPolicy)
 	if err != nil {
@@ -768,7 +758,7 @@ func CreateIAMServiceAccount(name string, iamRole string) (err error) {
 		iamPolicy.Bindings = append(iamPolicy.Bindings, binding)
 	}
 
-	setIamPolicy := SetIamPolicy{}
+	setIamPolicy := types.SetIamPolicy{}
 	setIamPolicy.Policy = iamPolicy
 	setIamPolicyBody, err := json.Marshal(setIamPolicy)
 
@@ -795,4 +785,61 @@ func createAllRoleBindings(name string) []types.Binding {
 	}
 
 	return bindings
+}
+
+//SetIAMServiceAccount create a new IAM SA with the necessary roles for an Apigee Env
+func SetIAMServiceAccount(serviceAccountName string, iamRole string) (err error) {
+
+	var role string
+
+	switch iamRole {
+	case "sync":
+		role = "roles/apigee.synchronizerManager"
+	case "analytics":
+		role = "roles/apigee.analyticsAgent"
+	case "deploy":
+		role = "roles/apigee.deployer"
+	default:
+		return fmt.Errorf("invalid service account role")
+	}
+
+	u, _ := url.Parse(BaseURL)
+	u.Path = path.Join(u.Path, RootArgs.Org, "environments", RootArgs.Env+":getIamPolicy")
+	getIamPolicyBody, err := HttpClient(false, u.String())
+
+	getIamPolicy := types.IamPolicy{}
+
+	err = json.Unmarshal(getIamPolicyBody, &getIamPolicy)
+	if err != nil {
+		Error.Fatalln(err)
+		return err
+	}
+
+	foundRole := false
+	for i, binding := range getIamPolicy.Bindings {
+		if binding.Role == role {
+			//found members with the role already, add the new SA to the role
+			getIamPolicy.Bindings[i].Members = append(binding.Members, "serviceAccount:"+serviceAccountName)
+			foundRole = true
+		}
+	}
+
+	//no members with the role, add a new one
+	if !foundRole {
+		binding := types.Binding{}
+		binding.Role = role
+		binding.Members = append(binding.Members, "serviceAccount:"+serviceAccountName)
+		getIamPolicy.Bindings = append(getIamPolicy.Bindings, binding)
+	}
+
+	u, _ = url.Parse(BaseURL)
+	u.Path = path.Join(u.Path, RootArgs.Org, "environments", RootArgs.Env+":setIamPolicy")
+
+	setIamPolicy := types.SetIamPolicy{}
+	setIamPolicy.Policy = getIamPolicy
+
+	setIamPolicyBody, err := json.Marshal(setIamPolicy)
+	_, err = HttpClient(false, u.String(), string(setIamPolicyBody))
+
+	return err
 }
