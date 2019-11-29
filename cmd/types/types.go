@@ -55,6 +55,27 @@ type SetIamPolicy struct {
 	Policy IamPolicy `json:"policy,omitempty"`
 }
 
+//Org structure
+type Org struct {
+	Name            string        `json:"name,omitempty"`
+	CreatedAt       string        `json:"-,omitempty"`
+	LastModifiedAt  string        `json:"-,omitempty"`
+	Environments    []string      `json:"-,omitempty"`
+	Properties      OrgProperties `json:"properties,omitempty"`
+	AnalyticsRegion string        `json:"-,omitempty"`
+}
+
+//OrgProperties stores all the org feature flags and properties
+type OrgProperties struct {
+	Property []OrgProperty `json:"property,omitempty"`
+}
+
+//OrgProperty contains an individual org flag or property
+type OrgProperty struct {
+	Name  string `json:"name,omitempty"`
+	Value string `json:"value,omitempty"`
+}
+
 func (a KeyAliasName) String() string {
 	return string(a)
 }

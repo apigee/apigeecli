@@ -2,7 +2,7 @@
 
 [![TravisCI](https://travis-ci.org/srinandan/apigeecli.svg?branch=master)](https://travis-ci.org/srinandan/apigeecli)
 [![Go Report Card](https://goreportcard.com/badge/github.com/srinandan/apigeecli)](https://goreportcard.com/report/github.com/srinandan/apigeecli)
-[![Version](https://img.shields.io/badge/version-v0.91-green.svg)](https://github.com/srinandan/apigeecli/releases)
+[![Version](https://img.shields.io/badge/version-v1.0-green.svg)](https://github.com/srinandan/apigeecli/releases)
 
 This is a tool to interact with [Apigee APIs](https://apigee.googleapis.com). The tool lets you manage (get, list) environments, proxies, etc. The tools also helps you create Service Accounts in Google IAM to operate Apigee hybrid runtime.
 
@@ -800,12 +800,12 @@ ___
 
 ## <a name="iam"/> iam
 
-* [createall] (#createall)
-* [createax] (#createax)
-* [createcass] (#createcass)
-* [createcass] (#createlogger)
-* [createmetric] (#createmetric)
-* [createsync] (#createsync)
+* [createall](#createall)
+* [createax](#createax)
+* [createcass](#createcass)
+* [createcass](#createlogger)
+* [createmetric](#createmetric)
+* [createsync](#createsync)
 
 ### <a name ="createall"/> createall
 
@@ -1103,16 +1103,59 @@ ___
 ## <a name="org"/> org
 
 * [create](#createorg)
+* [enable-apigee-connect](#enable-apigee-connect)
+* [enable-mart-whitelist](#enable-mart-whitelist)
 * [list](#listorgs)
 * [get](#getorg)
 * [setmart](#setmart)
+
+### <a name="createorg"/> create
+
+Create a new Apigee Org
+
+```bash
+apigeecli orgs create -o org -p gcp-project-id -r ax-region 
+```
+
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+* `--prj -p` (required) GCP Project Id
+* `--reg -r` (required) Apigee analytics region
+
+### <a name="enable-apigee-connect"/> enable-apigee-connect
+
+Enable Apigee Connect for an Apigee Org
+
+```bash
+apigeecli orgs enable-apigee-connect -o org 
+```
+
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+
+### <a name="enable-mart-whitelist"/> enable-mart-whitelist
+
+Enable IP whitelisting for MART
+
+```bash
+apigeecli orgs enable-mart-whitelist -o org 
+```
+
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
 
 ### <a name="listorgs"/> list
 
 List all the orgs available to the identity (service account)
 
 ```bash
-apigeecli org list 
+apigeecli orgs list
 ```
 
 ### <a name="getorg"/> get
@@ -1120,8 +1163,9 @@ apigeecli org list
 Get org details for an Apigee Org
 
 ```bash
-apigeecli org get -o org 
+apigeecli orgs get -o org 
 ```
+
 Parameters
 The following parameters are supported. See Common Reference for a list of additional parameters.
 
@@ -1132,8 +1176,9 @@ The following parameters are supported. See Common Reference for a list of addit
 Configure MART endpoint for an Apigee Org
 
 ```bash
-apigeecli org get -o org -m http://endpoint
+apigeecli orgs get -o org -m http://endpoint
 ```
+
 Parameters
 The following parameters are supported. See Common Reference for a list of additional parameters.
 
@@ -1154,6 +1199,7 @@ Test IAM permissions for a project
 ```bash
 apigeecli projects testiam -p gcp-project-id
 ```
+
 Parameters
 The following parameters are supported. See Common Reference for a list of additional parameters.
 
@@ -1178,6 +1224,7 @@ Create an API product
 ```bash
 apigeecli prods create -o org -n name -e test,prod -p proxy1,proxy2 -f auto --attrs "foo1=bar1,foo2=bar2"
 ```
+
 Parameters
 The following parameters are supported. See Common Reference for a list of additional parameters.
 
