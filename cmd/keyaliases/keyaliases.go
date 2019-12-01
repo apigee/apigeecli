@@ -3,7 +3,10 @@ package keyaliases
 import (
 	"github.com/spf13/cobra"
 	"github.com/srinandan/apigeecli/cmd/keyaliases/crtka"
+	"github.com/srinandan/apigeecli/cmd/keyaliases/crtself"
+	"github.com/srinandan/apigeecli/cmd/keyaliases/csr"
 	"github.com/srinandan/apigeecli/cmd/keyaliases/delka"
+	"github.com/srinandan/apigeecli/cmd/keyaliases/getcert"
 	"github.com/srinandan/apigeecli/cmd/keyaliases/getka"
 	"github.com/srinandan/apigeecli/cmd/keyaliases/listka"
 	"github.com/srinandan/apigeecli/cmd/shared"
@@ -31,7 +34,10 @@ func init() {
 	_ = Cmd.MarkPersistentFlagRequired("name")
 
 	Cmd.AddCommand(listka.Cmd)
+	Cmd.AddCommand(csr.Cmd)
+	Cmd.AddCommand(getcert.Cmd)
 	Cmd.AddCommand(getka.Cmd)
 	Cmd.AddCommand(delka.Cmd)
+	Cmd.AddCommand(crtself.Cmd)
 	Cmd.AddCommand(crtka.Cmd)
 }
