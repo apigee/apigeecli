@@ -355,6 +355,29 @@ func TestDeleteResource(t *testing.T) {
 	}
 }
 
+/*func TestCreateKeyStore(t *testing.T) {
+	name := "testkeystore"
+	cmd := exec.Command(apigeecli, "keystores", "create", "-o", org, "-e", env,
+		"-n", name)
+	err := cmd.Run()
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCreateKeyAliasSelfSigned(t *testing.T) {
+	payload := "{\"alias\": \"self\",\"keySize\": \"2048\",\"sigAlg\": \"SHA256withRSA\",\"subject\"" +
+		"{\"commonName\": \"nandan\",\"email\": \"test@test.com\"},\"certValidityInDays\": \"10\"}"
+	name := "testkeystore"
+	keyaliasname := "selfkeyalias"
+	cmd := exec.Command(apigeecli, "keyaliases", "create-self-signed", "-o", org, "-e", env,
+		"-n", name, "-s", keyaliasname, "-c", payload)
+	err := cmd.Run()
+	if err != nil {
+		t.Fatal(err)
+	}
+}*/
+
 //get requires an app id. run list and get an app id or get it from create
 /*func TestGetApp(t *testing.T) {
 	cmd := exec.Command(apigeecli, "apps", "get", "-o", org, "-i", appID, "-t", token, "-l")
