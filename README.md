@@ -978,16 +978,19 @@ ___
 ## <a name="keylaliases"/> keyaliases
 
 * [create](#crtka)
+* [create-self-signed](#crtself)
+* [csr](#csr)
 * [delete](#delka)
 * [get](#getka)
+* [getcert](#getcert)
 * [list](#listka)
 
 ### <a name="crtka"/> create
 
-Create a new key aliases
+Create a new key aliases from PEM or PKCS 12 file
 
 ```bash
-apigeecli keyaliases create -o org -e env -n name -s alias
+apigeecli keyaliases create -o org -e env -n name -s alias -f format
 ```
 
 Parameters
@@ -997,6 +1000,10 @@ The following parameters are supported. See Common Reference for a list of addit
 * `--env -e` (required) Apigee environment name
 * `--name -n` (required) Key Store name
 * `--alias -s` (required) Key Alias name
+* `--format -f` (required) Format; pkcs12 or keycertfile
+* `--exp -x` (optional) Ignore expiry error
+* `--nl -w` (optional) Ignore new line between cert chains
+* `--passsword -p` (optional) Password for pkcs12 file
 
 ### <a name ="delka"/> delete
 
