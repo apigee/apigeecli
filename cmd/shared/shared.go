@@ -170,7 +170,6 @@ func DownloadResource(url string, name string, resType string) error {
 		Error.Fatalln("error connecting: ", err)
 		return err
 	} else if resp.StatusCode > 299 {
-		Error.Fatalln("response Code: ", resp.StatusCode)
 		Error.Fatalln("error in response: ", resp.Body)
 		return errors.New("error in response")
 	}
@@ -239,7 +238,6 @@ func HttpClient(print bool, params ...string) (respBody []byte, err error) {
 		Error.Fatalln("error in response: ", err)
 		return nil, err
 	} else if resp.StatusCode > 299 {
-		Error.Fatalln("response Code: ", resp.StatusCode)
 		Error.Fatalln("error in response: ", string(respBody))
 		return nil, errors.New("error in response")
 	}
@@ -465,26 +463,26 @@ func SetAccessToken() error {
 func ReadBundle(filename string) error {
 
 	if !strings.HasSuffix(filename, ".zip") {
-		Error.Fatalln("Proxy bundle must be a zip file")
+		Error.Fatalln("proxy bundle must be a zip file")
 		return errors.New("source must be a zipfile")
 	}
 
 	file, err := os.Open(filename)
 
 	if err != nil {
-		Error.Fatalln("Cannot open/read API Proxy Bundle: ", err)
+		Error.Fatalln("cannot open/read API Proxy Bundle: ", err)
 		return err
 	}
 
 	fi, err := file.Stat()
 	if err != nil {
-		Error.Fatalln("Error accessing file: ", err)
+		Error.Fatalln("error accessing file: ", err)
 		return err
 	}
 	_, err = zip.NewReader(file, fi.Size())
 
 	if err != nil {
-		Error.Fatalln("Invalid API Proxy Bundle: ", err)
+		Error.Fatalln("invalid API Proxy Bundle: ", err)
 		return err
 	}
 
