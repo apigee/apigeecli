@@ -29,7 +29,6 @@ var Cmd = &cobra.Command{
 			return fmt.Errorf("identity[0] must have .iam.gserviceaccount.com suffix"+
 				" and should not be a Google managed service account: %s", identity)
 		}
-
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
