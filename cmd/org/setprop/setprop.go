@@ -49,7 +49,7 @@ func SetOrgProperty(name string, value string) (err error) {
 
 	u, _ = url.Parse(shared.BaseURL)
 	u.Path = path.Join(u.Path, shared.RootArgs.Org)
-	_, err = shared.HttpClient(true, u.String(), string(newOrgBody))
+	_, err = shared.HttpClient(true, u.String(), string(newOrgBody), "PUT")
 
 	return err
 }
