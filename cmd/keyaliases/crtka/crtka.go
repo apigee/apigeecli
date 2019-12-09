@@ -45,7 +45,7 @@ var Cmd = &cobra.Command{
 			_, err = shared.PostHttpOctet(true, u.String(), aliasName+".pem")
 		} else if format == "pkcs12" {
 			_, err = shared.PostHttpOctet(true, u.String(), aliasName+".pfx")
-		} 
+		}
 		return
 	},
 }
@@ -62,7 +62,7 @@ func init() {
 	Cmd.Flags().StringVarP(&format, "format", "f",
 		"", "Format of the certificate")
 	Cmd.Flags().StringVarP(&password, "password", "p",
-		"", "PKCS12 password")		
+		"", "PKCS12 password")
 	Cmd.Flags().BoolVarP(&ignoreExpiry, "exp", "x",
 		false, "Ignore expiry validation")
 	Cmd.Flags().BoolVarP(&ignoreNewLine, "nl", "w",

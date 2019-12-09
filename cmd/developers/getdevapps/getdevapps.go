@@ -37,9 +37,9 @@ func init() {
 
 	Cmd.Flags().StringVarP(&name, "name", "n",
 		"", "email of the developer")
-	
+
 	Cmd.Flags().BoolVarP(&expand, "expand", "x",
-		false, "expand app details")		
+		false, "expand app details")
 
 	_ = Cmd.MarkFlagRequired("org")
 	_ = Cmd.MarkFlagRequired("name")
