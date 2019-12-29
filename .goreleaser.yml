@@ -10,7 +10,7 @@ builds:
       - darwin
       - windows
     ldflags:
-    - -s -w -X main.Version={{.Commit}}
+    - -s -w -a -extldflags "-static" -X main.Version={{.Commit}}
 archive:
   name_template: "{{ .ProjectName }}_{{.Tag}}_{{ .Os }}_{{ .Arch }}"
   replacements:
