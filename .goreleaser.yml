@@ -11,21 +11,17 @@ builds:
       - windows
     ldflags:
     - -s -w -a -extldflags "-static" -X main.Version={{.Commit}}
-archive:
-  name_template: "{{ .ProjectName }}_{{.Tag}}_{{ .Os }}_{{ .Arch }}"
-  replacements:
-    darwin: Darwin
-    linux: Linux
-    windows: Windows
-    386: i386
-    amd64: x86_64
-  wrap_in_directory: true  
-  format_overrides:
-  - goos: windows
+archives:
+  - id: apigeecli
     format: zip
+    name_template: "{{ .ProjectName }}_{{.Tag}}_{{ .Os }}_{{ .Arch }}"
+    replacements:
+      darwin: Darwin
+      linux: Linux
+      windows: Windows
+      386: i386
+      amd64: x86_64
+    wrap_in_directory: true    
 release:
   draft: true
   prerelease: true
-nfpm:
-  name_template: "{{ .ProjectName }}_{{.Tag}}_{{ .Os }}_{{ .Arch }}"
-  bindir: bin
