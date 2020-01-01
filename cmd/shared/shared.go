@@ -232,7 +232,10 @@ func HttpClient(print bool, params ...string) (respBody []byte, err error) {
 		return nil, err
 	}
 
-	defer resp.Body.Close()
+	if resp != nil {
+		defer resp.Body.Close()
+	}
+		
 	respBody, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
 		Error.Fatalln("error in response: ", err)
