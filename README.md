@@ -2,7 +2,7 @@
 
 [![TravisCI](https://travis-ci.org/srinandan/apigeecli.svg?branch=master)](https://travis-ci.org/srinandan/apigeecli)
 [![Go Report Card](https://goreportcard.com/badge/github.com/srinandan/apigeecli)](https://goreportcard.com/report/github.com/srinandan/apigeecli)
-[![Version](https://img.shields.io/badge/version-v1.1-green.svg)](https://github.com/srinandan/apigeecli/releases)
+[![Version](https://img.shields.io/badge/version-v1.2-green.svg)](https://github.com/srinandan/apigeecli/releases)
 
 This is a tool to interact with [Apigee APIs](https://apigee.googleapis.com). The tool lets you manage (get, list) environments, proxies, etc. The tools also helps you create Service Accounts in Google IAM to operate Apigee hybrid runtime.
 
@@ -804,7 +804,8 @@ ___
 * [createall](#createall)
 * [createax](#createax)
 * [createcass](#createcass)
-* [createcass](#createlogger)
+* [createconnect](#createconnect)
+* [createlogger](#createlogger)
 * [createmetric](#createmetric)
 * [createsync](#createsync)
 
@@ -842,6 +843,20 @@ Create a Google IAM Service Account for Apigee hybrid Cassandra backup
 
 ```bash
 apigeecli iam createcass -p gcp-project-id -n service-account-name
+```
+
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--prj -p` (required) GCP Project ID
+* `--name -n` (required) Service Account Name
+
+### <a name ="createconnect"/> createconnect
+
+Create a Google IAM Service Account for Apigee Connect
+
+```bash
+apigeecli iam createconnect -p gcp-project-id -n service-account-name
 ```
 
 Parameters
