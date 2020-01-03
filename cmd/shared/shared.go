@@ -665,6 +665,8 @@ func CreateIAMServiceAccount(name string, iamRole string) (err error) {
 		role = ""
 	case "cassandra":
 		role = "roles/storage.objectAdmin"
+	case "connect":
+		role = "roles/apigeeconnect.Agent"		
 	case "all":
 		role = "not-necessary-to-add-this"
 	default:
@@ -774,7 +776,8 @@ func CreateIAMServiceAccount(name string, iamRole string) (err error) {
 
 func createAllRoleBindings(name string) []types.Binding {
 	var roles = [...]string{"roles/apigee.synchronizerManager", "roles/apigee.analyticsAgent",
-		"roles/monitoring.metricWriter", "roles/logging.logWriter", "roles/storage.objectAdmin"}
+		"roles/monitoring.metricWriter", "roles/logging.logWriter", "roles/storage.objectAdmin", 
+		"roles/apigeeconnect.Agent"}
 
 	bindings := []types.Binding{}
 
@@ -800,6 +803,8 @@ func SetIAMServiceAccount(serviceAccountName string, iamRole string) (err error)
 		role = "roles/apigee.analyticsAgent"
 	case "deploy":
 		role = "roles/apigee.deployer"
+	case "connect":
+		role = "roles/apigeeconnect.Agent"
 	default:
 		return fmt.Errorf("invalid service account role")
 	}
