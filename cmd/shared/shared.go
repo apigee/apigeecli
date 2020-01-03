@@ -803,8 +803,6 @@ func SetIAMServiceAccount(serviceAccountName string, iamRole string) (err error)
 		role = "roles/apigee.analyticsAgent"
 	case "deploy":
 		role = "roles/apigee.deployer"
-	case "connect":
-		role = "roles/apigeeconnect.Agent"
 	default:
 		return fmt.Errorf("invalid service account role")
 	}
