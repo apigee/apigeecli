@@ -30,9 +30,6 @@ var Cmd = &cobra.Command{
 	},
 }
 
-var mart string
-var whitelist bool
-
 func init() {
 
 	Cmd.Flags().StringVarP(&shared.RootArgs.Org, "org", "o",
