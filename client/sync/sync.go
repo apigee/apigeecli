@@ -37,7 +37,7 @@ func validate(i string) string {
 func Get() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg()+":getSyncAuthorization")
-	respBody, err = apiclient.HttpClient(true, u.String(), "")
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "")
 	return respBody, err
 }
 
@@ -45,7 +45,7 @@ func Reset() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg()+":setSyncAuthorization")
 	payload := "{\"identities\":[]}"
-	respBody, err = apiclient.HttpClient(true, u.String(), payload)
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload)
 	return respBody, err
 }
 
@@ -56,6 +56,6 @@ func Set(identity string) (respBody []byte, err error) {
 	identities := iAMIdentities{}
 	identities.Identities = append(identities.Identities, identity)
 	payload, _ := json.Marshal(&identities)
-	respBody, err = apiclient.HttpClient(true, u.String(), string(payload))
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), string(payload))
 	return respBody, err
 }

@@ -37,6 +37,7 @@ type proxy struct {
 	Revision []string `json:"revision,omitempty"`
 }
 
+//CreateProxy
 func CreateProxy(name string, proxy string) (respBody []byte, err error) {
 	if proxy != "" {
 		err = apiclient.ImportBundle("apis", name, proxy)
@@ -45,17 +46,19 @@ func CreateProxy(name string, proxy string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apis")
 	proxyName := "{\"name\":\"" + name + "\"}"
-	respBody, err = apiclient.HttpClient(true, u.String(), proxyName)
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), proxyName)
 	return respBody, err
 }
 
+//DeleteProxy
 func DeleteProxy(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apis", name)
-	respBody, err = apiclient.HttpClient(true, u.String(), "", "DELETE")
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "", "DELETE")
 	return respBody, err
 }
 
+//DeployProxy
 func DeployProxy(name string, revision string, overrides bool) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	if overrides {
@@ -65,21 +68,24 @@ func DeployProxy(name string, revision string, overrides bool) (respBody []byte,
 	}
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(),
 		"apis", name, "revisions", revision, "deployments")
-	respBody, err = apiclient.HttpClient(true, u.String(), "")
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "")
 	return respBody, err
 }
 
+//FetchProxy
 func FetchProxy(name string, revision string) (err error) {
 	return apiclient.FetchBundle("apis", name, revision)
 }
 
+//FetchProxy
 func GetProxy(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apis", name)
-	respBody, err = apiclient.HttpClient(true, u.String())
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
 	return respBody, err
 }
 
+//ListProxies
 func ListProxies(includeRevisions bool) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	if includeRevisions {
@@ -88,27 +94,30 @@ func ListProxies(includeRevisions bool) (respBody []byte, err error) {
 		u.RawQuery = q.Encode()
 	}
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apis")
-	respBody, err = apiclient.HttpClient(true, u.String())
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
 	return respBody, err
 }
 
+//ListEnvDeployments
 func ListEnvDeployments() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	if apiclient.GetApigeeEnv() == "" {
 		return respBody, fmt.Errorf("environment name missing")
 	}
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "deployments")
-	respBody, err = apiclient.HttpClient(true, u.String())
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
 	return respBody, err
 }
 
+//ListProxyDeployments
 func ListProxyDeployments(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apis", name, "deployments")
-	respBody, err = apiclient.HttpClient(true, u.String())
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
 	return respBody, err
 }
 
+//ListProxyRevisionDeployments
 func ListProxyRevisionDeployments(name string, revision int) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	if apiclient.GetApigeeEnv() == "" {
@@ -116,18 +125,20 @@ func ListProxyRevisionDeployments(name string, revision int) (respBody []byte, e
 	}
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "apis", name, "revisions",
 		strconv.Itoa(revision), "deployments")
-	respBody, err = apiclient.HttpClient(true, u.String())
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
 	return respBody, err
 }
 
+//UndeployProxy
 func UndeployProxy(name string, revision int) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(),
 		"apis", name, "revisions", strconv.Itoa(revision), "deployments")
-	respBody, err = apiclient.HttpClient(true, u.String(), "", "DELETE")
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "", "DELETE")
 	return respBody, err
 }
 
+//ExportProxies
 func ExportProxies(conn int) (err error) {
 	//parent workgroup
 	var pwg sync.WaitGroup
@@ -183,6 +194,7 @@ func ExportProxies(conn int) (err error) {
 	return nil
 }
 
+//ImportProxies
 func ImportProxies(conn int, folder string) error {
 
 	var pwg sync.WaitGroup

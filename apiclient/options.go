@@ -16,6 +16,8 @@ package apiclient
 
 import (
 	"os"
+
+	"github.com/srinandan/apigeecli/clilog"
 )
 
 //BaseURL is the Apigee control plane endpoint
@@ -31,13 +33,15 @@ type ApigeeClientOptions struct {
 	SkipLogInfo    bool   //LogInfo controls the log level
 	SkipCheck      bool   //skip checking access token expiry
 	SkipCache      bool   //skip writing access token to file
+	PrintOutput    bool   //prints output from http calls
 }
 
-var options = ApigeeClientOptions{SkipCache: false, SkipCheck: true, SkipLogInfo: true}
+var options = ApigeeClientOptions{SkipCache: false, SkipCheck: true, SkipLogInfo: true, PrintOutput: false}
 
 //NewApigeeClient sets up options to invoke Apigee APIs
 func NewApigeeClient(o ApigeeClientOptions) {
 	options = o
+	clilog.Init(o.SkipLogInfo)
 }
 
 //SetApigeeOrg sets the org variable
@@ -149,4 +153,19 @@ func IsSkipLogInfo() bool {
 //SkipLogInfo
 func SkipLogInfo() *bool {
 	return &options.SkipLogInfo
+}
+
+//SetLogIngo
+func LogInfo(l bool) {
+	options.SkipLogInfo = l
+}
+
+//PrintOutput
+func SetPrintOutput(output bool) {
+	options.PrintOutput = output
+}
+
+//GetPrintOutput
+func GetPrintOutput() bool {
+	return options.PrintOutput
 }

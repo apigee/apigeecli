@@ -64,7 +64,7 @@ func Create(keystoreName string, name string, format string, password string, ig
 			return respBody, err
 		}
 		u.RawQuery = q.Encode()
-		respBody, err = apiclient.HttpClient(true, u.String(), payload)
+		respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload)
 	}
 
 	return respBody, err
@@ -74,7 +74,7 @@ func CreateCSR(keystoreName string, name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(),
 		"keystores", keystoreName, "aliases", name, "csr")
-	respBody, err = apiclient.HttpClient(true, u.String())
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
 	return
 }
 
@@ -90,7 +90,7 @@ func Get(keystoreName string, name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(),
 		"keystores", keystoreName, "aliases", name)
-	respBody, err = apiclient.HttpClient(true, u.String())
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
 	return respBody, err
 }
 
@@ -98,7 +98,7 @@ func Delete(keystoreName string, name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "keystores",
 		keystoreName, "aliases", name)
-	respBody, err = apiclient.HttpClient(true, u.String(), "", "DELETE")
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "", "DELETE")
 	return respBody, err
 }
 
@@ -106,7 +106,7 @@ func List(keystoreName string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(),
 		"keystores", keystoreName, "aliases")
-	respBody, err = apiclient.HttpClient(true, u.String())
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
 	return respBody, err
 }
 

@@ -44,7 +44,7 @@ func Delete(name string, resourceType string) (respBody []byte, err error) {
 	}
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "resourcefiles", resourceType, name)
-	respBody, err = apiclient.HttpClient(true, u.String(), "", "DELETE")
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "", "DELETE")
 	return respBody, err
 }
 
@@ -70,7 +70,7 @@ func List(resourceType string) (respBody []byte, err error) {
 		q.Set("type", resourceType)
 		u.RawQuery = q.Encode()
 	}
-	respBody, err = apiclient.HttpClient(true, u.String())
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
 	return respBody, err
 }
 

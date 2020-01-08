@@ -17,7 +17,6 @@ package cmd
 import (
 	"github.com/spf13/cobra"
 	"github.com/srinandan/apigeecli/apiclient"
-	"github.com/srinandan/apigeecli/clilog"
 	"github.com/srinandan/apigeecli/cmd/apis"
 	"github.com/srinandan/apigeecli/cmd/apps"
 	cache "github.com/srinandan/apigeecli/cmd/cache"
@@ -44,7 +43,8 @@ var RootCmd = &cobra.Command{
 	Short: "Utility to work with Apigee APIs.",
 	Long:  "This command lets you interact with Apigee APIs.",
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-		clilog.Init(apiclient.IsSkipLogInfo())
+		apiclient.LogInfo(apiclient.IsSkipLogInfo())
+		apiclient.SetPrintOutput(true)
 		return apiclient.SetAccessToken()
 	},
 }

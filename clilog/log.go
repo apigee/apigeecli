@@ -28,10 +28,10 @@ var (
 )
 
 //Init function initializes the logger objects
-func Init(logInfo bool) {
+func Init(skipLogInfo bool) {
 	var infoHandle = ioutil.Discard
 
-	if logInfo {
+	if !skipLogInfo {
 		infoHandle = os.Stdout
 	}
 

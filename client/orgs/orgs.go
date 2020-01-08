@@ -56,20 +56,20 @@ func Create(region string) (respBody []byte, err error) {
 	orgPayload = append(orgPayload, "\"analyticsRegion\":\""+region+"\"")
 
 	payload := "{" + strings.Join(orgPayload, ",") + "}"
-	respBody, err = apiclient.HttpClient(true, u.String(), payload)
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload)
 	return respBody, err
 }
 
 func Get() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg())
-	respBody, err = apiclient.HttpClient(true, u.String())
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
 	return respBody, err
 }
 
 func List() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
-	respBody, err = apiclient.HttpClient(true, u.String())
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
 	return respBody, err
 }
 
@@ -135,7 +135,7 @@ func SetOrgProperty(name string, value string) (err error) {
 
 	u, _ = url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg())
-	_, err = apiclient.HttpClient(true, u.String(), string(newOrgBody), "PUT")
+	_, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), string(newOrgBody), "PUT")
 
 	return err
 }

@@ -31,7 +31,7 @@ var Cmd = &cobra.Command{
 		u, _ := url.Parse(apiclient.CrmURL)
 		u.Path = path.Join(u.Path, apiclient.GetProjectID()+":testIamPermissions")
 		payload := "{\"permissions\":[\"resourcemanager.projects.get\"]}"
-		_, err = apiclient.HttpClient(true, u.String(), payload)
+		_, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload)
 		return
 	},
 }

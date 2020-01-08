@@ -97,21 +97,21 @@ func Create(name string, description string, approval string, displayName string
 
 	payload := "{" + strings.Join(product, ",") + "}"
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts")
-	respBody, err = apiclient.HttpClient(true, u.String(), payload)
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload)
 	return respBody, err
 }
 
 func Get(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts", name)
-	respBody, err = apiclient.HttpClient(true, u.String())
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
 	return respBody, err
 }
 
 func Delete(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts", name)
-	respBody, err = apiclient.HttpClient(true, u.String(), "", "DELETE")
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "", "DELETE")
 	return respBody, err
 }
 
@@ -128,7 +128,7 @@ func List(count int, expand bool) (respBody []byte, err error) {
 		q.Set("count", strconv.Itoa(count))
 	}
 	u.RawQuery = q.Encode()
-	respBody, err = apiclient.HttpClient(true, u.String())
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
 	return respBody, err
 }
 
@@ -271,7 +271,7 @@ func createAsyncProduct(url string, entity product, wg *sync.WaitGroup) {
 		clilog.Error.Println(err)
 		return
 	}
-	_, err = apiclient.HttpClient(true, url, string(out))
+	_, err = apiclient.HttpClient(apiclient.GetPrintOutput(), url, string(out))
 	if err != nil {
 		clilog.Error.Println(err)
 		return

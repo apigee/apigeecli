@@ -63,21 +63,21 @@ func Create(email string, firstName string, lastName string, username string, at
 
 	payload := "{" + strings.Join(developer, ",") + "}"
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers")
-	respBody, err = apiclient.HttpClient(true, u.String(), payload)
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload)
 	return respBody, err
 }
 
 func Delete(email string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", email)
-	respBody, err = apiclient.HttpClient(true, u.String(), "", "DELETE")
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "", "DELETE")
 	return respBody, err
 }
 
 func Get(email string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", email)
-	respBody, err = apiclient.HttpClient(true, u.String())
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
 	return respBody, err
 }
 
@@ -91,7 +91,7 @@ func GetApps(name string, expand bool) (respBody []byte, err error) {
 	} else {
 		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", name, "apps")
 	}
-	respBody, err = apiclient.HttpClient(true, u.String())
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
 	return respBody, err
 }
 
@@ -108,7 +108,7 @@ func List(count int, expand bool) (respBody []byte, err error) {
 		q.Set("count", strconv.Itoa(count))
 	}
 	u.RawQuery = q.Encode()
-	respBody, err = apiclient.HttpClient(true, u.String())
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
 	return respBody, err
 }
 
@@ -176,7 +176,7 @@ func createAsyncDeveloper(url string, dev developer, wg *sync.WaitGroup) {
 		clilog.Error.Println(err)
 		return
 	}
-	_, err = apiclient.HttpClient(true, url, string(out))
+	_, err = apiclient.HttpClient(apiclient.GetPrintOutput(), url, string(out))
 	if err != nil {
 		clilog.Error.Println(err)
 		return

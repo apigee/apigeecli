@@ -44,21 +44,21 @@ func Create(name string, proxy string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sharedflows")
 	proxyName := "{\"name\":\"" + name + "\"}"
-	respBody, err = apiclient.HttpClient(true, u.String(), proxyName)
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), proxyName)
 	return respBody, err
 }
 
 func Get(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sharedflows", name)
-	respBody, err = apiclient.HttpClient(true, u.String())
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
 	return respBody, err
 }
 
 func Delete(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sharedflows", name)
-	respBody, err = apiclient.HttpClient(true, u.String(), "", "DELETE")
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "", "DELETE")
 	return respBody, err
 }
 
@@ -76,7 +76,7 @@ func List(includeRevisions bool) (respBody []byte, err error) {
 		}
 		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sharedflows")
 	}
-	respBody, err = apiclient.HttpClient(true, u.String())
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
 	return respBody, err
 }
 
@@ -89,7 +89,7 @@ func Deploy(name string, revision int, overrides bool) (respBody []byte, err err
 	}
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(),
 		"sharedflows", name, "revisions", strconv.Itoa(revision), "deployments")
-	respBody, err = apiclient.HttpClient(true, u.String(), "")
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "")
 	return respBody, err
 }
 
@@ -97,7 +97,7 @@ func Undeploy(name string, revision int) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(),
 		"sharedflows", name, "revisions", strconv.Itoa(revision), "deployments")
-	respBody, err = apiclient.HttpClient(true, u.String(), "", "DELETE")
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "", "DELETE")
 	return respBody, err
 }
 

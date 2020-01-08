@@ -108,21 +108,21 @@ func Create(name string, email string, expires string, callback string, apiProdu
 
 	payload := "{" + strings.Join(app, ",") + "}"
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", email, "apps")
-	respBody, err = apiclient.HttpClient(true, u.String(), payload)
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload)
 	return respBody, err
 }
 
 func Delete(name string, developerID string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", developerID, "apps", name)
-	respBody, err = apiclient.HttpClient(true, u.String(), "", "DELETE")
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "", "DELETE")
 	return respBody, err
 }
 
 func Get(appID string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apps", appID)
-	respBody, err = apiclient.HttpClient(true, u.String())
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
 	return respBody, err
 }
 
@@ -166,7 +166,7 @@ func List(includeCred bool, expand bool, count int) (respBody []byte, err error)
 		q.Set("row", strconv.Itoa(count))
 	}
 	u.RawQuery = q.Encode()
-	respBody, err = apiclient.HttpClient(true, u.String())
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
 	return respBody, err
 }
 
@@ -192,7 +192,7 @@ func GenerateKey(name string, developerID string, apiProducts []string, callback
 
 	payload := "{" + strings.Join(key, ",") + "}"
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", developerID, "apps", name)
-	respBody, err = apiclient.HttpClient(true, u.String(), payload)
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload)
 	return respBody, err
 }
 
@@ -370,7 +370,7 @@ func createAsyncApp(app application, wg *sync.WaitGroup) {
 	}
 
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", developerID, "apps")
-	_, err = apiclient.HttpClient(true, u.String(), string(out))
+	_, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), string(out))
 	if err != nil {
 		clilog.Error.Println(err)
 		return
@@ -395,7 +395,7 @@ func createAsyncApp(app application, wg *sync.WaitGroup) {
 			clilog.Error.Println(err)
 			return
 		}
-		_, err = apiclient.HttpClient(true, u.String(), string(impCredJSON))
+		_, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), string(impCredJSON))
 		if err != nil {
 			return
 		}
