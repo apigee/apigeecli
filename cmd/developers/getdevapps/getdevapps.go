@@ -16,9 +16,8 @@ package getdevapps
 
 import (
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/cmd/shared"
-	"net/url"
-	"path"
+	"github.com/srinandan/apigeecli/apiclient"
+	"github.com/srinandan/apigeecli/client/developers"
 )
 
 //Cmd to get developer
@@ -27,16 +26,7 @@ var Cmd = &cobra.Command{
 	Short: "Returns the apps owned by a developer by email address",
 	Long:  "Returns the apps owned by a developer by email address",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		u, _ := url.Parse(shared.BaseURL)
-		if expand {
-			u.Path = path.Join(u.Path, shared.RootArgs.Org, "developers", name, "apps")
-			q := u.Query()
-			q.Set("expand", "true")
-			u.RawQuery = q.Encode()
-		} else {
-			u.Path = path.Join(u.Path, shared.RootArgs.Org, "developers", name, "apps")
-		}
-		_, err = shared.HttpClient(true, u.String())
+		_, err = developers.GetApps(name, expand)
 		return
 	},
 }
@@ -46,7 +36,7 @@ var expand bool
 
 func init() {
 
-	Cmd.Flags().StringVarP(&shared.RootArgs.Org, "org", "o",
+	Cmd.Flags().StringVarP(apiclient.GetApigeeOrgP(), "org", "o",
 		"", "Apigee organization name")
 
 	Cmd.Flags().StringVarP(&name, "name", "n",

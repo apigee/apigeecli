@@ -16,11 +16,8 @@ package crtkvm
 
 import (
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/cmd/shared"
-	"net/url"
-	"path"
-	"strconv"
-	"strings"
+	"github.com/srinandan/apigeecli/apiclient"
+	"github.com/srinandan/apigeecli/client/kvm"
 )
 
 //Cmd to create kvms
@@ -29,17 +26,7 @@ var Cmd = &cobra.Command{
 	Short: "Create an environment scoped KVM Map",
 	Long:  "Create an environment scoped KVM Map",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		u, _ := url.Parse(shared.BaseURL)
-		kvm := []string{}
-
-		kvm = append(kvm, "\"name\":\""+name+"\"")
-		if encrypt {
-			kvm = append(kvm, "\"encrypted\":"+strconv.FormatBool(encrypt))
-		}
-		payload := "{" + strings.Join(kvm, ",") + "}"
-		shared.Info.Println(payload)
-		u.Path = path.Join(u.Path, shared.RootArgs.Org, "environments", shared.RootArgs.Env, "keyvaluemaps")
-		_, err = shared.HttpClient(true, u.String(), payload)
+		_, err = kvm.Create(name, encrypt)
 		return
 	},
 }
@@ -49,7 +36,7 @@ var encrypt bool
 
 func init() {
 
-	Cmd.Flags().StringVarP(&shared.RootArgs.Env, "env", "e",
+	Cmd.Flags().StringVarP(apiclient.GetApigeeEnvP(), "env", "e",
 		"", "Environment name")
 	Cmd.Flags().StringVarP(&name, "name", "n",
 		"", "KVM Map name")

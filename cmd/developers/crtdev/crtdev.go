@@ -15,12 +15,8 @@
 package crtdev
 
 import (
-	"net/url"
-	"path"
-	"strings"
-
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/cmd/shared"
+	"github.com/srinandan/apigeecli/client/developers"
 )
 
 //Cmd to create developer
@@ -29,27 +25,7 @@ var Cmd = &cobra.Command{
 	Short: "Create a developer",
 	Long:  "Create a developer",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		u, _ := url.Parse(shared.BaseURL)
-
-		developer := []string{}
-
-		developer = append(developer, "\"email\":\""+email+"\"")
-		developer = append(developer, "\"firstName\":\""+firstName+"\"")
-		developer = append(developer, "\"lastName\":\""+lastName+"\"")
-		developer = append(developer, "\"userName\":\""+userName+"\"")
-
-		if len(attrs) != 0 {
-			attributes := []string{}
-			for key, value := range attrs {
-				attributes = append(attributes, "{\"name\":\""+key+"\",\"value\":\""+value+"\"}")
-			}
-			attributesStr := "\"attributes\":[" + strings.Join(attributes, ",") + "]"
-			developer = append(developer, attributesStr)
-		}
-
-		payload := "{" + strings.Join(developer, ",") + "}"
-		u.Path = path.Join(u.Path, shared.RootArgs.Org, "developers")
-		_, err = shared.HttpClient(true, u.String(), payload)
+		_, err = developers.Create(email, firstName, lastName, userName, attrs)
 		return
 	},
 }

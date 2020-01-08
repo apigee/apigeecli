@@ -17,6 +17,8 @@ package cmd
 import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"github.com/srinandan/apigeecli/apiclient"
+	"github.com/srinandan/apigeecli/clilog"
 	"github.com/srinandan/apigeecli/cmd/apis"
 	"github.com/srinandan/apigeecli/cmd/apps"
 	cache "github.com/srinandan/apigeecli/cmd/cache"
@@ -31,7 +33,6 @@ import (
 	"github.com/srinandan/apigeecli/cmd/products"
 	"github.com/srinandan/apigeecli/cmd/projects"
 	res "github.com/srinandan/apigeecli/cmd/res"
-	"github.com/srinandan/apigeecli/cmd/shared"
 	"github.com/srinandan/apigeecli/cmd/sharedflows"
 	"github.com/srinandan/apigeecli/cmd/sync"
 	targetservers "github.com/srinandan/apigeecli/cmd/targetservers"
@@ -44,30 +45,29 @@ var RootCmd = &cobra.Command{
 	Short: "Utility to work with Apigee APIs.",
 	Long:  "This command lets you interact with Apigee APIs.",
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-
-		shared.Init()
-		return shared.SetAccessToken()
+		clilog.Init(apiclient.IsSkipLogInfo())
+		return apiclient.SetAccessToken()
 	},
 }
 
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	RootCmd.PersistentFlags().BoolVarP(&shared.RootArgs.LogInfo, "log", "l",
+	RootCmd.PersistentFlags().BoolVarP(apiclient.SkipLogInfo(), "log", "l",
 		false, "Log Information")
 
-	RootCmd.PersistentFlags().StringVarP(&shared.RootArgs.Token, "token", "t",
+	RootCmd.PersistentFlags().StringVarP(apiclient.GetApigeeTokenP(), "token", "t",
 		"", "Google OAuth Token")
 	_ = viper.BindPFlag("token", RootCmd.PersistentFlags().Lookup("token"))
 
-	RootCmd.PersistentFlags().StringVarP(&shared.RootArgs.ServiceAccount, "account", "a",
+	RootCmd.PersistentFlags().StringVarP(apiclient.GetServiceAccountP(), "account", "a",
 		"", "Path Service Account private key in JSON")
 	_ = viper.BindPFlag("account", RootCmd.PersistentFlags().Lookup("account"))
 
-	RootCmd.PersistentFlags().BoolVar(&shared.RootArgs.SkipCache, "skipCache",
+	RootCmd.PersistentFlags().BoolVar(apiclient.SkipCache(), "skipCache",
 		false, "Skip caching Google OAuth Token")
 
-	RootCmd.PersistentFlags().BoolVar(&shared.RootArgs.SkipCheck, "skipCheck",
+	RootCmd.PersistentFlags().BoolVar(apiclient.SkipCheck(), "skipCheck",
 		true, "Skip checking expiry for Google OAuth Token")
 
 	RootCmd.AddCommand(apis.Cmd)

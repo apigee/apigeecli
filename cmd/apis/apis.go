@@ -16,6 +16,7 @@ package apis
 
 import (
 	"github.com/spf13/cobra"
+	"github.com/srinandan/apigeecli/apiclient"
 	crtapi "github.com/srinandan/apigeecli/cmd/apis/crtapi"
 	delapi "github.com/srinandan/apigeecli/cmd/apis/delapi"
 	"github.com/srinandan/apigeecli/cmd/apis/depapi"
@@ -27,7 +28,6 @@ import (
 	"github.com/srinandan/apigeecli/cmd/apis/listdeploy"
 	traceapi "github.com/srinandan/apigeecli/cmd/apis/traceapi"
 	"github.com/srinandan/apigeecli/cmd/apis/undepapi"
-	"github.com/srinandan/apigeecli/cmd/shared"
 )
 
 //Cmd to manage apis
@@ -39,7 +39,7 @@ var Cmd = &cobra.Command{
 
 func init() {
 
-	Cmd.PersistentFlags().StringVarP(&shared.RootArgs.Org, "org", "o",
+	Cmd.PersistentFlags().StringVarP(apiclient.GetApigeeOrgP(), "org", "o",
 		"", "Apigee organization name")
 
 	_ = Cmd.MarkPersistentFlagRequired("org")

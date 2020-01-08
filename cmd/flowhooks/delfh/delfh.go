@@ -16,9 +16,7 @@ package delfh
 
 import (
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/cmd/shared"
-	"net/url"
-	"path"
+	"github.com/srinandan/apigeecli/client/flowhooks"
 )
 
 //Cmd to delete flow hooks
@@ -27,9 +25,7 @@ var Cmd = &cobra.Command{
 	Short: "Detach a flowhook",
 	Long:  "Detach a flowhook",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		u, _ := url.Parse(shared.BaseURL)
-		u.Path = path.Join(u.Path, shared.RootArgs.Org, "environments", shared.RootArgs.Env, "flowhooks", name)
-		_, err = shared.HttpClient(true, u.String(), "", "DELETE")
+		_, err = flowhooks.Detach(name)
 		return
 	},
 }

@@ -16,9 +16,7 @@ package getsync
 
 import (
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/cmd/shared"
-	"net/url"
-	"path"
+	"github.com/srinandan/apigeecli/client/sync"
 )
 
 //Cmd to get list of identities
@@ -27,9 +25,7 @@ var Cmd = &cobra.Command{
 	Short: "Show the list of identities with access to control plane resources",
 	Long:  "Show the list of identities with access to control plane resources",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		u, _ := url.Parse(shared.BaseURL)
-		u.Path = path.Join(u.Path, shared.RootArgs.Org+":getSyncAuthorization")
-		_, err = shared.HttpClient(true, u.String(), "")
+		_, err = sync.Get()
 		return
 	},
 }

@@ -15,11 +15,8 @@
 package delapis
 
 import (
-	"net/url"
-	"path"
-
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/cmd/shared"
+	"github.com/srinandan/apigeecli/client/apis"
 )
 
 //Cmd to delete api
@@ -29,9 +26,7 @@ var Cmd = &cobra.Command{
 	Long: "Deletes an API proxy and all associated endpoints, policies, resources, and revisions." +
 		"The proxy must be undeployed first.",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		u, _ := url.Parse(shared.BaseURL)
-		u.Path = path.Join(u.Path, shared.RootArgs.Org, "apis", name)
-		_, err = shared.HttpClient(true, u.String(), "", "DELETE")
+		_, err = apis.DeleteProxy(name)
 		return
 	},
 }

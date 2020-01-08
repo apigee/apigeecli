@@ -15,14 +15,11 @@
 package getdev
 
 import (
-	"encoding/json"
 	"fmt"
-	"net/url"
-	"path"
 
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/cmd/shared"
-	"github.com/thedevsaddam/gojsonq"
+	"github.com/srinandan/apigeecli/apiclient"
+	"github.com/srinandan/apigeecli/client/apps"
 )
 
 //Cmd to get app
@@ -40,31 +37,16 @@ var Cmd = &cobra.Command{
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		u, _ := url.Parse(shared.BaseURL)
 		if appID != "" {
-			u.Path = path.Join(u.Path, shared.RootArgs.Org, "apps", appID)
-			_, err = shared.HttpClient(true, u.String())
+			_, err = apps.Get(appID)
 			return
 		}
-		//search by name is not implement; use list and return the appropriate app
-		u.Path = path.Join(u.Path, shared.RootArgs.Org, "apps")
-		q := u.Query()
-		q.Set("expand", "true")
-		q.Set("includeCred", "false")
-		u.RawQuery = q.Encode()
-		//don't print the list
-		respBody, err := shared.HttpClient(false, u.String())
-		if err != nil {
-			return err
-		}
-		jq := gojsonq.New().JSONString(string(respBody)).From("app").Where("name", "eq", name)
-		out := jq.Get()
-		outBytes, err := json.Marshal(out)
+		outBytes, err := apps.SearchApp(name)
 		if err != nil {
 			return err
 		}
 		//print the item
-		return shared.PrettyPrint(outBytes)
+		return apiclient.PrettyPrint(outBytes)
 	},
 }
 

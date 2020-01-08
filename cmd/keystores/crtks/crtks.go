@@ -15,11 +15,8 @@
 package crtks
 
 import (
-	"net/url"
-	"path"
-
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/cmd/shared"
+	"github.com/srinandan/apigeecli/client/keystores"
 )
 
 //Cmd to create key stores
@@ -28,10 +25,7 @@ var Cmd = &cobra.Command{
 	Short: "Create a Key Store",
 	Long:  "Create a Key Store",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		u, _ := url.Parse(shared.BaseURL)
-		u.Path = path.Join(u.Path, shared.RootArgs.Org, "environments", shared.RootArgs.Env, "keystores")
-		payload := "{\"name\":\"" + name + "\"}"
-		_, err = shared.HttpClient(true, u.String(), payload)
+		_, err = keystores.Create(name)
 		return
 	},
 }

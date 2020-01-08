@@ -15,11 +15,8 @@
 package deldev
 
 import (
-	"net/url"
-	"path"
-
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/cmd/shared"
+	"github.com/srinandan/apigeecli/client/apps"
 )
 
 //Cmd to delete app
@@ -28,9 +25,7 @@ var Cmd = &cobra.Command{
 	Short: "Deletes a Developer App from an organization",
 	Long:  "Deletes a Developer Appfrom an organization",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		u, _ := url.Parse(shared.BaseURL)
-		u.Path = path.Join(u.Path, shared.RootArgs.Org, "developers", id, "apps", name)
-		_, err = shared.HttpClient(true, u.String(), "", "DELETE")
+		_, err = apps.Delete(name, id)
 		return
 	},
 }

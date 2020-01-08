@@ -16,7 +16,7 @@ package setax
 
 import (
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/cmd/shared"
+	"github.com/srinandan/apigeecli/client/env"
 )
 
 //Cmd to manage tracing of apis
@@ -25,7 +25,7 @@ var Cmd = &cobra.Command{
 	Short: "Set Analytics Agent role for a SA on an environment",
 	Long:  "Set Analytics Agent role for a SA an Environment",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		return shared.SetIAMServiceAccount(serviceAccountName, "analytics")
+		return env.SetIAM(serviceAccountName, "analytics")
 	},
 }
 

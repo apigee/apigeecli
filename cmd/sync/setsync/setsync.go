@@ -15,23 +15,14 @@
 package setsync
 
 import (
-	"encoding/json"
 	"fmt"
-	"net/url"
-	"path"
 	"strings"
 
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/cmd/shared"
+	"github.com/srinandan/apigeecli/client/sync"
 )
 
 //{"identities":["serviceAccount:srinandans-apigee@srinandans-apigee.iam.gserviceaccount.com"]}
-
-type iAMIdentities struct {
-	Identities []string `json:"identities,omitempty"`
-}
-
-var identity string
 
 //Cmd to set identities
 var Cmd = &cobra.Command{
@@ -46,17 +37,13 @@ var Cmd = &cobra.Command{
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		u, _ := url.Parse(shared.BaseURL)
-		u.Path = path.Join(u.Path, shared.RootArgs.Org+":setSyncAuthorization")
-		identity = validate(identity)
-		identities := iAMIdentities{}
-		identities.Identities = append(identities.Identities, identity)
-		payload, _ := json.Marshal(&identities)
-		_, err = shared.HttpClient(true, u.String(), string(payload))
+		_, err = sync.Set(identity)
 		return
 
 	},
 }
+
+var identity string
 
 func init() {
 
@@ -64,11 +51,4 @@ func init() {
 		"", "IAM Identity")
 
 	_ = Cmd.MarkFlagRequired("ity")
-}
-
-func validate(i string) string {
-	if strings.Contains(i, "serviceAccount:") {
-		return i
-	}
-	return "serviceAccount:" + i
 }

@@ -15,11 +15,9 @@
 package expdev
 
 import (
-	"net/url"
-	"path"
-
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/cmd/shared"
+	"github.com/srinandan/apigeecli/apiclient"
+	"github.com/srinandan/apigeecli/client/developers"
 )
 
 //Cmd to export developer
@@ -28,23 +26,14 @@ var Cmd = &cobra.Command{
 	Short: "Export Developers to a file",
 	Long:  "Export Developers to a file",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-
 		const exportFileName = "developers.json"
 
-		u, _ := url.Parse(shared.BaseURL)
-		u.Path = path.Join(u.Path, shared.RootArgs.Org, "developers")
-
-		q := u.Query()
-		q.Set("expand", "true")
-
-		u.RawQuery = q.Encode()
-		//don't print to sysout
-		respBody, err := shared.HttpClient(false, u.String())
+		respBody, err := developers.Export()
 		if err != nil {
 			return err
 		}
 
-		return shared.WriteByteArrayToFile(exportFileName, false, respBody)
+		return apiclient.WriteByteArrayToFile(exportFileName, false, respBody)
 	},
 }
 

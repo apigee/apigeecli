@@ -16,11 +16,11 @@ package res
 
 import (
 	"github.com/spf13/cobra"
+	"github.com/srinandan/apigeecli/apiclient"
 	"github.com/srinandan/apigeecli/cmd/res/crtres"
 	"github.com/srinandan/apigeecli/cmd/res/delres"
 	"github.com/srinandan/apigeecli/cmd/res/getres"
 	"github.com/srinandan/apigeecli/cmd/res/listres"
-	"github.com/srinandan/apigeecli/cmd/shared"
 )
 
 //Cmd to manage resources
@@ -33,10 +33,10 @@ var Cmd = &cobra.Command{
 
 func init() {
 
-	Cmd.PersistentFlags().StringVarP(&shared.RootArgs.Org, "org", "o",
+	Cmd.PersistentFlags().StringVarP(apiclient.GetApigeeOrgP(), "org", "o",
 		"", "Apigee organization name")
 
-	Cmd.PersistentFlags().StringVarP(&shared.RootArgs.Env, "env", "e",
+	Cmd.PersistentFlags().StringVarP(apiclient.GetApigeeEnvP(), "env", "e",
 		"", "Apigee environment name")
 
 	_ = Cmd.MarkPersistentFlagRequired("org")

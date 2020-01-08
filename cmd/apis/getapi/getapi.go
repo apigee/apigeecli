@@ -15,11 +15,8 @@
 package getapi
 
 import (
-	"net/url"
-	"path"
-
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/cmd/shared"
+	"github.com/srinandan/apigeecli/client/apis"
 )
 
 //Cmd to get api details
@@ -28,9 +25,7 @@ var Cmd = &cobra.Command{
 	Short: "Gets an API Proxy by name",
 	Long:  "Gets an API Proxy by name, including a list of its revisions.",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		u, _ := url.Parse(shared.BaseURL)
-		u.Path = path.Join(u.Path, shared.RootArgs.Org, "apis", name)
-		_, err = shared.HttpClient(true, u.String())
+		_, err = apis.GetProxy(name)
 		return
 	},
 }

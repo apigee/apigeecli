@@ -16,9 +16,7 @@ package getdev
 
 import (
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/cmd/shared"
-	"net/url"
-	"path"
+	"github.com/srinandan/apigeecli/client/developers"
 )
 
 //Cmd to get developer
@@ -27,23 +25,17 @@ var Cmd = &cobra.Command{
 	Short: "Returns the profile for a developer by email address or ID",
 	Long:  "Returns the profile for a developer by email address or ID",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		u, _ := url.Parse(shared.BaseURL)
-		u.Path = path.Join(u.Path, shared.RootArgs.Org, "developers", name)
-		_, err = shared.HttpClient(true, u.String())
+		_, err = developers.Get(email)
 		return
 	},
 }
 
-var name string
+var email string
 
 func init() {
 
-	Cmd.Flags().StringVarP(&shared.RootArgs.Org, "org", "o",
-		"", "Apigee organization name")
+	Cmd.Flags().StringVarP(&email, "email", "n",
+		"", "The developer's email")
 
-	Cmd.Flags().StringVarP(&name, "name", "n",
-		"", "email of the developer")
-
-	_ = Cmd.MarkFlagRequired("org")
-	_ = Cmd.MarkFlagRequired("name")
+	_ = Cmd.MarkFlagRequired("email")
 }

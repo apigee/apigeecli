@@ -15,13 +15,8 @@
 package listres
 
 import (
-	"fmt"
-	"net/url"
-	"path"
-
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/cmd/shared"
-	"github.com/srinandan/apigeecli/cmd/types"
+	"github.com/srinandan/apigeecli/client/res"
 )
 
 //Cmd to list resources
@@ -29,23 +24,8 @@ var Cmd = &cobra.Command{
 	Use:   "list",
 	Short: "List all resources in your environment",
 	Long:  "List all resources in your environment",
-	PreRunE: func(cmd *cobra.Command, args []string) (err error) {
-
-		if resType != "" && !types.IsValidResource(resType) {
-			return fmt.Errorf("invalid resource type")
-		}
-		return err
-	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		u, _ := url.Parse(shared.BaseURL)
-		u.Path = path.Join(u.Path, shared.RootArgs.Org, "environments", shared.RootArgs.Env, "resourcefiles")
-
-		if resType != "" {
-			q := u.Query()
-			q.Set("type", resType)
-			u.RawQuery = q.Encode()
-		}
-		_, err = shared.HttpClient(true, u.String())
+		_, err = res.List(resType)
 		return
 	},
 }

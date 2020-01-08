@@ -15,11 +15,9 @@
 package listkvm
 
 import (
-	"net/url"
-	"path"
-
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/cmd/shared"
+	"github.com/srinandan/apigeecli/apiclient"
+	"github.com/srinandan/apigeecli/client/kvm"
 )
 
 //Cmd to list kvms
@@ -28,16 +26,14 @@ var Cmd = &cobra.Command{
 	Short: "Returns a list of KVMs",
 	Long:  "Returns a list of KVMs",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		u, _ := url.Parse(shared.BaseURL)
-		u.Path = path.Join(u.Path, shared.RootArgs.Org, "environments", shared.RootArgs.Env, "keyvaluemaps")
-		_, err = shared.HttpClient(true, u.String())
+		_, err = kvm.List()
 		return
 	},
 }
 
 func init() {
 
-	Cmd.Flags().StringVarP(&shared.RootArgs.Env, "env", "e",
+	Cmd.Flags().StringVarP(apiclient.GetApigeeEnvP(), "env", "e",
 		"", "Environment name")
 	_ = Cmd.MarkFlagRequired("env")
 }

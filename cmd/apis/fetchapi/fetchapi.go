@@ -16,7 +16,7 @@ package fetchapi
 
 import (
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/cmd/shared"
+	"github.com/srinandan/apigeecli/apiclient"
 )
 
 //Cmd to download api
@@ -25,7 +25,7 @@ var Cmd = &cobra.Command{
 	Short: "Returns a zip-formatted proxy bundle ",
 	Long:  "Returns a zip-formatted proxy bundle of code and config files",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return shared.FetchBundle("apis", name, revision)
+		return apiclient.FetchBundle("apis", name, revision)
 	},
 }
 

@@ -16,7 +16,7 @@ package fetchsf
 
 import (
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/cmd/shared"
+	"github.com/srinandan/apigeecli/client/sharedflows"
 )
 
 //Cmd to download shared flow
@@ -25,7 +25,7 @@ var Cmd = &cobra.Command{
 	Short: "Returns a zip-formatted shared flow bundle ",
 	Long:  "Returns a zip-formatted shared flow bundle of code and config files",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return shared.FetchBundle("sharedflows", name, revision)
+		return sharedflows.Fetch(name, revision)
 	},
 }
 

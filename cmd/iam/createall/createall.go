@@ -16,7 +16,7 @@ package createall
 
 import (
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/cmd/shared"
+	"github.com/srinandan/apigeecli/apiclient"
 )
 
 //Cmd to get org details
@@ -25,7 +25,7 @@ var Cmd = &cobra.Command{
 	Short: "Create a new IAM Service Account with all permissions for Apigee Rnutime",
 	Long:  "Create a new IAM Service Account with all permissions for Apigee Rnutime",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		return shared.CreateIAMServiceAccount(name, "all")
+		return apiclient.CreateIAMServiceAccount(name, "all")
 	},
 }
 
@@ -33,7 +33,7 @@ var name string
 
 func init() {
 
-	Cmd.Flags().StringVarP(&shared.RootArgs.ProjectID, "prj", "p",
+	Cmd.Flags().StringVarP(apiclient.GetProjectIDP(), "prj", "p",
 		"", "GCP Project ID")
 	Cmd.Flags().StringVarP(&name, "name", "n",
 		"", "Service Account Name")

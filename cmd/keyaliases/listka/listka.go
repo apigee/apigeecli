@@ -15,11 +15,8 @@
 package listka
 
 import (
-	"net/url"
-	"path"
-
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/cmd/shared"
+	"github.com/srinandan/apigeecli/client/keyaliases"
 )
 
 //Cmd to list key aliases
@@ -28,14 +25,16 @@ var Cmd = &cobra.Command{
 	Short: "List Key Aliases",
 	Long:  "List Key Alises",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		u, _ := url.Parse(shared.BaseURL)
-		u.Path = path.Join(u.Path, shared.RootArgs.Org, "environments", shared.RootArgs.Env,
-			"keystores", shared.RootArgs.AliasName, "aliases")
-		_, err = shared.HttpClient(true, u.String())
+		_, err = keyaliases.List(keystoreName)
 		return
 	},
 }
 
-func init() {
+var keystoreName string
 
+func init() {
+	Cmd.Flags().StringVarP(&keystoreName, "key", "k",
+		"", "Name of the key store")
+
+	_ = Cmd.MarkFlagRequired("key")
 }

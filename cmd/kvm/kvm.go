@@ -16,10 +16,10 @@ package kvm
 
 import (
 	"github.com/spf13/cobra"
+	"github.com/srinandan/apigeecli/apiclient"
 	"github.com/srinandan/apigeecli/cmd/kvm/crtkvm"
 	"github.com/srinandan/apigeecli/cmd/kvm/delkvm"
 	"github.com/srinandan/apigeecli/cmd/kvm/listkvm"
-	"github.com/srinandan/apigeecli/cmd/shared"
 )
 
 //Cmd to manage kvms
@@ -31,7 +31,7 @@ var Cmd = &cobra.Command{
 
 func init() {
 
-	Cmd.PersistentFlags().StringVarP(&shared.RootArgs.Org, "org", "o",
+	Cmd.PersistentFlags().StringVarP(apiclient.GetApigeeOrgP(), "org", "o",
 		"", "Apigee organization name")
 
 	_ = Cmd.MarkPersistentFlagRequired("org")

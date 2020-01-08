@@ -16,7 +16,7 @@ package targetservers
 
 import (
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/cmd/shared"
+	"github.com/srinandan/apigeecli/apiclient"
 	"github.com/srinandan/apigeecli/cmd/targetservers/crtts"
 	"github.com/srinandan/apigeecli/cmd/targetservers/delts"
 	"github.com/srinandan/apigeecli/cmd/targetservers/expts"
@@ -34,9 +34,9 @@ var Cmd = &cobra.Command{
 
 func init() {
 
-	Cmd.PersistentFlags().StringVarP(&shared.RootArgs.Org, "org", "o",
+	Cmd.PersistentFlags().StringVarP(apiclient.GetApigeeOrgP(), "org", "o",
 		"", "Apigee organization name")
-	Cmd.PersistentFlags().StringVarP(&shared.RootArgs.Env, "env", "e",
+	Cmd.PersistentFlags().StringVarP(apiclient.GetApigeeEnvP(), "env", "e",
 		"", "Apigee environment name")
 
 	_ = Cmd.MarkPersistentFlagRequired("org")

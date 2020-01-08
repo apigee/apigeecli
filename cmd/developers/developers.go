@@ -16,6 +16,7 @@ package developers
 
 import (
 	"github.com/spf13/cobra"
+	"github.com/srinandan/apigeecli/apiclient"
 	"github.com/srinandan/apigeecli/cmd/developers/crtdev"
 	"github.com/srinandan/apigeecli/cmd/developers/deldev"
 	"github.com/srinandan/apigeecli/cmd/developers/expdev"
@@ -23,7 +24,6 @@ import (
 	"github.com/srinandan/apigeecli/cmd/developers/getdevapps"
 	"github.com/srinandan/apigeecli/cmd/developers/impdev"
 	"github.com/srinandan/apigeecli/cmd/developers/listdev"
-	"github.com/srinandan/apigeecli/cmd/shared"
 )
 
 //Cmd to manage developers
@@ -36,7 +36,7 @@ var Cmd = &cobra.Command{
 
 func init() {
 
-	Cmd.PersistentFlags().StringVarP(&shared.RootArgs.Org, "org", "o",
+	Cmd.PersistentFlags().StringVarP(apiclient.GetApigeeOrgP(), "org", "o",
 		"", "Apigee organization name")
 
 	_ = Cmd.MarkPersistentFlagRequired("org")

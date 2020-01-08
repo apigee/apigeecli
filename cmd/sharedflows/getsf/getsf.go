@@ -15,11 +15,8 @@
 package getsf
 
 import (
-	"net/url"
-	"path"
-
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/cmd/shared"
+	"github.com/srinandan/apigeecli/client/sharedflows"
 )
 
 //Cmd to get shared flow
@@ -28,9 +25,7 @@ var Cmd = &cobra.Command{
 	Short: "Gets a shared flow by name",
 	Long:  "Gets a shared flow by name, including a list of its revisions.",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		u, _ := url.Parse(shared.BaseURL)
-		u.Path = path.Join(u.Path, shared.RootArgs.Org, "sharedflows", name)
-		_, err = shared.HttpClient(true, u.String())
+		_, err = sharedflows.Get(name)
 		return
 	},
 }

@@ -18,7 +18,8 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/cmd/shared"
+	"github.com/srinandan/apigeecli/apiclient"
+	"github.com/srinandan/apigeecli/clilog"
 )
 
 //Cmd to cache token
@@ -27,7 +28,7 @@ var Cmd = &cobra.Command{
 	Short: "Generate and cache a new access token",
 	Long:  "Generate and cache a new access token",
 	Args: func(cmd *cobra.Command, args []string) error {
-		if shared.RootArgs.ServiceAccount == "" {
+		if apiclient.GetServiceAccount() == "" {
 			return fmt.Errorf("service account cannot be empty")
 		}
 
@@ -35,8 +36,8 @@ var Cmd = &cobra.Command{
 	},
 
 	RunE: func(cmd *cobra.Command, args []string) error {
-		shared.Init()
-		token, err := shared.GenerateAccessToken()
+		clilog.Init(apiclient.IsSkipLogInfo())
+		token, err := apiclient.GenerateAccessToken()
 		fmt.Printf("Token %s cached\n", token)
 		return err
 	},

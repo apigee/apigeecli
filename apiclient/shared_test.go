@@ -12,21 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package shared
+package apiclient
 
 import (
 	"testing"
+
+	"github.com/srinandan/apigeecli/clilog"
 )
 
 func TestInit(t *testing.T) {
-	Init()
-	Info.Println("Printing Information")
-	Warning.Println("Printing Warning")
-	Error.Println("Printing Error")
+	clilog.Init(true)
+	clilog.Info.Println("Printing Information")
+	clilog.Warning.Println("Printing Warning")
+	clilog.Error.Println("Printing Error")
 }
 
 func TestHttpGet(t *testing.T) {
-	Init()
+	clilog.Init(true)
 	_, err := HttpClient(true, "https://httpbin.org/get")
 	if err != nil {
 		t.Fatal(err)
@@ -64,7 +66,7 @@ func TestHttpInvalidNumberOfParams(t *testing.T) {
 
 func TestDownloadResource(t *testing.T) {
 	//download 1000 bytes
-	Init()
+	clilog.Init(true)
 	err := DownloadResource("https://httpbin.org/stream-bytes/1000", "test", ".zip")
 	if err != nil {
 		t.Fatal(err)
@@ -72,7 +74,7 @@ func TestDownloadResource(t *testing.T) {
 }
 
 func TestWriteJSONArrayToFile(t *testing.T) {
-	Init()
+	clilog.Init(true)
 	var entityPayloadList = []byte{'g', 'o', 'l', 'a', 'n', 'g'}
 	err := WriteByteArrayToFile("test.json", false, entityPayloadList)
 	if err != nil {

@@ -16,9 +16,8 @@ package delkvm
 
 import (
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/cmd/shared"
-	"net/url"
-	"path"
+	"github.com/srinandan/apigeecli/apiclient"
+	"github.com/srinandan/apigeecli/client/kvm"
 )
 
 //Cmd to delete kvm
@@ -27,9 +26,7 @@ var Cmd = &cobra.Command{
 	Short: "Delete a KVM map",
 	Long:  "Delete a KVM map",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		u, _ := url.Parse(shared.BaseURL)
-		u.Path = path.Join(u.Path, shared.RootArgs.Org, "environments", shared.RootArgs.Env, "keyvaluemaps", name)
-		_, err = shared.HttpClient(true, u.String(), "", "DELETE")
+		_, err = kvm.Delete(name)
 		return
 	},
 }
@@ -38,7 +35,7 @@ var name string
 
 func init() {
 
-	Cmd.Flags().StringVarP(&shared.RootArgs.Env, "env", "e",
+	Cmd.Flags().StringVarP(apiclient.GetApigeeEnvP(), "env", "e",
 		"", "Environment name")
 	Cmd.Flags().StringVarP(&name, "name", "n",
 		"", "KVM Map name")

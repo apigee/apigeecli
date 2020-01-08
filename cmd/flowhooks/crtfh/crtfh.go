@@ -15,13 +15,8 @@
 package crtfh
 
 import (
-	"net/url"
-	"path"
-	"strconv"
-	"strings"
-
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/cmd/shared"
+	"github.com/srinandan/apigeecli/client/flowhooks"
 )
 
 //Cmd to create flow hooks
@@ -30,25 +25,7 @@ var Cmd = &cobra.Command{
 	Short: "Attach a flowhook",
 	Long:  "Attach a flowhook",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		u, _ := url.Parse(shared.BaseURL)
-
-		flowhook := []string{}
-
-		flowhook = append(flowhook, "\"name\":\""+name+"\"")
-
-		if description != "" {
-			flowhook = append(flowhook, "\"description\":\""+description+"\"")
-		}
-
-		flowhook = append(flowhook, "\"sharedFlow\":\""+sharedflow+"\"")
-
-		if continueOnErr {
-			flowhook = append(flowhook, "\"continueOnError\":"+strconv.FormatBool(continueOnErr))
-		}
-
-		payload := "{" + strings.Join(flowhook, ",") + "}"
-		u.Path = path.Join(u.Path, shared.RootArgs.Org, "environments", shared.RootArgs.Env, "flowhooks", name)
-		_, err = shared.HttpClient(true, u.String(), payload, "PUT")
+		_, err = flowhooks.Attach(name, description, sharedflow, continueOnErr)
 		return
 	},
 }

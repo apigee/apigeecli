@@ -15,11 +15,9 @@
 package getprod
 
 import (
-	"net/url"
-	"path"
-
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/cmd/shared"
+	"github.com/srinandan/apigeecli/apiclient"
+	"github.com/srinandan/apigeecli/client/products"
 )
 
 //Cmd to get products
@@ -28,9 +26,7 @@ var Cmd = &cobra.Command{
 	Short: "Gets an API product from an organization",
 	Long:  "Gets an API product from an organization",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		u, _ := url.Parse(shared.BaseURL)
-		u.Path = path.Join(u.Path, shared.RootArgs.Org, "apiproducts", name)
-		_, err = shared.HttpClient(true, u.String())
+		_, err = products.Get(name)
 		return
 	},
 }
@@ -39,7 +35,7 @@ var name string
 
 func init() {
 
-	Cmd.Flags().StringVarP(&shared.RootArgs.Org, "org", "o",
+	Cmd.Flags().StringVarP(apiclient.GetApigeeOrgP(), "org", "o",
 		"", "Apigee organization name")
 
 	Cmd.Flags().StringVarP(&name, "name", "n",

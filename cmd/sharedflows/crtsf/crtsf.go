@@ -15,11 +15,8 @@
 package crtsf
 
 import (
-	"net/url"
-	"path"
-
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/cmd/shared"
+	"github.com/srinandan/apigeecli/client/sharedflows"
 )
 
 //Cmd to create shared flow
@@ -28,14 +25,7 @@ var Cmd = &cobra.Command{
 	Short: "Creates a sharedflow in an Apigee Org",
 	Long:  "Creates a sharedflow in an Apigee Org",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-
-		if proxy != "" {
-			return shared.ImportBundle("sharedflows", name, proxy)
-		}
-		u, _ := url.Parse(shared.BaseURL)
-		u.Path = path.Join(u.Path, shared.RootArgs.Org, "sharedflows")
-		proxyName := "{\"name\":\"" + name + "\"}"
-		_, err = shared.HttpClient(true, u.String(), proxyName)
+		_, err = sharedflows.Create(name, proxy)
 		return
 	},
 }

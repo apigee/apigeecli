@@ -15,11 +15,8 @@
 package delprod
 
 import (
-	"net/url"
-	"path"
-
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/cmd/shared"
+	"github.com/srinandan/apigeecli/client/products"
 )
 
 //Cmd to delete products
@@ -28,9 +25,7 @@ var Cmd = &cobra.Command{
 	Short: "Deletes an API product from an organization",
 	Long:  "Deletes an API product from an organization",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		u, _ := url.Parse(shared.BaseURL)
-		u.Path = path.Join(u.Path, shared.RootArgs.Org, "apiproducts", name)
-		_, err = shared.HttpClient(true, u.String(), "", "DELETE")
+		_, err = products.Delete(name)
 		return
 	},
 }

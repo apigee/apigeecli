@@ -15,12 +15,8 @@
 package crtapp
 
 import (
-	"net/url"
-	"path"
-	"strings"
-
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/cmd/shared"
+	"github.com/srinandan/apigeecli/client/apps"
 )
 
 //Cmd to create app
@@ -29,40 +25,7 @@ var Cmd = &cobra.Command{
 	Short: "Create a Developer App",
 	Long:  "Create a Developer App",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		u, _ := url.Parse(shared.BaseURL)
-
-		app := []string{}
-
-		app = append(app, "\"name\":\""+name+"\"")
-
-		if len(apiProducts) > 0 {
-			app = append(app, "\"apiProducts\":[\""+getArrayStr(apiProducts)+"\"]")
-		}
-
-		if callback != "" {
-			app = append(app, "\"callbackUrl\":\""+callback+"\"")
-		}
-
-		if expires != "" {
-			app = append(app, "\"keyExpiresIn\":\""+expires+"\"")
-		}
-
-		if len(scopes) > 0 {
-			app = append(app, "\"scopes\":[\""+getArrayStr(scopes)+"\"]")
-		}
-
-		if len(attrs) != 0 {
-			attributes := []string{}
-			for key, value := range attrs {
-				attributes = append(attributes, "{\"name\":\""+key+"\",\"value\":\""+value+"\"}")
-			}
-			attributesStr := "\"attributes\":[" + strings.Join(attributes, ",") + "]"
-			app = append(app, attributesStr)
-		}
-
-		payload := "{" + strings.Join(app, ",") + "}"
-		u.Path = path.Join(u.Path, shared.RootArgs.Org, "developers", email, "apps")
-		_, err = shared.HttpClient(true, u.String(), payload)
+		_, err = apps.Create(name, email, expires, callback, apiProducts, scopes, attrs)
 		return
 	},
 }
@@ -90,10 +53,4 @@ func init() {
 
 	_ = Cmd.MarkFlagRequired("name")
 	_ = Cmd.MarkFlagRequired("email")
-}
-
-func getArrayStr(str []string) string {
-	tmp := strings.Join(str, ",")
-	tmp = strings.ReplaceAll(tmp, ",", "\",\"")
-	return tmp
 }

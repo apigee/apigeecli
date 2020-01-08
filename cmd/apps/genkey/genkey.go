@@ -15,12 +15,10 @@
 package crtkey
 
 import (
-	"net/url"
-	"path"
 	"strings"
 
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/cmd/shared"
+	"github.com/srinandan/apigeecli/client/apps"
 )
 
 //Cmd to generate key
@@ -29,28 +27,7 @@ var Cmd = &cobra.Command{
 	Short: "Generate a new developer KeyPair",
 	Long:  "Generate a new developer KeyPair",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		u, _ := url.Parse(shared.BaseURL)
-
-		key := []string{}
-
-		key = append(key, "\"name\":\""+name+"\"")
-		key = append(key, "\"apiProducts\":[\""+getArrayStr(apiProducts)+"\"]")
-
-		if callback != "" {
-			key = append(key, "\"callbackUrl\":\""+callback+"\"")
-		}
-
-		if expires != "" {
-			key = append(key, "\"keyExpiresIn\":\""+expires+"\"")
-		}
-
-		if len(scopes) > 0 {
-			key = append(key, "\"scopes\":[\""+getArrayStr(scopes)+"\"]")
-		}
-
-		payload := "{" + strings.Join(key, ",") + "}"
-		u.Path = path.Join(u.Path, shared.RootArgs.Org, "developers", devID, "apps", name)
-		_, err = shared.HttpClient(true, u.String(), payload)
+		_, err = apps.GenerateKey(name, devID, apiProducts, callback, expires, scopes)
 		return
 	},
 }

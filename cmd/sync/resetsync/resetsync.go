@@ -15,11 +15,8 @@
 package resetsync
 
 import (
-	"net/url"
-	"path"
-
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/cmd/shared"
+	"github.com/srinandan/apigeecli/client/sync"
 )
 
 //Cmd to set identities
@@ -28,10 +25,7 @@ var Cmd = &cobra.Command{
 	Short: "Reset identities with access to control plane resources",
 	Long:  "Reset identities with access to control plane resources",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		u, _ := url.Parse(shared.BaseURL)
-		u.Path = path.Join(u.Path, shared.RootArgs.Org+":setSyncAuthorization")
-		payload := "{\"identities\":[]}"
-		_, err = shared.HttpClient(true, u.String(), payload)
+		_, err = sync.Reset()
 		return
 	},
 }

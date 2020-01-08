@@ -15,11 +15,8 @@
 package testiam
 
 import (
-	"net/url"
-	"path"
-
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/cmd/shared"
+	"github.com/srinandan/apigeecli/client/env"
 )
 
 //Cmd to manage tracing of apis
@@ -28,10 +25,7 @@ var Cmd = &cobra.Command{
 	Short: "Test IAM policy for an Environment",
 	Long:  "Test IAM policy for an Environment",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		u, _ := url.Parse(shared.BaseURL)
-		u.Path = path.Join(u.Path, shared.RootArgs.Org, "environments", shared.RootArgs.Env+":testIamPermissions")
-		payload := "{\"permissions\":[\"apigee.environments.get\"]}"
-		_, err = shared.HttpClient(true, u.String(), payload)
+		_, err = env.TestIAM()
 		return
 	},
 }

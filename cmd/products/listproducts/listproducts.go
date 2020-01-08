@@ -15,11 +15,9 @@
 package listproducts
 
 import (
-	"net/url"
-	"path"
-
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/cmd/shared"
+	"github.com/srinandan/apigeecli/apiclient"
+	"github.com/srinandan/apigeecli/client/products"
 )
 
 //Cmd to list products
@@ -28,34 +26,22 @@ var Cmd = &cobra.Command{
 	Short: "Returns a list of API products",
 	Long:  "Returns a list of API products with a filter by attribute names and values if provided",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		u, _ := url.Parse(shared.BaseURL)
-		u.Path = path.Join(u.Path, shared.RootArgs.Org, "apiproducts")
-		q := u.Query()
-		if expand {
-			q.Set("expand", "true")
-		} else {
-			q.Set("expand", "false")
-		}
-		if count != "" {
-			q.Set("count", count)
-		}
-		u.RawQuery = q.Encode()
-		_, err = shared.HttpClient(true, u.String())
+		_, err = products.List(count, expand)
 		return
 
 	},
 }
 
 var expand = false
-var count string
+var count int
 
 func init() {
 
-	Cmd.Flags().StringVarP(&shared.RootArgs.Org, "org", "o",
+	Cmd.Flags().StringVarP(apiclient.GetApigeeOrgP(), "org", "o",
 		"", "Apigee organization name")
 
-	Cmd.Flags().StringVarP(&count, "count", "c",
-		"", "Number of products; limit is 1000")
+	Cmd.Flags().IntVarP(&count, "count", "c",
+		-1, "Number of products; limit is 1000")
 
 	Cmd.Flags().BoolVarP(&expand, "expand", "x",
 		false, "Expand Details")

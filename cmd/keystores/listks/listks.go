@@ -15,11 +15,8 @@
 package listks
 
 import (
-	"net/url"
-	"path"
-
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/cmd/shared"
+	"github.com/srinandan/apigeecli/client/keystores"
 )
 
 //Cmd to list key stores
@@ -28,9 +25,7 @@ var Cmd = &cobra.Command{
 	Short: "List Key Stores",
 	Long:  "List Key Stores",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		u, _ := url.Parse(shared.BaseURL)
-		u.Path = path.Join(u.Path, shared.RootArgs.Org, "environments", shared.RootArgs.Env, "keystores")
-		_, err = shared.HttpClient(true, u.String())
+		_, err = keystores.List()
 		return
 	},
 }

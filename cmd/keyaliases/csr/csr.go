@@ -15,11 +15,8 @@
 package csr
 
 import (
-	"net/url"
-	"path"
-
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/cmd/shared"
+	"github.com/srinandan/apigeecli/client/keyaliases"
 )
 
 //Cmd to get key aliases
@@ -28,20 +25,19 @@ var Cmd = &cobra.Command{
 	Short: "Generates a csr for the private key in an alias",
 	Long:  "Generates a PKCS #10 Certificate Signing Request for the private key in an alias",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		u, _ := url.Parse(shared.BaseURL)
-		u.Path = path.Join(u.Path, shared.RootArgs.Org, "environments", shared.RootArgs.Env,
-			"keystores", shared.RootArgs.AliasName, "aliases", aliasName, "csr")
-		_, err = shared.HttpClient(true, u.String())
+		_, err = keyaliases.CreateCSR(keystoreName, aliasName)
 		return
 	},
 }
 
-var aliasName string
+var keystoreName, aliasName string
 
 func init() {
-
+	Cmd.Flags().StringVarP(&keystoreName, "key", "k",
+		"", "Name of the key store")
 	Cmd.Flags().StringVarP(&aliasName, "alias", "s",
 		"", "Name of the key store")
 
 	_ = Cmd.MarkFlagRequired("alias")
+	_ = Cmd.MarkFlagRequired("key")
 }

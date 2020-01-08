@@ -16,13 +16,13 @@ package products
 
 import (
 	"github.com/spf13/cobra"
+	"github.com/srinandan/apigeecli/apiclient"
 	"github.com/srinandan/apigeecli/cmd/products/crtprod"
 	"github.com/srinandan/apigeecli/cmd/products/delprod"
 	"github.com/srinandan/apigeecli/cmd/products/expprod"
 	"github.com/srinandan/apigeecli/cmd/products/getprod"
 	"github.com/srinandan/apigeecli/cmd/products/impprod"
 	"github.com/srinandan/apigeecli/cmd/products/listproducts"
-	"github.com/srinandan/apigeecli/cmd/shared"
 )
 
 //Cmd to manage products
@@ -35,7 +35,7 @@ var Cmd = &cobra.Command{
 
 func init() {
 
-	Cmd.PersistentFlags().StringVarP(&shared.RootArgs.Org, "org", "o",
+	Cmd.PersistentFlags().StringVarP(apiclient.GetApigeeOrgP(), "org", "o",
 		"", "Apigee organization name")
 
 	_ = Cmd.MarkPersistentFlagRequired("org")

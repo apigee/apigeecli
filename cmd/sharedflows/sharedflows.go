@@ -16,7 +16,7 @@ package sharedflows
 
 import (
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/cmd/shared"
+	"github.com/srinandan/apigeecli/apiclient"
 	"github.com/srinandan/apigeecli/cmd/sharedflows/crtsf"
 	"github.com/srinandan/apigeecli/cmd/sharedflows/delsf"
 	"github.com/srinandan/apigeecli/cmd/sharedflows/depsf"
@@ -37,7 +37,7 @@ var Cmd = &cobra.Command{
 
 func init() {
 
-	Cmd.PersistentFlags().StringVarP(&shared.RootArgs.Org, "org", "o",
+	Cmd.PersistentFlags().StringVarP(apiclient.GetApigeeOrgP(), "org", "o",
 		"", "Apigee organization name")
 
 	_ = Cmd.MarkPersistentFlagRequired("org")

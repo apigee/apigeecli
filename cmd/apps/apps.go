@@ -16,6 +16,7 @@ package apps
 
 import (
 	"github.com/spf13/cobra"
+	"github.com/srinandan/apigeecli/apiclient"
 	crtapp "github.com/srinandan/apigeecli/cmd/apps/crtapp"
 	delapp "github.com/srinandan/apigeecli/cmd/apps/delapp"
 	expapp "github.com/srinandan/apigeecli/cmd/apps/expapp"
@@ -23,7 +24,6 @@ import (
 	getapp "github.com/srinandan/apigeecli/cmd/apps/getapp"
 	impapps "github.com/srinandan/apigeecli/cmd/apps/impapps"
 	listapp "github.com/srinandan/apigeecli/cmd/apps/listapp"
-	"github.com/srinandan/apigeecli/cmd/shared"
 )
 
 //Cmd to manage apps
@@ -36,7 +36,7 @@ var Cmd = &cobra.Command{
 
 func init() {
 
-	Cmd.PersistentFlags().StringVarP(&shared.RootArgs.Org, "org", "o",
+	Cmd.PersistentFlags().StringVarP(apiclient.GetApigeeOrgP(), "org", "o",
 		"", "Apigee organization name")
 
 	_ = Cmd.MarkPersistentFlagRequired("org")

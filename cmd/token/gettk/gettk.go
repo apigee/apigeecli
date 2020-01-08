@@ -18,7 +18,8 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/cmd/shared"
+	"github.com/srinandan/apigeecli/apiclient"
+	"github.com/srinandan/apigeecli/clilog"
 )
 
 //Cmd to generate a new access token
@@ -27,7 +28,7 @@ var Cmd = &cobra.Command{
 	Short: "Generate a new access token",
 	Long:  "Generate a new access token",
 	Args: func(cmd *cobra.Command, args []string) error {
-		if shared.RootArgs.ServiceAccount == "" {
+		if apiclient.GetServiceAccount() == "" {
 			return fmt.Errorf("service account cannot be empty")
 		}
 
@@ -35,12 +36,12 @@ var Cmd = &cobra.Command{
 	},
 
 	RunE: func(cmd *cobra.Command, args []string) error {
-		shared.Init()
-		err := shared.SetAccessToken()
+		clilog.Init(apiclient.IsSkipLogInfo())
+		err := apiclient.SetAccessToken()
 		if err != nil {
 			return err
 		}
-		fmt.Println(shared.RootArgs.Token)
+		fmt.Println(apiclient.GetApigeeToken())
 		return nil
 	},
 }

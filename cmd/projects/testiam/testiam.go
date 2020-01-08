@@ -19,7 +19,7 @@ import (
 	"path"
 
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/cmd/shared"
+	"github.com/srinandan/apigeecli/apiclient"
 )
 
 //Cmd to manage tracing of apis
@@ -28,17 +28,17 @@ var Cmd = &cobra.Command{
 	Short: "Test IAM policy for a GCP Project",
 	Long:  "Test IAM policy for a GCP Project",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		u, _ := url.Parse(shared.CrmURL)
-		u.Path = path.Join(u.Path, shared.RootArgs.ProjectID+":testIamPermissions")
+		u, _ := url.Parse(apiclient.CrmURL)
+		u.Path = path.Join(u.Path, apiclient.GetProjectID()+":testIamPermissions")
 		payload := "{\"permissions\":[\"resourcemanager.projects.get\"]}"
-		_, err = shared.HttpClient(true, u.String(), payload)
+		_, err = apiclient.HttpClient(true, u.String(), payload)
 		return
 	},
 }
 
 func init() {
 
-	Cmd.Flags().StringVarP(&shared.RootArgs.ProjectID, "prj", "p",
+	Cmd.Flags().StringVarP(apiclient.GetProjectIDP(), "prj", "p",
 		"", "GCP Project ID")
 
 	_ = Cmd.MarkFlagRequired("prj")
