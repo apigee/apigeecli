@@ -16,7 +16,6 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	"github.com/srinandan/apigeecli/apiclient"
 	"github.com/srinandan/apigeecli/clilog"
 	"github.com/srinandan/apigeecli/cmd/apis"
@@ -58,11 +57,9 @@ func init() {
 
 	RootCmd.PersistentFlags().StringVarP(apiclient.GetApigeeTokenP(), "token", "t",
 		"", "Google OAuth Token")
-	_ = viper.BindPFlag("token", RootCmd.PersistentFlags().Lookup("token"))
 
 	RootCmd.PersistentFlags().StringVarP(apiclient.GetServiceAccountP(), "account", "a",
 		"", "Path Service Account private key in JSON")
-	_ = viper.BindPFlag("account", RootCmd.PersistentFlags().Lookup("account"))
 
 	RootCmd.PersistentFlags().BoolVar(apiclient.SkipCache(), "skipCache",
 		false, "Skip caching Google OAuth Token")
@@ -91,9 +88,7 @@ func init() {
 }
 
 func initConfig() {
-	viper.SetEnvPrefix("APIGEE")
-	viper.AutomaticEnv() // read in environment variables that match
-	viper.SetConfigType("json")
+
 }
 
 // GetRootCmd returns the root of the cobra command-tree.

@@ -25,20 +25,35 @@ import (
 	"net/url"
 	"os/user"
 	"path"
+	"reflect"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/lestrrat/go-jwx/jwa"
 	"github.com/lestrrat/go-jwx/jwt"
-	"github.com/spf13/viper"
 	"github.com/srinandan/apigeecli/clilog"
 )
 
 const accessTokenFile = ".access_token"
 
-func getPrivateKey() (interface{}, error) {
-	pemPrivateKey := fmt.Sprintf("%v", viper.Get("private_key"))
+type serviceAccount struct {
+	Type                string `json:"type,omitempty"`
+	ProjectID           string `json:"project_id,omitempty"`
+	PrivateKeyID        string `json:"private_key_id,omitempty"`
+	PrivateKey          string `json:"private_key,omitempty"`
+	ClientEmail         string `json:"client_email,omitempty"`
+	ClientID            string `json:"client_id,omitempty"`
+	AuthURI             string `json:"auth_uri,omitempty"`
+	TokenURI            string `json:"token_uri,omitempty"`
+	AuthProviderCertURL string `json:"auth_provider_x509_cert_url,omitempty"`
+	ClientCertURL       string `json:"client_x509_cert_url,omitempty"`
+}
+
+var account = serviceAccount{}
+
+func getPrivateKey(privateKey string) (interface{}, error) {
+	pemPrivateKey := fmt.Sprintf("%v", privateKey)
 	block, _ := pem.Decode([]byte(pemPrivateKey))
 	privKey, err := x509.ParsePKCS8PrivateKey(block.Bytes)
 	if err != nil {
@@ -48,11 +63,11 @@ func getPrivateKey() (interface{}, error) {
 	return privKey, nil
 }
 
-func generateJWT() (string, error) {
+func generateJWT(privateKey string) (string, error) {
 	const aud = "https://www.googleapis.com/oauth2/v4/token"
 	const scope = "https://www.googleapis.com/auth/cloud-platform"
 
-	privKey, err := getPrivateKey()
+	privKey, err := getPrivateKey(privateKey)
 
 	if err != nil {
 		return "", err
@@ -62,7 +77,7 @@ func generateJWT() (string, error) {
 	token := jwt.New()
 
 	_ = token.Set(jwt.AudienceKey, aud)
-	_ = token.Set(jwt.IssuerKey, viper.Get("client_email"))
+	_ = token.Set(jwt.IssuerKey, getServiceAccountProperty("ClientEmail"))
 	_ = token.Set("scope", scope)
 	_ = token.Set(jwt.IssuedAtKey, now.Unix())
 	_ = token.Set(jwt.ExpirationKey, now.Unix())
@@ -76,8 +91,8 @@ func generateJWT() (string, error) {
 	return string(payload), nil
 }
 
-//GenerateAccessToken generates a Google OAuth access token from a service account
-func GenerateAccessToken() (string, error) {
+//generateAccessToken generates a Google OAuth access token from a service account
+func generateAccessToken(privateKey string) (string, error) {
 
 	const tokenEndpoint = "https://www.googleapis.com/oauth2/v4/token"
 	const grantType = "urn:ietf:params:oauth:grant-type:jwt-bearer"
@@ -89,7 +104,7 @@ func GenerateAccessToken() (string, error) {
 		TokenType   string `json:"token_type,omitempty"`
 	}
 
-	token, err := generateJWT()
+	token, err := generateJWT(privateKey)
 
 	if err != nil {
 		return "", nil
@@ -130,6 +145,25 @@ func GenerateAccessToken() (string, error) {
 	SetApigeeToken(accessToken.AccessToken)
 	_ = writeAccessToken()
 	return accessToken.AccessToken, nil
+}
+
+func readServiceAccount(serviceAccountPath string) error {
+	content, err := ioutil.ReadFile(serviceAccountPath)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(content, &account)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func getServiceAccountProperty(key string) (value string) {
+	r := reflect.ValueOf(&account)
+	field := reflect.Indirect(r).FieldByName(key)
+	return field.String()
 }
 
 func readAccessToken() error {
@@ -215,18 +249,18 @@ func SetAccessToken() error {
 		return fmt.Errorf("token expired: request a new access token or pass the service account")
 	}
 	if GetServiceAccount() != "" {
-		viper.SetConfigFile(GetServiceAccount())
-		err := viper.ReadInConfig() // Find and read the config file
-		if err != nil {             // Handle errors reading the config file
+		err := readServiceAccount(GetServiceAccount())
+		if err != nil { // Handle errors reading the config file
 			return fmt.Errorf("error reading config file: %s", err)
 		}
-		if viper.Get("private_key") == "" {
+		privateKey := getServiceAccountProperty("PrivateKey")
+		if privateKey == "" {
 			return fmt.Errorf("private key missing in the service account")
 		}
-		if viper.Get("client_email") == "" {
+		if getServiceAccountProperty("ClientEmail") == "" {
 			return fmt.Errorf("client email missing in the service account")
 		}
-		_, err = GenerateAccessToken()
+		_, err = generateAccessToken(privateKey)
 		if err != nil {
 			return fmt.Errorf("fatal error generating access token: %s", err)
 		}

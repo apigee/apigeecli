@@ -37,8 +37,8 @@ var Cmd = &cobra.Command{
 
 	RunE: func(cmd *cobra.Command, args []string) error {
 		clilog.Init(apiclient.IsSkipLogInfo())
-		token, err := apiclient.GenerateAccessToken()
-		fmt.Printf("Token %s cached\n", token)
+		err := apiclient.SetAccessToken()
+		fmt.Printf("Token %s cached\n", apiclient.GetApigeeToken())
 		return err
 	},
 }
