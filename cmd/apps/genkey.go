@@ -22,7 +22,7 @@ import (
 	"github.com/srinandan/apigeecli/client/apps"
 )
 
-//Cmd to generate key
+//GenKeyCmd to generate key
 var GenKeyCmd = &cobra.Command{
 	Use:   "genkey",
 	Short: "Generate a new developer KeyPair",

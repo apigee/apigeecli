@@ -52,6 +52,7 @@ type attribute struct {
 	Value string `json:"value,omitempty"`
 }
 
+//Create
 func Create(name string, description string, approval string, displayName string, quota string, quotaInterval string, quotaUnit string, environments []string, proxies []string, scopes []string, attrs map[string]string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 
@@ -101,6 +102,7 @@ func Create(name string, description string, approval string, displayName string
 	return respBody, err
 }
 
+//Get
 func Get(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts", name)
@@ -108,6 +110,7 @@ func Get(name string) (respBody []byte, err error) {
 	return respBody, err
 }
 
+//Delete
 func Delete(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts", name)
@@ -115,6 +118,7 @@ func Delete(name string) (respBody []byte, err error) {
 	return respBody, err
 }
 
+//List
 func List(count int, expand bool) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts")
@@ -132,6 +136,7 @@ func List(count int, expand bool) (respBody []byte, err error) {
 	return respBody, err
 }
 
+//Export
 func Export(conn int) (payload [][]byte, err error) {
 	//parent workgroup
 	var pwg sync.WaitGroup
@@ -184,6 +189,7 @@ func Export(conn int) (payload [][]byte, err error) {
 	return apiclient.GetEntityPayloadList(), nil
 }
 
+//Import
 func Import(conn int, filePath string) (err error) {
 	var pwg sync.WaitGroup
 	u, _ := url.Parse(apiclient.BaseURL)

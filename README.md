@@ -73,7 +73,7 @@ Subsequent commands do not need the token flag
 
 ## Apigee Client Library
 
-apigeecli is can also be used as a golang based client library. Look at this [sample](./sample) for more details
+apigeecli is can also be used as a golang based client library. Look at this [sample](./samples) for more details
 
 ___
 

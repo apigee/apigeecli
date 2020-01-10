@@ -21,6 +21,7 @@ import (
 	"github.com/srinandan/apigeecli/apiclient"
 )
 
+//GetIAM
 func GetIAM() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv()+":getIamPolicy")
@@ -28,10 +29,12 @@ func GetIAM() (respBody []byte, err error) {
 	return respBody, err
 }
 
+//SetIAM
 func SetIAM(serviceAccountName string, permission string) (err error) {
 	return apiclient.SetIAMServiceAccount(serviceAccountName, permission)
 }
 
+//TestIAM
 func TestIAM() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv()+":testIamPermissions")

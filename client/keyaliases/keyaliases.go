@@ -23,6 +23,7 @@ import (
 	"github.com/srinandan/apigeecli/apiclient"
 )
 
+//Create
 func Create(keystoreName string, name string, format string, password string, ignoreExpiry bool,
 	ignoreNewLine bool, payload string) (respBody []byte, err error) {
 	if !validate(format) {
@@ -70,6 +71,7 @@ func Create(keystoreName string, name string, format string, password string, ig
 	return respBody, err
 }
 
+//CreateCSR
 func CreateCSR(keystoreName string, name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(),
@@ -78,6 +80,7 @@ func CreateCSR(keystoreName string, name string) (respBody []byte, err error) {
 	return
 }
 
+//GetCert
 func GetCert(keystoreName string, name string) (err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(),
@@ -86,6 +89,7 @@ func GetCert(keystoreName string, name string) (err error) {
 	return err
 }
 
+//Get
 func Get(keystoreName string, name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(),
@@ -94,6 +98,7 @@ func Get(keystoreName string, name string) (respBody []byte, err error) {
 	return respBody, err
 }
 
+//Delete
 func Delete(keystoreName string, name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "keystores",
@@ -102,6 +107,7 @@ func Delete(keystoreName string, name string) (respBody []byte, err error) {
 	return respBody, err
 }
 
+//List
 func List(keystoreName string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(),

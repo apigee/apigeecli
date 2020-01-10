@@ -21,6 +21,7 @@ import (
 	"github.com/srinandan/apigeecli/apiclient"
 )
 
+//Create
 func Create(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "keystores")
@@ -29,6 +30,7 @@ func Create(name string) (respBody []byte, err error) {
 	return respBody, err
 }
 
+//Get
 func Get(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "keystores", name)
@@ -36,6 +38,7 @@ func Get(name string) (respBody []byte, err error) {
 	return respBody, err
 }
 
+//Delete
 func Delete(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "keystores", name)
@@ -43,6 +46,7 @@ func Delete(name string) (respBody []byte, err error) {
 	return respBody, err
 }
 
+//List
 func List() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "keystores")

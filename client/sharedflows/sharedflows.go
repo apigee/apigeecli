@@ -36,6 +36,7 @@ type sharedflow struct {
 	Revision []string `json:"revision,omitempty"`
 }
 
+//Create
 func Create(name string, proxy string) (respBody []byte, err error) {
 	if proxy != "" {
 		err = apiclient.ImportBundle("sharedflows", name, proxy)
@@ -48,6 +49,7 @@ func Create(name string, proxy string) (respBody []byte, err error) {
 	return respBody, err
 }
 
+//Get
 func Get(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sharedflows", name)
@@ -55,6 +57,7 @@ func Get(name string) (respBody []byte, err error) {
 	return respBody, err
 }
 
+//Delete
 func Delete(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sharedflows", name)
@@ -62,6 +65,7 @@ func Delete(name string) (respBody []byte, err error) {
 	return respBody, err
 }
 
+//List
 func List(includeRevisions bool) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	if apiclient.GetApigeeEnv() != "" {
@@ -80,6 +84,7 @@ func List(includeRevisions bool) (respBody []byte, err error) {
 	return respBody, err
 }
 
+//Deploy
 func Deploy(name string, revision int, overrides bool) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	if overrides {
@@ -93,6 +98,7 @@ func Deploy(name string, revision int, overrides bool) (respBody []byte, err err
 	return respBody, err
 }
 
+//Undeploy
 func Undeploy(name string, revision int) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(),
@@ -101,10 +107,12 @@ func Undeploy(name string, revision int) (respBody []byte, err error) {
 	return respBody, err
 }
 
+//Fetch
 func Fetch(name string, revision int) (err error) {
 	return apiclient.FetchBundle("sharedflows", name, strconv.Itoa(revision))
 }
 
+//Export
 func Export(conn int) (err error) {
 	//parent workgroup
 	var pwg sync.WaitGroup
@@ -160,6 +168,7 @@ func Export(conn int) (err error) {
 	return nil
 }
 
+//Import
 func Import(conn int, folder string) error {
 	var pwg sync.WaitGroup
 	var entities []string

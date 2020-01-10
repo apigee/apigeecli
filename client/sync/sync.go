@@ -34,6 +34,7 @@ func validate(i string) string {
 	return "serviceAccount:" + i
 }
 
+//Get
 func Get() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg()+":getSyncAuthorization")
@@ -41,6 +42,7 @@ func Get() (respBody []byte, err error) {
 	return respBody, err
 }
 
+//Reset
 func Reset() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg()+":setSyncAuthorization")
@@ -49,6 +51,7 @@ func Reset() (respBody []byte, err error) {
 	return respBody, err
 }
 
+//Set
 func Set(identity string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg()+":setSyncAuthorization")

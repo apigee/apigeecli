@@ -26,8 +26,8 @@ func main() {
 	//set client options
 	apiclient.NewApigeeClient(apiclient.ApigeeClientOptions{
 		Org:            "apigee-org-name",
-		ServiceAccount: "/Users/srinandans/local_workspace/srinandans-hybrid-orgadmin.json", //"path-to-service-account.json",
-		SkipLogInfo:    true,                                                                //skip printing client logs
+		ServiceAccount: "path-to-service-account.json",
+		SkipLogInfo:    true, //skip printing client logs
 	})
 
 	//invoke list of orgs

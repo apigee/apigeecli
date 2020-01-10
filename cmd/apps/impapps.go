@@ -20,7 +20,7 @@ import (
 	"github.com/srinandan/apigeecli/client/apps"
 )
 
-//Cmd to import apps
+//ImpCmd to import apps
 var ImpCmd = &cobra.Command{
 	Use:   "import",
 	Short: "Import a file containing Developer Apps",

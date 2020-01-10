@@ -22,7 +22,7 @@ import (
 	"github.com/srinandan/apigeecli/client/apps"
 )
 
-//Cmd to get app
+//GetCmd to get app
 var GetCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Get App in an Organization by App ID",

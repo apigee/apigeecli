@@ -20,7 +20,7 @@ import (
 	"github.com/srinandan/apigeecli/client/apis"
 )
 
-//Cmd to create api
+//CreateCmd to create api
 var CreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Creates an API proxy in an Apigee Org",

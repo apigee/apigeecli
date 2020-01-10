@@ -20,7 +20,7 @@ import (
 	"github.com/srinandan/apigeecli/client/apps"
 )
 
-//Cmd to delete app
+//DelCmd to delete app
 var DelCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Deletes a Developer App from an organization",

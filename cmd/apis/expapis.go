@@ -20,7 +20,7 @@ import (
 	"github.com/srinandan/apigeecli/client/apis"
 )
 
-//Cmd to export apis
+//ExpCmd to export apis
 var ExpCmd = &cobra.Command{
 	Use:   "export",
 	Short: "export API proxy bundles from an org",

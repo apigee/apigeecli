@@ -22,6 +22,7 @@ import (
 	"github.com/srinandan/apigeecli/apiclient"
 )
 
+//GetDebug
 func GetDebug() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "debugmask")
@@ -29,6 +30,7 @@ func GetDebug() (respBody []byte, err error) {
 	return respBody, err
 }
 
+//SetDebug
 func SetDebug(maskConfig string) (respBody []byte, err error) {
 	//the following steps will validate json
 	m := map[string]string{}

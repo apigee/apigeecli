@@ -20,7 +20,7 @@ import (
 	"github.com/srinandan/apigeecli/client/apis"
 )
 
-//Cmd to import api bundles
+//ImpCmd to import api bundles
 var ImpCmd = &cobra.Command{
 	Use:   "import",
 	Short: "Import a folder containing API proxy bundles",

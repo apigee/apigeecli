@@ -42,6 +42,7 @@ type attribute struct {
 	Value string `json:"value,omitempty"`
 }
 
+//Create
 func Create(email string, firstName string, lastName string, username string, attrs map[string]string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 
@@ -67,6 +68,7 @@ func Create(email string, firstName string, lastName string, username string, at
 	return respBody, err
 }
 
+//Delete
 func Delete(email string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", email)
@@ -74,6 +76,7 @@ func Delete(email string) (respBody []byte, err error) {
 	return respBody, err
 }
 
+//Get
 func Get(email string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", email)
@@ -81,6 +84,7 @@ func Get(email string) (respBody []byte, err error) {
 	return respBody, err
 }
 
+//GetApps
 func GetApps(name string, expand bool) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	if expand {
@@ -95,6 +99,7 @@ func GetApps(name string, expand bool) (respBody []byte, err error) {
 	return respBody, err
 }
 
+//List
 func List(count int, expand bool) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers")
@@ -112,6 +117,7 @@ func List(count int, expand bool) (respBody []byte, err error) {
 	return respBody, err
 }
 
+//Export
 func Export() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers")
@@ -125,6 +131,7 @@ func Export() (respBody []byte, err error) {
 	return respBody, err
 }
 
+//Import
 func Import(conn int, filePath string) error {
 
 	var pwg sync.WaitGroup

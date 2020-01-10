@@ -20,7 +20,7 @@ import (
 	"github.com/srinandan/apigeecli/client/apps"
 )
 
-//Cmd to export apps
+//ExpCmd to export apps
 var ExpCmd = &cobra.Command{
 	Use:   "export",
 	Short: "Export API products to a file",

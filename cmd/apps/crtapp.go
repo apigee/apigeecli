@@ -20,7 +20,7 @@ import (
 	"github.com/srinandan/apigeecli/client/apps"
 )
 
-//Cmd to create app
+//CreateCmd to create app
 var CreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a Developer App",

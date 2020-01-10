@@ -20,7 +20,7 @@ import (
 	"github.com/srinandan/apigeecli/client/apps"
 )
 
-//Cmd to list apps
+//ListCmd to list apps
 var ListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "Returns a list of Developer Applications",

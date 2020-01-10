@@ -20,7 +20,7 @@ import (
 	"github.com/srinandan/apigeecli/client/apis"
 )
 
-//Cmd to deploy api
+//DepCmd to deploy api
 var DepCmd = &cobra.Command{
 	Use:   "deploy",
 	Short: "Deploys a revision of an existing API proxy",

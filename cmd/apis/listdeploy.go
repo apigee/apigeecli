@@ -22,7 +22,7 @@ import (
 	"github.com/srinandan/apigeecli/client/apis"
 )
 
-//Cmd to list deployed api
+//ListDepCmd to list deployed api
 var ListDepCmd = &cobra.Command{
 	Use:   "listdeploy",
 	Short: "Lists all deployments of an API proxy",

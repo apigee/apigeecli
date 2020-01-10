@@ -26,6 +26,7 @@ import (
 	"github.com/srinandan/apigeecli/clilog"
 )
 
+//Create
 func Create(name string, description string, host string, port int, enable bool) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 
@@ -50,6 +51,7 @@ func Create(name string, description string, host string, port int, enable bool)
 	return respBody, err
 }
 
+//Get
 func Get(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "targetservers", name)
@@ -57,6 +59,7 @@ func Get(name string) (respBody []byte, err error) {
 	return respBody, err
 }
 
+//Delete
 func Delete(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "targetservers", name)
@@ -64,6 +67,7 @@ func Delete(name string) (respBody []byte, err error) {
 	return respBody, err
 }
 
+//List
 func List() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "targetservers")
@@ -71,6 +75,7 @@ func List() (respBody []byte, err error) {
 	return respBody, err
 }
 
+//Export
 func Export(conn int) (payload [][]byte, err error) {
 
 	//parent workgroup

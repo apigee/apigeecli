@@ -20,7 +20,7 @@ import (
 	"github.com/srinandan/apigeecli/client/apis"
 )
 
-//Cmd to manage tracing of apis
+//GetTrcCmd to manage tracing of apis
 var GetTrcCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Get a debug session for an API proxy revision",

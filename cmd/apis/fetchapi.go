@@ -20,7 +20,7 @@ import (
 	"github.com/srinandan/apigeecli/client/apis"
 )
 
-//Cmd to download api
+//FetCmd to download api
 var FetCmd = &cobra.Command{
 	Use:   "fetch",
 	Short: "Returns a zip-formatted proxy bundle ",

@@ -37,6 +37,7 @@ func validRegion(region string) bool {
 	return false
 }
 
+//Create
 func Create(region string) (respBody []byte, err error) {
 	const baseURL = "https://apigee.googleapis.com/v1/organizations"
 
@@ -60,6 +61,7 @@ func Create(region string) (respBody []byte, err error) {
 	return respBody, err
 }
 
+//Get
 func Get() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg())
@@ -67,6 +69,7 @@ func Get() (respBody []byte, err error) {
 	return respBody, err
 }
 
+//List
 func List() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())

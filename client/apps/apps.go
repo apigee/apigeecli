@@ -74,6 +74,7 @@ type attribute struct {
 	Value string `json:"value,omitempty"`
 }
 
+//Create
 func Create(name string, email string, expires string, callback string, apiProducts []string, scopes []string, attrs map[string]string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 
@@ -112,6 +113,7 @@ func Create(name string, email string, expires string, callback string, apiProdu
 	return respBody, err
 }
 
+//Delete
 func Delete(name string, developerID string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", developerID, "apps", name)
@@ -119,6 +121,7 @@ func Delete(name string, developerID string) (respBody []byte, err error) {
 	return respBody, err
 }
 
+//Get
 func Get(appID string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apps", appID)
@@ -126,6 +129,7 @@ func Get(appID string) (respBody []byte, err error) {
 	return respBody, err
 }
 
+//SearchApp
 func SearchApp(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	//search by name is not implemented; use list and return the appropriate app
@@ -148,6 +152,7 @@ func SearchApp(name string) (respBody []byte, err error) {
 	return outBytes, nil
 }
 
+//List
 func List(includeCred bool, expand bool, count int) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apps")
@@ -170,6 +175,7 @@ func List(includeCred bool, expand bool, count int) (respBody []byte, err error)
 	return respBody, err
 }
 
+//GenerateKey
 func GenerateKey(name string, developerID string, apiProducts []string, callback string, expires string, scopes []string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 
@@ -196,6 +202,7 @@ func GenerateKey(name string, developerID string, apiProducts []string, callback
 	return respBody, err
 }
 
+//Export
 func Export(conn int) (payload [][]byte, err error) {
 	//parent workgroup
 	var pwg sync.WaitGroup
@@ -248,6 +255,7 @@ func Export(conn int) (payload [][]byte, err error) {
 	return apiclient.GetEntityPayloadList(), nil
 }
 
+//Import
 func Import(conn int, filePath string) error {
 	var pwg sync.WaitGroup
 

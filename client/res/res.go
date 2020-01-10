@@ -22,6 +22,7 @@ import (
 	"github.com/srinandan/apigeecli/apiclient"
 )
 
+//Create
 func Create(name string, resPath string, resourceType string) (respBody []byte, err error) {
 	if !validate(resourceType) {
 		return respBody, fmt.Errorf("invalid resource type")
@@ -38,6 +39,7 @@ func Create(name string, resPath string, resourceType string) (respBody []byte, 
 	return respBody, err
 }
 
+//Delete
 func Delete(name string, resourceType string) (respBody []byte, err error) {
 	if !validate(resourceType) {
 		return respBody, fmt.Errorf("invalid resource type")
@@ -48,6 +50,7 @@ func Delete(name string, resourceType string) (respBody []byte, err error) {
 	return respBody, err
 }
 
+//Get
 func Get(name string, resourceType string) (err error) {
 	if !validate(resourceType) {
 		return fmt.Errorf("invalid resource type")
@@ -58,6 +61,7 @@ func Get(name string, resourceType string) (err error) {
 	return
 }
 
+//List
 func List(resourceType string) (respBody []byte, err error) {
 	if !validate(resourceType) {
 		return respBody, fmt.Errorf("invalid resource type")
@@ -74,7 +78,7 @@ func List(resourceType string) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//IsValidResource returns true is the resource type is valid
+//validate returns true is the resource type is valid
 func validate(resType string) bool {
 	//validResourceTypes contains a list of valid resources
 	var validResourceTypes = [7]string{"js", "jsc", "properties", "java", "wsdl", "xsd", "py"}

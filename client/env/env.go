@@ -21,6 +21,7 @@ import (
 	"github.com/srinandan/apigeecli/apiclient"
 )
 
+//Get
 func Get(config bool) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	if config {
@@ -32,6 +33,7 @@ func Get(config bool) (respBody []byte, err error) {
 	return respBody, err
 }
 
+//List
 func List() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments")
