@@ -12,40 +12,36 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package traceapi
+package env
 
 import (
 	"github.com/spf13/cobra"
 	"github.com/srinandan/apigeecli/apiclient"
-	"github.com/srinandan/apigeecli/client/apis"
+	environments "github.com/srinandan/apigeecli/client/env"
 )
 
 //Cmd to manage tracing of apis
-var CreateCmd = &cobra.Command{
-	Use:   "create",
-	Short: "Create a new debug session for an API proxy",
-	Long:  "Create a new debug session for Apigee API proxy revision deployed in an environment",
+var SetDebugCmd = &cobra.Command{
+	Use:   "set",
+	Short: "Set debugmasks for an Environment",
+	Long:  "Set debugmasks for an Environment",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeEnv(env)
+		apiclient.SetApigeeOrg(org)
+		apiclient.SetApigeeEnv(environment)
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = apis.CreateTraceSession(name, revision, filter)
+		_, err = environments.SetDebug(payload)
 		return
 	},
 }
 
-var filter map[string]string
+var payload string
 
 func init() {
 
-	CreateCmd.Flags().StringVarP(&name, "name", "n",
-		"", "API proxy name")
-	CreateCmd.Flags().IntVarP(&revision, "rev", "v",
-		-1, "API Proxy revision")
-	CreateCmd.Flags().StringToStringVar(&filter, "filter",
-		nil, "Filter Conditions; format is name1=value1,name2=value2...")
+	Cmd.Flags().StringVarP(&payload, "mask", "m",
+		"", "Mask configuration is in JSON format")
 
-	_ = CreateCmd.MarkFlagRequired("name")
-	_ = CreateCmd.MarkFlagRequired("rev")
+	_ = Cmd.MarkFlagRequired("mask")
 }

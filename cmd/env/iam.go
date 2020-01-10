@@ -12,31 +12,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package iam
+package env
 
 import (
 	"github.com/spf13/cobra"
 )
 
 //Cmd to manage tracing of apis
-var Cmd = &cobra.Command{
+var IamCmd = &cobra.Command{
 	Use:   "iam",
 	Short: "Manage IAM permissions for the environment",
 	Long:  "Manage IAM permissions for the environment",
 }
 
-var env, serviceAccountName string
+var serviceAccountName string
 
 func init() {
 
-	Cmd.PersistentFlags().StringVarP(&env, "env", "e",
+	IamCmd.PersistentFlags().StringVarP(&environment, "env", "e",
 		"", "Apigee environment name")
 
-	_ = Cmd.MarkPersistentFlagRequired("env")
+	_ = IamCmd.MarkPersistentFlagRequired("env")
 
-	Cmd.AddCommand(GetCmd)
-	Cmd.AddCommand(SetAxCmd)
-	Cmd.AddCommand(SetDepCmd)
-	Cmd.AddCommand(SetSyncCmd)
-	Cmd.AddCommand(TestIamCmd)
+	IamCmd.AddCommand(GetIamCmd)
+	IamCmd.AddCommand(SetAxCmd)
+	IamCmd.AddCommand(SetDepCmd)
+	IamCmd.AddCommand(SetSyncCmd)
+	IamCmd.AddCommand(TestIamCmd)
 }

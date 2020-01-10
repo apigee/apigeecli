@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package iam
+package env
 
 import (
 	"github.com/spf13/cobra"
@@ -21,23 +21,17 @@ import (
 )
 
 //Cmd to manage tracing of apis
-var SetSyncCmd = &cobra.Command{
-	Use:   "setsync",
-	Short: "Set Synchronization Manager role for a SA on an environment",
-	Long:  "Set Synchronization Manager role for a SA on an environment",
+var TestIamCmd = &cobra.Command{
+	Use:   "test",
+	Short: "Test IAM policy for an Environment",
+	Long:  "Test IAM policy for an Environment",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeEnv(env)
+		apiclient.SetApigeeOrg(org)
+		apiclient.SetApigeeEnv(environment)
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		return environments.SetIAM(serviceAccountName, "sync")
+		_, err = environments.TestIAM()
+		return
 	},
-}
-
-func init() {
-
-	SetSyncCmd.Flags().StringVarP(&serviceAccountName, "name", "n",
-		"", "Service Account Name")
-
-	_ = Cmd.MarkFlagRequired("name")
 }

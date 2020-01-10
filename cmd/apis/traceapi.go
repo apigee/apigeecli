@@ -12,32 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package iam
+package apis
 
 import (
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/apiclient"
-	environments "github.com/srinandan/apigeecli/client/env"
 )
 
 //Cmd to manage tracing of apis
-var SetAxCmd = &cobra.Command{
-	Use:   "setax",
-	Short: "Set Analytics Agent role for a SA on an environment",
-	Long:  "Set Analytics Agent role for a SA an Environment",
-	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeEnv(env)
-		return nil
-	},
-	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		return environments.SetIAM(serviceAccountName, "analytics")
-	},
+var TraceCmd = &cobra.Command{
+	Use:   "trace",
+	Short: "Manage debugging/tracing of Apigee API proxies",
+	Long:  "Manage debugging/tracing of Apigee API proxy revisions deployed in an environment",
 }
 
 func init() {
 
-	SetAxCmd.Flags().StringVarP(&serviceAccountName, "name", "n",
-		"", "Service Account Name")
+	Cmd.PersistentFlags().StringVarP(&env, "env", "e",
+		"", "Apigee environment name")
 
-	_ = SetAxCmd.MarkFlagRequired("name")
+	_ = Cmd.MarkPersistentFlagRequired("env")
+
+	TraceCmd.AddCommand(CreateTrcCmd)
+	TraceCmd.AddCommand(ListTrcCmd)
+	TraceCmd.AddCommand(GetTrcCmd)
 }

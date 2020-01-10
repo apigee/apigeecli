@@ -12,38 +12,38 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package env
+package apis
 
 import (
 	"github.com/spf13/cobra"
 	"github.com/srinandan/apigeecli/apiclient"
-	"github.com/srinandan/apigeecli/client/env"
+	"github.com/srinandan/apigeecli/client/apis"
 )
 
-//Cmd to get env details
-var GetCmd = &cobra.Command{
-	Use:   "get",
-	Short: "Get properties of an environment",
-	Long:  "Get properties of an environment",
+//Cmd to manage tracing of apis
+var ListTrcCmd = &cobra.Command{
+	Use:   "list",
+	Short: "List all debug sessions for an API proxy revision",
+	Long:  "List all debug sessions for an API proxy revision deployed in an environment",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetApigeeOrg(org)
-		apiclient.SetApigeeEnv(environment)
+		apiclient.SetApigeeEnv(env)
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = env.Get(config)
+		_, err = apis.ListTracceSession(name, revision)
 		return
 	},
 }
 
-var config = false
-
 func init() {
 
-	GetCmd.Flags().StringVarP(&environment, "env", "e",
-		"", "Apigee environment name")
-	GetCmd.Flags().BoolVarP(&config, "config", "c",
-		false, "Return configuration details")
+	ListTrcCmd.Flags().StringVarP(&name, "name", "n",
+		"", "API proxy name")
+	ListTrcCmd.Flags().IntVarP(&revision, "rev", "v",
+		-1, "API Proxy revision")
 
-	_ = GetCmd.MarkFlagRequired("env")
+	_ = ListTrcCmd.MarkFlagRequired("name")
+	_ = ListTrcCmd.MarkFlagRequired("rev")
+
 }

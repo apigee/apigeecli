@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package debugmask
+package env
 
 import (
 	"github.com/spf13/cobra"
@@ -21,16 +21,24 @@ import (
 )
 
 //Cmd to manage tracing of apis
-var GetCmd = &cobra.Command{
-	Use:   "get",
-	Short: "Get debugmasks for an Environment",
-	Long:  "Get debugmasks for an Environment",
+var SetAxCmd = &cobra.Command{
+	Use:   "setax",
+	Short: "Set Analytics Agent role for a SA on an environment",
+	Long:  "Set Analytics Agent role for a SA an Environment",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeEnv(env)
+		apiclient.SetApigeeOrg(org)
+		apiclient.SetApigeeEnv(environment)
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = environments.GetDebug()
-		return
+		return environments.SetIAM(serviceAccountName, "analytics")
 	},
+}
+
+func init() {
+
+	SetAxCmd.Flags().StringVarP(&serviceAccountName, "name", "n",
+		"", "Service Account Name")
+
+	_ = SetAxCmd.MarkFlagRequired("name")
 }

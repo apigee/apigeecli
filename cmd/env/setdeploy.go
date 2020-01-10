@@ -12,43 +12,33 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package traceapi
+package env
 
 import (
 	"github.com/spf13/cobra"
 	"github.com/srinandan/apigeecli/apiclient"
-	"github.com/srinandan/apigeecli/client/apis"
+	environments "github.com/srinandan/apigeecli/client/env"
 )
 
 //Cmd to manage tracing of apis
-var GetCmd = &cobra.Command{
-	Use:   "get",
-	Short: "Get a debug session for an API proxy revision",
-	Long:  "Get a debug session for an API proxy revision deployed in an environment",
+var SetDepCmd = &cobra.Command{
+	Use:   "setdeploy",
+	Short: "Set Apigee Deployer role for a SA on an environment",
+	Long:  "Set Apigee Deployer role for a SA on an environment",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeEnv(env)
+		apiclient.SetApigeeOrg(org)
+		apiclient.SetApigeeEnv(environment)
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = apis.GetTraceSession(name, revision, sessionID, messageID)
-		return
+		return environments.SetIAM(serviceAccountName, "deploy")
 	},
 }
 
-var sessionID, messageID string
-
 func init() {
 
-	GetCmd.Flags().StringVarP(&name, "name", "n",
-		"", "API proxy name")
-	GetCmd.Flags().IntVarP(&revision, "rev", "v",
-		-1, "API Proxy revision")
-	GetCmd.Flags().StringVarP(&sessionID, "ses", "s",
-		"", "Debug session Id")
-	GetCmd.Flags().StringVarP(&messageID, "msg", "m",
-		"", "Debug session Id")
+	SetDepCmd.Flags().StringVarP(&serviceAccountName, "name", "n",
+		"", "Service Account Name")
 
-	_ = GetCmd.MarkFlagRequired("name")
-	_ = GetCmd.MarkFlagRequired("rev")
-	_ = GetCmd.MarkFlagRequired("ses")
+	_ = SetDepCmd.MarkFlagRequired("name")
 }

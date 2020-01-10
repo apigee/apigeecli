@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package traceapi
+package apis
 
 import (
 	"github.com/spf13/cobra"
@@ -21,28 +21,32 @@ import (
 )
 
 //Cmd to manage tracing of apis
-var ListCmd = &cobra.Command{
-	Use:   "list",
-	Short: "List all debug sessions for an API proxy revision",
-	Long:  "List all debug sessions for an API proxy revision deployed in an environment",
+var CreateTrcCmd = &cobra.Command{
+	Use:   "create",
+	Short: "Create a new debug session for an API proxy",
+	Long:  "Create a new debug session for Apigee API proxy revision deployed in an environment",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetApigeeOrg(org)
 		apiclient.SetApigeeEnv(env)
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = apis.ListTracceSession(name, revision)
+		_, err = apis.CreateTraceSession(name, revision, filter)
 		return
 	},
 }
 
+var filter map[string]string
+
 func init() {
 
-	ListCmd.Flags().StringVarP(&name, "name", "n",
+	CreateTrcCmd.Flags().StringVarP(&name, "name", "n",
 		"", "API proxy name")
-	ListCmd.Flags().IntVarP(&revision, "rev", "v",
+	CreateTrcCmd.Flags().IntVarP(&revision, "rev", "v",
 		-1, "API Proxy revision")
+	CreateTrcCmd.Flags().StringToStringVar(&filter, "filter",
+		nil, "Filter Conditions; format is name1=value1,name2=value2...")
 
-	_ = ListCmd.MarkFlagRequired("name")
-	_ = ListCmd.MarkFlagRequired("rev")
-
+	_ = CreateTrcCmd.MarkFlagRequired("name")
+	_ = CreateTrcCmd.MarkFlagRequired("rev")
 }

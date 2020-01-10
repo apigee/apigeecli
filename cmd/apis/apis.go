@@ -16,7 +16,6 @@ package apis
 
 import (
 	"github.com/spf13/cobra"
-	traceapi "github.com/srinandan/apigeecli/cmd/apis/traceapi"
 )
 
 //Cmd to manage apis
@@ -46,5 +45,5 @@ func init() {
 	Cmd.AddCommand(GetCmd)
 	Cmd.AddCommand(ImpCmd)
 	Cmd.AddCommand(UndepCmd)
-	Cmd.AddCommand(traceapi.Cmd)
+	Cmd.AddCommand(TraceCmd)
 }

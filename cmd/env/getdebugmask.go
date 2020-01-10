@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package debugmask
+package env
 
 import (
 	"github.com/spf13/cobra"
@@ -21,26 +21,17 @@ import (
 )
 
 //Cmd to manage tracing of apis
-var SetCmd = &cobra.Command{
-	Use:   "set",
-	Short: "Set debugmasks for an Environment",
-	Long:  "Set debugmasks for an Environment",
+var GetDebugCmd = &cobra.Command{
+	Use:   "get",
+	Short: "Get debugmasks for an Environment",
+	Long:  "Get debugmasks for an Environment",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeEnv(env)
+		apiclient.SetApigeeOrg(org)
+		apiclient.SetApigeeEnv(environment)
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = environments.SetDebug(payload)
+		_, err = environments.GetDebug()
 		return
 	},
-}
-
-var payload string
-
-func init() {
-
-	Cmd.Flags().StringVarP(&payload, "mask", "m",
-		"", "Mask configuration is in JSON format")
-
-	_ = Cmd.MarkFlagRequired("mask")
 }

@@ -12,25 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package iam
+package env
 
 import (
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/apiclient"
-	environments "github.com/srinandan/apigeecli/client/env"
 )
 
 //Cmd to manage tracing of apis
-var TestIamCmd = &cobra.Command{
-	Use:   "test",
-	Short: "Test IAM policy for an Environment",
-	Long:  "Test IAM policy for an Environment",
-	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeEnv(env)
-		return nil
-	},
-	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = environments.TestIAM()
-		return
-	},
+var DebugCmd = &cobra.Command{
+	Use:   "debugmask",
+	Short: "Manage debugmasks for the environment",
+	Long:  "Manage debugmasks for the environment",
+}
+
+func init() {
+
+	DebugCmd.PersistentFlags().StringVarP(&environment, "env", "e",
+		"", "Apigee environment name")
+
+	_ = DebugCmd.MarkPersistentFlagRequired("env")
+
+	DebugCmd.AddCommand(GetDebugCmd)
+	DebugCmd.AddCommand(SetDebugCmd)
 }

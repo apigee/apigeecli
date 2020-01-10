@@ -12,30 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package traceapi
+package env
 
 import (
 	"github.com/spf13/cobra"
+	"github.com/srinandan/apigeecli/apiclient"
+	environments "github.com/srinandan/apigeecli/client/env"
 )
 
 //Cmd to manage tracing of apis
-var Cmd = &cobra.Command{
-	Use:   "trace",
-	Short: "Manage debugging/tracing of Apigee API proxies",
-	Long:  "Manage debugging/tracing of Apigee API proxy revisions deployed in an environment",
-}
-
-var env, name string
-var revision int
-
-func init() {
-
-	Cmd.PersistentFlags().StringVarP(&env, "env", "e",
-		"", "Apigee environment name")
-
-	_ = Cmd.MarkPersistentFlagRequired("env")
-
-	Cmd.AddCommand(CreateCmd)
-	Cmd.AddCommand(ListCmd)
-	Cmd.AddCommand(GetCmd)
+var GetIamCmd = &cobra.Command{
+	Use:   "get",
+	Short: "Gets the IAM policy on an Environment",
+	Long:  "Gets the IAM policy on an Environment",
+	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetApigeeOrg(org)
+		apiclient.SetApigeeEnv(environment)
+		return nil
+	},
+	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		_, err = environments.GetIAM()
+		return
+	},
 }
