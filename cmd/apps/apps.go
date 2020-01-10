@@ -16,14 +16,6 @@ package apps
 
 import (
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/apiclient"
-	crtapp "github.com/srinandan/apigeecli/cmd/apps/crtapp"
-	delapp "github.com/srinandan/apigeecli/cmd/apps/delapp"
-	expapp "github.com/srinandan/apigeecli/cmd/apps/expapp"
-	genkey "github.com/srinandan/apigeecli/cmd/apps/genkey"
-	getapp "github.com/srinandan/apigeecli/cmd/apps/getapp"
-	impapps "github.com/srinandan/apigeecli/cmd/apps/impapps"
-	listapp "github.com/srinandan/apigeecli/cmd/apps/listapp"
 )
 
 //Cmd to manage apps
@@ -34,17 +26,21 @@ var Cmd = &cobra.Command{
 	Long:    "Manage Apigee Developer Applications",
 }
 
+var name, org string
+var conn int
+
 func init() {
 
-	Cmd.PersistentFlags().StringVarP(apiclient.GetApigeeOrgP(), "org", "o",
+	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
 
 	_ = Cmd.MarkPersistentFlagRequired("org")
-	Cmd.AddCommand(listapp.Cmd)
-	Cmd.AddCommand(getapp.Cmd)
-	Cmd.AddCommand(delapp.Cmd)
-	Cmd.AddCommand(crtapp.Cmd)
-	Cmd.AddCommand(genkey.Cmd)
-	Cmd.AddCommand(impapps.Cmd)
-	Cmd.AddCommand(expapp.Cmd)
+
+	Cmd.AddCommand(ListCmd)
+	Cmd.AddCommand(GetCmd)
+	Cmd.AddCommand(DelCmd)
+	Cmd.AddCommand(CreateCmd)
+	Cmd.AddCommand(GenKeyCmd)
+	Cmd.AddCommand(ImpCmd)
+	Cmd.AddCommand(ExpCmd)
 }

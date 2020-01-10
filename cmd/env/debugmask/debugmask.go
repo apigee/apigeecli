@@ -16,9 +16,6 @@ package debugmask
 
 import (
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/apiclient"
-	"github.com/srinandan/apigeecli/cmd/env/debugmask/getdebugmask"
-	"github.com/srinandan/apigeecli/cmd/env/debugmask/setdebugmask"
 )
 
 //Cmd to manage tracing of apis
@@ -28,13 +25,15 @@ var Cmd = &cobra.Command{
 	Long:  "Manage debugmasks for the environment",
 }
 
+var env string
+
 func init() {
 
-	Cmd.PersistentFlags().StringVarP(apiclient.GetApigeeEnvP(), "env", "e",
+	Cmd.PersistentFlags().StringVarP(&env, "env", "e",
 		"", "Apigee environment name")
 
 	_ = Cmd.MarkPersistentFlagRequired("env")
 
-	Cmd.AddCommand(getdebugmask.Cmd)
-	Cmd.AddCommand(setdebugmask.Cmd)
+	Cmd.AddCommand(GetCmd)
+	Cmd.AddCommand(SetCmd)
 }

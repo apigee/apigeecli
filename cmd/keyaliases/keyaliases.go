@@ -16,14 +16,6 @@ package keyaliases
 
 import (
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/apiclient"
-	"github.com/srinandan/apigeecli/cmd/keyaliases/crtka"
-	"github.com/srinandan/apigeecli/cmd/keyaliases/crtself"
-	"github.com/srinandan/apigeecli/cmd/keyaliases/csr"
-	"github.com/srinandan/apigeecli/cmd/keyaliases/delka"
-	"github.com/srinandan/apigeecli/cmd/keyaliases/getcert"
-	"github.com/srinandan/apigeecli/cmd/keyaliases/getka"
-	"github.com/srinandan/apigeecli/cmd/keyaliases/listka"
 )
 
 //Cmd to manage key aliases
@@ -34,21 +26,23 @@ var Cmd = &cobra.Command{
 	Long:    "Manage Key Aliases",
 }
 
+var org, env, name, keystoreName, aliasName string
+
 func init() {
 
-	Cmd.PersistentFlags().StringVarP(apiclient.GetApigeeOrgP(), "org", "o",
+	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
-	Cmd.PersistentFlags().StringVarP(apiclient.GetApigeeEnvP(), "env", "e",
+	Cmd.PersistentFlags().StringVarP(&env, "env", "e",
 		"", "Apigee environment name")
 
 	_ = Cmd.MarkPersistentFlagRequired("org")
 	_ = Cmd.MarkPersistentFlagRequired("env")
 
-	Cmd.AddCommand(listka.Cmd)
-	Cmd.AddCommand(csr.Cmd)
-	Cmd.AddCommand(getcert.Cmd)
-	Cmd.AddCommand(getka.Cmd)
-	Cmd.AddCommand(delka.Cmd)
-	Cmd.AddCommand(crtself.Cmd)
-	Cmd.AddCommand(crtka.Cmd)
+	Cmd.AddCommand(ListCmd)
+	Cmd.AddCommand(CsrCmd)
+	Cmd.AddCommand(GetctCmd)
+	Cmd.AddCommand(GetCmd)
+	Cmd.AddCommand(DelCmd)
+	Cmd.AddCommand(CrtslfCmd)
+	Cmd.AddCommand(CreateCmd)
 }

@@ -16,16 +16,6 @@ package sharedflows
 
 import (
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/apiclient"
-	"github.com/srinandan/apigeecli/cmd/sharedflows/crtsf"
-	"github.com/srinandan/apigeecli/cmd/sharedflows/delsf"
-	"github.com/srinandan/apigeecli/cmd/sharedflows/depsf"
-	"github.com/srinandan/apigeecli/cmd/sharedflows/expsf"
-	"github.com/srinandan/apigeecli/cmd/sharedflows/fetchsf"
-	getsf "github.com/srinandan/apigeecli/cmd/sharedflows/getsf"
-	"github.com/srinandan/apigeecli/cmd/sharedflows/impsfs"
-	listsf "github.com/srinandan/apigeecli/cmd/sharedflows/listsf"
-	"github.com/srinandan/apigeecli/cmd/sharedflows/undepsf"
 )
 
 //Cmd to manage shared flows
@@ -35,19 +25,22 @@ var Cmd = &cobra.Command{
 	Long:  "Manage Apigee shared flows in an org",
 }
 
+var name, org, env string
+var conn, revision int
+
 func init() {
 
-	Cmd.PersistentFlags().StringVarP(apiclient.GetApigeeOrgP(), "org", "o",
+	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
 
 	_ = Cmd.MarkPersistentFlagRequired("org")
-	Cmd.AddCommand(listsf.Cmd)
-	Cmd.AddCommand(getsf.Cmd)
-	Cmd.AddCommand(fetchsf.Cmd)
-	Cmd.AddCommand(delsf.Cmd)
-	Cmd.AddCommand(undepsf.Cmd)
-	Cmd.AddCommand(depsf.Cmd)
-	Cmd.AddCommand(crtsf.Cmd)
-	Cmd.AddCommand(expsf.Cmd)
-	Cmd.AddCommand(impsfs.Cmd)
+	Cmd.AddCommand(ListCmd)
+	Cmd.AddCommand(GetCmd)
+	Cmd.AddCommand(FetCmd)
+	Cmd.AddCommand(DelCmd)
+	Cmd.AddCommand(UndepCmd)
+	Cmd.AddCommand(DepCmd)
+	Cmd.AddCommand(CreateCmd)
+	Cmd.AddCommand(ExpCmd)
+	Cmd.AddCommand(ImpCmd)
 }

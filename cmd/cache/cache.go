@@ -16,9 +16,6 @@ package cache
 
 import (
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/apiclient"
-	"github.com/srinandan/apigeecli/cmd/cache/delcache"
-	"github.com/srinandan/apigeecli/cmd/cache/listcache"
 )
 
 //Cmd to manage tracing of apis
@@ -28,17 +25,19 @@ var Cmd = &cobra.Command{
 	Long:  "Manage caches within an Apigee environment",
 }
 
+var org, env string
+
 func init() {
 
-	Cmd.PersistentFlags().StringVarP(apiclient.GetApigeeOrgP(), "org", "o",
+	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
 
-	Cmd.PersistentFlags().StringVarP(apiclient.GetApigeeEnvP(), "env", "e",
+	Cmd.PersistentFlags().StringVarP(&env, "env", "e",
 		"", "Apigee environment name")
 
 	_ = Cmd.MarkPersistentFlagRequired("org")
 	_ = Cmd.MarkPersistentFlagRequired("env")
 
-	Cmd.AddCommand(listcache.Cmd)
-	Cmd.AddCommand(delcache.Cmd)
+	Cmd.AddCommand(ListCmd)
+	Cmd.AddCommand(DelCmd)
 }

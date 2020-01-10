@@ -12,15 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package targetservers
+package flowhooks
 
 import (
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/apiclient"
-	"github.com/srinandan/apigeecli/cmd/flowhooks/crtfh"
-	"github.com/srinandan/apigeecli/cmd/flowhooks/delfh"
-	"github.com/srinandan/apigeecli/cmd/flowhooks/getfh"
-	"github.com/srinandan/apigeecli/cmd/flowhooks/listfh"
 )
 
 //Cmd to manage flow hooks
@@ -31,18 +26,20 @@ var Cmd = &cobra.Command{
 	Long:    "Manage Flowhooks",
 }
 
+var org, env, name string
+
 func init() {
 
-	Cmd.PersistentFlags().StringVarP(apiclient.GetApigeeOrgP(), "org", "o",
+	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
-	Cmd.PersistentFlags().StringVarP(apiclient.GetApigeeEnvP(), "env", "e",
+	Cmd.PersistentFlags().StringVarP(&env, "env", "e",
 		"", "Apigee environment name")
 
 	_ = Cmd.MarkPersistentFlagRequired("org")
 	_ = Cmd.MarkPersistentFlagRequired("env")
 
-	Cmd.AddCommand(listfh.Cmd)
-	Cmd.AddCommand(getfh.Cmd)
-	Cmd.AddCommand(delfh.Cmd)
-	Cmd.AddCommand(crtfh.Cmd)
+	Cmd.AddCommand(ListCmd)
+	Cmd.AddCommand(GetCmd)
+	Cmd.AddCommand(DelCmd)
+	Cmd.AddCommand(CreateCmd)
 }

@@ -171,6 +171,12 @@ func HttpClient(print bool, params ...string) (respBody []byte, err error) {
 		return nil, err
 	}
 
+	if GetApigeeToken() == "" {
+		if err = SetAccessToken(); err != nil {
+			return nil, err
+		}
+	}
+
 	clilog.Info.Println("Setting token : ", GetApigeeToken())
 	req.Header.Add("Authorization", "Bearer "+GetApigeeToken())
 	req.Header.Set("Content-Type", "application/json")

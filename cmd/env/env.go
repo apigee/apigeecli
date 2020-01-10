@@ -16,11 +16,8 @@ package env
 
 import (
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/apiclient"
 	"github.com/srinandan/apigeecli/cmd/env/debugmask"
-	"github.com/srinandan/apigeecli/cmd/env/getenv"
 	"github.com/srinandan/apigeecli/cmd/env/iam"
-	"github.com/srinandan/apigeecli/cmd/env/listenv"
 )
 
 //Cmd to manage envs
@@ -31,15 +28,17 @@ var Cmd = &cobra.Command{
 	Long:    "Manage Apigee environments",
 }
 
+var org string
+
 func init() {
 
-	Cmd.PersistentFlags().StringVarP(apiclient.GetApigeeOrgP(), "org", "o",
+	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
 
 	_ = Cmd.MarkPersistentFlagRequired("org")
 
-	Cmd.AddCommand(listenv.Cmd)
-	Cmd.AddCommand(getenv.Cmd)
+	Cmd.AddCommand(ListCmd)
+	Cmd.AddCommand(GetCmd)
 	Cmd.AddCommand(iam.Cmd)
 	Cmd.AddCommand(debugmask.Cmd)
 }

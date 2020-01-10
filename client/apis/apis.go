@@ -59,7 +59,7 @@ func DeleteProxy(name string) (respBody []byte, err error) {
 }
 
 //DeployProxy
-func DeployProxy(name string, revision string, overrides bool) (respBody []byte, err error) {
+func DeployProxy(name string, revision int, overrides bool) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	if overrides {
 		q := u.Query()
@@ -67,14 +67,14 @@ func DeployProxy(name string, revision string, overrides bool) (respBody []byte,
 		u.RawQuery = q.Encode()
 	}
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(),
-		"apis", name, "revisions", revision, "deployments")
+		"apis", name, "revisions", strconv.Itoa(revision), "deployments")
 	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "")
 	return respBody, err
 }
 
 //FetchProxy
-func FetchProxy(name string, revision string) (err error) {
-	return apiclient.FetchBundle("apis", name, revision)
+func FetchProxy(name string, revision int) (err error) {
+	return apiclient.FetchBundle("apis", name, strconv.Itoa(revision))
 }
 
 //FetchProxy

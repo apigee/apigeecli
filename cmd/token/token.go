@@ -16,8 +16,6 @@ package token
 
 import (
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/cmd/token/cachetk"
-	"github.com/srinandan/apigeecli/cmd/token/gettk"
 )
 
 //Cmd to manage token to interact with apigee.googleapis.com
@@ -29,6 +27,6 @@ var Cmd = &cobra.Command{
 
 func init() {
 
-	Cmd.AddCommand(gettk.Cmd)
-	Cmd.AddCommand(cachetk.Cmd)
+	Cmd.AddCommand(GetCmd)
+	Cmd.AddCommand(CacheCmd)
 }

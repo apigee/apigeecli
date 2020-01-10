@@ -16,18 +16,7 @@ package apis
 
 import (
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/apiclient"
-	crtapi "github.com/srinandan/apigeecli/cmd/apis/crtapi"
-	delapi "github.com/srinandan/apigeecli/cmd/apis/delapi"
-	"github.com/srinandan/apigeecli/cmd/apis/depapi"
-	"github.com/srinandan/apigeecli/cmd/apis/expapis"
-	fetch "github.com/srinandan/apigeecli/cmd/apis/fetchapi"
-	"github.com/srinandan/apigeecli/cmd/apis/getapi"
-	impapis "github.com/srinandan/apigeecli/cmd/apis/impapis"
-	"github.com/srinandan/apigeecli/cmd/apis/listapis"
-	"github.com/srinandan/apigeecli/cmd/apis/listdeploy"
 	traceapi "github.com/srinandan/apigeecli/cmd/apis/traceapi"
-	"github.com/srinandan/apigeecli/cmd/apis/undepapi"
 )
 
 //Cmd to manage apis
@@ -37,22 +26,25 @@ var Cmd = &cobra.Command{
 	Long:  "Manage Apigee API proxies in an org",
 }
 
+var org, env, name string
+var conn, revision int
+
 func init() {
 
-	Cmd.PersistentFlags().StringVarP(apiclient.GetApigeeOrgP(), "org", "o",
+	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
 
 	_ = Cmd.MarkPersistentFlagRequired("org")
 
-	Cmd.AddCommand(listapis.Cmd)
-	Cmd.AddCommand(listdeploy.Cmd)
-	Cmd.AddCommand(crtapi.Cmd)
-	Cmd.AddCommand(expapis.Cmd)
-	Cmd.AddCommand(depapi.Cmd)
-	Cmd.AddCommand(delapi.Cmd)
-	Cmd.AddCommand(fetch.Cmd)
-	Cmd.AddCommand(getapi.Cmd)
-	Cmd.AddCommand(impapis.Cmd)
-	Cmd.AddCommand(undepapi.Cmd)
+	Cmd.AddCommand(ListCmd)
+	Cmd.AddCommand(ListDepCmd)
+	Cmd.AddCommand(CreateCmd)
+	Cmd.AddCommand(ExpCmd)
+	Cmd.AddCommand(DepCmd)
+	Cmd.AddCommand(DelCmd)
+	Cmd.AddCommand(FetCmd)
+	Cmd.AddCommand(GetCmd)
+	Cmd.AddCommand(ImpCmd)
+	Cmd.AddCommand(UndepCmd)
 	Cmd.AddCommand(traceapi.Cmd)
 }

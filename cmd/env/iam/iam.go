@@ -16,12 +16,6 @@ package iam
 
 import (
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/apiclient"
-	"github.com/srinandan/apigeecli/cmd/env/iam/getiam"
-	"github.com/srinandan/apigeecli/cmd/env/iam/setax"
-	"github.com/srinandan/apigeecli/cmd/env/iam/setdeploy"
-	"github.com/srinandan/apigeecli/cmd/env/iam/setsync"
-	"github.com/srinandan/apigeecli/cmd/env/iam/testiam"
 )
 
 //Cmd to manage tracing of apis
@@ -31,16 +25,18 @@ var Cmd = &cobra.Command{
 	Long:  "Manage IAM permissions for the environment",
 }
 
+var env, serviceAccountName string
+
 func init() {
 
-	Cmd.PersistentFlags().StringVarP(apiclient.GetApigeeEnvP(), "env", "e",
+	Cmd.PersistentFlags().StringVarP(&env, "env", "e",
 		"", "Apigee environment name")
 
 	_ = Cmd.MarkPersistentFlagRequired("env")
 
-	Cmd.AddCommand(getiam.Cmd)
-	Cmd.AddCommand(setax.Cmd)
-	Cmd.AddCommand(setdeploy.Cmd)
-	Cmd.AddCommand(setsync.Cmd)
-	Cmd.AddCommand(testiam.Cmd)
+	Cmd.AddCommand(GetCmd)
+	Cmd.AddCommand(SetAxCmd)
+	Cmd.AddCommand(SetDepCmd)
+	Cmd.AddCommand(SetSyncCmd)
+	Cmd.AddCommand(TestIamCmd)
 }

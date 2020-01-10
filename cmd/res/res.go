@@ -16,11 +16,6 @@ package res
 
 import (
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/apiclient"
-	"github.com/srinandan/apigeecli/cmd/res/crtres"
-	"github.com/srinandan/apigeecli/cmd/res/delres"
-	"github.com/srinandan/apigeecli/cmd/res/getres"
-	"github.com/srinandan/apigeecli/cmd/res/listres"
 )
 
 //Cmd to manage resources
@@ -31,19 +26,21 @@ var Cmd = &cobra.Command{
 	Long:    "Manage resources within an Apigee environment",
 }
 
+var name, org, env, resType string
+
 func init() {
 
-	Cmd.PersistentFlags().StringVarP(apiclient.GetApigeeOrgP(), "org", "o",
+	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
 
-	Cmd.PersistentFlags().StringVarP(apiclient.GetApigeeEnvP(), "env", "e",
+	Cmd.PersistentFlags().StringVarP(&env, "env", "e",
 		"", "Apigee environment name")
 
 	_ = Cmd.MarkPersistentFlagRequired("org")
 	_ = Cmd.MarkPersistentFlagRequired("env")
 
-	Cmd.AddCommand(crtres.Cmd)
-	Cmd.AddCommand(delres.Cmd)
-	Cmd.AddCommand(listres.Cmd)
-	Cmd.AddCommand(getres.Cmd)
+	Cmd.AddCommand(CreateCmd)
+	Cmd.AddCommand(DelCmd)
+	Cmd.AddCommand(ListCmd)
+	Cmd.AddCommand(GetCmd)
 }

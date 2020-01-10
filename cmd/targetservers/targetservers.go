@@ -16,12 +16,6 @@ package targetservers
 
 import (
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/apiclient"
-	"github.com/srinandan/apigeecli/cmd/targetservers/crtts"
-	"github.com/srinandan/apigeecli/cmd/targetservers/delts"
-	"github.com/srinandan/apigeecli/cmd/targetservers/expts"
-	"github.com/srinandan/apigeecli/cmd/targetservers/getts"
-	"github.com/srinandan/apigeecli/cmd/targetservers/listts"
 )
 
 //Cmd to manage targetservers
@@ -32,19 +26,21 @@ var Cmd = &cobra.Command{
 	Long:    "Manage Target Servers",
 }
 
+var org, env, name string
+
 func init() {
 
-	Cmd.PersistentFlags().StringVarP(apiclient.GetApigeeOrgP(), "org", "o",
+	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
-	Cmd.PersistentFlags().StringVarP(apiclient.GetApigeeEnvP(), "env", "e",
+	Cmd.PersistentFlags().StringVarP(&env, "env", "e",
 		"", "Apigee environment name")
 
 	_ = Cmd.MarkPersistentFlagRequired("org")
 	_ = Cmd.MarkPersistentFlagRequired("env")
 
-	Cmd.AddCommand(listts.Cmd)
-	Cmd.AddCommand(getts.Cmd)
-	Cmd.AddCommand(delts.Cmd)
-	Cmd.AddCommand(expts.Cmd)
-	Cmd.AddCommand(crtts.Cmd)
+	Cmd.AddCommand(ListCmd)
+	Cmd.AddCommand(GetCmd)
+	Cmd.AddCommand(DelCmd)
+	Cmd.AddCommand(ExpCmd)
+	Cmd.AddCommand(CreateCmd)
 }

@@ -16,10 +16,6 @@ package kvm
 
 import (
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/apiclient"
-	"github.com/srinandan/apigeecli/cmd/kvm/crtkvm"
-	"github.com/srinandan/apigeecli/cmd/kvm/delkvm"
-	"github.com/srinandan/apigeecli/cmd/kvm/listkvm"
 )
 
 //Cmd to manage kvms
@@ -29,13 +25,15 @@ var Cmd = &cobra.Command{
 	Long:  "Manage Key Value Maps",
 }
 
+var org, env, name string
+
 func init() {
 
-	Cmd.PersistentFlags().StringVarP(apiclient.GetApigeeOrgP(), "org", "o",
+	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
 
 	_ = Cmd.MarkPersistentFlagRequired("org")
-	Cmd.AddCommand(listkvm.Cmd)
-	Cmd.AddCommand(delkvm.Cmd)
-	Cmd.AddCommand(crtkvm.Cmd)
+	Cmd.AddCommand(ListCmd)
+	Cmd.AddCommand(DelCmd)
+	Cmd.AddCommand(CreateCmd)
 }

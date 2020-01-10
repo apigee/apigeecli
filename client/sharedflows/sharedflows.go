@@ -101,8 +101,8 @@ func Undeploy(name string, revision int) (respBody []byte, err error) {
 	return respBody, err
 }
 
-func Fetch(name string, revision string) (err error) {
-	return apiclient.FetchBundle("sharedflows", name, revision)
+func Fetch(name string, revision int) (err error) {
+	return apiclient.FetchBundle("sharedflows", name, strconv.Itoa(revision))
 }
 
 func Export(conn int) (err error) {

@@ -36,12 +36,51 @@ type ApigeeClientOptions struct {
 	PrintOutput    bool   //prints output from http calls
 }
 
-var options = ApigeeClientOptions{SkipCache: false, SkipCheck: true, SkipLogInfo: true, PrintOutput: false}
+var options *ApigeeClientOptions
 
 //NewApigeeClient sets up options to invoke Apigee APIs
 func NewApigeeClient(o ApigeeClientOptions) {
-	options = o
-	clilog.Init(o.SkipLogInfo)
+	if options == nil {
+		options = new(ApigeeClientOptions)
+	}
+
+	if o.Org != "" {
+		options.Org = o.Org
+	}
+	if o.Token != "" {
+		options.Token = o.Token
+	}
+	if o.ServiceAccount != "" {
+		options.ServiceAccount = o.ServiceAccount
+	}
+	if o.ProjectID != "" {
+		options.ProjectID = o.ProjectID
+	}
+	if o.Env != "" {
+		options.Env = o.Env
+	}
+	if o.SkipCheck {
+		options.SkipCheck = true
+	} else {
+		options.SkipCheck = false
+	}
+	if o.SkipCache {
+		options.SkipCache = true
+	} else {
+		options.SkipCache = false
+	}
+	if o.SkipLogInfo {
+		options.SkipLogInfo = true
+		clilog.Init(true)
+	} else {
+		options.SkipLogInfo = false
+		clilog.Init(false)
+	}
+	if o.PrintOutput {
+		options.PrintOutput = true
+	} else {
+		options.PrintOutput = false
+	}
 }
 
 //SetApigeeOrg sets the org variable
@@ -54,11 +93,6 @@ func GetApigeeOrg() string {
 	return options.Org
 }
 
-//GetApigeeOrgP gets the pointer to org variable
-func GetApigeeOrgP() *string {
-	return &options.Org
-}
-
 //SetApigeeEnv set the env variable
 func SetApigeeEnv(env string) {
 	options.Env = env
@@ -67,11 +101,6 @@ func SetApigeeEnv(env string) {
 //GetApigeeEnv gets the env variable
 func GetApigeeEnv() string {
 	return options.Env
-}
-
-//GetApigeeEnvP gets the pointer to env variable
-func GetApigeeEnvP() *string {
-	return &options.Env
 }
 
 //SetApigeeToken sets the access token for use with Apigee API calls
@@ -84,11 +113,6 @@ func GetApigeeToken() string {
 	return options.Token
 }
 
-//GetApigeeToken get the access token pointer
-func GetApigeeTokenP() *string {
-	return &options.Token
-}
-
 //SetProjectID sets the project id
 func SetProjectID(projectID string) {
 	options.ProjectID = projectID
@@ -97,11 +121,6 @@ func SetProjectID(projectID string) {
 //GetProjectID gets the project id
 func GetProjectID() string {
 	return options.ProjectID
-}
-
-//GetProjectID gets the project id pointer
-func GetProjectIDP() *string {
-	return &options.ProjectID
 }
 
 //SetServiceAccount
@@ -120,19 +139,9 @@ func GetServiceAccount() string {
 	return options.ServiceAccount
 }
 
-//GetServiceAccountP
-func GetServiceAccountP() *string {
-	return &options.ServiceAccount
-}
-
 //IsSkipCheck
 func IsSkipCheck() bool {
 	return options.SkipCheck
-}
-
-//SkipCheck
-func SkipCheck() *bool {
-	return &options.SkipCheck
 }
 
 //IsSkipCache
@@ -140,24 +149,15 @@ func IsSkipCache() bool {
 	return options.SkipCache
 }
 
-//SkipCache
-func SkipCache() *bool {
-	return &options.SkipCache
-}
-
 //IsSkipLogInfo
 func IsSkipLogInfo() bool {
 	return options.SkipLogInfo
 }
 
-//SkipLogInfo
-func SkipLogInfo() *bool {
-	return &options.SkipLogInfo
-}
-
-//SetLogIngo
-func LogInfo(l bool) {
+//SetSkipLogIngo
+func SetSkipLogInfo(l bool) {
 	options.SkipLogInfo = l
+	clilog.Init(l)
 }
 
 //PrintOutput

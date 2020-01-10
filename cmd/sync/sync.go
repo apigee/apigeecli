@@ -16,10 +16,6 @@ package sync
 
 import (
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/apiclient"
-	"github.com/srinandan/apigeecli/cmd/sync/getsync"
-	"github.com/srinandan/apigeecli/cmd/sync/resetsync"
-	"github.com/srinandan/apigeecli/cmd/sync/setsync"
 )
 
 //Cmd to manage identities
@@ -29,13 +25,15 @@ var Cmd = &cobra.Command{
 	Long:  "Manage identities with grant access to control plane resources",
 }
 
+var org string
+
 func init() {
 
-	Cmd.PersistentFlags().StringVarP(apiclient.GetApigeeOrgP(), "org", "o",
+	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
 
 	_ = Cmd.MarkPersistentFlagRequired("org")
-	Cmd.AddCommand(setsync.Cmd)
-	Cmd.AddCommand(getsync.Cmd)
-	Cmd.AddCommand(resetsync.Cmd)
+	Cmd.AddCommand(SetCmd)
+	Cmd.AddCommand(GetCmd)
+	Cmd.AddCommand(ResetCmd)
 }

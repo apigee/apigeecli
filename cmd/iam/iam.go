@@ -16,14 +16,6 @@ package iam
 
 import (
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/cmd/iam/createall"
-	"github.com/srinandan/apigeecli/cmd/iam/createax"
-	"github.com/srinandan/apigeecli/cmd/iam/createcass"
-	"github.com/srinandan/apigeecli/cmd/iam/createconnect"
-	"github.com/srinandan/apigeecli/cmd/iam/createlogger"
-	"github.com/srinandan/apigeecli/cmd/iam/createmart"
-	"github.com/srinandan/apigeecli/cmd/iam/createmetrics"
-	"github.com/srinandan/apigeecli/cmd/iam/createsync"
 )
 
 //Cmd to manage orgs
@@ -34,13 +26,15 @@ var Cmd = &cobra.Command{
 		"Create Service Accounts and Service Account Key Admin roles",
 }
 
+var name, projectID string
+
 func init() {
-	Cmd.AddCommand(createall.Cmd)
-	Cmd.AddCommand(createax.Cmd)
-	Cmd.AddCommand(createcass.Cmd)
-	Cmd.AddCommand(createconnect.Cmd)
-	Cmd.AddCommand(createlogger.Cmd)
-	Cmd.AddCommand(createmart.Cmd)
-	Cmd.AddCommand(createmetrics.Cmd)
-	Cmd.AddCommand(createsync.Cmd)
+	Cmd.AddCommand(CallCmd)
+	Cmd.AddCommand(CaxCmd)
+	Cmd.AddCommand(CassCmd)
+	Cmd.AddCommand(ConnCmd)
+	Cmd.AddCommand(ClogCmd)
+	Cmd.AddCommand(CmartCmd)
+	Cmd.AddCommand(CmetCmd)
+	Cmd.AddCommand(CsyncCmd)
 }

@@ -16,13 +16,6 @@ package products
 
 import (
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/apiclient"
-	"github.com/srinandan/apigeecli/cmd/products/crtprod"
-	"github.com/srinandan/apigeecli/cmd/products/delprod"
-	"github.com/srinandan/apigeecli/cmd/products/expprod"
-	"github.com/srinandan/apigeecli/cmd/products/getprod"
-	"github.com/srinandan/apigeecli/cmd/products/impprod"
-	"github.com/srinandan/apigeecli/cmd/products/listproducts"
 )
 
 //Cmd to manage products
@@ -33,17 +26,20 @@ var Cmd = &cobra.Command{
 	Long:    "Manage Apigee API products",
 }
 
+var org, name string
+var conn int
+
 func init() {
 
-	Cmd.PersistentFlags().StringVarP(apiclient.GetApigeeOrgP(), "org", "o",
+	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
 
 	_ = Cmd.MarkPersistentFlagRequired("org")
 
-	Cmd.AddCommand(listproducts.Cmd)
-	Cmd.AddCommand(getprod.Cmd)
-	Cmd.AddCommand(delprod.Cmd)
-	Cmd.AddCommand(crtprod.Cmd)
-	Cmd.AddCommand(impprod.Cmd)
-	Cmd.AddCommand(expprod.Cmd)
+	Cmd.AddCommand(ListCmd)
+	Cmd.AddCommand(GetCmd)
+	Cmd.AddCommand(DelCmd)
+	Cmd.AddCommand(CreateCmd)
+	Cmd.AddCommand(ImpCmd)
+	Cmd.AddCommand(ExpCmd)
 }

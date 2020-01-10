@@ -248,7 +248,13 @@ func SetAccessToken() error {
 		}
 		return fmt.Errorf("token expired: request a new access token or pass the service account")
 	}
-	if GetServiceAccount() != "" {
+	if GetApigeeToken() != "" {
+		//a token was passed, cache it
+		if checkAccessToken() {
+			_ = writeAccessToken()
+			return nil
+		}
+	} else {
 		err := readServiceAccount(GetServiceAccount())
 		if err != nil { // Handle errors reading the config file
 			return fmt.Errorf("error reading config file: %s", err)
@@ -264,11 +270,6 @@ func SetAccessToken() error {
 		if err != nil {
 			return fmt.Errorf("fatal error generating access token: %s", err)
 		}
-		return nil
-	}
-	//a token was passed, cache it
-	if checkAccessToken() {
-		_ = writeAccessToken()
 		return nil
 	}
 	return fmt.Errorf("token expired: request a new access token or pass the service account")

@@ -16,11 +16,6 @@ package keystores
 
 import (
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/apiclient"
-	"github.com/srinandan/apigeecli/cmd/keystores/crtks"
-	"github.com/srinandan/apigeecli/cmd/keystores/delks"
-	"github.com/srinandan/apigeecli/cmd/keystores/getks"
-	"github.com/srinandan/apigeecli/cmd/keystores/listks"
 )
 
 //Cmd to manage key stores
@@ -31,18 +26,20 @@ var Cmd = &cobra.Command{
 	Long:    "Manage Key Stores",
 }
 
+var org, env, name string
+
 func init() {
 
-	Cmd.PersistentFlags().StringVarP(apiclient.GetApigeeOrgP(), "org", "o",
+	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
-	Cmd.PersistentFlags().StringVarP(apiclient.GetApigeeEnvP(), "env", "e",
+	Cmd.PersistentFlags().StringVarP(&env, "env", "e",
 		"", "Apigee environment name")
 
 	_ = Cmd.MarkPersistentFlagRequired("org")
 	_ = Cmd.MarkPersistentFlagRequired("env")
 
-	Cmd.AddCommand(listks.Cmd)
-	Cmd.AddCommand(getks.Cmd)
-	Cmd.AddCommand(delks.Cmd)
-	Cmd.AddCommand(crtks.Cmd)
+	Cmd.AddCommand(ListCmd)
+	Cmd.AddCommand(GetCmd)
+	Cmd.AddCommand(DelCmd)
+	Cmd.AddCommand(CreateCmd)
 }

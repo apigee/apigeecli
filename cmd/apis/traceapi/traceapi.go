@@ -12,14 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package apis
+package traceapi
 
 import (
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/apiclient"
-	"github.com/srinandan/apigeecli/cmd/apis/traceapi/crttrcapi"
-	"github.com/srinandan/apigeecli/cmd/apis/traceapi/gettrcapi"
-	"github.com/srinandan/apigeecli/cmd/apis/traceapi/listtrcapi"
 )
 
 //Cmd to manage tracing of apis
@@ -29,14 +25,17 @@ var Cmd = &cobra.Command{
 	Long:  "Manage debugging/tracing of Apigee API proxy revisions deployed in an environment",
 }
 
+var env, name string
+var revision int
+
 func init() {
 
-	Cmd.PersistentFlags().StringVarP(apiclient.GetApigeeEnvP(), "env", "e",
+	Cmd.PersistentFlags().StringVarP(&env, "env", "e",
 		"", "Apigee environment name")
 
 	_ = Cmd.MarkPersistentFlagRequired("env")
 
-	Cmd.AddCommand(crttrcapi.Cmd)
-	Cmd.AddCommand(listtrcapi.Cmd)
-	Cmd.AddCommand(gettrcapi.Cmd)
+	Cmd.AddCommand(CreateCmd)
+	Cmd.AddCommand(ListCmd)
+	Cmd.AddCommand(GetCmd)
 }

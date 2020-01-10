@@ -16,12 +16,6 @@ package org
 
 import (
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/cmd/org/createorg"
-	"github.com/srinandan/apigeecli/cmd/org/enableac"
-	"github.com/srinandan/apigeecli/cmd/org/enablewl"
-	"github.com/srinandan/apigeecli/cmd/org/getorg"
-	"github.com/srinandan/apigeecli/cmd/org/listorgs"
-	"github.com/srinandan/apigeecli/cmd/org/setmart"
 )
 
 //Cmd to manage orgs
@@ -31,11 +25,13 @@ var Cmd = &cobra.Command{
 	Long:  "Manage Apigee Orgs",
 }
 
+var org string
+
 func init() {
-	Cmd.AddCommand(createorg.Cmd)
-	Cmd.AddCommand(listorgs.Cmd)
-	Cmd.AddCommand(getorg.Cmd)
-	Cmd.AddCommand(setmart.Cmd)
-	Cmd.AddCommand(enableac.Cmd)
-	Cmd.AddCommand(enablewl.Cmd)
+	Cmd.AddCommand(CreateCmd)
+	Cmd.AddCommand(ListCmd)
+	Cmd.AddCommand(GetCmd)
+	Cmd.AddCommand(MartCmd)
+	Cmd.AddCommand(AcCmd)
+	Cmd.AddCommand(WlCmd)
 }

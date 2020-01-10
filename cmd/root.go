@@ -15,6 +15,10 @@
 package cmd
 
 import (
+	"fmt"
+	"os"
+	"strconv"
+
 	"github.com/spf13/cobra"
 	"github.com/srinandan/apigeecli/apiclient"
 	"github.com/srinandan/apigeecli/cmd/apis"
@@ -43,29 +47,34 @@ var RootCmd = &cobra.Command{
 	Short: "Utility to work with Apigee APIs.",
 	Long:  "This command lets you interact with Apigee APIs.",
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-		apiclient.LogInfo(apiclient.IsSkipLogInfo())
-		apiclient.SetPrintOutput(true)
-		return apiclient.SetAccessToken()
+		apiclient.SetServiceAccount(serviceAccount)
+		apiclient.SetApigeeToken(accessToken)
+
+		err := apiclient.SetAccessToken()
+		if err != nil {
+			return err
+		}
+		return nil
 	},
 }
+
+func Execute() {
+	if err := RootCmd.Execute(); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+}
+
+var accessToken, serviceAccount string
 
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	RootCmd.PersistentFlags().BoolVarP(apiclient.SkipLogInfo(), "log", "l",
-		false, "Log Information")
-
-	RootCmd.PersistentFlags().StringVarP(apiclient.GetApigeeTokenP(), "token", "t",
+	RootCmd.PersistentFlags().StringVarP(&accessToken, "token", "t",
 		"", "Google OAuth Token")
 
-	RootCmd.PersistentFlags().StringVarP(apiclient.GetServiceAccountP(), "account", "a",
+	RootCmd.PersistentFlags().StringVarP(&serviceAccount, "account", "a",
 		"", "Path Service Account private key in JSON")
-
-	RootCmd.PersistentFlags().BoolVar(apiclient.SkipCache(), "skipCache",
-		false, "Skip caching Google OAuth Token")
-
-	RootCmd.PersistentFlags().BoolVar(apiclient.SkipCheck(), "skipCheck",
-		true, "Skip checking expiry for Google OAuth Token")
 
 	RootCmd.AddCommand(apis.Cmd)
 	RootCmd.AddCommand(org.Cmd)
@@ -88,7 +97,16 @@ func init() {
 }
 
 func initConfig() {
+	var skipLogInfo, skipCache = true, false
+	skipLogInfo, _ = strconv.ParseBool(os.Getenv("APIGEECLI_SKIPLOG"))
+	skipCache, _ = strconv.ParseBool(os.Getenv("APIGEECLI_SKIPCACHE"))
 
+	apiclient.NewApigeeClient(apiclient.ApigeeClientOptions{
+		SkipCheck:   true,
+		PrintOutput: true,
+		SkipLogInfo: skipLogInfo,
+		SkipCache:   skipCache,
+	})
 }
 
 // GetRootCmd returns the root of the cobra command-tree.
