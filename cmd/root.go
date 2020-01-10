@@ -98,7 +98,11 @@ func init() {
 
 func initConfig() {
 	var skipLogInfo, skipCache = true, false
-	skipLogInfo, _ = strconv.ParseBool(os.Getenv("APIGEECLI_SKIPLOG"))
+
+	if os.Getenv("APIGEECLI_SKIPLOG") == "false" {
+		skipLogInfo = false
+	}
+
 	skipCache, _ = strconv.ParseBool(os.Getenv("APIGEECLI_SKIPCACHE"))
 
 	apiclient.NewApigeeClient(apiclient.ApigeeClientOptions{
