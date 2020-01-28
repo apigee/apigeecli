@@ -15,6 +15,8 @@
 package iam
 
 import (
+	"fmt"
+	
 	"github.com/spf13/cobra"
 	"github.com/srinandan/apigeecli/apiclient"
 )
@@ -24,7 +26,17 @@ var CmartCmd = &cobra.Command{
 	Use:   "createmart",
 	Short: "Create a new IAM Service Account for Apigee MART",
 	Long:  "Create a new IAM Service Account for Apigee MART",
+	Args: func(cmd *cobra.Command, args []string) (err error) {
+		if !generateName && name == "" {
+			return fmt.Errorf("provide a service account name or allow the tool to generate one")
+		}		
+		apiclient.SetProjectID(projectID)
+		return nil
+	},	
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		if generateName {
+			name = GenerateName("apigee-mart-")
+		}		
 		return apiclient.CreateIAMServiceAccount(name, "mart")
 	},
 }
@@ -35,7 +47,8 @@ func init() {
 		"", "GCP Project ID")
 	CmartCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Service Account Name")
+	CmartCmd.Flags().BoolVarP(&generateName, "gen", "g",
+		false, "Generate account name")
 
 	_ = CmartCmd.MarkFlagRequired("prj")
-	_ = CmartCmd.MarkFlagRequired("name")
 }

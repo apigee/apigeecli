@@ -15,27 +15,16 @@
 package iam
 
 import (
-	"github.com/spf13/cobra"
+	"math/rand"
+	"time"
 )
 
-//Cmd to manage orgs
-var Cmd = &cobra.Command{
-	Use:   "iam",
-	Short: "Manage IAM permissions for Apigee",
-	Long: "Manage IAM permissions for Apigee. The SA to run this command requires Security Admin, " +
-		"Create Service Accounts and Service Account Key Admin roles",
-}
-
-var name, projectID string
-var generateName bool
-
-func init() {
-	Cmd.AddCommand(CallCmd)
-	Cmd.AddCommand(CaxCmd)
-	Cmd.AddCommand(CassCmd)
-	Cmd.AddCommand(ConnCmd)
-	Cmd.AddCommand(ClogCmd)
-	Cmd.AddCommand(CmartCmd)
-	Cmd.AddCommand(CmetCmd)
-	Cmd.AddCommand(CsyncCmd)
+func GenerateName(prefix string) string {
+	const letterBytes = "abcdefghijklmnopqrstuvwxyz0123456789"
+	rand.Seed(time.Now().UnixNano())
+	b := make([]byte, 7) //7 random chars
+	for i := range b {
+		b[i] = letterBytes[rand.Intn(len(letterBytes))]
+	}
+	return prefix + string(b)
 }

@@ -818,14 +818,15 @@ ___
 Create a Google IAM Service Account with all the necessary roles to operate the hybrid runtime
 
 ```bash
-apigeecli iam createall -p gcp-project-id -n service-account-name
+apigeecli iam createall -p gcp-project-id -g
 ```
 
 Parameters
 The following parameters are supported. See Common Reference for a list of additional parameters.
 
 * `--prj -p` (required) GCP Project ID
-* `--name -n` (required) Service Account Name
+* `--name -n` (optional) Service Account Name
+* `--gen -g` (optional) Generate a service account name
 
 ### <a name ="createax"/> createax
 
@@ -839,7 +840,8 @@ Parameters
 The following parameters are supported. See Common Reference for a list of additional parameters.
 
 * `--prj -p` (required) GCP Project ID
-* `--name -n` (required) Service Account Name
+* `--name -n` (optional) Service Account Name
+* `--gen -g` (optional) Generate a service account name
 
 ### <a name ="createcass"/> createcass
 
@@ -853,7 +855,8 @@ Parameters
 The following parameters are supported. See Common Reference for a list of additional parameters.
 
 * `--prj -p` (required) GCP Project ID
-* `--name -n` (required) Service Account Name
+* `--name -n` (optional) Service Account Name
+* `--gen -g` (optional) Generate a service account name
 
 ### <a name ="createconnect"/> createconnect
 
@@ -867,7 +870,8 @@ Parameters
 The following parameters are supported. See Common Reference for a list of additional parameters.
 
 * `--prj -p` (required) GCP Project ID
-* `--name -n` (required) Service Account Name
+* `--name -n` (optional) Service Account Name
+* `--gen -g` (optional) Generate a service account name
 
 ### <a name ="createlogger"/> createlogger
 
@@ -881,7 +885,8 @@ Parameters
 The following parameters are supported. See Common Reference for a list of additional parameters.
 
 * `--prj -p` (required) GCP Project ID
-* `--name -n` (required) Service Account Name
+* `--name -n` (optional) Service Account Name
+* `--gen -g` (optional) Generate a service account name
 
 ### <a name="createmart"/> createmart
 
@@ -895,7 +900,8 @@ Parameters
 The following parameters are supported. See Common Reference for a list of additional parameters.
 
 * `--prj -p` (required) GCP Project ID
-* `--name -n` (required) Service Account Name
+* `--name -n` (optional) Service Account Name
+* `--gen -g` (optional) Generate a service account name
 
 ### <a name="createmetrics"/> createmetrics
 
@@ -909,7 +915,8 @@ Parameters
 The following parameters are supported. See Common Reference for a list of additional parameters.
 
 * `--prj -p` (required) GCP Project ID
-* `--name -n` (required) Service Account Name
+* `--name -n` (optional) Service Account Name
+* `--gen -g` (optional) Generate a service account name
 
 ### <a name="createsync"/> createsync
 
@@ -923,7 +930,8 @@ Parameters
 The following parameters are supported. See Common Reference for a list of additional parameters.
 
 * `--prj -p` (required) GCP Project ID
-* `--name -n` (required) Service Account Name
+* `--name -n` (optional) Service Account Name
+* `--gen -g` (optional) Generate a service account name
 
 ___
 

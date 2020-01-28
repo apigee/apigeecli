@@ -15,6 +15,8 @@
 package iam
 
 import (
+	"fmt"
+	
 	"github.com/spf13/cobra"
 	"github.com/srinandan/apigeecli/apiclient"
 )
@@ -24,7 +26,17 @@ var CassCmd = &cobra.Command{
 	Use:   "createcass",
 	Short: "Create a new IAM Service Account for Cassandra backup",
 	Long:  "Create a new IAM Service Account for Cassandra backup",
+	Args: func(cmd *cobra.Command, args []string) (err error) {
+		if !generateName && name == "" {
+			return fmt.Errorf("provide a service account name or allow the tool to generate one")
+		}		
+		apiclient.SetProjectID(projectID)
+		return nil
+	},	
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		if generateName {
+			name = GenerateName("apigee-cass-")
+		}		
 		return apiclient.CreateIAMServiceAccount(name, "cassandra")
 	},
 }
@@ -35,7 +47,8 @@ func init() {
 		"", "GCP Project ID")
 	CassCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Service Account Name")
+	CassCmd.Flags().BoolVarP(&generateName, "gen", "g",
+		false, "Generate account name")
 
 	_ = CassCmd.MarkFlagRequired("prj")
-	_ = CassCmd.MarkFlagRequired("name")
 }
