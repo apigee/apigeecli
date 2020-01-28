@@ -26,7 +26,7 @@ var Version string
 func main() {
 
 	rootCmd := cmd.GetRootCmd()
-	rootCmd.Version = "1.2.0, Git: " + Version
+	rootCmd.Version = "1.3.0, Git: " + Version
 
 	if err := rootCmd.Execute(); err != nil {
 		os.Exit(-1)
