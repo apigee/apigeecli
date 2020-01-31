@@ -1394,7 +1394,7 @@ The following parameters are required. See Common Reference for a list of additi
 List resources in an environment
 
 ```bash
-apigeecli prods list -o org -e env 
+apigeecli resources list -o org -e env 
 ```
 Required parameters
 The following parameters are required. See Common Reference for a list of additional parameters.
@@ -1404,6 +1404,91 @@ The following parameters are required. See Common Reference for a list of additi
 `--type -p` (optional) Filter by resource type
 
 ___
+
+## <a name="references"/> references
+
+* [create] (#crtref)
+* [delete] (#delref)
+* [get] (#getref)
+* [list] (#listref)
+* [update] (#updateref)
+
+### <a name="crtres"> create
+
+Create a reference to an environment
+
+```bash
+apigeecli references create -o org -e env -n test -s KeyStore -r test
+```
+Required parameters
+The following parameters are required. See Common Reference for a list of additional parameters.
+
+`--org -o` (required) Apigee organization name
+`--env -e` (required) Apigee environment name
+`--name -n` (required) Resource name
+`--desc -d` (required) Resource name description
+`--restype -s` (required) Resource Type
+`--refers -r` (required) KeyStore or Truststore reference
+
+### <a name="delref"> delete
+
+Delete a reference from an environment
+
+```bash
+apigeecli references delete -o org -e env -n test
+```
+Required parameters
+The following parameters are required. See Common Reference for a list of additional parameters.
+
+`--org -o` (required) Apigee organization name
+`--env -e` (required) Apigee environment name
+`--name -n` (required) Reference name
+
+### <a name="getref"> get
+
+Get a reference from an environment
+
+```bash
+apigeecli resources get -o org -e env -n test
+```
+Required parameters
+The following parameters are required. See Common Reference for a list of additional parameters.
+
+`--org -o` (required) Apigee organization name
+`--env -e` (required) Apigee environment name
+`--name -n` (required) Reference name
+
+### <a name="listref"> list
+
+List references in an environment
+
+```bash
+apigeecli references list -o org -e env 
+```
+Required parameters
+The following parameters are required. See Common Reference for a list of additional parameters.
+
+`--org -o` (required) Apigee organization name
+`--env -e` (required) Apigee environment name
+
+### <a name="crtres"> update
+
+Update a reference to an environment
+
+```bash
+apigeecli references update -o org -e env -n test -s KeyStore -r test
+```
+Required parameters
+The following parameters are required. See Common Reference for a list of additional parameters.
+
+`--org -o` (required) Apigee organization name
+`--env -e` (required) Apigee environment name
+`--name -n` (required) Resource name
+`--desc -d` (optional) Resource name description
+`--restype -s` (optional) Resource Type
+`--refers -r` (optional) KeyStore or Truststore reference
+
+---
 
 ## <a name="sf"/> sharedflows
 
