@@ -1407,13 +1407,13 @@ ___
 
 ## <a name="references"/> references
 
-* [create] (#crtref)
-* [delete] (#delref)
-* [get] (#getref)
-* [list] (#listref)
-* [update] (#updateref)
+* [create](#crtref)
+* [delete](#delref)
+* [get](#getref)
+* [list](#listref)
+* [update](#updref)
 
-### <a name="crtres"> create
+### <a name="crtref"> create
 
 Create a reference to an environment
 
@@ -1471,7 +1471,7 @@ The following parameters are required. See Common Reference for a list of additi
 `--org -o` (required) Apigee organization name
 `--env -e` (required) Apigee environment name
 
-### <a name="crtres"> update
+### <a name="updref"> update
 
 Update a reference to an environment
 
