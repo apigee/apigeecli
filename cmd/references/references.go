@@ -20,9 +20,9 @@ import (
 
 //Cmd to manage references
 var Cmd = &cobra.Command{
-	Use:   "ref",
-	Aliases: []string{"references"},
-	Short: "Manage References",
+	Use:   "references",
+	Aliases: []string{"refs"},
+	Short: "Manage References within an Apigee environment",
 	Long:  "Manage References. References must refer to a keystore that also exists in the env.",
 }
 
