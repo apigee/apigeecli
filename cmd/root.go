@@ -35,6 +35,7 @@ import (
 	"github.com/srinandan/apigeecli/cmd/products"
 	"github.com/srinandan/apigeecli/cmd/projects"
 	res "github.com/srinandan/apigeecli/cmd/res"
+	"github.com/srinandan/apigeecli/cmd/references"
 	"github.com/srinandan/apigeecli/cmd/sharedflows"
 	"github.com/srinandan/apigeecli/cmd/sync"
 	targetservers "github.com/srinandan/apigeecli/cmd/targetservers"
@@ -91,6 +92,7 @@ func init() {
 	RootCmd.AddCommand(keystores.Cmd)
 	RootCmd.AddCommand(keyaliases.Cmd)
 	RootCmd.AddCommand(cache.Cmd)
+	RootCmd.AddCommand(references.Cmd)
 	RootCmd.AddCommand(res.Cmd)
 	RootCmd.AddCommand(projects.Cmd)
 	RootCmd.AddCommand(iam.Cmd)
