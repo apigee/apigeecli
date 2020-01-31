@@ -93,6 +93,7 @@ ___
 * [projects](#projects)
 * [products](#prods)
 * [resources](#resources)
+* [references](#references)
 * [sharedflows](#sf)
 * [sync](#sync)
 * [targetservers](#target)
@@ -1363,7 +1364,7 @@ The following parameters are required. See Common Reference for a list of additi
 Delete a resource from an environment
 
 ```bash
-apigeecli resources create -o org -e env -n test.js -p jsc
+apigeecli resources delete -o org -e env -n test.js -p jsc
 ```
 Required parameters
 The following parameters are required. See Common Reference for a list of additional parameters.
@@ -1378,7 +1379,7 @@ The following parameters are required. See Common Reference for a list of additi
 Download a resource from an environment
 
 ```bash
-apigeecli resources create -o org -e env -n test.js -p jsc
+apigeecli resources get -o org -e env -n test.js -p jsc
 ```
 Required parameters
 The following parameters are required. See Common Reference for a list of additional parameters.
