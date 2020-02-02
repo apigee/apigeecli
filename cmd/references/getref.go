@@ -22,7 +22,7 @@ import (
 
 //Cmd to get reference
 var GetCmd = &cobra.Command{
-	Use:   "create",
+	Use:   "get",
 	Short: "Get a reference in an environment",
 	Long:  "Get a reference in an environment",
 	Args: func(cmd *cobra.Command, args []string) (err error) {

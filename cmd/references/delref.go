@@ -22,7 +22,7 @@ import (
 
 //Cmd to delete reference
 var DelCmd = &cobra.Command{
-	Use:   "create",
+	Use:   "delete",
 	Short: "Delete a reference in an environment",
 	Long:  "Delete a reference in an environment",
 	Args: func(cmd *cobra.Command, args []string) (err error) {

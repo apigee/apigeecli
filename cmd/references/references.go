@@ -20,10 +20,10 @@ import (
 
 //Cmd to manage references
 var Cmd = &cobra.Command{
-	Use:   "references",
+	Use:     "references",
 	Aliases: []string{"refs"},
-	Short: "Manage References within an Apigee environment",
-	Long:  "Manage References. References must refer to a keystore that also exists in the env.",
+	Short:   "Manage References within an Apigee environment",
+	Long:    "Manage References. References must refer to a keystore that also exists in the env.",
 }
 
 var org, env, name, description, refers, resourceType string
@@ -35,7 +35,6 @@ func init() {
 
 	Cmd.PersistentFlags().StringVarP(&env, "env", "e",
 		"", "Apigee environment name")
-
 
 	_ = Cmd.MarkPersistentFlagRequired("org")
 	_ = Cmd.MarkPersistentFlagRequired("env")

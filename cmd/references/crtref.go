@@ -30,7 +30,7 @@ var CreateCmd = &cobra.Command{
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		if resourceType != "KeyStore" && resourceType != "TrustStore" {
 			return fmt.Errorf("resourceType should be KeyStore or TrustStore")
-		} 
+		}
 		apiclient.SetApigeeEnv(env)
 		apiclient.SetApigeeOrg(org)
 		return nil
