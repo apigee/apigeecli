@@ -30,7 +30,7 @@ var GetCmd = &cobra.Command{
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = apis.GetProxy(name)
+		_, err = apis.GetProxy(name, revision)
 		return
 	},
 }
@@ -38,6 +38,8 @@ var GetCmd = &cobra.Command{
 func init() {
 	GetCmd.Flags().StringVarP(&name, "name", "n",
 		"", "API Proxy name")
+	GetCmd.Flags().IntVarP(&revision, "rev", "v",
+		-1, "API Proxy revision")
 
 	_ = GetCmd.MarkFlagRequired("name")
 }

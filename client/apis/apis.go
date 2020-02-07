@@ -77,10 +77,14 @@ func FetchProxy(name string, revision int) (err error) {
 	return apiclient.FetchBundle("apis", name, strconv.Itoa(revision))
 }
 
-//FetchProxy
-func GetProxy(name string) (respBody []byte, err error) {
+//GetProxy
+func GetProxy(name string, revision int) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
-	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apis", name)
+	if revision != -1 {
+		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apis", name, "revisions", strconv.Itoa(revision))
+	} else {
+		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apis", name)
+	}
 	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
 	return respBody, err
 }
