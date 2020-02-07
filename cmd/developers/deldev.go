@@ -40,5 +40,5 @@ func init() {
 	DelCmd.Flags().StringVarP(&email, "email", "n",
 		"", "The developer's email")
 
-	_ = Cmd.MarkFlagRequired("email")
+	_ = DelCmd.MarkFlagRequired("email")
 }

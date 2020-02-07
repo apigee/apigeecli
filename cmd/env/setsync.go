@@ -40,5 +40,5 @@ func init() {
 	SetSyncCmd.Flags().StringVarP(&serviceAccountName, "name", "n",
 		"", "Service Account Name")
 
-	_ = Cmd.MarkFlagRequired("name")
+	_ = SetSyncCmd.MarkFlagRequired("name")
 }

@@ -40,8 +40,8 @@ var payload string
 
 func init() {
 
-	Cmd.Flags().StringVarP(&payload, "mask", "m",
+	SetDebugCmd.Flags().StringVarP(&payload, "mask", "m",
 		"", "Mask configuration is in JSON format")
 
-	_ = Cmd.MarkFlagRequired("mask")
+	_ = SetDebugCmd.MarkFlagRequired("mask")
 }

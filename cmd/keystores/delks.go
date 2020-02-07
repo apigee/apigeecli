@@ -41,5 +41,5 @@ func init() {
 	DelCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of the key store")
 
-	_ = Cmd.MarkFlagRequired("name")
+	_ = DelCmd.MarkFlagRequired("name")
 }

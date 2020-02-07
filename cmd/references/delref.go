@@ -41,5 +41,5 @@ func init() {
 	DelCmd.PersistentFlags().StringVarP(&name, "name", "n",
 		"", "Reference name")
 
-	_ = CreateCmd.MarkFlagRequired("name")
+	_ = DelCmd.MarkFlagRequired("name")
 }

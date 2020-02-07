@@ -20,7 +20,7 @@ import (
 	"github.com/srinandan/apigeecli/client/products"
 )
 
-//Cmd to get products
+//GetCmd to get products
 var GetCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Gets an API product from an organization",
@@ -37,12 +37,12 @@ var GetCmd = &cobra.Command{
 
 func init() {
 
-	Cmd.Flags().StringVarP(&org, "org", "o",
+	GetCmd.Flags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
 
-	Cmd.Flags().StringVarP(&name, "name", "n",
+	GetCmd.Flags().StringVarP(&name, "name", "n",
 		"", "name of the API Product")
 
-	_ = Cmd.MarkFlagRequired("org")
-	_ = Cmd.MarkFlagRequired("name")
+	_ = GetCmd.MarkFlagRequired("org")
+	_ = GetCmd.MarkFlagRequired("name")
 }

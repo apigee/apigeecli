@@ -20,7 +20,7 @@ import (
 	"github.com/srinandan/apigeecli/client/products"
 )
 
-//Cmd to export products
+//ExpCmd to export products
 var ExpCmd = &cobra.Command{
 	Use:   "export",
 	Short: "Export API products to a file",
@@ -41,6 +41,6 @@ var ExpCmd = &cobra.Command{
 
 func init() {
 
-	Cmd.Flags().IntVarP(&conn, "conn", "c",
+	ExpCmd.Flags().IntVarP(&conn, "conn", "c",
 		4, "Number of connections")
 }

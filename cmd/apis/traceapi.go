@@ -27,10 +27,10 @@ var TraceCmd = &cobra.Command{
 
 func init() {
 
-	Cmd.PersistentFlags().StringVarP(&env, "env", "e",
+	TraceCmd.PersistentFlags().StringVarP(&env, "env", "e",
 		"", "Apigee environment name")
 
-	_ = Cmd.MarkPersistentFlagRequired("env")
+	_ = TraceCmd.MarkPersistentFlagRequired("env")
 
 	TraceCmd.AddCommand(CreateTrcCmd)
 	TraceCmd.AddCommand(ListTrcCmd)

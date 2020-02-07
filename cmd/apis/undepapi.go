@@ -45,8 +45,7 @@ func init() {
 	UndepCmd.Flags().IntVarP(&revision, "rev", "v",
 		-1, "API Proxy revision")
 
-	_ = Cmd.MarkFlagRequired("env")
-	_ = Cmd.MarkFlagRequired("name")
-	_ = Cmd.MarkFlagRequired("rev")
-
+	_ = UndepCmd.MarkFlagRequired("env")
+	_ = UndepCmd.MarkFlagRequired("name")
+	_ = UndepCmd.MarkFlagRequired("rev")
 }
