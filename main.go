@@ -20,13 +20,13 @@ import (
 	"github.com/srinandan/apigeecli/cmd"
 )
 
-//Version contains the git hash
-var Version string
+//Version
+var Version, Git string
 
 func main() {
 
 	rootCmd := cmd.GetRootCmd()
-	rootCmd.Version = "1.4.0, Git: " + Version
+	rootCmd.Version = Version + ", Git: " + Git
 
 	if err := rootCmd.Execute(); err != nil {
 		os.Exit(-1)
