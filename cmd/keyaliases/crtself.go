@@ -36,8 +36,6 @@ var CrtslfCmd = &cobra.Command{
 	},
 }
 
-const certFormat = "selfsignedcert"
-
 var payload string
 
 func init() {

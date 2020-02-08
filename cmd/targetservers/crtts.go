@@ -20,7 +20,7 @@ import (
 	"github.com/srinandan/apigeecli/client/targetservers"
 )
 
-//Cmd to create target servers
+//CreateCmd to create target servers
 var CreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a Target Server",

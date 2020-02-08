@@ -20,7 +20,7 @@ import (
 	"github.com/srinandan/apigeecli/client/targetservers"
 )
 
-//Cmd to delete target servers
+//DelCmd to delete target servers
 var DelCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete a Target Server",

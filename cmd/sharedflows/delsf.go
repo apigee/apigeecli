@@ -42,5 +42,4 @@ func init() {
 		"", "shared flow name")
 
 	_ = DelCmd.MarkFlagRequired("name")
-
 }

@@ -22,7 +22,7 @@ import (
 	"github.com/srinandan/apigeecli/clilog"
 )
 
-//Cmd to generate a new access token
+//GetCmd to generate a new access token
 var GetCmd = &cobra.Command{
 	Use:   "gen",
 	Short: "Generate a new access token",

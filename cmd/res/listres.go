@@ -36,8 +36,6 @@ var ListCmd = &cobra.Command{
 }
 
 func init() {
-
 	ListCmd.Flags().StringVarP(&resType, "type", "p",
 		"", "Resource type")
-
 }

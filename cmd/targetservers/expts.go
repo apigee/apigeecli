@@ -20,7 +20,7 @@ import (
 	"github.com/srinandan/apigeecli/client/targetservers"
 )
 
-//Cmd to export target servers
+//ExpCmd to export target servers
 var ExpCmd = &cobra.Command{
 	Use:   "export",
 	Short: "Export target servers to a file",

@@ -22,7 +22,7 @@ import (
 	"github.com/srinandan/apigeecli/clilog"
 )
 
-//Cmd to cache token
+//CacheCmd to cache token
 var CacheCmd = &cobra.Command{
 	Use:   "cache",
 	Short: "Generate and cache a new access token",

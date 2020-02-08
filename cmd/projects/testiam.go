@@ -22,7 +22,7 @@ import (
 	"github.com/srinandan/apigeecli/apiclient"
 )
 
-//Cmd to manage tracing of apis
+//TestCmd to manage tracing of apis
 var TestCmd = &cobra.Command{
 	Use:   "testiam",
 	Short: "Test IAM policy for a GCP Project",
@@ -41,7 +41,6 @@ var TestCmd = &cobra.Command{
 }
 
 func init() {
-
 	TestCmd.Flags().StringVarP(&projectID, "prj", "p",
 		"", "GCP Project ID")
 

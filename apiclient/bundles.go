@@ -39,17 +39,19 @@ func ReadBundle(filename string) error {
 	}
 
 	file, err := os.Open(filename)
-
 	if err != nil {
 		clilog.Error.Println("cannot open/read API Proxy Bundle: ", err)
 		return err
 	}
+
+	defer file.Close()
 
 	fi, err := file.Stat()
 	if err != nil {
 		clilog.Error.Println("error accessing file: ", err)
 		return err
 	}
+
 	_, err = zip.NewReader(file, fi.Size())
 
 	if err != nil {
@@ -57,7 +59,6 @@ func ReadBundle(filename string) error {
 		return err
 	}
 
-	defer file.Close()
 	return nil
 }
 
@@ -124,6 +125,7 @@ func WriteArrayByteArrayToFile(exportFile string, fileAppend bool, payload [][]b
 func GetAsyncEntity(entityURL string, wg *sync.WaitGroup, mu *sync.Mutex) {
 	//this is a two step process - 1) get entity details 2) store in byte[][]
 	defer wg.Done()
+
 	var respBody []byte
 
 	//don't print to sysout
@@ -132,6 +134,7 @@ func GetAsyncEntity(entityURL string, wg *sync.WaitGroup, mu *sync.Mutex) {
 	if err != nil {
 		clilog.Error.Fatalf("error with entity: %s", entityURL)
 		clilog.Error.Println(err)
+
 		return
 	}
 
@@ -148,7 +151,6 @@ func GetEntityPayloadList() [][]byte {
 //FetchAsyncBundle can download a shared flow or a proxy bundle
 func FetchAsyncBundle(entityType string, name string, revision string, wg *sync.WaitGroup) {
 	//this method is meant to be called asynchronously
-
 	defer wg.Done()
 
 	_ = FetchBundle(entityType, name, revision)
