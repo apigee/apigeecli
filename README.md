@@ -5,7 +5,7 @@
 [![Version](https://img.shields.io/badge/version-v1.4-green.svg)](https://github.com/srinandan/apigeecli/releases)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-This is a tool to interact with [Apigee APIs](https://apigee.googleapis.com). The tool lets you manage (Create,Get, List, Update, Delete, Export and Import) Apigee entities like proxies, products etc. The tools also helps you create Service Accounts in Google IAM to operate Apigee hybrid runtime.
+This is a tool to interact with [Apigee APIs](https://docs.apigee.com/hybrid/reference/apis/rest) for [Apigee hybrid](https://docs.apigee.com/hybrid/reference-overview). The tool lets you manage (Create,Get, List, Update, Delete, Export and Import) Apigee entities like proxies, products etc. The tools also helps you create Service Accounts in Google IAM to operate Apigee hybrid runtime. 
 
 ## Installation
 
@@ -19,12 +19,11 @@ NOTE: Supported platforms are:
 
 ## What you need to know about apigeecli
 
-You must have an account on [Apigee Hybrid](https://docs.apigee.com/hybrid/) to perform any `apigeecli` functions. These functions include: proxies, API Products, Environments,
-Org details etc.
+You must have an account on [Apigee Hybrid](https://docs.apigee.com/hybrid/) to perform any `apigeecli` functions. These functions include: proxies, API Products, Environments, Org details etc.
 
 You need to be familiar with basic concepts and features of Apigee Edge such as API proxies, organizations, and environments.
 
-For more information, refer to the [Apigee Hybrid API Reference](https://docs.apigee.com/hybrid/reference/apis/rest/index).
+For more information, refer to the [Apigee API Reference](https://docs.apigee.com/hybrid/reference/apis/rest/index).
 
 ## Service Account
 
