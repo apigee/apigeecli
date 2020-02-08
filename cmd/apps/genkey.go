@@ -15,8 +15,6 @@
 package apps
 
 import (
-	"strings"
-
 	"github.com/spf13/cobra"
 	"github.com/srinandan/apigeecli/apiclient"
 	"github.com/srinandan/apigeecli/client/apps"
@@ -57,10 +55,4 @@ func init() {
 	_ = GenKeyCmd.MarkFlagRequired("name")
 	_ = GenKeyCmd.MarkFlagRequired("devid")
 	_ = GenKeyCmd.MarkFlagRequired("prods")
-}
-
-func getArrayStr(str []string) string {
-	tmp := strings.Join(str, ",")
-	tmp = strings.ReplaceAll(tmp, ",", "\",\"")
-	return tmp
 }
