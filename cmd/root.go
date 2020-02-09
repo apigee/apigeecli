@@ -99,7 +99,8 @@ func init() {
 }
 
 func initConfig() {
-	var skipLogInfo, skipCache = true, false
+	var skipLogInfo = true
+	var skipCache bool
 
 	if os.Getenv("APIGEECLI_SKIPLOG") == "false" {
 		skipLogInfo = false
