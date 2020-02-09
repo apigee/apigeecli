@@ -25,6 +25,8 @@ var Cmd = &cobra.Command{
 	Long:  "Manage OAuth 2.0 access tokens",
 }
 
+var serviceAccount string
+
 func init() {
 
 	Cmd.AddCommand(GetCmd)

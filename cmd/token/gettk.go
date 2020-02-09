@@ -28,10 +28,7 @@ var GetCmd = &cobra.Command{
 	Short: "Generate a new access token",
 	Long:  "Generate a new access token",
 	Args: func(cmd *cobra.Command, args []string) error {
-		if apiclient.GetServiceAccount() == "" {
-			return fmt.Errorf("service account cannot be empty")
-		}
-
+		apiclient.SetServiceAccount(serviceAccount)
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -46,5 +43,5 @@ var GetCmd = &cobra.Command{
 }
 
 func init() {
-
+	_ = GetCmd.MarkFlagRequired("account")
 }

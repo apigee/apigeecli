@@ -28,13 +28,9 @@ var CacheCmd = &cobra.Command{
 	Short: "Generate and cache a new access token",
 	Long:  "Generate and cache a new access token",
 	Args: func(cmd *cobra.Command, args []string) error {
-		if apiclient.GetServiceAccount() == "" {
-			return fmt.Errorf("service account cannot be empty")
-		}
-
+		apiclient.SetServiceAccount(serviceAccount)
 		return nil
 	},
-
 	RunE: func(cmd *cobra.Command, args []string) error {
 		clilog.Init(apiclient.IsSkipLogInfo())
 		err := apiclient.SetAccessToken()
@@ -44,5 +40,5 @@ var CacheCmd = &cobra.Command{
 }
 
 func init() {
-
+	_ = CacheCmd.MarkFlagRequired("account")
 }
