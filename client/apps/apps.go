@@ -175,6 +175,17 @@ func List(includeCred bool, expand bool, count int) (respBody []byte, err error)
 	return respBody, err
 }
 
+//ListApps
+func ListApps(productName string) (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.BaseURL)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apps")
+	q := u.Query()
+	q.Set("apiProduct", productName)
+	u.RawQuery = q.Encode()
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	return respBody, err
+}
+
 //GenerateKey
 func GenerateKey(name string, developerID string, apiProducts []string, callback string, expires string, scopes []string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)

@@ -29,8 +29,8 @@ var GetCmd = &cobra.Command{
 	Long:  "Returns the app profile for the specified app ID.",
 	Args: func(cmd *cobra.Command, args []string) error {
 		apiclient.SetApigeeOrg(org)
-		if appID == "" && name == "" {
-			return fmt.Errorf("pass either name or appId")
+		if appID == "" && name == "" && productName == "" {
+			return fmt.Errorf("pass either name or appId or productName")
 		}
 		if appID != "" && name != "" {
 			return fmt.Errorf("name and appId cannot be used together")
@@ -42,16 +42,22 @@ var GetCmd = &cobra.Command{
 			_, err = apps.Get(appID)
 			return
 		}
-		outBytes, err := apps.SearchApp(name)
-		if err != nil {
-			return err
+
+		if name != "" {
+			outBytes, err := apps.SearchApp(name)
+			if err != nil {
+				return err
+			}
+			//print the item
+			return apiclient.PrettyPrint(outBytes)
 		}
-		//print the item
-		return apiclient.PrettyPrint(outBytes)
+
+		_, err = apps.ListApps(productName)
+		return
 	},
 }
 
-var appID string
+var appID, productName string
 
 func init() {
 
@@ -59,4 +65,6 @@ func init() {
 		"", "Developer app id")
 	GetCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Developer app name")
+	GetCmd.Flags().StringVarP(&productName, "product", "p",
+		"", "API Product name")
 }

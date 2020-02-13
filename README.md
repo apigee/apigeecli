@@ -407,6 +407,7 @@ The following parameters are supported. See Common Reference for a list of addit
 * `--org -o` (required) Apigee organization name
 * `--appId -i` (optional) Developer App Id
 * `--name -n` (optional) Developer App Name
+* `--product -p` (optional) API Product Name
 
 NOTE: Either appId or Name must be passed
 
