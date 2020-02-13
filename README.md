@@ -2,7 +2,7 @@
 
 [![TravisCI](https://travis-ci.org/srinandan/apigeecli.svg?branch=master)](https://travis-ci.org/srinandan/apigeecli)
 [![Go Report Card](https://goreportcard.com/badge/github.com/srinandan/apigeecli)](https://goreportcard.com/report/github.com/srinandan/apigeecli)
-[![Version](https://img.shields.io/badge/version-v1.4-green.svg)](https://github.com/srinandan/apigeecli/releases)
+[![GitHub release]](https://img.shields.io/github/v/release/srinandan/apigeecli)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 This is a tool to interact with [Apigee APIs](https://docs.apigee.com/hybrid/reference/apis/rest) for [Apigee hybrid](https://docs.apigee.com/hybrid/reference-overview). The tool lets you manage (Create,Get, List, Update, Delete, Export and Import) Apigee entities like proxies, products etc. The tools also helps you create Service Accounts in Google IAM to operate Apigee hybrid runtime. 
