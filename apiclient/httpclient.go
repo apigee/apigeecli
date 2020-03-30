@@ -156,8 +156,10 @@ func HttpClient(print bool, params ...string) (respBody []byte, err error) {
 		if params[2] == "DELETE" {
 			req, err = http.NewRequest("DELETE", params[0], nil)
 		} else if params[2] == "PUT" {
+			clilog.Info.Println("Payload: ", params[1])
 			req, err = http.NewRequest("PUT", params[0], bytes.NewBuffer([]byte(params[1])))
 		} else if params[2] == "PATCH" {
+			clilog.Info.Println("Payload: ", params[1])
 			req, err = http.NewRequest("PATCH", params[0], bytes.NewBuffer([]byte(params[1])))
 		} else {
 			return nil, errors.New("unsupported method")
