@@ -109,3 +109,53 @@ func SetEnvProperty(name string, value string) (err error) {
 
 	return err
 }
+
+//ClearEnvProperties is used to set env properties
+func ClearEnvProperties() (err error) {
+	//EnvProperty contains an individual org flag or property
+	type envProperty struct {
+		Name  string `json:"name,omitempty"`
+		Value string `json:"value,omitempty"`
+	}
+	//EnvProperties stores all the org feature flags and properties
+	type envProperties struct {
+		Property []envProperty `json:"property,omitempty"`
+	}
+
+	//Env structure
+	type environment struct {
+		Name           string        `json:"name,omitempty"`
+		Description    string        `json:"description,omitempty"`
+		CreatedAt      string        `json:"-,omitempty"`
+		LastModifiedAt string        `json:"-,omitempty"`
+		Properties     envProperties `json:"-,omitempty"`
+	}
+
+	u, _ := url.Parse(apiclient.BaseURL)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv())
+	//get env details
+	envBody, err := apiclient.HttpClient(false, u.String())
+	if err != nil {
+		return err
+	}
+
+	env := environment{}
+	err = json.Unmarshal(envBody, &env)
+	if err != nil {
+		return err
+	}
+
+	newEnv := environment{}
+	newEnv.Name = env.Name
+	newEnv.Description = env.Description
+	newEnvBody, err := json.Marshal(newEnv)
+	if err != nil {
+		return err
+	}
+
+	u, _ = url.Parse(apiclient.BaseURL)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv())
+	_, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), string(newEnvBody), "PUT")
+
+	return err
+}

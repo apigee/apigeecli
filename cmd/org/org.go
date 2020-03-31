@@ -34,4 +34,6 @@ func init() {
 	Cmd.AddCommand(MartCmd)
 	Cmd.AddCommand(AcCmd)
 	Cmd.AddCommand(WlCmd)
+	Cmd.AddCommand(PropCmd)
+	Cmd.AddCommand(ObCmd)
 }

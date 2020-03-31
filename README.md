@@ -598,10 +598,26 @@ ___
 
 Supported alias `environments`
 
+* [enable-ax-obfuscation](#enable-ax-obfuscation)
 * [debugmask] (#debugmask)
 * [get](#getenv)
 * [iam](#iamenv)
 * [list](#listenv)
+* [set](#setenv)
+
+### <a name="enable-ax-obfuscation"/> enable-ax-obfuscation
+
+Enable Analytics Obfuscation for an environment
+
+```bash
+apigeecli orgs enable-ax-obfuscation -o org -e env
+```
+
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+* `--env -e` (required) Apigee environment name
 
 ### <a name="debugmask"/> debugmask
 
@@ -716,7 +732,7 @@ Parameters
 The following parameters are supported. See Common Reference for a list of additional parameters.
 
 * `--org -o` (required) Apigee organization name
-* `--name -n` (required) environment name
+* `--env -e` (required) environment name
 * `--config -c` (optional) If set, returns environment configuration 
 
 ### <a name="listenv"/> list
@@ -726,10 +742,27 @@ List all environments in an org
 ```bash
 apigeecli envs list -o org 
 ```
+
 Parameters
 The following parameters are supported. See Common Reference for a list of additional parameters.
 
 * `--org -o` (required) Apigee organization name
+
+### <a name="setenv"/> set
+
+Set environment property
+
+```bash
+apigeecli envs set -o org -e env -n name -v value 
+```
+
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+* `--env -e` (required) environment name
+* `--name -n` (required) property name
+* `--value -v` (required) property value
 
 ___
 
@@ -1141,10 +1174,12 @@ ___
 
 * [create](#createorg)
 * [enable-apigee-connect](#enable-apigee-connect)
+* [enable-ax-obfuscation](#enable-ax-obfuscation)
 * [enable-mart-whitelist](#enable-mart-whitelist)
 * [list](#listorgs)
 * [get](#getorg)
 * [setmart](#setmart)
+* [set](#setorg)
 
 ### <a name="createorg"/> create
 
@@ -1167,6 +1202,19 @@ Enable Apigee Connect for an Apigee Org
 
 ```bash
 apigeecli orgs enable-apigee-connect -o org 
+```
+
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+
+### <a name="enable-ax-obfuscation"/> enable-ax-obfuscation
+
+Enable Analytics Obfuscation for all environments in the org
+
+```bash
+apigeecli orgs enable-ax-obfuscation -o org 
 ```
 
 Parameters
@@ -1222,6 +1270,21 @@ The following parameters are supported. See Common Reference for a list of addit
 * `--org -o` (required) Apigee organization name
 * `--mart -m` (required) MART endpoint
 * `--whitelist -w` (optional) Enable/disable whitelisting of GCP IP for source connections to MART
+
+### <a name="setorg"/> set
+
+Set org property
+
+```bash
+apigeecli orgs set -o org -n name -v value
+```
+
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+* `--name -n` (required) Property Name
+* `--value -v` (required) Property Value
 
 ___
 

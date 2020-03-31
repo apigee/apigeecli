@@ -12,33 +12,32 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package env
+package org
 
 import (
 	"github.com/spf13/cobra"
+	"github.com/srinandan/apigeecli/apiclient"
+	"github.com/srinandan/apigeecli/client/orgs"
 )
 
-//Cmd to manage envs
-var Cmd = &cobra.Command{
-	Use:     "envs",
-	Aliases: []string{"environments"},
-	Short:   "Manage Apigee environments",
-	Long:    "Manage Apigee environments",
+//Cmd to enable AX obfuscation
+var ObCmd = &cobra.Command{
+	Use:   "enable-ax-obfuscation",
+	Short: "Obfuscate analytics fields",
+	Long:  "Obfuscate analytics fields before sending to control plane",
+	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetApigeeOrg(org)
+		return nil
+	},
+	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		return orgs.SetOrgProperty("features.analytics.data.obfuscation.enabled", "true")
+	},
 }
-
-var org, environment string
 
 func init() {
 
-	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
+	ObCmd.Flags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
 
-	_ = Cmd.MarkPersistentFlagRequired("org")
-
-	Cmd.AddCommand(ListCmd)
-	Cmd.AddCommand(GetCmd)
-	Cmd.AddCommand(IamCmd)
-	Cmd.AddCommand(DebugCmd)
-	Cmd.AddCommand(ObCmd)
-	Cmd.AddCommand(PropCmd)
+	_ = ObCmd.MarkFlagRequired("org")
 }
