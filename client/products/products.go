@@ -118,6 +118,22 @@ func Delete(name string) (respBody []byte, err error) {
 	return respBody, err
 }
 
+//UpdateAttribute
+func UpdateAttribute(name string, key string, value string) (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.BaseURL)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts", name, "attributes", key)
+	payload := "{ \"name\":\"" + key + "\",\"value\":" + value + "\"}"
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload)
+	return respBody, err
+}
+
+func ListAttributes(name string, key string) (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.BaseURL)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts", name, "attributes", key)
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	return respBody, err
+}
+
 //List
 func List(count int, expand bool) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
