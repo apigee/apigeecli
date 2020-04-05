@@ -86,6 +86,7 @@ ___
 * [envs](#env)
 * [flowhooks](#flow)
 * [iam](#iam)
+* [istio-binding](#istio-binding)
 * [keystores](#keystores)
 * [keyaliases](#keyaliases)
 * [kvms](#kvm)
@@ -705,7 +706,7 @@ The following parameters are supported. See Common Reference for a list of addit
 * `--env -e` (required) Apigee environment name
 * `--name -n` (required) Service Account Name
 
-#### <a name="setax"/> setsync
+#### <a name="setsync"/> setsync
 
 Set Synchronization Manager permission for an SA on an Apigee environment
 
@@ -719,6 +720,10 @@ The following parameters are supported. See Common Reference for a list of addit
 * `--org -o` (required) Apigee organization name
 * `--env -e` (required) Apigee environment name
 * `--name -n` (required) Service Account Name
+
+#### <a name="testiam"/> testiam
+
+Help TODO
 
 ### <a name="getenv"/> get
 
@@ -967,6 +972,42 @@ The following parameters are supported. See Common Reference for a list of addit
 * `--prj -p` (required) GCP Project ID
 * `--name -n` (optional) Service Account Name
 * `--gen -g` (optional) Generate a service account name
+
+---
+
+## <a name="istio-bindings"/> istio-bindings
+
+* [create](#createbindings)
+* [list](#listbindings)
+
+### <a name="createbindings"/> create
+
+Create a istio binding for an API Product
+
+```bash
+apigeecli istio-bindings create -o org -p product_name -s name1,name2
+```
+
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+* `--prod -p` (required) Apigee API Product name
+* `--svcs -s` (required) List of Istio service names
+
+### <a name="createbindings"/> create
+
+List a istio bindings for an API Product
+
+```bash
+apigeecli istio-bindings list -o org -p product_name
+```
+
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--org -o` (required) Apigee organization name
+* `--prod -p` (required) Apigee API Product name
 
 ___
 
