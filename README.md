@@ -118,7 +118,7 @@ ___
 
 ### <a name="createapi"/> create
 
-Import or create an API Proxy. If a bundle (zip) is supplied, it is imported else, it creates an empty proxy in the Org
+Import or create an API Proxy. Creates an API Proxy using existing an bundle (zip) or OpenAPI Specification document. If omitted, it creates an empty proxy in the Org
 
 ```bash
 apigeecli apis create -o org -n proxy
@@ -129,7 +129,10 @@ The following parameters are supported. See Common Reference for a list of addit
 
 * `--org -o` (required) Apigee organization name
 * `--name -n` (required) API proxy name
-* `--proxy -p` (required) API proxy bundle (zip)
+* `--proxy -p` (optional) API proxy bundle (zip)
+* `--oasfile -f` (optional) Open API Specification file path
+* `--oasuri -u` (optional) Open API Specification URI
+* `--import` (optional) Control whether the bundle should be imported; default is (true)
 
 ### <a name="delapi"/> delete
 
