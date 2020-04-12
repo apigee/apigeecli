@@ -23,8 +23,10 @@ builds:
       - linux
       - darwin
       - windows
+    flags:
+    - -trimpath
     ldflags:
-    - -s -w -a -extldflags "-static" -X main.Version={{.Tag}} -X main.Git={{.Commit}} -trimpath
+    - -s -w -a -extldflags "-static" -X main.Version={{.Tag}} -X main.Git={{.Commit}}
 archives:
   - id: apigeecli
     format: zip
