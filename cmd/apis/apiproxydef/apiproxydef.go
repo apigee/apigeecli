@@ -20,47 +20,50 @@ import (
 	"time"
 )
 
-type policiesType struct {
-	XMLName xml.Name `xml:"Policies"`
-	Policy  []string `xml:"Policy,omitempty"`
+type policiesDef struct {
+	Policy []string `xml:"Policy,omitempty"`
 }
 
-type proxyEndpointsType struct {
+type proxyEndpointsDef struct {
 	XMLName       xml.Name `xml:"ProxyEndpoints"`
 	ProxyEndpoint []string `xml:"ProxyEndpoint,omitempty"`
 }
 
-type targetEndpointsType struct {
+type targetEndpointsDef struct {
 	XMLName        xml.Name `xml:"TargetEndpoints"`
 	TargetEndpoint []string `xml:"TargetEndpoint,omitempty"`
 }
 
-type configurationVersionType struct {
+type configurationVersionDef struct {
 	XMLName      xml.Name `xml:"ConfigurationVersion,omitempty"`
 	MajorVersion string   `xml:"majorVersion,attr"`
 	MinorVersion string   `xml:"minorVersion,attr"`
 }
 
-type apiProxyType struct {
-	XMLName              xml.Name                 `xml:"APIProxy"`
-	Name                 string                   `xml:"name,attr"`
-	Revision             string                   `xml:"revision,attr"`
-	BasePaths            string                   `xml:"Basepaths,omitempty"`
-	ConfigurationVersion configurationVersionType `xml:"ConfigurationVersion,omitempty"`
-	CreatedAt            string                   `xml:"CreatedAt,omitempty"`
-	Description          string                   `xml:"Description,omitempty"`
-	DisplayName          string                   `xml:"DisplayName,omitempty"`
-	LastModifiedAt       string                   `xml:"LastModifiedAt,omitempty"`
-	Policies             policiesType             `xml:"Policies,omitempty"`
-	ProxyEndpoints       proxyEndpointsType       `xml:"ProxyEndpoints,omitempty"`
-	Resources            string                   `xml:"Resources,omitempty"`
-	Spec                 string                   `xml:"Spec,omitempty"`
-	TargetServers        string                   `xml:"TargetServers,omitempty"`
-	TargetEndpoints      targetEndpointsType      `xml:"TargetEndpoints,omitempty"`
-	Validate             string                   `xml:"validate,omitempty"`
+type resourcesDef struct {
+	Resource []string `xml:"Resource,omitempty"`
 }
 
-var apiProxy apiProxyType
+type apiProxyDef struct {
+	XMLName              xml.Name                `xml:"APIProxy"`
+	Name                 string                  `xml:"name,attr"`
+	Revision             string                  `xml:"revision,attr"`
+	BasePaths            string                  `xml:"Basepaths,omitempty"`
+	ConfigurationVersion configurationVersionDef `xml:"ConfigurationVersion,omitempty"`
+	CreatedAt            string                  `xml:"CreatedAt,omitempty"`
+	Description          string                  `xml:"Description,omitempty"`
+	DisplayName          string                  `xml:"DisplayName,omitempty"`
+	LastModifiedAt       string                  `xml:"LastModifiedAt,omitempty"`
+	Policies             policiesDef             `xml:"Policies,omitempty"`
+	ProxyEndpoints       proxyEndpointsDef       `xml:"ProxyEndpoints,omitempty"`
+	Resources            resourcesDef            `xml:"Resources,omitempty"`
+	Spec                 string                  `xml:"Spec,omitempty"`
+	TargetServers        string                  `xml:"TargetServers,omitempty"`
+	TargetEndpoints      targetEndpointsDef      `xml:"TargetEndpoints,omitempty"`
+	Validate             string                  `xml:"validate,omitempty"`
+}
+
+var apiProxy apiProxyDef
 
 func SetDisplayName(name string) {
 	apiProxy.DisplayName = name
@@ -99,12 +102,19 @@ func SetDescription(description string) {
 	apiProxy.Description = description
 }
 
-func GetAPIProxy() string {
-	proxyBody, _ := xml.MarshalIndent(apiProxy, "", " ")
-	return string(proxyBody)
+func GetAPIProxy() (string, error) {
+	proxyBody, err := xml.MarshalIndent(apiProxy, "", " ")
+	if err != nil {
+		return "", err
+	}
+	return string(proxyBody), nil
 }
 
 func SetConfigurationVersion() {
 	apiProxy.ConfigurationVersion.MajorVersion = "4"
 	apiProxy.ConfigurationVersion.MinorVersion = "0"
+}
+
+func AddResource(name string) {
+	apiProxy.Resources.Resource = append(apiProxy.Resources.Resource, "oas://"+name)
 }

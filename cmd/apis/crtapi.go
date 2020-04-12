@@ -33,13 +33,24 @@ var CreateCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		if proxy != "" {
 			_, err = apis.CreateProxy(name, proxy)
-		} else if oasDoc != "" {
-			err = GenerateAPIProxyDefFromOAS(name, oasDoc)
+		} else if oasFile != "" || oasURI != "" {
+			var content []byte
+			var oasDocName string
+			if oasFile != "" {
+				oasDocName, content, err = LoadDocumentFromFile(oasFile)
+			} else {
+				oasDocName, content, err = LoadDocumentFromURI(oasURI)
+			}
 			if err != nil {
 				return err
 			}
 
-			err = proxybundle.GenerateAPIProxyBundle(name)
+			err = GenerateAPIProxyDefFromOAS(name, oasDocName)
+			if err != nil {
+				return err
+			}
+
+			err = proxybundle.GenerateAPIProxyBundle(name, string(content), oasDocName)
 			if err != nil {
 				return err
 			}
@@ -56,7 +67,7 @@ var CreateCmd = &cobra.Command{
 	},
 }
 
-var proxy, oasDoc string
+var proxy, oasFile, oasURI string
 var importProxy bool
 
 func init() {
@@ -65,8 +76,10 @@ func init() {
 		"", "API Proxy name")
 	CreateCmd.Flags().StringVarP(&proxy, "proxy", "p",
 		"", "API Proxy Bundle path")
-	CreateCmd.Flags().StringVarP(&oasDoc, "oas", "f",
+	CreateCmd.Flags().StringVarP(&oasFile, "oasfile", "f",
 		"", "Open API 3.0 Specification file")
+	CreateCmd.Flags().StringVarP(&oasURI, "oasuri", "u",
+		"", "Open API 3.0 Specification URI location")
 	CreateCmd.Flags().BoolVarP(&importProxy, "import", "",
 		true, "Import API Proxy after generation from spec")
 

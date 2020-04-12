@@ -45,15 +45,15 @@ type postFlowDef struct {
 }
 
 type requestFlowDef struct {
-	Step stepDef `xml:"Step"`
+	Step []*stepDef `xml:"Step"`
 }
 
 type responseFlowDef struct {
-	Step stepDef `xml:"Step"`
+	Step []*stepDef `xml:"Step"`
 }
 
 type stepDef struct {
-	Name string `xml:"name"`
+	Name string `xml:"Name"`
 }
 
 type routeRuleDef struct {
@@ -68,11 +68,12 @@ type flowsDef struct {
 }
 
 type flowDef struct {
-	XMLName   xml.Name        `xml:"Flow"`
-	Name      string          `xml:"name,attr"`
-	Request   requestFlowDef  `xml:"Request"`
-	Response  responseFlowDef `xml:"Response"`
-	Condition conditionDef    `xml:"Condition"`
+	XMLName     xml.Name        `xml:"Flow"`
+	Name        string          `xml:"name,attr"`
+	Description string          `xml:"Description,omitempty"`
+	Request     requestFlowDef  `xml:"Request"`
+	Response    responseFlowDef `xml:"Response"`
+	Condition   conditionDef    `xml:"Condition"`
 }
 
 type conditionDef struct {
@@ -88,9 +89,12 @@ type httpProxyConnectionDef struct {
 
 var proxyEndpoint proxyEndpointDef
 
-func GetProxyEndpoint() string {
-	proxyBody, _ := xml.MarshalIndent(proxyEndpoint, "", " ")
-	return string(proxyBody)
+func GetProxyEndpoint() (string, error) {
+	proxyBody, err := xml.MarshalIndent(proxyEndpoint, "", " ")
+	if err != nil {
+		return "", nil
+	}
+	return string(proxyBody), nil
 }
 
 func NewProxyEndpoint(basePath string) {
@@ -102,9 +106,16 @@ func NewProxyEndpoint(basePath string) {
 	proxyEndpoint.RouteRule.TargetEndpoint = "default"
 }
 
-func AddFlow(operationId string, keyPath string, method string) {
+func AddFlow(operationId string, keyPath string, method string, description string) {
 	flow := flowDef{}
 	flow.Name = operationId
+	flow.Description = description
 	flow.Condition.ConditionData = "(proxy.pathsuffix MatchesPath \"" + keyPath + "\") and (request.verb = \"" + method + "\")"
 	proxyEndpoint.Flows.Flow = append(proxyEndpoint.Flows.Flow, flow)
+}
+
+func AddStepToPreFlowRequest(name string) {
+	step := stepDef{}
+	step.Name = name
+	proxyEndpoint.PreFlow.Request.Step = append(proxyEndpoint.PreFlow.Request.Step, &step)
 }

@@ -37,15 +37,15 @@ type httpTargetConnectionDef struct {
 }
 
 type requestFlowDef struct {
-	Step stepDef `xml:"Step,omitempty"`
+	Step []*stepDef `xml:"Step,omitempty"`
 }
 
 type responseFlowDef struct {
-	Step stepDef `xml:"Step,omitempty"`
+	Step []*stepDef `xml:"Step,omitempty"`
 }
 
 type stepDef struct {
-	Name string `xml:"name"`
+	Name string `xml:"Name"`
 }
 
 type targetEndpointDef struct {
@@ -58,9 +58,12 @@ type targetEndpointDef struct {
 
 var targetEndpoint targetEndpointDef
 
-func GetTargetEndpoint() string {
-	targetBody, _ := xml.MarshalIndent(targetEndpoint, "", " ")
-	return string(targetBody)
+func GetTargetEndpoint() (string, error) {
+	targetBody, err := xml.MarshalIndent(targetEndpoint, "", " ")
+	if err != nil {
+		return "", nil
+	}
+	return string(targetBody), nil
 }
 
 func NewTargetEndpoint(endpoint string) {

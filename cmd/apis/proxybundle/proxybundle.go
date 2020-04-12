@@ -22,49 +22,76 @@ import (
 	"strings"
 
 	apiproxy "github.com/srinandan/apigeecli/cmd/apis/apiproxydef"
+	policies "github.com/srinandan/apigeecli/cmd/apis/policies"
 	proxies "github.com/srinandan/apigeecli/cmd/apis/proxies"
 	target "github.com/srinandan/apigeecli/cmd/apis/targetendpoint"
 )
 
-func GenerateAPIProxyBundle(name string) (err error) {
+func GenerateAPIProxyBundle(name string, content string, fileName string) (err error) {
 	const rootDir = "apiproxy"
+	var apiProxyData, proxyEndpointData, targetEndpointData string
 
-	err = os.Mkdir(rootDir, os.ModePerm)
-	if err != nil {
+	if err = os.Mkdir(rootDir, os.ModePerm); err != nil {
 		return err
 	}
 
 	// write API Proxy file
-	err = writeXMLData(rootDir+string(os.PathSeparator)+name+".xml", apiproxy.GetAPIProxy())
+	if apiProxyData, err = apiproxy.GetAPIProxy(); err != nil {
+		return err
+	}
+
+	err = writeXMLData(rootDir+string(os.PathSeparator)+name+".xml", apiProxyData)
 	if err != nil {
 		return err
 	}
 
 	proxiesDirPath := rootDir + string(os.PathSeparator) + "proxies"
+	policiesDirPath := rootDir + string(os.PathSeparator) + "policies"
 	targetDirPath := rootDir + string(os.PathSeparator) + "targets"
+	oasDirPath := rootDir + string(os.PathSeparator) + "resources" + string(os.PathSeparator) + "oas"
 
-	err = os.Mkdir(proxiesDirPath, os.ModePerm)
+	if err = os.Mkdir(proxiesDirPath, os.ModePerm); err != nil {
+		return err
+	}
+
+	if proxyEndpointData, err = proxies.GetProxyEndpoint(); err != nil {
+		return err
+	}
+
+	err = writeXMLData(proxiesDirPath+string(os.PathSeparator)+"default.xml", proxyEndpointData)
 	if err != nil {
 		return err
 	}
 
-	err = writeXMLData(proxiesDirPath+string(os.PathSeparator)+"default.xml", proxies.GetProxyEndpoint())
-	if err != nil {
+	if err = os.Mkdir(targetDirPath, os.ModePerm); err != nil {
 		return err
 	}
 
-	err = os.Mkdir(targetDirPath, os.ModePerm)
-	if err != nil {
+	if targetEndpointData, err = target.GetTargetEndpoint(); err != nil {
 		return err
 	}
 
-	err = writeXMLData(targetDirPath+string(os.PathSeparator)+"default.xml", target.GetTargetEndpoint())
-	if err != nil {
+	if err = writeXMLData(targetDirPath+string(os.PathSeparator)+"default.xml", targetEndpointData); err != nil {
 		return err
 	}
 
-	err = archiveBundle(rootDir, name+".zip")
-	if err != nil {
+	if err = os.MkdirAll(oasDirPath, os.ModePerm); err != nil {
+		return err
+	}
+
+	if err = writeXMLData(oasDirPath+string(os.PathSeparator)+fileName, content); err != nil {
+		return err
+	}
+
+	if err = os.Mkdir(policiesDirPath, os.ModePerm); err != nil {
+		return err
+	}
+
+	if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"OpenAPI-Spec-Validation-1.xml", policies.AddOpenAPIValidatePolicy(fileName)); err != nil {
+		return err
+	}
+
+	if err = archiveBundle(rootDir, name+".zip"); err != nil {
 		return err
 	}
 
