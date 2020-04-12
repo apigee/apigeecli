@@ -17,8 +17,9 @@ package apis
 import (
 	"github.com/spf13/cobra"
 	"github.com/srinandan/apigeecli/apiclient"
+	bundle "github.com/srinandan/apigeecli/bundlegen"
+	proxybundle "github.com/srinandan/apigeecli/bundlegen/proxybundle"
 	"github.com/srinandan/apigeecli/client/apis"
-	proxybundle "github.com/srinandan/apigeecli/cmd/apis/proxybundle"
 )
 
 //CreateCmd to create api
@@ -37,15 +38,15 @@ var CreateCmd = &cobra.Command{
 			var content []byte
 			var oasDocName string
 			if oasFile != "" {
-				oasDocName, content, err = LoadDocumentFromFile(oasFile)
+				oasDocName, content, err = bundle.LoadDocumentFromFile(oasFile)
 			} else {
-				oasDocName, content, err = LoadDocumentFromURI(oasURI)
+				oasDocName, content, err = bundle.LoadDocumentFromURI(oasURI)
 			}
 			if err != nil {
 				return err
 			}
 
-			err = GenerateAPIProxyDefFromOAS(name, oasDocName)
+			err = bundle.GenerateAPIProxyDefFromOAS(name, oasDocName)
 			if err != nil {
 				return err
 			}

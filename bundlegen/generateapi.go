@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package apis
+package bundlegen
 
 import (
 	"fmt"
@@ -24,9 +24,9 @@ import (
 
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/ghodss/yaml"
-	apiproxy "github.com/srinandan/apigeecli/cmd/apis/apiproxydef"
-	proxies "github.com/srinandan/apigeecli/cmd/apis/proxies"
-	target "github.com/srinandan/apigeecli/cmd/apis/targetendpoint"
+	apiproxy "github.com/srinandan/apigeecli/bundlegen/apiproxydef"
+	proxies "github.com/srinandan/apigeecli/bundlegen/proxies"
+	target "github.com/srinandan/apigeecli/bundlegen/targetendpoint"
 )
 
 type pathDetailDef struct {

@@ -21,10 +21,10 @@ import (
 	"path/filepath"
 	"strings"
 
-	apiproxy "github.com/srinandan/apigeecli/cmd/apis/apiproxydef"
-	policies "github.com/srinandan/apigeecli/cmd/apis/policies"
-	proxies "github.com/srinandan/apigeecli/cmd/apis/proxies"
-	target "github.com/srinandan/apigeecli/cmd/apis/targetendpoint"
+	apiproxy "github.com/srinandan/apigeecli/bundlegen/apiproxydef"
+	policies "github.com/srinandan/apigeecli/bundlegen/policies"
+	proxies "github.com/srinandan/apigeecli/bundlegen/proxies"
+	target "github.com/srinandan/apigeecli/bundlegen/targetendpoint"
 )
 
 func GenerateAPIProxyBundle(name string, content string, fileName string) (err error) {
