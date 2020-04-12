@@ -18,6 +18,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/srinandan/apigeecli/apiclient"
 	"github.com/srinandan/apigeecli/client/apis"
+	proxybundle "github.com/srinandan/apigeecli/cmd/apis/proxybundle"
 )
 
 //CreateCmd to create api
@@ -30,12 +31,33 @@ var CreateCmd = &cobra.Command{
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = apis.CreateProxy(name, proxy)
+		if proxy != "" {
+			_, err = apis.CreateProxy(name, proxy)
+		} else if oasDoc != "" {
+			err = GenerateAPIProxyDefFromOAS(name, oasDoc)
+			if err != nil {
+				return err
+			}
+
+			err = proxybundle.GenerateAPIProxyBundle(name)
+			if err != nil {
+				return err
+			}
+
+			if importProxy {
+				_, err = apis.CreateProxy(name, name+".zip")
+			}
+
+		} else {
+			_, err = apis.CreateProxy(name, "")
+		}
+
 		return
 	},
 }
 
-var proxy string
+var proxy, oasDoc string
+var importProxy bool
 
 func init() {
 
@@ -43,6 +65,10 @@ func init() {
 		"", "API Proxy name")
 	CreateCmd.Flags().StringVarP(&proxy, "proxy", "p",
 		"", "API Proxy Bundle path")
+	CreateCmd.Flags().StringVarP(&oasDoc, "oas", "f",
+		"", "Open API 3.0 Specification file")
+	CreateCmd.Flags().BoolVarP(&importProxy, "import", "",
+		true, "Import API Proxy after generation from spec")
 
 	_ = CreateCmd.MarkFlagRequired("name")
 }

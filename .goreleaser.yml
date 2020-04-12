@@ -24,7 +24,7 @@ builds:
       - darwin
       - windows
     ldflags:
-    - -s -w -a -extldflags "-static" -X main.Version={{.Tag}} -X main.Git={{.Commit}}
+    - -s -w -a -extldflags "-static" -X main.Version={{.Tag}} -X main.Git={{.Commit}} -trimpath
 archives:
   - id: apigeecli
     format: zip
