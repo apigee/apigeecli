@@ -38,9 +38,9 @@ var CreateCmd = &cobra.Command{
 			var content []byte
 			var oasDocName string
 			if oasFile != "" {
-				oasDocName, content, err = bundle.LoadDocumentFromFile(oasFile)
+				oasDocName, content, err = bundle.LoadDocumentFromFile(oasFile, validateSpec)
 			} else {
-				oasDocName, content, err = bundle.LoadDocumentFromURI(oasURI)
+				oasDocName, content, err = bundle.LoadDocumentFromURI(oasURI, validateSpec)
 			}
 			if err != nil {
 				return err
@@ -69,7 +69,7 @@ var CreateCmd = &cobra.Command{
 }
 
 var proxy, oasFile, oasURI string
-var importProxy bool
+var importProxy, validateSpec bool
 
 func init() {
 
@@ -83,6 +83,7 @@ func init() {
 		"", "Open API 3.0 Specification URI location")
 	CreateCmd.Flags().BoolVarP(&importProxy, "import", "",
 		true, "Import API Proxy after generation from spec")
-
+	CreateCmd.Flags().BoolVarP(&validateSpec, "validate", "",
+		true, "Validate Spec before generating proxy")
 	_ = CreateCmd.MarkFlagRequired("name")
 }

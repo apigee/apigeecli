@@ -40,7 +40,7 @@ var generateOAuthPolicy, generateAPIKeyPolicy bool
 
 var doc *openapi3.Swagger
 
-func LoadDocumentFromFile(filePath string) (string, []byte, error) {
+func LoadDocumentFromFile(filePath string, validate bool) (string, []byte, error) {
 	var err error
 	var jsonContent []byte
 
@@ -49,8 +49,10 @@ func LoadDocumentFromFile(filePath string) (string, []byte, error) {
 		return "", nil, err
 	}
 
-	if err = doc.Validate(openapi3.NewSwaggerLoader().Context); err != nil {
-		return "", nil, err
+	if validate {
+		if err = doc.Validate(openapi3.NewSwaggerLoader().Context); err != nil {
+			return "", nil, err
+		}
 	}
 
 	if jsonContent, err = doc.MarshalJSON(); err != nil {
@@ -65,7 +67,7 @@ func LoadDocumentFromFile(filePath string) (string, []byte, error) {
 	}
 }
 
-func LoadDocumentFromURI(uri string) (string, []byte, error) {
+func LoadDocumentFromURI(uri string, validate bool) (string, []byte, error) {
 	var err error
 	var jsonContent []byte
 
@@ -79,8 +81,10 @@ func LoadDocumentFromURI(uri string) (string, []byte, error) {
 		return "", nil, err
 	}
 
-	if err = doc.Validate(openapi3.NewSwaggerLoader().Context); err != nil {
-		return "", nil, err
+	if validate {
+		if err = doc.Validate(openapi3.NewSwaggerLoader().Context); err != nil {
+			return "", nil, err
+		}
 	}
 
 	if jsonContent, err = doc.MarshalJSON(); err != nil {
