@@ -27,6 +27,8 @@ builds:
     - -trimpath
     ldflags:
     - -s -w -a -extldflags "-static" -X main.Version={{.Tag}} -X main.Git={{.Commit}}
+    hooks:
+      post: /bin/sh compress.sh
 archives:
   - id: apigeecli
     format: zip
