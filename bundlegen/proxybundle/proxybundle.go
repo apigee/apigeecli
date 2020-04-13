@@ -21,6 +21,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	genapi "github.com/srinandan/apigeecli/bundlegen"
 	apiproxy "github.com/srinandan/apigeecli/bundlegen/apiproxydef"
 	policies "github.com/srinandan/apigeecli/bundlegen/policies"
 	proxies "github.com/srinandan/apigeecli/bundlegen/proxies"
@@ -87,8 +88,23 @@ func GenerateAPIProxyBundle(name string, content string, fileName string) (err e
 		return err
 	}
 
+	//add oas policy
 	if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"OpenAPI-Spec-Validation-1.xml", policies.AddOpenAPIValidatePolicy(fileName)); err != nil {
 		return err
+	}
+
+	//add oauth policy
+	if genapi.GenerateOAuthPolicy() {
+		if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"OAuth-v20-1.xml", policies.AddOAuth2Policy()); err != nil {
+			return err
+		}
+	}
+
+	//add api key policy
+	if genapi.GenerateAPIKeyPolicy() {
+		if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"Verify-API-Key-1.xml", policies.AddVerifyApiKeyPolicy()); err != nil {
+			return err
+		}
 	}
 
 	if err = archiveBundle(rootDir, name+".zip"); err != nil {

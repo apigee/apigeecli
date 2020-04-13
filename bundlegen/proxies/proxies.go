@@ -16,6 +16,7 @@ package proxies
 
 import (
 	"encoding/xml"
+	"fmt"
 )
 
 type proxyEndpointDef struct {
@@ -118,4 +119,16 @@ func AddStepToPreFlowRequest(name string) {
 	step := stepDef{}
 	step.Name = name
 	proxyEndpoint.PreFlow.Request.Step = append(proxyEndpoint.PreFlow.Request.Step, &step)
+}
+
+func AddStepToFlowRequest(name string, flowName string) error {
+	for flowKey, flow := range proxyEndpoint.Flows.Flow {
+		if flow.Name == flowName {
+			step := stepDef{}
+			step.Name = name
+			proxyEndpoint.Flows.Flow[flowKey].Request.Step = append(proxyEndpoint.Flows.Flow[flowKey].Request.Step, &step)
+			return nil
+		}
+	}
+	return fmt.Errorf("flow name not found")
 }

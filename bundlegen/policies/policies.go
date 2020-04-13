@@ -26,8 +26,35 @@ var oasPolicyTemplate = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
     <OASResource>oas://{PolicyName}</OASResource>
 </OASValidation>`
 
+var verifyApiKeyPolicy = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<VerifyAPIKey async="false" continueOnError="false" enabled="true" name="Verify-API-Key-1">
+    <DisplayName>Verify API Key-1</DisplayName>
+    <Properties/>
+    <APIKey ref="request.queryparam.apikey"/>
+</VerifyAPIKey>`
+
+var oauth2Policy = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<OAuthV2 async="false" continueOnError="false" enabled="true" name="OAuth-v20-1">
+    <DisplayName>OAuth v2.0-1</DisplayName>
+    <Properties/>
+    <Attributes/>
+    <ExternalAuthorization>false</ExternalAuthorization>
+    <Operation>VerifyAccessToken</Operation>
+    <SupportedGrantTypes/>
+    <GenerateResponse enabled="true"/>
+    <Tokens/>
+</OAuthV2>`
+
 func AddOpenAPIValidatePolicy(name string) string {
 	return replaceTemplateWithPolicy(name)
+}
+
+func AddVerifyApiKeyPolicy() string {
+	return verifyApiKeyPolicy
+}
+
+func AddOAuth2Policy() string {
+	return oauth2Policy
 }
 
 func replaceTemplateWithPolicy(name string) string {

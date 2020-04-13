@@ -32,7 +32,11 @@ import (
 type pathDetailDef struct {
 	OperationID string
 	Description string
+	OAuthPolicy bool
+	APIKeyPoicy bool
 }
+
+var generateOAuthPolicy, generateAPIKeyPolicy bool
 
 var doc *openapi3.Swagger
 
@@ -131,7 +135,17 @@ func GenerateAPIProxyDefFromOAS(name string, oasDocName string) (err error) {
 	proxies.NewProxyEndpoint(u.Path)
 	proxies.AddStepToPreFlowRequest("OpenAPI-Spec-Validation-1")
 
-	GenerateFlows(doc.Paths)
+	if err = GenerateFlows(doc.Paths); err != nil {
+		return err
+	}
+
+	if GenerateAPIKeyPolicy() {
+		apiproxy.AddPolicy("Verify-API-Key-1")
+	}
+
+	if GenerateOAuthPolicy() {
+		apiproxy.AddPolicy("OAuth-v20-1")
+	}
 
 	return nil
 }
@@ -159,6 +173,10 @@ func GetHTTPMethod(pathItem *openapi3.PathItem, keyPath string) map[string]pathD
 		if pathItem.Get.Description != "" {
 			getPathDetail.Description = pathItem.Get.Description
 		}
+		if pathItem.Get.Security != nil {
+			securityRequirements := []openapi3.SecurityRequirement(*pathItem.Get.Security)
+			getPathDetail.OAuthPolicy, getPathDetail.APIKeyPoicy = getSecurityRequirements(securityRequirements)
+		}
 		pathMap["get"] = getPathDetail
 	}
 
@@ -171,6 +189,10 @@ func GetHTTPMethod(pathItem *openapi3.PathItem, keyPath string) map[string]pathD
 		}
 		if pathItem.Post.Description != "" {
 			postPathDetail.Description = pathItem.Post.Description
+		}
+		if pathItem.Post.Security != nil {
+			securityRequirements := []openapi3.SecurityRequirement(*pathItem.Post.Security)
+			postPathDetail.OAuthPolicy, postPathDetail.APIKeyPoicy = getSecurityRequirements(securityRequirements)
 		}
 		pathMap["post"] = postPathDetail
 	}
@@ -185,6 +207,10 @@ func GetHTTPMethod(pathItem *openapi3.PathItem, keyPath string) map[string]pathD
 		if pathItem.Put.Description != "" {
 			putPathDetail.Description = pathItem.Put.Description
 		}
+		if pathItem.Put.Security != nil {
+			securityRequirements := []openapi3.SecurityRequirement(*pathItem.Put.Security)
+			putPathDetail.OAuthPolicy, putPathDetail.APIKeyPoicy = getSecurityRequirements(securityRequirements)
+		}
 		pathMap["put"] = putPathDetail
 	}
 
@@ -198,6 +224,10 @@ func GetHTTPMethod(pathItem *openapi3.PathItem, keyPath string) map[string]pathD
 		if pathItem.Patch.Description != "" {
 			patchPathDetail.Description = pathItem.Patch.Description
 		}
+		if pathItem.Patch.Security != nil {
+			securityRequirements := []openapi3.SecurityRequirement(*pathItem.Patch.Security)
+			patchPathDetail.OAuthPolicy, patchPathDetail.APIKeyPoicy = getSecurityRequirements(securityRequirements)
+		}
 		pathMap["patch"] = patchPathDetail
 	}
 
@@ -210,6 +240,10 @@ func GetHTTPMethod(pathItem *openapi3.PathItem, keyPath string) map[string]pathD
 		}
 		if pathItem.Delete.Description != "" {
 			deletePathDetail.Description = pathItem.Delete.Description
+		}
+		if pathItem.Delete.Security != nil {
+			securityRequirements := []openapi3.SecurityRequirement(*pathItem.Delete.Security)
+			deletePathDetail.OAuthPolicy, deletePathDetail.APIKeyPoicy = getSecurityRequirements(securityRequirements)
 		}
 		pathMap["delete"] = deletePathDetail
 	}
@@ -256,13 +290,32 @@ func GetHTTPMethod(pathItem *openapi3.PathItem, keyPath string) map[string]pathD
 	return pathMap
 }
 
-func GenerateFlows(paths openapi3.Paths) {
+func GenerateFlows(paths openapi3.Paths) (err error) {
 	for keyPath := range paths {
 		pathMap := GetHTTPMethod(paths[keyPath], keyPath)
 		for method, pathDetail := range pathMap {
 			proxies.AddFlow(pathDetail.OperationID, replacePathWithWildCard(keyPath), method, pathDetail.Description)
+			if pathDetail.OAuthPolicy {
+				if err = proxies.AddStepToFlowRequest("OAuth-v20-1", pathDetail.OperationID); err != nil {
+					return err
+				}
+			}
+			if pathDetail.APIKeyPoicy {
+				if err = proxies.AddStepToFlowRequest("Verify-API-Key-1", pathDetail.OperationID); err != nil {
+					return err
+				}
+			}
 		}
 	}
+	return nil
+}
+
+func GenerateOAuthPolicy() bool {
+	return generateOAuthPolicy
+}
+
+func GenerateAPIKeyPolicy() bool {
+	return generateAPIKeyPolicy
 }
 
 func replacePathWithWildCard(keyPath string) string {
@@ -272,4 +325,29 @@ func replacePathWithWildCard(keyPath string) string {
 	} else {
 		return keyPath
 	}
+}
+
+func getSecurityType(name string) (oauth bool, apikey bool) {
+	for schemeName, securityScheme := range doc.Components.SecuritySchemes {
+		if schemeName == name {
+			if securityScheme.Value.Type == "oauth2" {
+				generateOAuthPolicy = true
+				return true, false
+			}
+			if securityScheme.Value.Type == "apiKey" {
+				generateAPIKeyPolicy = true
+				return false, true
+			}
+		}
+	}
+	return false, false
+}
+
+func getSecurityRequirements(securityRequirements []openapi3.SecurityRequirement) (oauth bool, apikey bool) {
+	for _, secReq := range securityRequirements {
+		for secReqName := range secReq {
+			return getSecurityType(secReqName)
+		}
+	}
+	return false, false
 }
