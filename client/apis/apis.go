@@ -22,6 +22,7 @@ import (
 	"path"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"sync"
 
 	"github.com/srinandan/apigeecli/apiclient"
@@ -51,9 +52,13 @@ func CreateProxy(name string, proxy string) (respBody []byte, err error) {
 }
 
 //DeleteProxy
-func DeleteProxy(name string) (respBody []byte, err error) {
+func DeleteProxy(name string, revision int) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
-	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apis", name)
+	if revision != -1 {
+		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apis", name)
+	} else {
+		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apis", name, "revisions", strconv.Itoa(revision))
+	}
 	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "", "DELETE")
 	return respBody, err
 }
@@ -133,13 +138,104 @@ func ListProxyRevisionDeployments(name string, revision int) (respBody []byte, e
 	return respBody, err
 }
 
-//UndeployProxy
+//Undeployproxy
 func UndeployProxy(name string, revision int) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(),
 		"apis", name, "revisions", strconv.Itoa(revision), "deployments")
 	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "", "DELETE")
 	return respBody, err
+}
+
+//CleanProxy
+func CleanProxy(name string, reportOnly bool) (err error) {
+
+	type deploymentsDef struct {
+		Environment    string `json:"environment,omitempty"`
+		ApiProxy       string `json:"apiProxy,omitempty"`
+		Revision       string `json:"revision,omitempty"`
+		DeloyStartTime string `json:"deployStartTime,omitempty"`
+		BasePath       string `json:"basePath,omitempty"`
+	}
+
+	type proxyDeploymentsDef struct {
+		Deployments []deploymentsDef `json:"deployments,omitempty"`
+	}
+
+	type metaDataDef struct {
+		CreatedAt      string `json:"createdAt,omitempty"`
+		LastModifiedAt string `json:"lastModifiedAt,omitempty"`
+		SubType        string `json:"subType,omitempty"`
+	}
+
+	type proxyRevisionsDef struct {
+		MetaData metaDataDef `json:"metaData,omitempty"`
+		Name     string      `json:"name,omitempty"`
+		Revision []string    `json:"revision,omitempty"`
+	}
+
+	proxyDeployments := proxyDeploymentsDef{}
+	proxyRevisions := proxyRevisionsDef{}
+	var deployedRevisions, reportRevisions []string
+	var proxyDeploymentsBytes, proxyRevisionsBytes []byte
+	var revision int
+
+	//disable printing
+	apiclient.SetPrintOutput(false)
+
+	//step 1. get a list of revisions that are deployed.
+	if proxyDeploymentsBytes, err = ListProxyDeployments(name); err != nil {
+		return err
+	}
+
+	if err = json.Unmarshal(proxyDeploymentsBytes, &proxyDeployments); err != nil {
+		return err
+	}
+
+	if len(proxyDeployments.Deployments) == 0 {
+		return fmt.Errorf("no proxy deployments found")
+	}
+
+	for _, proxyDeployment := range proxyDeployments.Deployments {
+		deployedRevisions = append(deployedRevisions, proxyDeployment.Revision)
+	}
+
+	fmt.Println("Proxy revisions [" + strings.Join(deployedRevisions, ",") + "] deployed for API Proxy " + name)
+
+	//step 2. get all the revisions for the proxy
+	if proxyRevisionsBytes, err = GetProxy(name, -1); err != nil {
+		return err
+	}
+
+	if err = json.Unmarshal(proxyRevisionsBytes, &proxyRevisions); err != nil {
+		return err
+	}
+
+	//enable printing
+	apiclient.SetPrintOutput(true)
+
+	for _, proxyRevision := range proxyRevisions.Revision {
+		if !isRevisionDeployed(deployedRevisions, proxyRevision) {
+			//step 3. clean up proxy revisions that are not deployed
+			if reportOnly {
+				reportRevisions = append(reportRevisions, proxyRevision)
+			} else {
+				if revision, err = strconv.Atoi(proxyRevision); err != nil {
+					return err
+				}
+				fmt.Println("Deleting revision: " + proxyRevision)
+				if _, err = DeleteProxy(name, revision); err != nil {
+					return err
+				}
+			}
+		}
+	}
+
+	if reportOnly && len(reportRevisions) > 0 {
+		fmt.Println("[REPORT]: API Proxy '" + name + "' revisions: " + strings.Join(reportRevisions, ",") + " can be cleaned")
+	}
+
+	return nil
 }
 
 //ExportProxies
@@ -281,4 +377,13 @@ func batchImport(entities []string, pwg *sync.WaitGroup) {
 		go apiclient.ImportBundleAsync("apis", "", entity, &bwg)
 	}
 	bwg.Wait()
+}
+
+func isRevisionDeployed(revisions []string, revision string) bool {
+	for _, r := range revisions {
+		if r == revision {
+			return true
+		}
+	}
+	return false
 }

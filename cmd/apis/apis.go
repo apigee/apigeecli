@@ -46,4 +46,5 @@ func init() {
 	Cmd.AddCommand(ImpCmd)
 	Cmd.AddCommand(UndepCmd)
 	Cmd.AddCommand(TraceCmd)
+	Cmd.AddCommand(CleanCmd)
 }

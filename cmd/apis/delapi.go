@@ -31,7 +31,7 @@ var DelCmd = &cobra.Command{
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = apis.DeleteProxy(name)
+		_, err = apis.DeleteProxy(name, revision)
 		return
 	},
 }
@@ -39,6 +39,7 @@ var DelCmd = &cobra.Command{
 func init() {
 	DelCmd.Flags().StringVarP(&name, "name", "n",
 		"", "API proxy name")
-
+	DelCmd.Flags().IntVarP(&revision, "rev", "v",
+		-1, "API Proxy revision")
 	_ = DelCmd.MarkFlagRequired("name")
 }
