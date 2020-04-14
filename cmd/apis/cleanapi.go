@@ -23,8 +23,8 @@ import (
 //CleanCmd to delete api
 var CleanCmd = &cobra.Command{
 	Use:   "clean",
-	Short: "Deletes undeployed/unsed reivisions of an API proxy",
-	Long:  "Deletes undeployed/unsed reivisions of an API proxy",
+	Short: "Deletes undeployed/unused reivisions of an API proxy",
+	Long:  "Deletes undeployed/unused reivisions of an API proxy",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetApigeeOrg(org)
 		return nil
