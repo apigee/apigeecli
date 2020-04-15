@@ -20,27 +20,27 @@ import (
 	"github.com/srinandan/apigeecli/client/sharedflows"
 )
 
-//Cmd to get shared flow
-var GetCmd = &cobra.Command{
-	Use:   "get",
-	Short: "Gets a shared flow by name",
-	Long:  "Gets a shared flow by name, including a list of its revisions.",
+//CleanCmd to delete sf
+var CleanCmd = &cobra.Command{
+	Use:   "clean",
+	Short: "Deletes undeployed/unsed reivisions of a Sharedflow",
+	Long:  "Deletes undeployed/unsed reivisions of a Sharedflow",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetApigeeOrg(org)
-		apiclient.SetApigeeEnv(env)
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = sharedflows.Get(name, revision)
-		return
+		return sharedflows.Clean(name, reportOnly)
 	},
 }
 
-func init() {
-	GetCmd.Flags().StringVarP(&name, "name", "n",
-		"", "Shared flow name")
-	GetCmd.Flags().IntVarP(&revision, "rev", "v",
-		-1, "shared flow revision")
+var reportOnly bool
 
-	_ = GetCmd.MarkFlagRequired("name")
+func init() {
+	CleanCmd.Flags().StringVarP(&name, "name", "n",
+		"", "Sharedflow name")
+	CleanCmd.Flags().BoolVarP(&reportOnly, "report", "",
+		true, "Report which Shareflow revisions will be deleted")
+
+	_ = CleanCmd.MarkFlagRequired("name")
 }

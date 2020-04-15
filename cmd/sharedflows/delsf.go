@@ -32,7 +32,7 @@ var DelCmd = &cobra.Command{
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = sharedflows.Delete(name)
+		_, err = sharedflows.Delete(name, revision)
 		return
 	},
 }
@@ -40,6 +40,8 @@ var DelCmd = &cobra.Command{
 func init() {
 	DelCmd.Flags().StringVarP(&name, "name", "n",
 		"", "shared flow name")
+	DelCmd.Flags().IntVarP(&revision, "rev", "v",
+		-1, "shared flow revision")
 
 	_ = DelCmd.MarkFlagRequired("name")
 }

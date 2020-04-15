@@ -104,6 +104,7 @@ ___
 
 ## <a name="apis"/> apis
 
+* [clean](#cleanapi)
 * [create](#createapi)
 * [delete](#delapi)
 * [deploy](#depapi)
@@ -1600,6 +1601,7 @@ The following parameters are required. See Common Reference for a list of additi
 
 ## <a name="sf"/> sharedflows
 
+* [clean](#cleansf)
 * [create](#createsf)
 * [delete](#delsf)
 * [deploy](#depsf)
@@ -1608,6 +1610,7 @@ The following parameters are required. See Common Reference for a list of additi
 * [import](#impsf)
 * [get](#gettsf)
 * [list](#listsf)
+* [listdeploy](#listdeploysf)
 * [undeploy](#undepsf)
 
 ### <a name="createsf"/> create

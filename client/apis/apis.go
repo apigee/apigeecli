@@ -176,7 +176,10 @@ func CleanProxy(name string, reportOnly bool) (err error) {
 
 	proxyDeployments := proxyDeploymentsDef{}
 	proxyRevisions := proxyRevisionsDef{}
-	var deployedRevisions, reportRevisions []string
+
+	reportRevisions := make(map[string]bool)
+	deployedRevisions := make(map[string]bool)
+
 	var proxyDeploymentsBytes, proxyRevisionsBytes []byte
 	var revision int
 
@@ -197,10 +200,12 @@ func CleanProxy(name string, reportOnly bool) (err error) {
 	}
 
 	for _, proxyDeployment := range proxyDeployments.Deployments {
-		deployedRevisions = append(deployedRevisions, proxyDeployment.Revision)
+		if !deployedRevisions[proxyDeployment.Revision] {
+			deployedRevisions[proxyDeployment.Revision] = true
+		}
 	}
 
-	fmt.Println("Proxy revisions [" + strings.Join(deployedRevisions, ",") + "] deployed for API Proxy " + name)
+	fmt.Println("Revisions [" + getRevisions(deployedRevisions) + "] deployed for API Proxy " + name)
 
 	//step 2. get all the revisions for the proxy
 	if proxyRevisionsBytes, err = GetProxy(name, -1); err != nil {
@@ -218,7 +223,9 @@ func CleanProxy(name string, reportOnly bool) (err error) {
 		if !isRevisionDeployed(deployedRevisions, proxyRevision) {
 			//step 3. clean up proxy revisions that are not deployed
 			if reportOnly {
-				reportRevisions = append(reportRevisions, proxyRevision)
+				if !reportRevisions[proxyRevision] {
+					reportRevisions[proxyRevision] = true
+				}
 			} else {
 				if revision, err = strconv.Atoi(proxyRevision); err != nil {
 					return err
@@ -232,7 +239,7 @@ func CleanProxy(name string, reportOnly bool) (err error) {
 	}
 
 	if reportOnly && len(reportRevisions) > 0 {
-		fmt.Println("[REPORT]: API Proxy '" + name + "' revisions: " + strings.Join(reportRevisions, ",") + " can be cleaned")
+		fmt.Println("[REPORT]: API Proxy '" + name + "' revisions: " + getRevisions(reportRevisions) + " can be cleaned")
 	}
 
 	return nil
@@ -379,11 +386,19 @@ func batchImport(entities []string, pwg *sync.WaitGroup) {
 	bwg.Wait()
 }
 
-func isRevisionDeployed(revisions []string, revision string) bool {
+func isRevisionDeployed(revisions map[string]bool, revision string) bool {
 	for _, r := range revisions {
 		if r == revision {
 			return true
 		}
 	}
 	return false
+}
+
+func getRevisions(r map[string]bool) string {
+	var arr []string
+	for s := range r {
+		arr = append(arr, s)
+	}
+	return strings.Join(arr, ",")
 }

@@ -16,11 +16,13 @@ package sharedflows
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/url"
 	"os"
 	"path"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"sync"
 
 	"github.com/srinandan/apigeecli/apiclient"
@@ -50,36 +52,76 @@ func Create(name string, proxy string) (respBody []byte, err error) {
 }
 
 //Get
-func Get(name string) (respBody []byte, err error) {
+func Get(name string, revision int) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
-	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sharedflows", name)
+	if revision != -1 {
+		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sharedflows", name, "revisions", strconv.Itoa(revision))
+	} else {
+		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sharedflows", name)
+	}
 	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
 	return respBody, err
 }
 
 //Delete
-func Delete(name string) (respBody []byte, err error) {
+func Delete(name string, revision int) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
-	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sharedflows", name)
+	if revision != -1 {
+		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sharedflows", name, "revisions", strconv.Itoa(revision))
+	} else {
+		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sharedflows", name)
+	}
 	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "", "DELETE")
 	return respBody, err
 }
 
 //List
 func List(includeRevisions bool) (respBody []byte, err error) {
+
 	u, _ := url.Parse(apiclient.BaseURL)
-	if apiclient.GetApigeeEnv() != "" {
+	if includeRevisions {
 		q := u.Query()
-		q.Set("sharedFlows", "true")
-		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "deployments")
-	} else {
-		if includeRevisions {
-			q := u.Query()
-			q.Set("includeRevisions", strconv.FormatBool(includeRevisions))
-			u.RawQuery = q.Encode()
-		}
-		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sharedflows")
+		q.Set("includeRevisions", strconv.FormatBool(includeRevisions))
+		u.RawQuery = q.Encode()
 	}
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sharedflows")
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	return respBody, err
+}
+
+//ListEnvDeployments
+func ListEnvDeployments() (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.BaseURL)
+
+	if apiclient.GetApigeeEnv() == "" {
+		return respBody, fmt.Errorf("environment name missing")
+	}
+
+	q := u.Query()
+	q.Set("sharedFlows", "true")
+	u.RawQuery = q.Encode()
+
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "deployments")
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	return respBody, err
+}
+
+//ListDeployments
+func ListDeployments(name string) (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.BaseURL)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sharedflows", name, "deployments")
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	return respBody, err
+}
+
+//ListRevisionDeployments
+func ListRevisionDeployments(name string, revision int) (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.BaseURL)
+	if apiclient.GetApigeeEnv() == "" {
+		return respBody, fmt.Errorf("environment name missing")
+	}
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "sharedflows", name, "revisions",
+		strconv.Itoa(revision), "deployments")
 	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
 	return respBody, err
 }
@@ -96,6 +138,104 @@ func Deploy(name string, revision int, overrides bool) (respBody []byte, err err
 		"sharedflows", name, "revisions", strconv.Itoa(revision), "deployments")
 	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "")
 	return respBody, err
+}
+
+//Clean
+func Clean(name string, reportOnly bool) (err error) {
+
+	type deploymentsDef struct {
+		Environment    string `json:"environment,omitempty"`
+		ApiProxy       string `json:"apiProxy,omitempty"`
+		Revision       string `json:"revision,omitempty"`
+		DeloyStartTime string `json:"deployStartTime,omitempty"`
+		BasePath       string `json:"basePath,omitempty"`
+	}
+
+	type sfDeploymentsDef struct {
+		Deployments []deploymentsDef `json:"deployments,omitempty"`
+	}
+
+	type metaDataDef struct {
+		CreatedAt      string `json:"createdAt,omitempty"`
+		LastModifiedAt string `json:"lastModifiedAt,omitempty"`
+		SubType        string `json:"subType,omitempty"`
+	}
+
+	type sfRevisionsDef struct {
+		MetaData metaDataDef `json:"metaData,omitempty"`
+		Name     string      `json:"name,omitempty"`
+		Revision []string    `json:"revision,omitempty"`
+	}
+
+	sfDeployments := sfDeploymentsDef{}
+	sfRevisions := sfRevisionsDef{}
+
+	reportRevisions := make(map[string]bool)
+	deployedRevisions := make(map[string]bool)
+
+	var sfDeploymentsBytes, sfRevisionsBytes []byte
+	var revision int
+
+	//disable printing
+	apiclient.SetPrintOutput(false)
+
+	//step 1. get a list of revisions that are deployed.
+	if sfDeploymentsBytes, err = ListDeployments(name); err != nil {
+		return err
+	}
+
+	if err = json.Unmarshal(sfDeploymentsBytes, &sfDeployments); err != nil {
+		return err
+	}
+
+	if len(sfDeployments.Deployments) == 0 {
+		return fmt.Errorf("no sharedflow deployments found")
+	}
+
+	for _, sfDeployment := range sfDeployments.Deployments {
+		if !deployedRevisions[sfDeployment.Revision] {
+			deployedRevisions[sfDeployment.Revision] = true
+		}
+	}
+
+	fmt.Println("Revisions [" + getRevisions(deployedRevisions) + "] deployed for Sharedflow " + name)
+
+	//step 2. get all the revisions for the sf
+	if sfRevisionsBytes, err = Get(name, -1); err != nil {
+		return err
+	}
+
+	if err = json.Unmarshal(sfRevisionsBytes, &sfRevisions); err != nil {
+		return err
+	}
+
+	//enable printing
+	apiclient.SetPrintOutput(true)
+
+	for _, sfRevision := range sfRevisions.Revision {
+		if !isRevisionDeployed(deployedRevisions, sfRevision) {
+			//step 3. clean up proxy revisions that are not deployed
+			if reportOnly {
+				if !reportRevisions[sfRevision] {
+					reportRevisions[sfRevision] = true
+				}
+			} else {
+				if revision, err = strconv.Atoi(sfRevision); err != nil {
+					return err
+				}
+				fmt.Println("Deleting revision: " + sfRevision)
+				if _, err = Delete(name, revision); err != nil {
+					return err
+				}
+			}
+		}
+	}
+
+	if reportOnly && len(reportRevisions) > 0 {
+		fmt.Println("[REPORT]: Sharedflow '" + name + "' revisions: " + getRevisions(reportRevisions) + " can be cleaned")
+	}
+
+	return nil
 }
 
 //Undeploy
@@ -249,4 +389,21 @@ func batchImport(entities []string, pwg *sync.WaitGroup) {
 		go apiclient.ImportBundleAsync("sharedflows", "", entity, &bwg)
 	}
 	bwg.Wait()
+}
+
+func isRevisionDeployed(revisions map[string]bool, revision string) bool {
+	for r := range revisions {
+		if r == revision {
+			return true
+		}
+	}
+	return false
+}
+
+func getRevisions(r map[string]bool) string {
+	var arr []string
+	for s := range r {
+		arr = append(arr, s)
+	}
+	return strings.Join(arr, ",")
 }
