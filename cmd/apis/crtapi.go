@@ -46,12 +46,12 @@ var CreateCmd = &cobra.Command{
 				return err
 			}
 
-			err = bundle.GenerateAPIProxyDefFromOAS(name, oasDocName)
+			err = bundle.GenerateAPIProxyDefFromOAS(name, oasDocName, skipPolicy)
 			if err != nil {
 				return err
 			}
 
-			err = proxybundle.GenerateAPIProxyBundle(name, string(content), oasDocName)
+			err = proxybundle.GenerateAPIProxyBundle(name, string(content), oasDocName, skipPolicy)
 			if err != nil {
 				return err
 			}
@@ -69,7 +69,7 @@ var CreateCmd = &cobra.Command{
 }
 
 var proxy, oasFile, oasURI string
-var importProxy, validateSpec bool
+var importProxy, validateSpec, skipPolicy bool
 
 func init() {
 
@@ -85,5 +85,8 @@ func init() {
 		true, "Import API Proxy after generation from spec")
 	CreateCmd.Flags().BoolVarP(&validateSpec, "validate", "",
 		true, "Validate Spec before generating proxy")
+	CreateCmd.Flags().BoolVarP(&skipPolicy, "skip-policy", "",
+		false, "Skip adding the OAS Validate policy")
+
 	_ = CreateCmd.MarkFlagRequired("name")
 }

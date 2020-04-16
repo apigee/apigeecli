@@ -28,7 +28,7 @@ import (
 	target "github.com/srinandan/apigeecli/bundlegen/targetendpoint"
 )
 
-func GenerateAPIProxyBundle(name string, content string, fileName string) (err error) {
+func GenerateAPIProxyBundle(name string, content string, fileName string, skipPolicy bool) (err error) {
 	const rootDir = "apiproxy"
 	var apiProxyData, proxyEndpointData, targetEndpointData string
 
@@ -76,20 +76,16 @@ func GenerateAPIProxyBundle(name string, content string, fileName string) (err e
 		return err
 	}
 
-	if err = os.MkdirAll(oasDirPath, os.ModePerm); err != nil {
-		return err
-	}
-
-	if err = writeXMLData(oasDirPath+string(os.PathSeparator)+fileName, content); err != nil {
-		return err
+	if !skipPolicy {
+		if err = os.MkdirAll(oasDirPath, os.ModePerm); err != nil {
+			return err
+		}
+		if err = writeXMLData(oasDirPath+string(os.PathSeparator)+fileName, content); err != nil {
+			return err
+		}
 	}
 
 	if err = os.Mkdir(policiesDirPath, os.ModePerm); err != nil {
-		return err
-	}
-
-	//add oas policy
-	if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"OpenAPI-Spec-Validation-1.xml", policies.AddOpenAPIValidatePolicy(fileName)); err != nil {
 		return err
 	}
 
@@ -103,6 +99,13 @@ func GenerateAPIProxyBundle(name string, content string, fileName string) (err e
 	//add api key policy
 	if genapi.GenerateAPIKeyPolicy() {
 		if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"Verify-API-Key-1.xml", policies.AddVerifyApiKeyPolicy()); err != nil {
+			return err
+		}
+	}
+
+	if !skipPolicy {
+		//add oas policy
+		if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"OpenAPI-Spec-Validation-1.xml", policies.AddOpenAPIValidatePolicy(fileName)); err != nil {
 			return err
 		}
 	}

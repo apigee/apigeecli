@@ -106,7 +106,7 @@ func isFileYaml(name string) bool {
 	return false
 }
 
-func GenerateAPIProxyDefFromOAS(name string, oasDocName string) (err error) {
+func GenerateAPIProxyDefFromOAS(name string, oasDocName string, skipPolicy bool) (err error) {
 
 	if doc == nil {
 		return fmt.Errorf("Open API document not loaded")
@@ -124,8 +124,11 @@ func GenerateAPIProxyDefFromOAS(name string, oasDocName string) (err error) {
 	apiproxy.SetConfigurationVersion()
 	apiproxy.AddTargetEndpoint("default")
 	apiproxy.AddProxyEndpoint("default")
-	apiproxy.AddResource(oasDocName)
-	apiproxy.AddPolicy("Validate-" + name + "-Schema")
+
+	if !skipPolicy {
+		apiproxy.AddResource(oasDocName)
+		apiproxy.AddPolicy("Validate-" + name + "-Schema")
+	}
 
 	u, err := GetEndpoint(doc)
 	if err != nil {
@@ -137,7 +140,10 @@ func GenerateAPIProxyDefFromOAS(name string, oasDocName string) (err error) {
 	target.NewTargetEndpoint(u.Scheme + "://" + u.Hostname())
 
 	proxies.NewProxyEndpoint(u.Path)
-	proxies.AddStepToPreFlowRequest("OpenAPI-Spec-Validation-1")
+
+	if !skipPolicy {
+		proxies.AddStepToPreFlowRequest("OpenAPI-Spec-Validation-1")
+	}
 
 	if err = GenerateFlows(doc.Paths); err != nil {
 		return err
