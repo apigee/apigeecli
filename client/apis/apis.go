@@ -387,7 +387,7 @@ func batchImport(entities []string, pwg *sync.WaitGroup) {
 }
 
 func isRevisionDeployed(revisions map[string]bool, revision string) bool {
-	for _, r := range revisions {
+	for r := range revisions {
 		if r == revision {
 			return true
 		}
