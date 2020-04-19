@@ -32,8 +32,18 @@ var CreateCmd = &cobra.Command{
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = products.UpdateAttribute(productName, istioAttributeName, strings.Join(serviceNames, ","))
-		return err
+		apiclient.SetPrintOutput(false)
+		_, err = products.ListAttributes(productName, istioAttributeName)
+		apiclient.SetPrintOutput(true)
+		if err != nil {
+			attr := make(map[string]string)
+			attr[string(istioAttributeName)] = strings.Join(serviceNames, ",")
+			_, err = products.Update(productName, "", "", "", "", "", "", nil, nil, nil, attr)
+			return err
+		} else {
+			_, err = products.UpdateAttribute(productName, istioAttributeName, strings.Join(serviceNames, ","))
+			return err
+		}
 	},
 }
 
