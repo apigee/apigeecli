@@ -29,6 +29,12 @@ var AttributesCmd = &cobra.Command{
 var attrName string
 
 func init() {
+
+	AttributesCmd.PersistentFlags().StringVarP(&name, "name", "n",
+		"", "API Product name")
+
+	_ = AttributesCmd.MarkPersistentFlagRequired("name")
+
 	AttributesCmd.AddCommand(DelAttrCmd)
 	AttributesCmd.AddCommand(ListAttrCmd)
 	AttributesCmd.AddCommand(GetAttrCmd)
