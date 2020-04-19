@@ -30,7 +30,7 @@ var ListCmd = &cobra.Command{
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = products.ListAttributes(productName, istioAttributeName)
+		_, err = products.GetAttribute(productName, istioAttributeName)
 		return err
 	},
 }
