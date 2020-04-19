@@ -37,13 +37,18 @@ type apiProduct struct {
 }
 
 type product struct {
-	Name         string      `json:"name,omitempty"`
-	DisplayName  string      `json:"displayName,omitempty"`
-	ApprovalType string      `json:"approvalType,omitempty"`
-	Attributes   []attribute `json:"attributes,omitempty"`
-	APIResources []string    `json:"apiResources,omitempty"`
-	Environments []string    `json:"environments,omitempty"`
-	Proxies      []string    `json:"proxies,omitempty"`
+	Name          string      `json:"name,omitempty"`
+	DisplayName   string      `json:"displayName,omitempty"`
+	Description   string      `json:"description,omitempty"`
+	ApprovalType  string      `json:"approvalType,omitempty"`
+	Attributes    []attribute `json:"attributes,omitempty"`
+	APIResources  []string    `json:"apiResources,omitempty"`
+	Environments  []string    `json:"environments,omitempty"`
+	Proxies       []string    `json:"proxies,omitempty"`
+	Quota         string      `json:"quota,omitempty"`
+	QuotaInterval string      `json:"quotaInterval,omitempty"`
+	QuotaTimeUnit string      `json:"quotaTimeUnit,omitempty"`
+	Scopes        []string    `json:"scopes,omitempty"`
 }
 
 //attribute to used to hold custom attributes for entities
@@ -118,15 +123,86 @@ func Delete(name string) (respBody []byte, err error) {
 	return respBody, err
 }
 
+//Update
+func Update(name string, description string, approval string, displayName string, quota string, quotaInterval string, quotaUnit string, environments []string, proxies []string, scopes []string, attrs map[string]string) (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.BaseURL)
+	apiclient.SetPrintOutput(false)
+	respBody, err = Get(name)
+	if err != nil {
+		return nil, err
+	}
+	apiclient.SetPrintOutput(true)
+
+	p := product{}
+
+	err = json.Unmarshal(respBody, &p)
+	if err != nil {
+		return nil, err
+	}
+
+	if displayName != "" {
+		p.DisplayName = displayName
+	}
+
+	if description != "" {
+		p.Description = description
+	}
+
+	if quota != "" {
+		p.Quota = quota
+	}
+
+	if quotaInterval != "" {
+		p.QuotaInterval = quotaInterval
+	}
+
+	if quotaUnit != "" {
+		p.QuotaTimeUnit = quotaUnit
+	}
+
+	if len(environments) > 0 {
+		p.Environments = append(p.Environments, environments...)
+	}
+
+	if len(proxies) > 0 {
+		p.Proxies = append(p.Proxies, proxies...)
+	}
+
+	if len(scopes) > 0 {
+		p.Scopes = append(p.Scopes, scopes...)
+	}
+
+	if len(attrs) > 0 {
+		//create new attributes
+		for k, v := range attrs {
+			a := attribute{}
+			a.Name = k
+			a.Value = v
+			p.Attributes = append(p.Attributes, a)
+		}
+	}
+
+	payload, err := json.Marshal(p)
+	if err != nil {
+		return nil, err
+	}
+
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts", name)
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), string(payload), "PUT")
+
+	return respBody, err
+}
+
 //UpdateAttribute
 func UpdateAttribute(name string, key string, value string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts", name, "attributes", key)
-	payload := "{ \"name\":\"" + key + "\",\"value\":" + value + "\"}"
+	payload := "{ \"name\":\"" + key + "\",\"value\":\"" + value + "\"}"
 	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload)
 	return respBody, err
 }
 
+//ListAttributes
 func ListAttributes(name string, key string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts", name, "attributes", key)
