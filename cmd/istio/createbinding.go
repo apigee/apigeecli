@@ -33,7 +33,7 @@ var CreateCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetPrintOutput(false)
-		_, err = products.ListAttributes(productName, istioAttributeName)
+		_, err = products.GetAttribute(productName, istioAttributeName)
 		apiclient.SetPrintOutput(true)
 		if err != nil {
 			attr := make(map[string]string)
