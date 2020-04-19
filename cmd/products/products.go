@@ -29,6 +29,10 @@ var Cmd = &cobra.Command{
 var org, name string
 var conn int
 
+var description, approval, displayName, quota, quotaInterval, quotaUnit string
+var environments, proxies, scopes []string
+var attrs map[string]string
+
 func init() {
 
 	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
@@ -42,4 +46,6 @@ func init() {
 	Cmd.AddCommand(CreateCmd)
 	Cmd.AddCommand(ImpCmd)
 	Cmd.AddCommand(ExpCmd)
+	Cmd.AddCommand(UpdateCmd)
+	Cmd.AddCommand(AttributesCmd)
 }
