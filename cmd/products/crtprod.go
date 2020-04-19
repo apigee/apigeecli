@@ -30,10 +30,6 @@ var CreateCmd = &cobra.Command{
 	},
 }
 
-var description, approval, displayName, quota, quotaInterval, quotaUnit string
-var environments, proxies, scopes []string
-var attrs map[string]string
-
 func init() {
 
 	CreateCmd.Flags().StringVarP(&name, "name", "n",
