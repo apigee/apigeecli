@@ -21,3 +21,6 @@ apigeecli
 vendor/
 # binaries
 dist/
+
+#keys for envoy
+remote-service.*
