@@ -26,9 +26,9 @@ import (
 	cache "github.com/srinandan/apigeecli/cmd/cache"
 	"github.com/srinandan/apigeecli/cmd/developers"
 	"github.com/srinandan/apigeecli/cmd/env"
+	"github.com/srinandan/apigeecli/cmd/envoy"
 	flowhooks "github.com/srinandan/apigeecli/cmd/flowhooks"
 	"github.com/srinandan/apigeecli/cmd/iam"
-	"github.com/srinandan/apigeecli/cmd/istio"
 	"github.com/srinandan/apigeecli/cmd/keyaliases"
 	"github.com/srinandan/apigeecli/cmd/keystores"
 	"github.com/srinandan/apigeecli/cmd/kvm"
@@ -97,7 +97,7 @@ func init() {
 	RootCmd.AddCommand(res.Cmd)
 	RootCmd.AddCommand(projects.Cmd)
 	RootCmd.AddCommand(iam.Cmd)
-	RootCmd.AddCommand(istio.Cmd)
+	RootCmd.AddCommand(envoy.Cmd)
 }
 
 func initConfig() {
