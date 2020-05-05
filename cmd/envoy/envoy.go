@@ -31,11 +31,6 @@ var serviceNames []string
 const envoyAttributeName = "apigee-remote-service-targets"
 
 func init() {
-	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
-		"", "Apigee organization name")
-
-	_ = Cmd.MarkPersistentFlagRequired("org")
-
 	Cmd.AddCommand(CreateCmd)
 	Cmd.AddCommand(ListCmd)
 	Cmd.AddCommand(RemoveCmd)

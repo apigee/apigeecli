@@ -15,6 +15,8 @@
 package envoy
 
 import (
+	"fmt"
+
 	"github.com/spf13/cobra"
 )
 
@@ -27,10 +29,11 @@ var GenCmd = &cobra.Command{
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		err = Generatekeys(kid)
-		if err != nil {
+		if err = Generatekeys(kid); err != nil {
 			return err
 		}
+		fmt.Println("Add the generated files to the Kubernetes secret:")
+		fmt.Println("kubectl create secret generic {org}-{env}-policy-secret -n apigee --from-file=remote-service.key --from-file=remote-service.crt --from-file=remote-service.properties")
 		return Generatekid(kid)
 	},
 }
