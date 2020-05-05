@@ -73,12 +73,14 @@ var RemoveCmd = &cobra.Command{
 var serviceName string
 
 func init() {
-
+	RemoveCmd.Flags().StringVarP(&org, "org", "o",
+		"", "Apigee organization name")
 	RemoveCmd.Flags().StringVarP(&productName, "prod", "p",
 		"", "Apigee API Product name")
 	RemoveCmd.Flags().StringVarP(&serviceName, "svc", "s",
 		"", "Envoy Service name")
 
+	_ = RemoveCmd.MarkFlagRequired("org")
 	_ = RemoveCmd.MarkFlagRequired("prod")
 	_ = RemoveCmd.MarkFlagRequired("svc")
 }

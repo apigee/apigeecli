@@ -36,9 +36,11 @@ var ListCmd = &cobra.Command{
 }
 
 func init() {
-
+	ListCmd.Flags().StringVarP(&org, "org", "o",
+		"", "Apigee organization name")
 	ListCmd.Flags().StringVarP(&productName, "prod", "p",
 		"", "Apigee API Product name")
 
+	_ = ListCmd.MarkFlagRequired("org")
 	_ = ListCmd.MarkFlagRequired("prod")
 }

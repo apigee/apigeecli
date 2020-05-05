@@ -48,12 +48,14 @@ var CreateCmd = &cobra.Command{
 }
 
 func init() {
-
+	CreateCmd.Flags().StringVarP(&org, "org", "o",
+		"", "Apigee organization name")
 	CreateCmd.Flags().StringVarP(&productName, "prod", "p",
 		"", "Apigee API Product name")
 	CreateCmd.Flags().StringArrayVarP(&serviceNames, "svcs", "s",
 		[]string{}, "Envoy Service names")
 
+	_ = CreateCmd.MarkFlagRequired("org")
 	_ = CreateCmd.MarkFlagRequired("prod")
 	_ = CreateCmd.MarkFlagRequired("svc")
 }
