@@ -12,33 +12,33 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package istio
+package apps
 
 import (
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/apiclient"
-	"github.com/srinandan/apigeecli/client/products"
 )
 
-//ListCmd bindings
-var ListCmd = &cobra.Command{
-	Use:   "list",
-	Short: "List Istio bindings to an API Product",
-	Long:  "List Istio bindings to an API Product",
-	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
-		return nil
-	},
-	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = products.GetAttribute(productName, istioAttributeName)
-		return err
-	},
+//KeysCmd
+var KeysCmd = &cobra.Command{
+	Use:   "keys",
+	Short: "Manage developer app keys",
+	Long:  "Manage developer apps keys",
 }
+
+var developerEmail, key string
 
 func init() {
 
-	ListCmd.Flags().StringVarP(&productName, "prod", "p",
-		"", "Apigee API Product name")
+	KeysCmd.PersistentFlags().StringVarP(&name, "name", "n",
+		"", "Developer App name")
 
-	_ = ListCmd.MarkFlagRequired("prod")
+	KeysCmd.PersistentFlags().StringVarP(&developerEmail, "dev", "d",
+		"", "Developer email")
+
+	_ = KeysCmd.MarkPersistentFlagRequired("dev")
+	_ = KeysCmd.MarkPersistentFlagRequired("app")
+
+	KeysCmd.AddCommand(CreateKeyCmd)
+	KeysCmd.AddCommand(GetKeyCmd)
+	KeysCmd.AddCommand(DeleteKeyCmd)
 }

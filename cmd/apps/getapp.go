@@ -57,7 +57,7 @@ var GetCmd = &cobra.Command{
 	},
 }
 
-var appID, productName string
+var productName string
 
 func init() {
 

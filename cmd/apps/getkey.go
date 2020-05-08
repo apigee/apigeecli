@@ -16,32 +16,29 @@ package apps
 
 import (
 	"github.com/spf13/cobra"
+	"github.com/srinandan/apigeecli/apiclient"
+	"github.com/srinandan/apigeecli/client/apps"
 )
 
-//Cmd to manage apps
-var Cmd = &cobra.Command{
-	Use:     "apps",
-	Aliases: []string{"applications"},
-	Short:   "Manage Apigee Developer Applications",
-	Long:    "Manage Apigee Developer Applications",
+//GetKeyCmd to manage tracing of apis
+var GetKeyCmd = &cobra.Command{
+	Use:   "get",
+	Short: "Get a developer app key",
+	Long:  "Get a a developer app key",
+	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetApigeeOrg(org)
+		return nil
+	},
+	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		_, err = apps.GetKey(developerEmail, name, key)
+		return
+	},
 }
-
-var appID, name, org string
-var conn int
 
 func init() {
 
-	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
-		"", "Apigee organization name")
+	GetKeyCmd.Flags().StringVarP(&key, "key", "k",
+		"", "developer app consumer key")
 
-	_ = Cmd.MarkPersistentFlagRequired("org")
-
-	Cmd.AddCommand(ListCmd)
-	Cmd.AddCommand(GetCmd)
-	Cmd.AddCommand(DelCmd)
-	Cmd.AddCommand(CreateCmd)
-	Cmd.AddCommand(GenKeyCmd)
-	Cmd.AddCommand(ImpCmd)
-	Cmd.AddCommand(ExpCmd)
-	Cmd.AddCommand(KeysCmd)
+	_ = GetKeyCmd.MarkFlagRequired("key")
 }

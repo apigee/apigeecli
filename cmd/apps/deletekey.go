@@ -12,31 +12,33 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package istio
+package apps
 
 import (
 	"github.com/spf13/cobra"
+	"github.com/srinandan/apigeecli/apiclient"
+	"github.com/srinandan/apigeecli/client/apps"
 )
 
-//Cmd to manage orgs
-var Cmd = &cobra.Command{
-	Use:   "istio-binding",
-	Short: "Manage Istio API Product Bindings Apigee",
-	Long:  "Manage Istio API Product Bindings Apigee",
+//DeleteKeyCmd to manage tracing of apis
+var DeleteKeyCmd = &cobra.Command{
+	Use:   "delete",
+	Short: "Delete a developer app key",
+	Long:  "Delete a a developer app key",
+	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetApigeeOrg(org)
+		return nil
+	},
+	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		_, err = apps.DeleteKey(developerEmail, name, key)
+		return
+	},
 }
 
-var org, productName string
-var serviceNames []string
-
-const istioAttributeName = "apigee-remote-service-targets"
-
 func init() {
-	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
-		"", "Apigee organization name")
 
-	_ = Cmd.MarkPersistentFlagRequired("org")
+	DeleteKeyCmd.Flags().StringVarP(&key, "key", "k",
+		"", "developer app consumer key")
 
-	Cmd.AddCommand(CreateCmd)
-	Cmd.AddCommand(ListCmd)
-	Cmd.AddCommand(RemoveCmd)
+	_ = DeleteKeyCmd.MarkFlagRequired("name")
 }
