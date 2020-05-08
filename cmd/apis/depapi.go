@@ -27,6 +27,7 @@ var DepCmd = &cobra.Command{
 	Long:  "Deploys a revision of an existing API proxy to an environment in an organization",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetApigeeOrg(org)
+		apiclient.SetApigeeEnv(env)
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
