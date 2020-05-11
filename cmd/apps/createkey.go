@@ -20,7 +20,7 @@ import (
 	"github.com/srinandan/apigeecli/client/apps"
 )
 
-//CreateKeyCmd to manage tracing of apis
+//CreateKeyCmd to create developer keys
 var CreateKeyCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a developer app key",
