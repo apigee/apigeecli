@@ -28,7 +28,6 @@ func CreateKey(developerEmail string, appID string, consumerKey string, consumer
 
 	key := []string{}
 
-	key = append(key, "\"apiProducts\":[\""+getArrayStr(apiProducts)+"\"]")
 	key = append(key, "\"scopes\":[\""+getArrayStr(scopes)+"\"]")
 
 	if len(attrs) != 0 {
@@ -46,7 +45,22 @@ func CreateKey(developerEmail string, appID string, consumerKey string, consumer
 	payload := "{" + strings.Join(key, ",") + "}"
 
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", developerEmail, "apps", appID, "keys")
+
+	if len(apiProducts) > 0 {
+		apiclient.SetPrintOutput(false)
+	}
 	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload)
+
+	if err != nil {
+		return respBody, err
+	}
+
+	//since the API does not support adding products when creating a key, use a second API call to add products
+	if len(apiProducts) > 0 {
+		apiclient.SetPrintOutput(true)
+		respBody, err = UpdateKeyProducts(developerEmail, appID, consumerKey, apiProducts)
+	}
+
 	return respBody, err
 }
 
@@ -63,5 +77,56 @@ func GetKey(developerEmail string, appID string, key string) (respBody []byte, e
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", developerEmail, "apps", appID, "keys", key)
 	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	return respBody, err
+}
+
+//UpdateKey
+func UpdateKey(developerEmail string, appID string, consumerKey string, consumerSecret string, apiProducts []string, scopes []string, attrs map[string]string) (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.BaseURL)
+
+	key := []string{}
+
+	if len(apiProducts) > 0 {
+		key = append(key, "\"apiProducts\":[\""+getArrayStr(apiProducts)+"\"]")
+	}
+
+	if len(scopes) > 0 {
+		key = append(key, "\"scopes\":[\""+getArrayStr(scopes)+"\"]")
+	}
+
+	if len(attrs) > 0 {
+		attributes := []string{}
+		for keyattr, value := range attrs {
+			attributes = append(attributes, "{\"name\":\""+keyattr+"\",\"value\":\""+value+"\"}")
+		}
+		attributesStr := "\"attributes\":[" + strings.Join(attributes, ",") + "]"
+		key = append(key, attributesStr)
+	}
+
+	key = append(key, "\"consumerKey\":\""+consumerKey+"\"")
+
+	if consumerSecret != "" {
+		key = append(key, "\"consumerSecret\":\""+consumerSecret+"\"")
+	}
+
+	payload := "{" + strings.Join(key, ",") + "}"
+
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", developerEmail, "apps", appID, "keys", consumerKey)
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload)
+
+	return respBody, err
+}
+
+func UpdateKeyProducts(developerEmail string, appID string, consumerKey string, apiProducts []string) (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.BaseURL)
+
+	key := []string{}
+	key = append(key, "\"apiProducts\":[\""+getArrayStr(apiProducts)+"\"]")
+
+	payload := "{" + strings.Join(key, ",") + "}"
+
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", developerEmail, "apps", appID, "keys", consumerKey)
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload)
+
 	return respBody, err
 }
