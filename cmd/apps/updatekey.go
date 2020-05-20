@@ -35,8 +35,6 @@ var UpdateKeyCmd = &cobra.Command{
 	},
 }
 
-var secret string
-
 func init() {
 
 	UpdateKeyCmd.Flags().StringVarP(&key, "key", "k",

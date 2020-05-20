@@ -25,7 +25,7 @@ var KeysCmd = &cobra.Command{
 	Long:  "Manage developer apps keys",
 }
 
-var developerEmail, key string
+var developerEmail, key, secret string
 
 func init() {
 
