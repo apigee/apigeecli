@@ -21,6 +21,7 @@ import (
 	"net/url"
 	"os"
 	"path"
+	"regexp"
 	"strings"
 
 	"github.com/srinandan/apigeecli/clilog"
@@ -222,8 +223,13 @@ func SetIAMServiceAccount(serviceAccountName string, iamRole string) (err error)
 		role = "roles/apigee.analyticsAgent"
 	case "deploy":
 		role = "roles/apigee.deployer"
-	default:
-		return fmt.Errorf("invalid service account role")
+	default: //assume this is a custom role definition
+		re := regexp.MustCompile(`projects\/([a-zA-Z0-9_-]+)\/roles\/([a-zA-Z0-9_-]+)`)
+		result := re.FindString(iamRole)
+		if result == "" {
+			return fmt.Errorf("custom role must be of the format projects/{project-id}/roles/{role-name}")
+		}
+		role = iamRole
 	}
 
 	u, _ := url.Parse(BaseURL)
