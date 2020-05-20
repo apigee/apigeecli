@@ -39,4 +39,5 @@ func init() {
 	IamCmd.AddCommand(SetDepCmd)
 	IamCmd.AddCommand(SetSyncCmd)
 	IamCmd.AddCommand(TestIamCmd)
+	IamCmd.AddCommand(SetCustCmd)
 }
