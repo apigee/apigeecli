@@ -281,3 +281,113 @@ func SetIAMServiceAccount(serviceAccountName string, iamRole string) (err error)
 
 	return err
 }
+
+//RemoveIAMServiceAccount removes/unbinds IAM SA from all roles for an Apigee Env
+func RemoveIAMServiceAccount(serviceAccountName string, iamRole string) (err error) {
+	u, _ := url.Parse(BaseURL)
+	u.Path = path.Join(u.Path, GetApigeeOrg(), "environments", GetApigeeEnv()+":getIamPolicy")
+	getIamPolicyBody, err := HttpClient(false, u.String())
+	clilog.Info.Println(string(getIamPolicyBody))
+	if err != nil {
+		clilog.Error.Println(err)
+		return err
+	}
+
+	getIamPolicy := iamPolicy{}
+
+	err = json.Unmarshal(getIamPolicyBody, &getIamPolicy)
+	if err != nil {
+		clilog.Error.Println(err)
+		return err
+	}
+
+	foundRole := false
+	foundMember := false
+	removeIamPolicy := setIamPolicy{}
+
+	numBindings := len(getIamPolicy.Bindings)
+
+	if numBindings < 1 {
+		return fmt.Errorf("role %s not found for envrionment %s", iamRole, GetApigeeEnv())
+	} else if numBindings == 1 { //there is only 1 binding
+		clilog.Info.Printf("comparing %s and %s\n", getIamPolicy.Bindings[0].Role, iamRole)
+		if getIamPolicy.Bindings[0].Role == iamRole {
+			if len(getIamPolicy.Bindings[0].Members) > 1 { //more than one memeber in the role
+				removeIamPolicy.Policy.Etag = getIamPolicy.Etag
+				removeIamPolicy.Policy.Bindings[0].Role = getIamPolicy.Bindings[0].Role
+				for _, member := range getIamPolicy.Bindings[0].Members {
+					clilog.Info.Printf("comparing %s and %s\n", serviceAccountName, member)
+					if member == serviceAccountName {
+						clilog.Info.Println("found member")
+						foundMember = true
+						//don't include this member
+					} else {
+						removeIamPolicy.Policy.Bindings[0].Members = append(removeIamPolicy.Policy.Bindings[0].Members, member)
+					}
+				}
+				if !foundMember {
+					return fmt.Errorf("member %s not set for role %s in envrionment %s", serviceAccountName, iamRole, GetApigeeEnv())
+				}
+			} else { //there is one member, one role
+				if getIamPolicy.Bindings[0].Members[0] == serviceAccountName {
+					clilog.Info.Printf("comparing %s and %s\n", getIamPolicy.Bindings[0].Members[0], serviceAccountName)
+					removeIamPolicy.Policy.Etag = getIamPolicy.Etag
+				} else {
+					return fmt.Errorf("member %s not set for role %s in envrionment %s", serviceAccountName, iamRole, GetApigeeEnv())
+				}
+			}
+		} else {
+			return fmt.Errorf("role %s not found for envrionment %s", iamRole, GetApigeeEnv())
+		}
+	} else { //there are many binding, loop through them
+		removeIamPolicy.Policy.Etag = getIamPolicy.Etag
+		for _, binding := range getIamPolicy.Bindings {
+			members := []string{}
+			clilog.Info.Printf("comparing %s and %s\n", binding.Role, iamRole)
+			if binding.Role == iamRole {
+				if len(binding.Members) > 1 { //there is more than one member in the role
+					for _, member := range binding.Members {
+						if member == serviceAccountName { //remove the member
+							foundMember = true
+						} else {
+							members = append(members, member)
+						}
+					}
+					if !foundMember {
+						return fmt.Errorf("member %s not set for role %s in envrionment %s", serviceAccountName, iamRole, GetApigeeEnv())
+					}
+				} else { //there is only one member in the role
+					if binding.Members[0] == serviceAccountName {
+						foundMember = true
+					} else {
+						return fmt.Errorf("member %s not set for role %s in envrionment %s", serviceAccountName, iamRole, GetApigeeEnv())
+					}
+				}
+				copyRoleBinding := roleBinding{}
+				copyRoleBinding.Role = binding.Role
+				copyRoleBinding.Members = members
+				removeIamPolicy.Policy.Bindings = append(removeIamPolicy.Policy.Bindings, copyRoleBinding)
+				foundRole = true
+			} else { //copy the binding as-is
+				removeIamPolicy.Policy.Bindings = append(removeIamPolicy.Policy.Bindings, binding)
+			}
+		}
+
+		if !foundRole {
+			return fmt.Errorf("role %s not found for envrionment %s", iamRole, GetApigeeEnv())
+		}
+	}
+
+	u, _ = url.Parse(BaseURL)
+	u.Path = path.Join(u.Path, GetApigeeOrg(), "environments", GetApigeeEnv()+":setIamPolicy")
+
+	removeIamPolicyBody, err := json.Marshal(removeIamPolicy)
+	if err != nil {
+		clilog.Error.Println(err)
+		return err
+	}
+
+	_, err = HttpClient(false, u.String(), string(removeIamPolicyBody))
+
+	return err
+}

@@ -1,20 +1,21 @@
-## apigeecli envs iam setdeploy
+## apigeecli envs iam removerole
 
-Set Apigee Deployer role for a SA on an environment
+Remove a member or SA from a role for an environment
 
 ### Synopsis
 
-Set Apigee Deployer role for a SA on an environment
+Remove a member or SA from a role for an environment
 
 ```
-apigeecli envs iam setdeploy [flags]
+apigeecli envs iam removerole [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help          help for setdeploy
+  -h, --help          help for removerole
   -n, --name string   Service Account Name
+  -r, --role string   IAM Role
 ```
 
 ### Options inherited from parent commands

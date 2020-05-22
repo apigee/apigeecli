@@ -25,7 +25,7 @@ var IamCmd = &cobra.Command{
 	Long:  "Manage IAM permissions for the environment",
 }
 
-var serviceAccountName string
+var serviceAccountName, role string
 
 func init() {
 
@@ -40,4 +40,5 @@ func init() {
 	IamCmd.AddCommand(SetSyncCmd)
 	IamCmd.AddCommand(TestIamCmd)
 	IamCmd.AddCommand(SetCustCmd)
+	IamCmd.AddCommand(RemoveRoleCmd)
 }

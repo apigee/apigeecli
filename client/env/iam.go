@@ -34,6 +34,11 @@ func SetIAM(serviceAccountName string, permission string) (err error) {
 	return apiclient.SetIAMServiceAccount(serviceAccountName, permission)
 }
 
+//RemoveIAM
+func RemoveIAM(serviceAccountName string, role string) (err error) {
+	return apiclient.RemoveIAMServiceAccount(serviceAccountName, role)
+}
+
 //TestIAM
 func TestIAM() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
