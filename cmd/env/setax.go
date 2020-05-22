@@ -15,6 +15,8 @@
 package env
 
 import (
+	"fmt"
+
 	"github.com/spf13/cobra"
 	"github.com/srinandan/apigeecli/apiclient"
 	environments "github.com/srinandan/apigeecli/client/env"
@@ -31,7 +33,12 @@ var SetAxCmd = &cobra.Command{
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		return environments.SetIAM(serviceAccountName, "analytics")
+		err = environments.SetIAM(serviceAccountName, "analytics")
+		if err != nil {
+			return err
+		}
+		fmt.Printf("Service account %s granted access to Apigee Analytics Viewer role\n", serviceAccountName)
+		return nil
 	},
 }
 

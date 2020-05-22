@@ -48,8 +48,6 @@ var SetCustCmd = &cobra.Command{
 	},
 }
 
-var role string
-
 func init() {
 
 	SetCustCmd.Flags().StringVarP(&serviceAccountName, "name", "n",
