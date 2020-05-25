@@ -21,6 +21,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/srinandan/apigeecli/apiclient"
 	"github.com/srinandan/apigeecli/client/keyaliases"
+	"github.com/srinandan/apigeecli/clilog"
 )
 
 //CreateCmd to create key aliases
@@ -79,7 +80,7 @@ func init() {
 
 func fileExists(filename string) bool {
 	if _, err := os.Stat(filename); err != nil {
-		fmt.Println(err)
+		clilog.Info.Println(err)
 		return false
 	}
 	return true
