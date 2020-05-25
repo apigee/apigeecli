@@ -339,7 +339,7 @@ func RemoveIAMServiceAccount(serviceAccountName string, iamRole string) (err err
 		} else {
 			return fmt.Errorf("role %s not found for envrionment %s", iamRole, GetApigeeEnv())
 		}
-	} else { //there are many binding, loop through them
+	} else { //there are many bindings, loop through them
 		removeIamPolicy.Policy.Etag = getIamPolicy.Etag
 		for _, binding := range getIamPolicy.Bindings {
 			members := []string{}
@@ -347,6 +347,7 @@ func RemoveIAMServiceAccount(serviceAccountName string, iamRole string) (err err
 			if binding.Role == iamRole {
 				if len(binding.Members) > 1 { //there is more than one member in the role
 					for _, member := range binding.Members {
+						clilog.Info.Printf("comparing %s and %s\n", member, serviceAccountName)
 						if member == serviceAccountName { //remove the member
 							foundMember = true
 						} else {
