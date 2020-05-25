@@ -20,7 +20,7 @@ import (
 	"github.com/srinandan/apigeecli/client/keyaliases"
 )
 
-//Cmd to create key aliases
+//CrtslfCmd to create self signed key aliases
 var CrtslfCmd = &cobra.Command{
 	Use:   "create-self-signed",
 	Short: "Create a Key Alias from self-seigned cert",

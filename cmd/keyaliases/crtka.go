@@ -20,7 +20,7 @@ import (
 	"github.com/srinandan/apigeecli/client/keyaliases"
 )
 
-//Cmd to create key aliases
+//CreateCmd to create key aliases
 var CreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a Key Alias from PEM, JAR or PKCS12 file",
@@ -44,7 +44,7 @@ func init() {
 	CreateCmd.Flags().StringVarP(&keystoreName, "key", "k",
 		"", "Name of the key store")
 	CreateCmd.Flags().StringVarP(&name, "alias", "s",
-		"", "Name of the key alias")
+		"", "Name of the key alias. File name of pem, jar or pfx file. Do not add the extension")
 	CreateCmd.Flags().StringVarP(&format, "format", "f",
 		"", "Format of the certificate")
 	CreateCmd.Flags().StringVarP(&password, "password", "p",
