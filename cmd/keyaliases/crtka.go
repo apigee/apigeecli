@@ -15,6 +15,9 @@
 package keyaliases
 
 import (
+	"fmt"
+	"os"
+
 	"github.com/spf13/cobra"
 	"github.com/srinandan/apigeecli/apiclient"
 	"github.com/srinandan/apigeecli/client/keyaliases"
@@ -31,6 +34,21 @@ var CreateCmd = &cobra.Command{
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		var fileformat string
+
+		switch format {
+		case "pem":
+			fileformat = "pem"
+		case "pkcs12":
+			fileformat = "pfx"
+		case "jar":
+			fileformat = "jar"
+		default:
+			return fmt.Errorf("invalid foramt key alias for %s", format)
+		}
+		if !fileExists(name + "." + fileformat) {
+			return fmt.Errorf("file %s.%s not found. Do not specify file extension with key alias name", name, fileformat)
+		}
 		_, err = keyaliases.Create(keystoreName, name, format, password, ignoreExpiry, ignoreNewLine, "")
 		return
 	},
@@ -44,7 +62,7 @@ func init() {
 	CreateCmd.Flags().StringVarP(&keystoreName, "key", "k",
 		"", "Name of the key store")
 	CreateCmd.Flags().StringVarP(&name, "alias", "s",
-		"", "Name of the key alias. File name of pem, jar or pfx file. Do not add the extension")
+		"", "Name of the key alias file. File name of pem, jar or pfx file. Do not add the extension")
 	CreateCmd.Flags().StringVarP(&format, "format", "f",
 		"", "Format of the certificate")
 	CreateCmd.Flags().StringVarP(&password, "password", "p",
@@ -57,4 +75,12 @@ func init() {
 	_ = CreateCmd.MarkFlagRequired("alias")
 	_ = CreateCmd.MarkFlagRequired("format")
 	_ = CreateCmd.MarkFlagRequired("key")
+}
+
+func fileExists(filename string) bool {
+	if _, err := os.Stat(filename); err != nil {
+		fmt.Println(err)
+		return false
+	}
+	return true
 }
