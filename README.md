@@ -79,4 +79,10 @@ ___
 
 ## Available Commands
 
-Here is a [list](./docs/apigeecli.md) of available commands 
+Here is a [list](./docs/apigeecli.md) of available commands
+
+___
+
+## Support
+
+This is not an officially supported Google product
