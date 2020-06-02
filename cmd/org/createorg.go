@@ -26,7 +26,7 @@ var CreateCmd = &cobra.Command{
 	Short: "Create a new Apigee Org",
 	Long:  "Create a new Apigee Org; Your GCP project must be whitelist for this operation",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
+		apiclient.SetApigeeOrg(projectID)
 		apiclient.SetProjectID(projectID)
 		return nil
 	},
@@ -40,14 +40,11 @@ var region, projectID string
 
 func init() {
 
-	CreateCmd.Flags().StringVarP(&org, "org", "o",
-		"", "Apigee organization name")
 	CreateCmd.Flags().StringVarP(&region, "reg", "r",
 		"", "Analytics region name")
 	CreateCmd.Flags().StringVarP(&projectID, "prj", "p",
 		"", "GCP Project ID")
 
 	_ = CreateCmd.MarkFlagRequired("prj")
-	_ = CreateCmd.MarkFlagRequired("org")
 	_ = CreateCmd.MarkFlagRequired("reg")
 }
