@@ -16,6 +16,7 @@ package products
 
 import (
 	"github.com/spf13/cobra"
+	"github.com/srinandan/apigeecli/apiclient"
 	"github.com/srinandan/apigeecli/client/products"
 )
 
@@ -24,6 +25,10 @@ var CreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create an API product",
 	Long:  "Create an API product",
+	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetApigeeOrg(org)
+		return nil
+	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		_, err = products.Create(name, description, approval, displayName, quota, quotaInterval, quotaUnit, environments, proxies, scopes, attrs)
 		return
