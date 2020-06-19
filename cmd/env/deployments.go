@@ -18,28 +18,19 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//Cmd to manage envs
-var Cmd = &cobra.Command{
-	Use:     "envs",
-	Aliases: []string{"environments"},
-	Short:   "Manage Apigee environments",
-	Long:    "Manage Apigee environments",
+//DeployCmd to manage api deployments for an environment
+var DeployCmd = &cobra.Command{
+	Use:   "deployments",
+	Short: "Manage deployments for the environment",
+	Long:  "Manage deployments for the environment",
 }
-
-var org, environment string
 
 func init() {
 
-	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
-		"", "Apigee organization name")
+	DeployCmd.PersistentFlags().StringVarP(&environment, "env", "e",
+		"", "Apigee environment name")
 
-	_ = Cmd.MarkPersistentFlagRequired("org")
+	_ = DeployCmd.MarkPersistentFlagRequired("env")
 
-	Cmd.AddCommand(ListCmd)
-	Cmd.AddCommand(GetCmd)
-	Cmd.AddCommand(IamCmd)
-	Cmd.AddCommand(DebugCmd)
-	Cmd.AddCommand(ObCmd)
-	Cmd.AddCommand(PropCmd)
-	Cmd.AddCommand(DeployCmd)
+	DeployCmd.AddCommand(GetDeployCmd)
 }

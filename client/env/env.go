@@ -43,6 +43,14 @@ func List() (respBody []byte, err error) {
 	return respBody, err
 }
 
+//GetDeployments
+func GetDeployments() (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.BaseURL)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "deployments")
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	return respBody, err
+}
+
 //SetEnvProperty is used to set env properties
 func SetEnvProperty(name string, value string) (err error) {
 	//EnvProperty contains an individual org flag or property
