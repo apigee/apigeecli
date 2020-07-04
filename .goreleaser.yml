@@ -43,3 +43,10 @@ archives:
 release:
   draft: true
   prerelease: true
+dockers:
+  -
+    goos: linux
+    goarch: amd64
+    image_templates:
+    - "nandanks/apigeecli:{{ .Tag }}"
+    dockerfile: Dockerfile
