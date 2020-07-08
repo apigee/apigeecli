@@ -28,7 +28,7 @@ builds:
     ldflags:
     - -s -w -a -extldflags "-static" -X main.Version={{.Tag}} -X main.Git={{.Commit}}
     hooks:
-      post: /bin/sh compress.sh
+      post: upx "{{ .Path }}"
 archives:
   - id: apigeecli
     format: zip
@@ -37,7 +37,6 @@ archives:
       darwin: Darwin
       linux: Linux
       windows: Windows
-      386: i386
       amd64: x86_64
     wrap_in_directory: true    
 release:
@@ -48,5 +47,14 @@ dockers:
     goos: linux
     goarch: amd64
     image_templates:
-    - "nandanks/apigeecli:{{ .Tag }}"
+    - "docker.io/nandanks/apigeecli:{{ .Tag }}"
     dockerfile: Dockerfile
+brews:
+  - tap:
+      owner: srinandan
+      name: homebrew-tap
+    skip_upload: true
+    download_strategy: CurlDownloadStrategy
+    folder: Formula    
+    url_template: "https://github.com/srinandan/apigeecli/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
+    homepage: "https://github.com/srinandan/apigeecli"
