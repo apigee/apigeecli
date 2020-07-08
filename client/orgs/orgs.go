@@ -76,6 +76,14 @@ func List() (respBody []byte, err error) {
 	return respBody, err
 }
 
+//GetDeployedIngressConfig
+func GetDeployedIngressConfig() (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.BaseURL)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "deployedIngressConfig")
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	return respBody, err
+}
+
 //SetOrgProperty is used to set org properties
 func SetOrgProperty(name string, value string) (err error) {
 	//OrgProperty contains an individual org flag or property

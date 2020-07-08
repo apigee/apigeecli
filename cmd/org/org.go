@@ -36,4 +36,5 @@ func init() {
 	Cmd.AddCommand(WlCmd)
 	Cmd.AddCommand(PropCmd)
 	Cmd.AddCommand(ObCmd)
+	Cmd.AddCommand(IngressCmd)
 }
