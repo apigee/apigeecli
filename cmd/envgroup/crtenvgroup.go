@@ -35,8 +35,6 @@ var CreateCmd = &cobra.Command{
 	},
 }
 
-var hostnames []string
-
 func init() {
 
 	CreateCmd.Flags().StringVarP(&name, "name", "n",

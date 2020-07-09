@@ -20,33 +20,33 @@ import (
 	"github.com/srinandan/apigeecli/client/envgroups"
 )
 
-//AttachCmd to get env group
-var AttachCmd = &cobra.Command{
-	Use:   "attach",
-	Short: "Attach an env to an Environment Group",
-	Long:  "Attach an env to an Environment Group",
+//DetachCmd to get env group
+var DetachCmd = &cobra.Command{
+	Use:   "detach",
+	Short: "Detach an env from an Environment Group",
+	Long:  "Detach an env from an Environment Group",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetApigeeOrg(org)
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = envgroups.Attach(name, environment)
+		_, err = envgroups.DetachEnvironment(name, environment)
 		return
 	},
 }
 
 func init() {
 
-	AttachCmd.Flags().StringVarP(&org, "org", "o",
+	DetachCmd.Flags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
 
-	AttachCmd.Flags().StringVarP(&name, "name", "n",
+	DetachCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of the environment group")
 
-	AttachCmd.Flags().StringVarP(&environment, "env", "e",
+	DetachCmd.Flags().StringVarP(&environment, "env", "e",
 		"", "Name of the environment")
 
-	_ = AttachCmd.MarkFlagRequired("org")
-	_ = AttachCmd.MarkFlagRequired("name")
-	_ = AttachCmd.MarkFlagRequired("env")
+	_ = DetachCmd.MarkFlagRequired("org")
+	_ = DetachCmd.MarkFlagRequired("name")
+	_ = DetachCmd.MarkFlagRequired("env")
 }

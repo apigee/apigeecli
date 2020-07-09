@@ -20,33 +20,28 @@ import (
 	"github.com/srinandan/apigeecli/client/envgroups"
 )
 
-//AttachCmd to get env group
-var AttachCmd = &cobra.Command{
-	Use:   "attach",
-	Short: "Attach an env to an Environment Group",
-	Long:  "Attach an env to an Environment Group",
+//UpdateCmd to create a new product
+var UpdateCmd = &cobra.Command{
+	Use:   "update",
+	Short: "Update hostnames in an Environment Group",
+	Long:  "Update hostnames in an Environment Group",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetApigeeOrg(org)
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = envgroups.Attach(name, environment)
+		_, err = envgroups.PatchHosts(name, hostnames)
 		return
 	},
 }
 
 func init() {
 
-	AttachCmd.Flags().StringVarP(&org, "org", "o",
-		"", "Apigee organization name")
+	UpdateCmd.Flags().StringVarP(&name, "name", "n",
+		"", "Name of the Environment Group")
+	UpdateCmd.Flags().StringArrayVarP(&hostnames, "hosts", "d",
+		[]string{}, "A list of hostnames")
 
-	AttachCmd.Flags().StringVarP(&name, "name", "n",
-		"", "Name of the environment group")
-
-	AttachCmd.Flags().StringVarP(&environment, "env", "e",
-		"", "Name of the environment")
-
-	_ = AttachCmd.MarkFlagRequired("org")
-	_ = AttachCmd.MarkFlagRequired("name")
-	_ = AttachCmd.MarkFlagRequired("env")
+	_ = UpdateCmd.MarkFlagRequired("name")
+	_ = UpdateCmd.MarkFlagRequired("hosts")
 }

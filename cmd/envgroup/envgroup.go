@@ -25,7 +25,8 @@ var Cmd = &cobra.Command{
 	Long:  "Manage Apigee environment groups",
 }
 
-var org, name string
+var org, name, environment string
+var hostnames []string
 
 func init() {
 
@@ -39,4 +40,7 @@ func init() {
 	Cmd.AddCommand(ListCmd)
 	Cmd.AddCommand(ListAttachCmd)
 	Cmd.AddCommand(GetCmd)
+	Cmd.AddCommand(DetachCmd)
+	Cmd.AddCommand(UpdateCmd)
+	Cmd.AddCommand(DelCmd)
 }
