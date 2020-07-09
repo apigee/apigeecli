@@ -140,8 +140,10 @@ func HttpClient(print bool, params ...string) (respBody []byte, err error) {
 	// The first parameter instructs whether the output should be printed
 	// The second parameter is url. If only one parameter is sent, assume GET
 	// The third parameter is the payload. The two parameters are sent, assume POST
-	// THe fourth parammeter is the method. If three parameters are sent, assume method in param
+	// THe fourth parameter is the method. If three parameters are sent, assume method in param
+	//The fifth parameter is content type
 	var req *http.Request
+	contentType := "application/json"
 
 	client := &http.Client{}
 	clilog.Info.Println("Connecting to: ", params[0])
@@ -153,17 +155,14 @@ func HttpClient(print bool, params ...string) (respBody []byte, err error) {
 		clilog.Info.Println("Payload: ", params[1])
 		req, err = http.NewRequest("POST", params[0], bytes.NewBuffer([]byte(params[1])))
 	case 3:
-		if params[2] == "DELETE" {
-			req, err = http.NewRequest("DELETE", params[0], nil)
-		} else if params[2] == "PUT" {
-			clilog.Info.Println("Payload: ", params[1])
-			req, err = http.NewRequest("PUT", params[0], bytes.NewBuffer([]byte(params[1])))
-		} else if params[2] == "PATCH" {
-			clilog.Info.Println("Payload: ", params[1])
-			req, err = http.NewRequest("PATCH", params[0], bytes.NewBuffer([]byte(params[1])))
-		} else {
-			return nil, errors.New("unsupported method")
+		if req, err = getRequest(params); err != nil {
+			return nil, err
 		}
+	case 4:
+		if req, err = getRequest(params); err != nil {
+			return nil, err
+		}
+		contentType = params[2]
 	default:
 		return nil, errors.New("unsupported method")
 	}
@@ -181,7 +180,7 @@ func HttpClient(print bool, params ...string) (respBody []byte, err error) {
 
 	clilog.Info.Println("Setting token : ", GetApigeeToken())
 	req.Header.Add("Authorization", "Bearer "+GetApigeeToken())
-	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Content-Type", contentType)
 
 	resp, err := client.Do(req)
 
@@ -218,4 +217,19 @@ func PrettyPrint(body []byte) error {
 	}
 	fmt.Println(prettyJSON.String())
 	return nil
+}
+
+func getRequest(params []string) (req *http.Request, err error) {
+	if params[2] == "DELETE" {
+		req, err = http.NewRequest("DELETE", params[0], nil)
+	} else if params[2] == "PUT" {
+		clilog.Info.Println("Payload: ", params[1])
+		req, err = http.NewRequest("PUT", params[0], bytes.NewBuffer([]byte(params[1])))
+	} else if params[2] == "PATCH" {
+		clilog.Info.Println("Payload: ", params[1])
+		req, err = http.NewRequest("PATCH", params[0], bytes.NewBuffer([]byte(params[1])))
+	} else {
+		return nil, errors.New("unsupported method")
+	}
+	return req, err
 }
