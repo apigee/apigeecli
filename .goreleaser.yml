@@ -53,7 +53,7 @@ brews:
   - tap:
       owner: srinandan
       name: homebrew-tap
-    skip_upload: true
+    skip_upload: false
     download_strategy: CurlDownloadStrategy
     folder: Formula    
     url_template: "https://github.com/srinandan/apigeecli/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
