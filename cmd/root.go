@@ -30,9 +30,11 @@ import (
 	"github.com/srinandan/apigeecli/cmd/envoy"
 	flowhooks "github.com/srinandan/apigeecli/cmd/flowhooks"
 	"github.com/srinandan/apigeecli/cmd/iam"
+	"github.com/srinandan/apigeecli/cmd/instances"
 	"github.com/srinandan/apigeecli/cmd/keyaliases"
 	"github.com/srinandan/apigeecli/cmd/keystores"
 	"github.com/srinandan/apigeecli/cmd/kvm"
+	"github.com/srinandan/apigeecli/cmd/ops"
 	"github.com/srinandan/apigeecli/cmd/org"
 	"github.com/srinandan/apigeecli/cmd/products"
 	"github.com/srinandan/apigeecli/cmd/projects"
@@ -100,6 +102,8 @@ func init() {
 	RootCmd.AddCommand(projects.Cmd)
 	RootCmd.AddCommand(iam.Cmd)
 	RootCmd.AddCommand(envoy.Cmd)
+	RootCmd.AddCommand(instances.Cmd)
+	RootCmd.AddCommand(ops.Cmd)
 }
 
 func initConfig() {
