@@ -75,7 +75,10 @@ func Create(name string, description string, approval string, displayName string
 		product = append(product, "\"description\":\""+description+"\"")
 	}
 	product = append(product, "\"environments\":[\""+getArrayStr(environments)+"\"]")
-	product = append(product, "\"proxies\":[\""+getArrayStr(proxies)+"\"]")
+
+	if len(proxies) > 0 {
+		product = append(product, "\"proxies\":[\""+getArrayStr(proxies)+"\"]")
+	}
 
 	if len(scopes) > 0 {
 		product = append(product, "\"scopes\":[\""+getArrayStr(scopes)+"\"]")

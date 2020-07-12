@@ -64,6 +64,5 @@ func init() {
 
 	_ = CreateCmd.MarkFlagRequired("name")
 	_ = CreateCmd.MarkFlagRequired("envs")
-	_ = CreateCmd.MarkFlagRequired("proxies")
 	_ = CreateCmd.MarkFlagRequired("approval")
 }
