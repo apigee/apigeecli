@@ -20,9 +20,10 @@ import (
 
 //Cmd to manage orgs
 var Cmd = &cobra.Command{
-	Use:   "orgs",
-	Short: "Manage Apigee Orgs",
-	Long:  "Manage Apigee Orgs",
+	Use:     "orgs",
+	Aliases: []string{"organizations"},
+	Short:   "Manage Apigee Orgs",
+	Long:    "Manage Apigee Orgs",
 }
 
 var org string
