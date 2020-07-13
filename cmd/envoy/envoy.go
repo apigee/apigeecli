@@ -35,5 +35,6 @@ func init() {
 	Cmd.AddCommand(ListCmd)
 	Cmd.AddCommand(RemoveCmd)
 	Cmd.AddCommand(GenCmd)
+	Cmd.AddCommand(GenJwtCmd)
 	Cmd.AddCommand(AddCmd)
 }

@@ -20,11 +20,20 @@ import (
 	"crypto/x509"
 	"encoding/json"
 	"encoding/pem"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
+	"path"
+	"strings"
+	"time"
 
+	"github.com/lestrrat-go/jwx/jwa"
 	"github.com/lestrrat-go/jwx/jwk"
+	"github.com/lestrrat-go/jwx/jws"
+	"github.com/lestrrat-go/jwx/jwt"
+
+	"github.com/srinandan/apigeecli/clilog"
 )
 
 const keyFile = "remote-service.key"
@@ -53,6 +62,89 @@ func writeToFile(name string, data string) error {
 	f.Close()
 
 	return nil
+}
+
+func getPrivateKey(privateKey string) (interface{}, error) {
+	pemPrivateKey := fmt.Sprintf("%v", privateKey)
+	block, _ := pem.Decode([]byte(pemPrivateKey))
+	privKey, err := x509.ParsePKCS1PrivateKey(block.Bytes) //x509.ParsePKCS8PrivateKey(block.Bytes)
+	if err != nil {
+		clilog.Error.Println("error parsing Private Key: ", err)
+		return nil, err
+	}
+	return privKey, nil
+}
+
+func GenerateToken(folder string, expiry int) (string, error) {
+
+	var jwtKidFile, jwtKeyFile, privateKey, kid string
+	var err error
+
+	if jwtKidFile = path.Join(folder, kidFile); !fileExists(jwtKidFile) {
+		return "", fmt.Errorf("remote-service.properties not found in %s", folder)
+	}
+
+	if jwtKeyFile = path.Join(folder, keyFile); !fileExists(jwtKeyFile) {
+		return "", fmt.Errorf("remote-service.key not found in %s", folder)
+	}
+
+	const aud = "remote-service-client"
+	const iss = "apigee-remote-service-envoy"
+
+	if privateKey, err = getFileContents(jwtKeyFile); err != nil {
+		return "", err
+	}
+
+	if kid, err = getFileContents(jwtKidFile); err != nil {
+		return "", err
+	}
+
+	privKey, err := getPrivateKey(privateKey)
+
+	if err != nil {
+		return "", err
+	}
+
+	now := time.Now()
+	hdr := jws.NewHeaders()
+	if err = hdr.Set(jws.AlgorithmKey, jwa.RS256); err != nil {
+		return "", err
+	}
+	if err = hdr.Set(jws.TypeKey, "JWT"); err != nil {
+		return "", err
+	}
+
+	if err = hdr.Set(jws.KeyIDKey, getKid(kid)); err != nil {
+		return "", err
+	}
+
+	token := jwt.New()
+
+	if err = token.Set(jwt.AudienceKey, aud); err != nil {
+		return "", err
+	}
+	if err = token.Set(jwt.IssuerKey, iss); err != nil {
+		return "", err
+	}
+	if err = token.Set(jwt.IssuedAtKey, now.Unix()); err != nil {
+		return "", err
+	}
+	if err = token.Set(jwt.ExpirationKey, now.Unix()+(int64(expiry*60))); err != nil {
+		return "", err
+	}
+
+	buf, err := json.Marshal(token)
+	if err != nil {
+		return "", err
+	}
+
+	payload, err := jws.Sign(buf, jwa.RS256, privKey, jws.WithHeaders(hdr))
+	if err != nil {
+		clilog.Error.Println("error parsing Private Key: ", err)
+		return "", err
+	}
+	clilog.Info.Println("jwt token : ", string(payload))
+	return string(payload), nil
 }
 
 func Generatekeys(kid string) (err error) {
@@ -152,4 +244,23 @@ func AddKey(kid string, jwkFile string) (err error) {
 	}
 
 	return writeToFile(certFile, string(jsonbuf))
+}
+
+func fileExists(file string) bool {
+	if _, err := os.Stat(file); os.IsNotExist(err) {
+		return false
+	}
+	return true
+}
+
+func getFileContents(filename string) (content string, err error) {
+	var contentBytes []byte
+	if contentBytes, err = ioutil.ReadFile(filename); err != nil {
+		return "", err
+	}
+	return strings.TrimSuffix(string(contentBytes), "\n"), nil
+}
+
+func getKid(kid string) string {
+	return strings.ReplaceAll(kid, "kid=", "")
 }
