@@ -40,6 +40,7 @@ const keyFile = "remote-service.key"
 const certFile = "remote-service.crt"
 const kidFile = "remote-service.properties"
 const use = "sig"
+const kidFormat = "kid="
 
 func readFile(name string) (data []byte, err error) {
 	data, err = ioutil.ReadFile(name)
@@ -67,7 +68,7 @@ func writeToFile(name string, data string) error {
 func getPrivateKey(privateKey string) (interface{}, error) {
 	pemPrivateKey := fmt.Sprintf("%v", privateKey)
 	block, _ := pem.Decode([]byte(pemPrivateKey))
-	privKey, err := x509.ParsePKCS1PrivateKey(block.Bytes) //x509.ParsePKCS8PrivateKey(block.Bytes)
+	privKey, err := x509.ParsePKCS1PrivateKey(block.Bytes)
 	if err != nil {
 		clilog.Error.Println("error parsing Private Key: ", err)
 		return nil, err
@@ -90,6 +91,7 @@ func GenerateToken(folder string, expiry int) (string, error) {
 
 	const aud = "remote-service-client"
 	const iss = "apigee-remote-service-envoy"
+	const tokenType = "JWT"
 
 	if privateKey, err = getFileContents(jwtKeyFile); err != nil {
 		return "", err
@@ -110,7 +112,7 @@ func GenerateToken(folder string, expiry int) (string, error) {
 	if err = hdr.Set(jws.AlgorithmKey, jwa.RS256); err != nil {
 		return "", err
 	}
-	if err = hdr.Set(jws.TypeKey, "JWT"); err != nil {
+	if err = hdr.Set(jws.TypeKey, tokenType); err != nil {
 		return "", err
 	}
 
@@ -193,7 +195,7 @@ func Generatekeys(kid string) (err error) {
 }
 
 func Generatekid(kid string) (err error) {
-	data := "kid=" + kid
+	data := kidFormat + kid
 	return writeToFile(kidFile, data)
 }
 
@@ -262,5 +264,5 @@ func getFileContents(filename string) (content string, err error) {
 }
 
 func getKid(kid string) string {
-	return strings.ReplaceAll(kid, "kid=", "")
+	return strings.ReplaceAll(kid, kidFormat, "")
 }
