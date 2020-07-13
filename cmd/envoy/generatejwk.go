@@ -16,6 +16,7 @@ package envoy
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/spf13/cobra"
 )
@@ -39,7 +40,6 @@ var GenCmd = &cobra.Command{
 }
 
 func init() {
-
 	GenCmd.Flags().StringVarP(&kid, "kid", "k",
-		"1", "Key Identifier")
+		time.Now().Format("2006-01-02T15:04:05"), "Key Identifier")
 }
