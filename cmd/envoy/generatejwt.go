@@ -33,7 +33,7 @@ var GenJwtCmd = &cobra.Command{
 		if token, err = GenerateToken(folder, expiry); err != nil {
 			return err
 		}
-		fmt.Printf("token: %s", token)
+		fmt.Printf("%s", token)
 		return nil
 	},
 }
@@ -44,7 +44,7 @@ var expiry int
 func init() {
 
 	GenJwtCmd.Flags().StringVarP(&folder, "folder", "f",
-		"", "private key folder")
+		"", "folder containing remote-service.* files")
 	GenJwtCmd.Flags().IntVarP(&expiry, "exp", "x",
 		10, "expiry in minutes; default 10 mins")
 
