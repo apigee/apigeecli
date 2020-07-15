@@ -1,21 +1,21 @@
-## apigeecli envoy-bindings gen-jwk
+## apigeecli envoy-bindings gen-jwt
 
-Generate JSON Web Keys for Apigee Envoy Connector
+Generate JSON Web Tokens for Apigee Envoy Connector
 
 ### Synopsis
 
-Generate JSON Web Keys for Apigee Envoy Connector
+Generate JSON Web Token for Apigee Envoy Connector
 
 ```
-apigeecli envoy-bindings gen-jwk [flags]
+apigeecli envoy-bindings gen-jwt [flags]
 ```
 
 ### Options
 
 ```
-  -f, --folder string   folder containing remote-service.* files
-  -h, --help            help for gen-jwk
-  -k, --kid string      Key Identifier (default "2020-07-14T21:04:35")
+  -x, --exp int         expiry in minutes; default 10 mins (default 10)
+  -f, --folder string   path to folder containing remote-service.* files
+  -h, --help            help for gen-jwt
 ```
 
 ### Options inherited from parent commands

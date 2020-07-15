@@ -1,20 +1,20 @@
-## apigeecli iam createcass
+## apigeecli iam creatert
 
-Create a new IAM Service Account for Cassandra backup
+Create a new IAM Service Account for Apigee Watcher
 
 ### Synopsis
 
-Create a new IAM Service Account for Cassandra backup
+Create a new IAM Service Account for Apigee Watcher
 
 ```
-apigeecli iam createcass [flags]
+apigeecli iam creatert [flags]
 ```
 
 ### Options
 
 ```
   -g, --gen           Generate account name
-  -h, --help          help for createcass
+  -h, --help          help for creatert
   -n, --name string   Service Account Name
   -p, --prj string    GCP Project ID
 ```
