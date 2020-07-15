@@ -38,13 +38,12 @@ var GenJwtCmd = &cobra.Command{
 	},
 }
 
-var folder string
 var expiry int
 
 func init() {
 
 	GenJwtCmd.Flags().StringVarP(&folder, "folder", "f",
-		"", "folder containing remote-service.* files")
+		"", "path to folder containing remote-service.* files")
 	GenJwtCmd.Flags().IntVarP(&expiry, "exp", "x",
 		10, "expiry in minutes; default 10 mins")
 

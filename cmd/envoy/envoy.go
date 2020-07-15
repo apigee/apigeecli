@@ -25,7 +25,7 @@ var Cmd = &cobra.Command{
 	Long:  "Manage Envoy API Product Bindings Apigee",
 }
 
-var org, productName, kid string
+var org, productName, kid, folder string
 var serviceNames []string
 
 const envoyAttributeName = "apigee-remote-service-targets"

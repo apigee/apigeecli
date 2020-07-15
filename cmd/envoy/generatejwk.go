@@ -30,16 +30,18 @@ var GenCmd = &cobra.Command{
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		if err = Generatekeys(kid); err != nil {
+		if err = Generatekeys(kid, folder); err != nil {
 			return err
 		}
 		fmt.Println("Add the generated files to the Kubernetes secret:")
 		fmt.Println("kubectl create secret generic {org}-{env}-policy-secret -n apigee --from-file=remote-service.key --from-file=remote-service.crt --from-file=remote-service.properties")
-		return Generatekid(kid)
+		return Generatekid(kid, folder)
 	},
 }
 
 func init() {
+	GenCmd.Flags().StringVarP(&folder, "folder", "f",
+		"", "folder containing remote-service.* files")
 	GenCmd.Flags().StringVarP(&kid, "kid", "k",
 		time.Now().Format("2006-01-02T15:04:05"), "Key Identifier")
 }

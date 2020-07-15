@@ -16,6 +16,7 @@ package envoy
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/spf13/cobra"
 )
@@ -29,24 +30,21 @@ var AddCmd = &cobra.Command{
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		if err = AddKey(kid, jwkFile); err != nil {
+		if err = AddKey(kid, folder); err != nil {
 			return err
 		}
 		fmt.Println("Add the generated files to the Kubernetes secret:")
 		fmt.Println("kubectl create secret generic {org}-{env}-policy-secret -n apigee --from-file=remote-service.key --from-file=remote-service.crt --from-file=remote-service.properties")
-		return Generatekid(kid)
+		return Generatekid(kid, folder)
 	},
 }
 
-var jwkFile string
-
 func init() {
 
+	AddCmd.Flags().StringVarP(&folder, "folder", "f",
+		"", "folder containing remote-service.* files")
 	AddCmd.Flags().StringVarP(&kid, "kid", "k",
-		"2", "Key Identifier")
-	AddCmd.Flags().StringVarP(&jwkFile, "jwk", "j",
-		"", "Path to JWK File")
+		time.Now().Format("2006-01-02T15:04:05"), "Key Identifier")
 
-	_ = AddCmd.MarkFlagRequired("kid")
-	_ = AddCmd.MarkFlagRequired("jwk")
+	_ = AddCmd.MarkFlagRequired("folder")
 }

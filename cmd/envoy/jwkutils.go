@@ -48,6 +48,7 @@ func readFile(name string) (data []byte, err error) {
 }
 
 func writeToFile(name string, data string) error {
+
 	f, err := os.Create(name)
 	if err != nil {
 		log.Printf("failed to open file: %s\n", err)
@@ -81,12 +82,8 @@ func GenerateToken(folder string, expiry int) (string, error) {
 	var jwtKidFile, jwtKeyFile, privateKey, kid string
 	var err error
 
-	if jwtKidFile = path.Join(folder, kidFile); !fileExists(jwtKidFile) {
-		return "", fmt.Errorf("remote-service.properties not found in %s", folder)
-	}
-
-	if jwtKeyFile = path.Join(folder, keyFile); !fileExists(jwtKeyFile) {
-		return "", fmt.Errorf("remote-service.key not found in %s", folder)
+	if jwtKidFile, jwtKeyFile, _, err = checkFiles(folder); err != nil {
+		return "", err
 	}
 
 	const aud = "remote-service-client"
@@ -149,7 +146,18 @@ func GenerateToken(folder string, expiry int) (string, error) {
 	return string(payload), nil
 }
 
-func Generatekeys(kid string) (err error) {
+func Generatekeys(kid string, folder string) (err error) {
+
+	var jwtCertFile, jwtKeyFile string
+
+	if folder != "" {
+		jwtKeyFile = path.Join(folder, keyFile)
+		jwtCertFile = path.Join(folder, certFile)
+	} else {
+		jwtKeyFile = keyFile
+		jwtCertFile = certFile
+	}
+
 	privkey, err := rsa.GenerateKey(rand.Reader, 2048)
 	if err != nil {
 		return err
@@ -162,7 +170,7 @@ func Generatekeys(kid string) (err error) {
 		},
 	)
 
-	if err = writeToFile(keyFile, string(pemdata)); err != nil {
+	if err = writeToFile(jwtKeyFile, string(pemdata)); err != nil {
 		return err
 	}
 
@@ -177,31 +185,47 @@ func Generatekeys(kid string) (err error) {
 		return err
 	}
 
-	jsonbuf, err := json.MarshalIndent(key, "", "  ")
-	if err != nil {
-		return err
-	}
+	if fileExists(jwtCertFile) {
+		//append cert
+		return nil
+	} else { //create new cert file
+		jsonbuf, err := json.MarshalIndent(key, "", "  ")
+		if err != nil {
+			return err
+		}
 
-	set, err := jwk.ParseBytes(jsonbuf)
-	if err != nil {
-		return err
-	}
-	jsonbuf, err = json.MarshalIndent(set, "", "  ")
-	if err != nil {
-		return err
-	}
+		set, err := jwk.ParseBytes(jsonbuf)
+		if err != nil {
+			return err
+		}
+		jsonbuf, err = json.MarshalIndent(set, "", "  ")
+		if err != nil {
+			return err
+		}
 
-	return writeToFile(certFile, string(jsonbuf))
+		return writeToFile(jwtCertFile, string(jsonbuf))
+	}
 }
 
-func Generatekid(kid string) (err error) {
+func Generatekid(kid string, folder string) (err error) {
+	var jwtKidFile string
+	if folder != "" {
+		jwtKidFile = path.Join(folder, kidFile)
+	} else {
+		jwtKidFile = kidFile
+	}
 	data := kidFormat + kid
-	return writeToFile(kidFile, data)
+	return writeToFile(jwtKidFile, data)
 }
 
-func AddKey(kid string, jwkFile string) (err error) {
+func AddKey(kid string, folder string) (err error) {
 
-	data, err := readFile(jwkFile)
+	var jwtCertFile string
+	if jwtCertFile = path.Join(folder, certFile); !fileExists(jwtCertFile) {
+		return fmt.Errorf("remote-service.crt not found in %s", folder)
+	}
+
+	data, err := readFile(jwtCertFile)
 	if err != nil {
 		return err
 	}
@@ -265,4 +289,21 @@ func getFileContents(filename string) (content string, err error) {
 
 func getKid(kid string) string {
 	return strings.ReplaceAll(kid, kidFormat, "")
+}
+
+func checkFiles(folder string) (jwtKidFile string, jwtKeyFile string, jwtCertFile string, err error) {
+
+	if jwtKidFile = path.Join(folder, kidFile); !fileExists(jwtKidFile) {
+		return "", "", "", fmt.Errorf("remote-service.properties not found in %s", folder)
+	}
+
+	if jwtKeyFile = path.Join(folder, keyFile); !fileExists(jwtKeyFile) {
+		return "", "", "", fmt.Errorf("remote-service.key not found in %s", folder)
+	}
+
+	if jwtCertFile = path.Join(folder, certFile); !fileExists(jwtCertFile) {
+		return "", "", "", fmt.Errorf("remote-service.crt not found in %s", folder)
+	}
+
+	return jwtKidFile, jwtKeyFile, jwtCertFile, nil
 }
