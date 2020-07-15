@@ -88,6 +88,8 @@ func CreateIAMServiceAccount(name string, iamRole string) (err error) {
 		role = "roles/storage.objectAdmin"
 	case "connect":
 		role = "roles/apigeeconnect.Agent"
+	case "watcher":
+		role = "roles/apigee.runtimeAgent"
 	case "all":
 		role = "not-necessary-to-add-this"
 	default:
@@ -198,7 +200,7 @@ func CreateIAMServiceAccount(name string, iamRole string) (err error) {
 func createAllRoleBindings(name string) []roleBinding {
 	var roles = [...]string{"roles/apigee.synchronizerManager", "roles/apigee.analyticsAgent",
 		"roles/monitoring.metricWriter", "roles/logging.logWriter", "roles/storage.objectAdmin",
-		"roles/apigeeconnect.Agent"}
+		"roles/apigeeconnect.Agent", "roles/apigee.runtimeAgent"}
 
 	bindings := []roleBinding{}
 

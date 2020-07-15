@@ -38,4 +38,5 @@ func init() {
 	Cmd.AddCommand(CmartCmd)
 	Cmd.AddCommand(CmetCmd)
 	Cmd.AddCommand(CsyncCmd)
+	Cmd.AddCommand(CruntimeCmd)
 }
