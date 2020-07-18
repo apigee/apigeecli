@@ -15,6 +15,8 @@
 package env
 
 import (
+	"strconv"
+
 	"github.com/spf13/cobra"
 	"github.com/srinandan/apigeecli/apiclient"
 	"github.com/srinandan/apigeecli/client/env"
@@ -22,7 +24,7 @@ import (
 
 //Cmd to enable AX obfuscation
 var ObCmd = &cobra.Command{
-	Use:   "enable-ax-obfuscation",
+	Use:   "ax-obfuscation",
 	Short: "Obfuscate analytics fields",
 	Long:  "Obfuscate analytics fields before sending to control plane",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
@@ -31,14 +33,18 @@ var ObCmd = &cobra.Command{
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		return env.SetEnvProperty("features.analytics.data.obfuscation.enabled", "true")
+		return env.SetEnvProperty("features.analytics.data.obfuscation.enabled", strconv.FormatBool(enable))
 	},
 }
+
+var enable bool
 
 func init() {
 
 	ObCmd.Flags().StringVarP(&environment, "env", "e",
 		"", "Apigee environment name")
+	ObCmd.Flags().BoolVarP(&enable, "enable", "x",
+		false, "Enable or disable")
 
 	_ = ObCmd.MarkFlagRequired("env")
 }
