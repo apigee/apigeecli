@@ -1,21 +1,21 @@
-## apigeecli envs get
+## apigeecli envs ax-obfuscation
 
-Get properties of an environment
+Obfuscate analytics fields
 
 ### Synopsis
 
-Get properties of an environment
+Obfuscate analytics fields before sending to control plane
 
 ```
-apigeecli envs get [flags]
+apigeecli envs ax-obfuscation [flags]
 ```
 
 ### Options
 
 ```
-  -c, --config       Return configuration details
+  -x, --enable       Enable or disable
   -e, --env string   Apigee environment name
-  -h, --help         help for get
+  -h, --help         help for ax-obfuscation
 ```
 
 ### Options inherited from parent commands
