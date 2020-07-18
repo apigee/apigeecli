@@ -40,10 +40,11 @@ func RemoveIAM(serviceAccountName string, role string) (err error) {
 }
 
 //TestIAM
-func TestIAM() (respBody []byte, err error) {
+func TestIAM(resource string, verb string) (respBody []byte, err error) {
+	var permission = "apigee." + resource + "." + verb
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv()+":testIamPermissions")
-	payload := "{\"permissions\":[\"apigee.environments.get\"]}"
+	payload := "{\"permissions\":[\"" + permission + "\"]}"
 	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload)
 	return respBody, err
 }

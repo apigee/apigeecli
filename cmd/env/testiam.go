@@ -31,7 +31,17 @@ var TestIamCmd = &cobra.Command{
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = environments.TestIAM()
+		_, err = environments.TestIAM(resource, verb)
 		return
 	},
+}
+
+var verb, resource string
+
+func init() {
+
+	TestIamCmd.Flags().StringVarP(&verb, "verb", "v",
+		"get", "resource verb")
+	TestIamCmd.Flags().StringVarP(&resource, "res", "r",
+		"environment", "resource")
 }
