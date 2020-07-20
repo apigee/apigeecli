@@ -9,6 +9,17 @@ This is a tool to interact with [Apigee APIs](https://docs.apigee.com/hybrid/ref
 
 ## Installation
 
+### Brew
+
+To install via brew,
+
+```bash
+brew tap brew tap srinandan/homebrew-tap
+brew install apigeecli
+```
+
+### Others
+
 `apigeecli` is a binary and you can download the appropriate one for your platform from [here](https://github.com/srinandan/apigeecli/releases)
 
 NOTE: Supported platforms are:
