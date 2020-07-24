@@ -15,7 +15,10 @@
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"net/http"
 	"os"
 	"strconv"
 
@@ -54,6 +57,15 @@ var RootCmd = &cobra.Command{
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 		apiclient.SetServiceAccount(serviceAccount)
 		apiclient.SetApigeeToken(accessToken)
+		_ = apiclient.ReadPreferencesFile()
+		if !disableCheck {
+			if ok, _ := apiclient.TestAndUpdateLastCheck(); !ok {
+				latestVersion, _ := getLatestVersion()
+				if cmd.Version != latestVersion {
+					fmt.Printf("You are using %s, the latest version %s is available for download\n", cmd.Version, latestVersion)
+				}
+			}
+		}
 
 		err := apiclient.SetAccessToken()
 		if err != nil {
@@ -71,6 +83,7 @@ func Execute() {
 }
 
 var accessToken, serviceAccount string
+var disableCheck bool
 
 func init() {
 	cobra.OnInitialize(initConfig)
@@ -80,6 +93,9 @@ func init() {
 
 	RootCmd.PersistentFlags().StringVarP(&serviceAccount, "account", "a",
 		"", "Path Service Account private key in JSON")
+
+	RootCmd.PersistentFlags().BoolVarP(&disableCheck, "disable-check", "",
+		false, "Disable check for newer versions")
 
 	RootCmd.AddCommand(apis.Cmd)
 	RootCmd.AddCommand(org.Cmd)
@@ -127,4 +143,35 @@ func initConfig() {
 // GetRootCmd returns the root of the cobra command-tree.
 func GetRootCmd() *cobra.Command {
 	return RootCmd
+}
+
+func getLatestVersion() (version string, err error) {
+	var req *http.Request
+	const endpoint = "https://api.github.com/repos/srinandan/apigeecli/releases/latest"
+
+	client := &http.Client{}
+	contentType := "application/json"
+
+	req, err = http.NewRequest("GET", endpoint, nil)
+	if err != nil {
+		return "", err
+	}
+
+	req.Header.Set("Content-Type", contentType)
+	resp, err := client.Do(req)
+	if err != nil {
+		return "", err
+	}
+
+	respBody, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+	var result map[string]interface{}
+	err = json.Unmarshal(respBody, &result)
+	if err != nil {
+		return "", err
+	}
+
+	return fmt.Sprintf("%s", result["tag_name"]), nil
 }
