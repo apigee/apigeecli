@@ -23,8 +23,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"os/user"
-	"path"
 	"reflect"
 	"strconv"
 	"strings"
@@ -34,8 +32,6 @@ import (
 	"github.com/lestrrat/go-jwx/jwt"
 	"github.com/srinandan/apigeecli/clilog"
 )
-
-const accessTokenFile = ".access_token"
 
 type serviceAccount struct {
 	Type                string `json:"type,omitempty"`
@@ -143,7 +139,7 @@ func generateAccessToken(privateKey string) (string, error) {
 	}
 	clilog.Info.Println("access token : ", accessToken)
 	SetApigeeToken(accessToken.AccessToken)
-	_ = writeAccessToken()
+	_ = WriteToken(accessToken.AccessToken)
 	return accessToken.AccessToken, nil
 }
 
@@ -164,36 +160,6 @@ func getServiceAccountProperty(key string) (value string) {
 	r := reflect.ValueOf(&account)
 	field := reflect.Indirect(r).FieldByName(key)
 	return field.String()
-}
-
-func readAccessToken() error {
-	usr, err := user.Current()
-	if err != nil {
-		return err
-	}
-	content, err := ioutil.ReadFile(path.Join(usr.HomeDir, accessTokenFile))
-	if err != nil {
-		clilog.Info.Println("Cached access token was not found")
-		return err
-	}
-	clilog.Info.Println("Using cached access token: ", string(content))
-	SetApigeeToken(string(content))
-	return nil
-}
-
-func writeAccessToken() error {
-	if IsSkipCache() {
-		return nil
-	}
-
-	usr, err := user.Current()
-	if err != nil {
-		clilog.Warning.Println(err)
-		return err
-	}
-	clilog.Info.Println("Cache access token: ", GetApigeeToken())
-	//don't append access token
-	return WriteByteArrayToFile(path.Join(usr.HomeDir, accessTokenFile), false, []byte(GetApigeeToken()))
 }
 
 func checkAccessToken() bool {
@@ -239,8 +205,8 @@ func checkAccessToken() bool {
 //SetAccessToken read from cache or if not found or expired will generate a new one
 func SetAccessToken() error {
 	if GetApigeeToken() == "" && GetServiceAccount() == "" {
-		err := readAccessToken() //try to read from config
-		if err != nil {
+		SetApigeeToken(GetToken()) //read from configuration
+		if GetApigeeToken() == "" {
 			return fmt.Errorf("either token or service account must be provided")
 		}
 		if checkAccessToken() { //check if the token is still valid
@@ -251,7 +217,7 @@ func SetAccessToken() error {
 	if GetApigeeToken() != "" {
 		//a token was passed, cache it
 		if checkAccessToken() {
-			_ = writeAccessToken()
+			_ = WriteToken(GetApigeeToken())
 			return nil
 		}
 	} else {
