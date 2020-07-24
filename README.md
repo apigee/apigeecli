@@ -14,7 +14,7 @@ This is a tool to interact with [Apigee APIs](https://docs.apigee.com/hybrid/ref
 To install via brew,
 
 ```bash
-brew tap brew tap srinandan/homebrew-tap
+brew tap srinandan/homebrew-tap
 brew install apigeecli
 ```
 
