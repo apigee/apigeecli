@@ -26,9 +26,8 @@ var CreateCmd = &cobra.Command{
 	Short: "Create a new Apigee Org",
 	Long:  "Create a new Apigee Org; Your GCP project must be whitelist for this operation",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(projectID)
 		apiclient.SetProjectID(projectID)
-		return nil
+		return apiclient.SetApigeeOrg(projectID)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		_, err = orgs.Create(region)

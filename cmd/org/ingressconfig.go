@@ -26,8 +26,7 @@ var IngressCmd = &cobra.Command{
 	Short: "Show details of the Ingress configuration for an Apigee Org",
 	Long:  "Show details of the Ingress configuration for an Apigee Org",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		_, err = orgs.GetDeployedIngressConfig()
@@ -36,9 +35,6 @@ var IngressCmd = &cobra.Command{
 }
 
 func init() {
-
 	IngressCmd.Flags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
-
-	_ = IngressCmd.MarkFlagRequired("org")
 }

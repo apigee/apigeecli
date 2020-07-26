@@ -26,8 +26,7 @@ var AcCmd = &cobra.Command{
 	Short: "Set MART endpoint for an Apigee Org",
 	Long:  "Set MART endpoint for an Apigee Org",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		return orgs.SetOrgProperty("features.mart.apigee.connect.enabled", "true")
@@ -38,6 +37,4 @@ func init() {
 
 	AcCmd.Flags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
-
-	_ = AcCmd.MarkFlagRequired("org")
 }

@@ -26,8 +26,7 @@ var PropCmd = &cobra.Command{
 	Short: "Set organization property",
 	Long:  "Set organization property",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		return orgs.SetOrgProperty(propName, propValue)
@@ -45,7 +44,6 @@ func init() {
 	PropCmd.Flags().StringVarP(&propValue, "value", "v",
 		"", "Property Value")
 
-	_ = PropCmd.MarkFlagRequired("org")
 	_ = PropCmd.MarkFlagRequired("name")
 	_ = PropCmd.MarkFlagRequired("value")
 }
