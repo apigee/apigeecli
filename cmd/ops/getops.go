@@ -26,8 +26,7 @@ var GetCmd = &cobra.Command{
 	Short: "Get operation of an org",
 	Long:  "Get operation of an org",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		_, err = operations.Get(name)
