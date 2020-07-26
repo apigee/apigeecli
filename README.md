@@ -74,13 +74,23 @@ apigeecli <flags> -a orgadmin.json
 
 ## Access Token Caching
 
-`apigeecli` caches the OAuth Access token for subsequent calls (until the token expires). The access token is stored in `$HOME/.access_token`. This path must be readable/writeable by the `apigeecli` process. 
+`apigeecli` caches the OAuth Access token for subsequent calls (until the token expires). The access token is stored in `$HOME/.apigeecli`. This path must be readable/writeable by the `apigeecli` process.
 
 ```bash
 apigeecli token cache -a serviceaccount.json
 ```
 
-Subsequent commands do not need the token flag
+or
+
+```bash
+apigeecli orgs get -o org-name -a serviceaccount.json
+```
+
+Subsequent commands do not need the token or service account flag
+
+## Preferences
+
+
 
 ## Apigee Client Library
 
