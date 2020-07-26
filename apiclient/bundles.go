@@ -68,6 +68,8 @@ func WriteByteArrayToFile(exportFile string, fileAppend bool, payload []byte) er
 
 	if fileAppend {
 		fileFlags |= os.O_APPEND
+	} else {
+		fileFlags |= os.O_TRUNC
 	}
 
 	f, err := os.OpenFile(exportFile, fileFlags, 0644)

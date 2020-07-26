@@ -15,6 +15,7 @@
 package apiclient
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/srinandan/apigeecli/clilog"
@@ -81,11 +82,21 @@ func NewApigeeClient(o ApigeeClientOptions) {
 	} else {
 		options.PrintOutput = false
 	}
+	//read preference file
+	_ = ReadPreferencesFile()
+
 }
 
 //SetApigeeOrg sets the org variable
-func SetApigeeOrg(org string) {
+func SetApigeeOrg(org string) (err error) {
+	if org == "" {
+		if GetApigeeOrg() == "" {
+			return fmt.Errorf("An org name was not set in preferences in supplied in the command")
+		}
+		return nil
+	}
 	options.Org = org
+	return nil
 }
 
 //GetApigeeOrg gets the org variable
