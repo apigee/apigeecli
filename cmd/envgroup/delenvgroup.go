@@ -42,6 +42,5 @@ func init() {
 	DelCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of the environment group")
 
-	_ = DelCmd.MarkFlagRequired("org")
 	_ = DelCmd.MarkFlagRequired("name")
 }

@@ -42,6 +42,5 @@ func init() {
 	ListAttachCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of the environment group")
 
-	_ = ListAttachCmd.MarkFlagRequired("org")
 	_ = ListAttachCmd.MarkFlagRequired("name")
 }

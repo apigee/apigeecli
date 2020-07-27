@@ -40,5 +40,4 @@ func init() {
 	ListCmd.Flags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
 
-	_ = ListCmd.MarkFlagRequired("org")
 }

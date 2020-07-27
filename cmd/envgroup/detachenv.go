@@ -45,7 +45,6 @@ func init() {
 	DetachCmd.Flags().StringVarP(&environment, "env", "e",
 		"", "Name of the environment")
 
-	_ = DetachCmd.MarkFlagRequired("org")
 	_ = DetachCmd.MarkFlagRequired("name")
 	_ = DetachCmd.MarkFlagRequired("env")
 }
