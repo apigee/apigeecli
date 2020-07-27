@@ -90,7 +90,15 @@ Subsequent commands do not need the token or service account flag
 
 ## Preferences
 
+Users can set a default org via preferences and that org name will be used for all subsequent commands
 
+```bash
+apigeecli prefs set -o org-name
+
+apigeecli orgs get
+```
+
+NOTE: the second command uses the org name from perferences
 
 ## Apigee Client Library
 
