@@ -51,7 +51,7 @@ func init() {
 	CreateCmd.Flags().StringVarP(&location, "location", "l",
 		"", "Instance location")
 	CreateCmd.Flags().StringVarP(&diskEncryptionKeyName, "diskenc", "d",
-		"", "Instance location")
+		"", "CloudKMS key name")
 
 	_ = CreateCmd.MarkFlagRequired("name")
 	_ = CreateCmd.MarkFlagRequired("location")
