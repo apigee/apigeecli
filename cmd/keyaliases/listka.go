@@ -26,9 +26,8 @@ var ListCmd = &cobra.Command{
 	Short: "List Key Aliases",
 	Long:  "List Key Alises",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
 		apiclient.SetApigeeEnv(env)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		_, err = keyaliases.List(keystoreName)

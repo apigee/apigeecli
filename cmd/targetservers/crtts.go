@@ -26,9 +26,8 @@ var CreateCmd = &cobra.Command{
 	Short: "Create a Target Server",
 	Long:  "Create a Target Server",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
 		apiclient.SetApigeeEnv(env)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		_, err = targetservers.Create(name, description, host, port, enable)

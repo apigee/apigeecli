@@ -26,9 +26,8 @@ var FetCmd = &cobra.Command{
 	Short: "Returns a zip-formatted shared flow bundle ",
 	Long:  "Returns a zip-formatted shared flow bundle of code and config files",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
 		apiclient.SetApigeeEnv(env)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return sharedflows.Fetch(name, revision)

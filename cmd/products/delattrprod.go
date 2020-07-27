@@ -26,8 +26,7 @@ var DelAttrCmd = &cobra.Command{
 	Short: "Deletes an attribute from an API product",
 	Long:  "Deletes an attribute from an API product",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		_, err = products.DeleteAttribute(name, attrName)

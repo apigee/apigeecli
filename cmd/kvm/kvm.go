@@ -32,7 +32,6 @@ func init() {
 	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
 
-	_ = Cmd.MarkPersistentFlagRequired("org")
 	Cmd.AddCommand(ListCmd)
 	Cmd.AddCommand(DelCmd)
 	Cmd.AddCommand(CreateCmd)

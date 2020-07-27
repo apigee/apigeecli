@@ -26,8 +26,7 @@ var AttachCmd = &cobra.Command{
 	Short: "Attach an env to an Environment Group",
 	Long:  "Attach an env to an Environment Group",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		_, err = envgroups.Attach(name, environment)

@@ -26,8 +26,7 @@ var GetAppCmd = &cobra.Command{
 	Short: "Returns the apps owned by a developer by email address",
 	Long:  "Returns the apps owned by a developer by email address",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		_, err = developers.GetApps(name, expand)

@@ -26,8 +26,7 @@ var ExpCmd = &cobra.Command{
 	Short: "export API proxy bundles from an org",
 	Long:  "export API proxy bundles from an org",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		return apis.ExportProxies(conn)

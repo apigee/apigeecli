@@ -28,7 +28,7 @@ var ListDepCmd = &cobra.Command{
 	Short: "Lists all deployments of a Sharedflow",
 	Long:  "Lists all deployments of a Sharedflow",
 	Args: func(cmd *cobra.Command, args []string) error {
-		apiclient.SetApigeeOrg(org)
+
 		apiclient.SetApigeeEnv(env)
 		if apiclient.GetApigeeEnv() == "" && name == "" {
 			return fmt.Errorf("sharedflow name or environment must be supplied")
@@ -39,7 +39,7 @@ var ListDepCmd = &cobra.Command{
 		if name != "" && revision == -1 && apiclient.GetApigeeEnv() != "" {
 			return fmt.Errorf("revision must be supplied with sharedflow name and env")
 		}
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		if apiclient.GetApigeeEnv() != "" {

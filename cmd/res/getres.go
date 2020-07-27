@@ -26,8 +26,7 @@ var GetCmd = &cobra.Command{
 	Short: "Get a resource file",
 	Long:  "Get a resource file",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		return res.Get(name, resType)

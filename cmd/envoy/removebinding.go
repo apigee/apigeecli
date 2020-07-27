@@ -30,8 +30,7 @@ var RemoveCmd = &cobra.Command{
 	Short: "Removes an Envoy binding from an API Product",
 	Long:  "Removes an Envoy binding from an API Product",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		fmt.Println("Current Values of Attribute: ")

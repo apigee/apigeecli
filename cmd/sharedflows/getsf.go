@@ -26,9 +26,8 @@ var GetCmd = &cobra.Command{
 	Short: "Gets a shared flow by name",
 	Long:  "Gets a shared flow by name, including a list of its revisions.",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
 		apiclient.SetApigeeEnv(env)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		_, err = sharedflows.Get(name, revision)

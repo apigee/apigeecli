@@ -26,9 +26,8 @@ var DepCmd = &cobra.Command{
 	Short: "Deploys a revision of an existing Sharedflow",
 	Long:  "Deploys a revision of an existing Sharedflow to an environment in an organization",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
 		apiclient.SetApigeeEnv(env)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		_, err = sharedflows.Deploy(name, revision, overrides)

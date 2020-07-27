@@ -26,9 +26,8 @@ var GetDeployCmd = &cobra.Command{
 	Short: "Get deployments for an Environment",
 	Long:  "Get deployments for an Environment",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
 		apiclient.SetApigeeEnv(environment)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		_, err = environments.GetDeployments()

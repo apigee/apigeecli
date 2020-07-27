@@ -26,8 +26,7 @@ var GetCmd = &cobra.Command{
 	Short: "Gets an API Proxy by name",
 	Long:  "Gets an API Proxy by name, including a list of its revisions.",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		_, err = apis.GetProxy(name, revision)

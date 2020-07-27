@@ -28,9 +28,8 @@ var RemoveRoleCmd = &cobra.Command{
 	Short: "Remove a member or SA from a role for an environment",
 	Long:  "Remove a member or SA from a role for an environment",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
 		apiclient.SetApigeeEnv(environment)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		err = environments.RemoveIAM(serviceAccountName, role)

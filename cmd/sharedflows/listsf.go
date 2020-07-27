@@ -26,9 +26,8 @@ var ListCmd = &cobra.Command{
 	Short: "Lists all shared flows in the organization.",
 	Long:  "Lists all shared flows in the organization.",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
 		apiclient.SetApigeeEnv(env)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		_, err = sharedflows.List(includeRevisions)

@@ -26,9 +26,8 @@ var UndepCmd = &cobra.Command{
 	Short: "Undeploys a revision of an existing API proxy",
 	Long:  "Undeploys a revision of an existing API proxy to an environment in an organization",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
 		apiclient.SetApigeeEnv(env)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		_, err = sharedflows.Undeploy(name, revision)

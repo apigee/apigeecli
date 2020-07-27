@@ -26,9 +26,8 @@ var ImpCmd = &cobra.Command{
 	Short: "Import a folder containing sharedflow bundles",
 	Long:  "Import a folder containing sharedflow bundles",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
 		apiclient.SetApigeeEnv(env)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		return sharedflows.Import(conn, folder)

@@ -26,9 +26,8 @@ var DelCmd = &cobra.Command{
 	Short: "Delete a Key Alias",
 	Long:  "Delete a Key Alias",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
 		apiclient.SetApigeeEnv(env)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		_, err = keyaliases.Delete(keystoreName, aliasName)

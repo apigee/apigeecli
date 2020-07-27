@@ -26,9 +26,8 @@ var CreateCmd = &cobra.Command{
 	Short: "Creates a sharedflow in an Apigee Org",
 	Long:  "Creates a sharedflow in an Apigee Org",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
 		apiclient.SetApigeeEnv(env)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		_, err = sharedflows.Create(name, proxy)

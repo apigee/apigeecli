@@ -26,9 +26,8 @@ var CreateTrcCmd = &cobra.Command{
 	Short: "Create a new debug session for an API proxy",
 	Long:  "Create a new debug session for Apigee API proxy revision deployed in an environment",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
 		apiclient.SetApigeeEnv(env)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		_, err = apis.CreateTraceSession(name, revision, filter)

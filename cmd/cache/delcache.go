@@ -26,9 +26,8 @@ var DelCmd = &cobra.Command{
 	Short: "Delete a cache resource from the environment",
 	Long:  "Delete a cache resource from the environment",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
 		apiclient.SetApigeeEnv(env)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		_, err = cache.Delete(name)

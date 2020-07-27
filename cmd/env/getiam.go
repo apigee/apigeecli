@@ -26,9 +26,8 @@ var GetIamCmd = &cobra.Command{
 	Short: "Gets the IAM policy on an Environment",
 	Long:  "Gets the IAM policy on an Environment",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
 		apiclient.SetApigeeEnv(environment)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		_, err = environments.GetIAM()

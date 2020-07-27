@@ -26,9 +26,8 @@ var CreateCmd = &cobra.Command{
 	Short: "Create a Key Store",
 	Long:  "Create a Key Store",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
 		apiclient.SetApigeeEnv(env)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		_, err = keystores.Create(name)
