@@ -15,7 +15,7 @@ apigeecli envoy-bindings gen-jwk [flags]
 ```
   -f, --folder string   folder containing remote-service.* files
   -h, --help            help for gen-jwk
-  -k, --kid string      Key Identifier (default "2020-07-27T14:49:40")
+  -k, --kid string      Key Identifier (default "2020-07-27T16:26:21")
 ```
 
 ### Options inherited from parent commands

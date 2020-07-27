@@ -13,7 +13,7 @@ apigeecli instances create [flags]
 ### Options
 
 ```
-  -d, --diskenc string    Instance location
+  -d, --diskenc string    CloudKMS key name
   -h, --help              help for create
   -l, --location string   Instance location
   -n, --name string       Name of the Instance
