@@ -42,6 +42,5 @@ func init() {
 	GetCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of the instance")
 
-	_ = GetCmd.MarkFlagRequired("org")
 	_ = GetCmd.MarkFlagRequired("name")
 }
