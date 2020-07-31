@@ -30,9 +30,8 @@ var CreateCmd = &cobra.Command{
 	Short: "Create a Key Alias from PEM, JAR or PKCS12 file",
 	Long:  "Create a Key Alias from PEM, JAR or PKCS12 file",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
 		apiclient.SetApigeeEnv(env)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		var fileformat string

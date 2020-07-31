@@ -26,9 +26,8 @@ var CrtslfCmd = &cobra.Command{
 	Short: "Create a Key Alias from self-seigned cert",
 	Long:  "Create a Key Alias by generating a self-signed cert",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
 		apiclient.SetApigeeEnv(env)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		_, err = keyaliases.Create(keystoreName, aliasName, "selfsignedcert", "", ignoreExpiry, ignoreNewLine, payload)

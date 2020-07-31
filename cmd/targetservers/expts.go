@@ -26,9 +26,8 @@ var ExpCmd = &cobra.Command{
 	Short: "Export target servers to a file",
 	Long:  "Export target servers to a file",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
 		apiclient.SetApigeeEnv(env)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		const exportFileName = "targetservers.json"

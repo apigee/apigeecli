@@ -26,8 +26,7 @@ var DelCmd = &cobra.Command{
 	Short: "Deletes an Environment Group",
 	Long:  "Deletes an Environment Group",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		_, err = envgroups.Get(name)
@@ -43,6 +42,5 @@ func init() {
 	DelCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of the environment group")
 
-	_ = DelCmd.MarkFlagRequired("org")
 	_ = DelCmd.MarkFlagRequired("name")
 }

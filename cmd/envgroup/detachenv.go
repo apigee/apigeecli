@@ -26,8 +26,7 @@ var DetachCmd = &cobra.Command{
 	Short: "Detach an env from an Environment Group",
 	Long:  "Detach an env from an Environment Group",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		_, err = envgroups.DetachEnvironment(name, environment)
@@ -46,7 +45,6 @@ func init() {
 	DetachCmd.Flags().StringVarP(&environment, "env", "e",
 		"", "Name of the environment")
 
-	_ = DetachCmd.MarkFlagRequired("org")
 	_ = DetachCmd.MarkFlagRequired("name")
 	_ = DetachCmd.MarkFlagRequired("env")
 }

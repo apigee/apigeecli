@@ -26,8 +26,7 @@ var CreateCmd = &cobra.Command{
 	Short: "Create a resource file",
 	Long:  "Create a resource file",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		_, err = res.Create(name, resPath, resType)

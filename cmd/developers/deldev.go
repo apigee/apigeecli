@@ -26,8 +26,7 @@ var DelCmd = &cobra.Command{
 	Short: "Deletes an App Developer from an organization",
 	Long:  "Deletes an App Developer from an organization",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		_, err = developers.Delete(email)

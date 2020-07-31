@@ -26,9 +26,8 @@ var GetDebugCmd = &cobra.Command{
 	Short: "Get debugmasks for an Environment",
 	Long:  "Get debugmasks for an Environment",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
 		apiclient.SetApigeeEnv(environment)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		_, err = environments.GetDebug()

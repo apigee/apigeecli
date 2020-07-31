@@ -28,14 +28,14 @@ var GetCmd = &cobra.Command{
 	Short: "Get App in an Organization by App ID",
 	Long:  "Returns the app profile for the specified app ID.",
 	Args: func(cmd *cobra.Command, args []string) error {
-		apiclient.SetApigeeOrg(org)
+
 		if appID == "" && name == "" && productName == "" {
 			return fmt.Errorf("pass either name or appId or productName")
 		}
 		if appID != "" && name != "" {
 			return fmt.Errorf("name and appId cannot be used together")
 		}
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		if appID != "" {

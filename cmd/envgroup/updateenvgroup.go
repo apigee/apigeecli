@@ -26,8 +26,7 @@ var UpdateCmd = &cobra.Command{
 	Short: "Update hostnames in an Environment Group",
 	Long:  "Update hostnames in an Environment Group",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		_, err = envgroups.PatchHosts(name, hostnames)

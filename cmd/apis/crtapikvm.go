@@ -26,8 +26,7 @@ var CreateKvmCmd = &cobra.Command{
 	Short: "Create an API Proxy scoped KVM",
 	Long:  "Create an API Proxy scoped KVM",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		_, err = apis.CreateProxyKVM(proxyName, name, encrypted)

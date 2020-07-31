@@ -26,8 +26,7 @@ var ObCmd = &cobra.Command{
 	Short: "Obfuscate analytics fields",
 	Long:  "Obfuscate analytics fields before sending to control plane",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		return orgs.SetOrgProperty("features.analytics.data.obfuscation.enabled", "true")
@@ -38,6 +37,4 @@ func init() {
 
 	ObCmd.Flags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
-
-	_ = ObCmd.MarkFlagRequired("org")
 }

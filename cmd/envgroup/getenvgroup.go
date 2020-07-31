@@ -26,8 +26,7 @@ var GetCmd = &cobra.Command{
 	Short: "Gets an Environment Group",
 	Long:  "Gets an Environment Group",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		_, err = envgroups.Get(name)
@@ -43,6 +42,5 @@ func init() {
 	GetCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of the environment group")
 
-	_ = GetCmd.MarkFlagRequired("org")
 	_ = GetCmd.MarkFlagRequired("name")
 }

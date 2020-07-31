@@ -26,8 +26,7 @@ var ListKvmCmd = &cobra.Command{
 	Short: "List all KVMs for an API proxy",
 	Long:  "List all KVMs for an API proxy",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		_, err = apis.ListProxyKVM(proxyName)

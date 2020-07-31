@@ -26,9 +26,8 @@ var GetCmd = &cobra.Command{
 	Short: "Get properties of an environment",
 	Long:  "Get properties of an environment",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
 		apiclient.SetApigeeEnv(environment)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		_, err = env.Get(config)

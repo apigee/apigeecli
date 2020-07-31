@@ -26,8 +26,7 @@ var DelCmd = &cobra.Command{
 	Short: "Deletes an API product from an organization",
 	Long:  "Deletes an API product from an organization",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		_, err = products.Delete(name)

@@ -26,8 +26,7 @@ var ImpCmd = &cobra.Command{
 	Short: "Import a folder containing API proxy bundles",
 	Long:  "Import a folder containing API proxy bundles",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		return apis.ImportProxies(conn, folder)

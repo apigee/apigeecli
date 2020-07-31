@@ -26,8 +26,7 @@ var ListCmd = &cobra.Command{
 	Short: "List environments in an Apigee Org",
 	Long:  "List environments in an Apigee Org",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		_, err = env.List()

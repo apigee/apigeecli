@@ -28,8 +28,7 @@ var CreateCmd = &cobra.Command{
 	Short: "Create a new Envoy binding; Binds an Envoy service to an API Product",
 	Long:  "Create a new Envoy binding; Binds an Envoy service to an API Product",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetPrintOutput(false)
@@ -55,7 +54,6 @@ func init() {
 	CreateCmd.Flags().StringArrayVarP(&serviceNames, "svcs", "s",
 		[]string{}, "Envoy Service names")
 
-	_ = CreateCmd.MarkFlagRequired("org")
 	_ = CreateCmd.MarkFlagRequired("prod")
 	_ = CreateCmd.MarkFlagRequired("svc")
 }

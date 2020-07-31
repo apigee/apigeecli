@@ -26,9 +26,8 @@ var GetctCmd = &cobra.Command{
 	Short: "Get a Key alias certificate",
 	Long:  "Get a Key alias certificate",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
 		apiclient.SetApigeeEnv(env)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		err = keyaliases.GetCert(keystoreName, aliasName)

@@ -16,6 +16,7 @@ package products
 
 import (
 	"github.com/spf13/cobra"
+	"github.com/srinandan/apigeecli/apiclient"
 	"github.com/srinandan/apigeecli/client/products"
 )
 
@@ -24,6 +25,9 @@ var UpdateCmd = &cobra.Command{
 	Use:   "update",
 	Short: "Update an API product",
 	Long:  "Update an API product",
+	Args: func(cmd *cobra.Command, args []string) (err error) {
+		return apiclient.SetApigeeOrg(org)
+	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		_, err = products.Update(name, description, approval, displayName, quota, quotaInterval, quotaUnit, environments, proxies, scopes, attrs)
 		return

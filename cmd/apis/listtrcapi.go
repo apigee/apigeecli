@@ -26,9 +26,8 @@ var ListTrcCmd = &cobra.Command{
 	Short: "List all debug sessions for an API proxy revision",
 	Long:  "List all debug sessions for an API proxy revision deployed in an environment",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
 		apiclient.SetApigeeEnv(env)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		_, err = apis.ListTracceSession(name, revision)

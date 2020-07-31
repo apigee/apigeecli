@@ -26,8 +26,7 @@ var DeleteKeyCmd = &cobra.Command{
 	Short: "Delete a developer app key",
 	Long:  "Delete a a developer app key",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		_, err = apps.DeleteKey(developerEmail, name, key)

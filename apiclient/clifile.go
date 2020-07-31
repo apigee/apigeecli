@@ -17,6 +17,7 @@ package apiclient
 import (
 	"encoding/json"
 	"io/ioutil"
+	"os"
 	"os/user"
 	"path"
 	"time"
@@ -31,14 +32,18 @@ var usr *user.User
 type apigeeCLI struct {
 	Token     string `json:"token,omitempty"`
 	LastCheck string `json:"lastCheck,omitempty"`
+	Org       string `json:"defaultOrg,omitempty"`
 }
 
-var cliPref = apigeeCLI{}
+var cliPref *apigeeCLI //= apigeeCLI{}
 
 func ReadPreferencesFile() (err error) {
+
+	cliPref = new(apigeeCLI)
+
 	usr, err = user.Current()
 	if err != nil {
-		clilog.Error.Println(err)
+		clilog.Info.Println(err)
 		return err
 	}
 
@@ -49,12 +54,30 @@ func ReadPreferencesFile() (err error) {
 	}
 
 	err = json.Unmarshal(prefFile, &cliPref)
+	clilog.Info.Printf("Token %s, lastCheck: %s", cliPref.Token, cliPref.LastCheck)
+	clilog.Info.Printf("DefaultOrg %s", cliPref.Org)
 	if err != nil {
-		clilog.Error.Printf("Error marshalling: %v\n", err)
-		return err
+		clilog.Info.Printf("Error marshalling: %v\n", err)
+		return DeletePreferencesFile()
 	}
 
+	if cliPref.Org != "" {
+		SetApigeeOrg(cliPref.Org)
+	}
 	return nil
+}
+
+func DeletePreferencesFile() (err error) {
+	usr, err = user.Current()
+	if err != nil {
+		clilog.Info.Println(err)
+		return err
+	}
+	if _, err := os.Stat(path.Join(usr.HomeDir, apigeecliFile)); os.IsNotExist(err) {
+		clilog.Info.Println(err)
+		return err
+	}
+	return os.Remove(path.Join(usr.HomeDir, apigeecliFile))
 }
 
 func WriteToken(token string) (err error) {
@@ -67,9 +90,10 @@ func WriteToken(token string) (err error) {
 
 	data, err := json.Marshal(&cliPref)
 	if err != nil {
-		clilog.Error.Printf("Error marshalling: %v\n", err)
+		clilog.Info.Printf("Error marshalling: %v\n", err)
 		return err
 	}
+	clilog.Info.Println("Writing ", string(data))
 	return WriteByteArrayToFile(path.Join(usr.HomeDir, apigeecliFile), false, data)
 }
 
@@ -84,7 +108,6 @@ func GetLastCheck() (lastCheck string) {
 func TestAndUpdateLastCheck() (updated bool, err error) {
 	currentTime := time.Now()
 	currentDate := currentTime.Format("01-02-2006")
-
 	if currentDate == cliPref.LastCheck {
 		return true, nil
 	}
@@ -93,13 +116,29 @@ func TestAndUpdateLastCheck() (updated bool, err error) {
 
 	data, err := json.Marshal(&cliPref)
 	if err != nil {
-		clilog.Error.Printf("Error marshalling: %v\n", err)
+		clilog.Warning.Printf("Error marshalling: %v\n", err)
 		return false, err
 	}
-
+	clilog.Info.Println("Writing ", string(data))
 	if err = WriteByteArrayToFile(path.Join(usr.HomeDir, apigeecliFile), false, data); err != nil {
 		return false, err
 	}
 
 	return false, nil
+}
+
+func GetDefaultOrg() (org string) {
+	return cliPref.Org
+}
+
+func WriteDefaultOrg(org string) (err error) {
+	clilog.Info.Println("Default org: ", org)
+	cliPref.Org = org
+	data, err := json.Marshal(&cliPref)
+	if err != nil {
+		clilog.Info.Printf("Error marshalling: %v\n", err)
+		return err
+	}
+	clilog.Info.Println("Writing ", string(data))
+	return WriteByteArrayToFile(path.Join(usr.HomeDir, apigeecliFile), false, data)
 }

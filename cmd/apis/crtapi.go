@@ -28,8 +28,7 @@ var CreateCmd = &cobra.Command{
 	Short: "Creates an API proxy in an Apigee Org",
 	Long:  "Creates an API proxy in an Apigee Org",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		if proxy != "" {

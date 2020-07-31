@@ -32,8 +32,8 @@ var CreateCmd = &cobra.Command{
 			return fmt.Errorf("resourceType should be KeyStore or TrustStore")
 		}
 		apiclient.SetApigeeEnv(env)
-		apiclient.SetApigeeOrg(org)
-		return nil
+
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		_, err = references.Create(name, description, resourceType, refers)

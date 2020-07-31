@@ -35,7 +35,6 @@ func init() {
 	Cmd.PersistentFlags().StringVarP(&env, "env", "e",
 		"", "Apigee environment name")
 
-	_ = Cmd.MarkPersistentFlagRequired("org")
 	_ = Cmd.MarkPersistentFlagRequired("env")
 
 	Cmd.AddCommand(ListCmd)

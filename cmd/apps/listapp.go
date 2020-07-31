@@ -26,8 +26,7 @@ var ListCmd = &cobra.Command{
 	Short: "Returns a list of Developer Applications",
 	Long:  "Returns a list of app IDs within an organization based on app status",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		_, err = apps.List(includeCred, expand, count)

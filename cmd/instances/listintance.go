@@ -26,8 +26,7 @@ var ListCmd = &cobra.Command{
 	Short: "Returns a list of environment groups",
 	Long:  "Returns a list of environment groups",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		_, err = instances.List()
@@ -41,5 +40,4 @@ func init() {
 	ListCmd.Flags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
 
-	_ = ListCmd.MarkFlagRequired("org")
 }

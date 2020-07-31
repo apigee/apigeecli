@@ -26,8 +26,7 @@ var ListAttachCmd = &cobra.Command{
 	Short: "List attachments of an Environment Group",
 	Long:  "List attachments of an Environment Group",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		_, err = envgroups.ListAttach(name)
@@ -43,6 +42,5 @@ func init() {
 	ListAttachCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of the environment group")
 
-	_ = ListAttachCmd.MarkFlagRequired("org")
 	_ = ListAttachCmd.MarkFlagRequired("name")
 }

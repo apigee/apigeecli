@@ -26,8 +26,7 @@ var ListCmd = &cobra.Command{
 	Short: "Returns a list of API products",
 	Long:  "Returns a list of API products with a filter by attribute names and values if provided",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		_, err = products.List(count, expand)

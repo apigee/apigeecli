@@ -26,9 +26,8 @@ var CreateCmd = &cobra.Command{
 	Short: "Attach a flowhook",
 	Long:  "Attach a flowhook",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
 		apiclient.SetApigeeEnv(env)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		_, err = flowhooks.Attach(name, description, sharedflow, continueOnErr)

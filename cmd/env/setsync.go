@@ -28,9 +28,8 @@ var SetSyncCmd = &cobra.Command{
 	Short: "Set Synchronization Manager role for a SA on an environment",
 	Long:  "Set Synchronization Manager role for a SA on an environment",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
 		apiclient.SetApigeeEnv(environment)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		err = environments.SetIAM(serviceAccountName, "sync")

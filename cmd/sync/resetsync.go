@@ -26,8 +26,7 @@ var ResetCmd = &cobra.Command{
 	Short: "Reset identities with access to control plane resources",
 	Long:  "Reset identities with access to control plane resources",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		_, err = sync.Reset()

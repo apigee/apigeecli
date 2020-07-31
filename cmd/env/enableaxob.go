@@ -28,9 +28,8 @@ var ObCmd = &cobra.Command{
 	Short: "Obfuscate analytics fields",
 	Long:  "Obfuscate analytics fields before sending to control plane",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
 		apiclient.SetApigeeEnv(environment)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		return env.SetEnvProperty("features.analytics.data.obfuscation.enabled", strconv.FormatBool(enable))

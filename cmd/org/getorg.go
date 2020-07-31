@@ -26,8 +26,7 @@ var GetCmd = &cobra.Command{
 	Short: "Show details of an Apigee Org",
 	Long:  "Show details of an Apigee Org",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		_, err = orgs.Get()
@@ -39,6 +38,4 @@ func init() {
 
 	GetCmd.Flags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
-
-	_ = GetCmd.MarkFlagRequired("org")
 }

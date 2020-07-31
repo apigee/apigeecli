@@ -26,8 +26,7 @@ var WlCmd = &cobra.Command{
 	Short: "Enable IP whitelisting for MART connections",
 	Long:  "Enable IP whitelisting for MART connections",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		return orgs.SetOrgProperty("features.mart.ip.whitelist.enabled", "true")
@@ -35,9 +34,6 @@ var WlCmd = &cobra.Command{
 }
 
 func init() {
-
 	WlCmd.Flags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
-
-	_ = WlCmd.MarkFlagRequired("org")
 }

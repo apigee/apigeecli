@@ -39,6 +39,7 @@ import (
 	"github.com/srinandan/apigeecli/cmd/kvm"
 	"github.com/srinandan/apigeecli/cmd/ops"
 	"github.com/srinandan/apigeecli/cmd/org"
+	"github.com/srinandan/apigeecli/cmd/preferences"
 	"github.com/srinandan/apigeecli/cmd/products"
 	"github.com/srinandan/apigeecli/cmd/projects"
 	"github.com/srinandan/apigeecli/cmd/references"
@@ -57,7 +58,7 @@ var RootCmd = &cobra.Command{
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 		apiclient.SetServiceAccount(serviceAccount)
 		apiclient.SetApigeeToken(accessToken)
-		_ = apiclient.ReadPreferencesFile()
+
 		if !disableCheck {
 			if ok, _ := apiclient.TestAndUpdateLastCheck(); !ok {
 				latestVersion, _ := getLatestVersion()
@@ -67,10 +68,8 @@ var RootCmd = &cobra.Command{
 			}
 		}
 
-		err := apiclient.SetAccessToken()
-		if err != nil {
-			return err
-		}
+		_ = apiclient.SetAccessToken()
+
 		return nil
 	},
 }
@@ -120,6 +119,7 @@ func init() {
 	RootCmd.AddCommand(envoy.Cmd)
 	RootCmd.AddCommand(instances.Cmd)
 	RootCmd.AddCommand(ops.Cmd)
+	RootCmd.AddCommand(preferences.Cmd)
 }
 
 func initConfig() {

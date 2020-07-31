@@ -29,8 +29,7 @@ var CreateCmd = &cobra.Command{
 	Short: "Create an Instance",
 	Long:  "Create an Instance",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		re := regexp.MustCompile(`projects\/([a-zA-Z0-9_-]+)\/locations\/([a-zA-Z0-9_-]+)\/keyRings\/([a-zA-Z0-9_-]+)\/cryptoKeys\/([a-zA-Z0-9_-]+)`)
@@ -52,7 +51,7 @@ func init() {
 	CreateCmd.Flags().StringVarP(&location, "location", "l",
 		"", "Instance location")
 	CreateCmd.Flags().StringVarP(&diskEncryptionKeyName, "diskenc", "d",
-		"", "Instance location")
+		"", "CloudKMS key name")
 
 	_ = CreateCmd.MarkFlagRequired("name")
 	_ = CreateCmd.MarkFlagRequired("location")

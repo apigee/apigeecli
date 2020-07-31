@@ -26,8 +26,7 @@ var CreateCmd = &cobra.Command{
 	Short: "Create a Developer App",
 	Long:  "Create a Developer App",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		_, err = apps.Create(name, email, expires, callback, apiProducts, scopes, attrs)

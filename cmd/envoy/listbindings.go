@@ -26,8 +26,7 @@ var ListCmd = &cobra.Command{
 	Short: "List Envoy bindings to an API Product",
 	Long:  "List Envoy bindings to an API Product",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		_, err = products.GetAttribute(productName, envoyAttributeName)

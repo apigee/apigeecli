@@ -25,8 +25,7 @@ var ListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "Returns a list of App Developers",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	Long: "Lists all developers in an organization by email address",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
