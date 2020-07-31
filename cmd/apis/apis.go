@@ -40,6 +40,7 @@ func init() {
 	Cmd.AddCommand(CreateCmd)
 	Cmd.AddCommand(ExpCmd)
 	Cmd.AddCommand(DepCmd)
+	Cmd.AddCommand(DepWaitCmd)
 	Cmd.AddCommand(DelCmd)
 	Cmd.AddCommand(FetCmd)
 	Cmd.AddCommand(GetCmd)
