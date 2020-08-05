@@ -19,9 +19,31 @@ import (
 	"fmt"
 	"net/url"
 	"path"
+	"strings"
 
 	"github.com/srinandan/apigeecli/apiclient"
 )
+
+//Create
+func Create(name string) (respBody []byte, err error) {
+	environment := []string{}
+	environment = append(environment, "\"name\":\""+name+"\"")
+
+	payload := "{" + strings.Join(environment, ",") + "}"
+
+	u, _ := url.Parse(apiclient.BaseURL)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments")
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload)
+	return respBody, err
+}
+
+//Delete
+func Delete(name string) (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.BaseURL)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", name)
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "", "DELETE")
+	return respBody, err
+}
 
 //Get
 func Get(config bool) (respBody []byte, err error) {
