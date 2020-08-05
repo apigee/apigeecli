@@ -18,23 +18,22 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//Cmd to manage instances
-var Cmd = &cobra.Command{
-	Use:   "instances",
-	Short: "Manage Apigee runtime instances",
-	Long:  "Manage Apigee runtime instances",
+//AttachCmd to manage instances
+var AttachCmd = &cobra.Command{
+	Use:   "attachments",
+	Short: "Manage environments to instances",
+	Long:  "Manage environments to instances",
 }
 
-var org, name, location string
+var environment string
 
 func init() {
 
-	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
+	AttachCmd.PersistentFlags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
 
-	Cmd.AddCommand(CreateCmd)
-	Cmd.AddCommand(ListCmd)
-	Cmd.AddCommand(GetCmd)
-	Cmd.AddCommand(DeleteCmd)
-	Cmd.AddCommand(AttachCmd)
+	AttachCmd.AddCommand(CreateAttachCmd)
+	AttachCmd.AddCommand(ListAttachCmd)
+	AttachCmd.AddCommand(GetAttachCmd)
+	AttachCmd.AddCommand(DeleteAttachCmd)
 }

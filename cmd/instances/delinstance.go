@@ -16,25 +16,31 @@ package instances
 
 import (
 	"github.com/spf13/cobra"
+	"github.com/srinandan/apigeecli/apiclient"
+	"github.com/srinandan/apigeecli/client/instances"
 )
 
-//Cmd to manage instances
-var Cmd = &cobra.Command{
-	Use:   "instances",
-	Short: "Manage Apigee runtime instances",
-	Long:  "Manage Apigee runtime instances",
+//DeleteCmd to get instance
+var DeleteCmd = &cobra.Command{
+	Use:   "delete",
+	Short: "Delete an Instance",
+	Long:  "Delete an Instance",
+	Args: func(cmd *cobra.Command, args []string) (err error) {
+		return apiclient.SetApigeeOrg(org)
+	},
+	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		_, err = instances.Delete(name)
+		return
+	},
 }
-
-var org, name, location string
 
 func init() {
 
-	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
+	DeleteCmd.Flags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
 
-	Cmd.AddCommand(CreateCmd)
-	Cmd.AddCommand(ListCmd)
-	Cmd.AddCommand(GetCmd)
-	Cmd.AddCommand(DeleteCmd)
-	Cmd.AddCommand(AttachCmd)
+	DeleteCmd.Flags().StringVarP(&name, "name", "n",
+		"", "Name of the instance")
+
+	_ = DeleteCmd.MarkFlagRequired("name")
 }

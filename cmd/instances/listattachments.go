@@ -16,25 +16,29 @@ package instances
 
 import (
 	"github.com/spf13/cobra"
+	"github.com/srinandan/apigeecli/apiclient"
+	"github.com/srinandan/apigeecli/client/instances"
 )
 
-//Cmd to manage instances
-var Cmd = &cobra.Command{
-	Use:   "instances",
-	Short: "Manage Apigee runtime instances",
-	Long:  "Manage Apigee runtime instances",
+//Cmd to create a new instance
+var ListAttachCmd = &cobra.Command{
+	Use:   "list",
+	Short: "List attachment details for an instance",
+	Long:  "List attachment details for an instance",
+	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetApigeeEnv(environment)
+		return apiclient.SetApigeeOrg(org)
+	},
+	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		_, err = instances.ListAttach(name)
+		return
+	},
 }
-
-var org, name, location string
 
 func init() {
 
-	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
-		"", "Apigee organization name")
+	ListAttachCmd.Flags().StringVarP(&name, "name", "n",
+		"", "Name of the Instance")
 
-	Cmd.AddCommand(CreateCmd)
-	Cmd.AddCommand(ListCmd)
-	Cmd.AddCommand(GetCmd)
-	Cmd.AddCommand(DeleteCmd)
-	Cmd.AddCommand(AttachCmd)
+	_ = ListAttachCmd.MarkFlagRequired("name")
 }
