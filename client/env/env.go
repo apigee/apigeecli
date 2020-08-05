@@ -25,9 +25,9 @@ import (
 )
 
 //Create
-func Create(name string) (respBody []byte, err error) {
+func Create() (respBody []byte, err error) {
 	environment := []string{}
-	environment = append(environment, "\"name\":\""+name+"\"")
+	environment = append(environment, "\"name\":\""+apiclient.GetApigeeEnv()+"\"")
 
 	payload := "{" + strings.Join(environment, ",") + "}"
 
@@ -38,9 +38,9 @@ func Create(name string) (respBody []byte, err error) {
 }
 
 //Delete
-func Delete(name string) (respBody []byte, err error) {
+func Delete() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
-	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", name)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv())
 	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "", "DELETE")
 	return respBody, err
 }
