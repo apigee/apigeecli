@@ -33,6 +33,7 @@ type apigeeCLI struct {
 	Token     string `json:"token,omitempty"`
 	LastCheck string `json:"lastCheck,omitempty"`
 	Org       string `json:"defaultOrg,omitempty"`
+	Staging   bool   `json:"staging,omitempty"`
 }
 
 var cliPref *apigeeCLI //= apigeeCLI{}
@@ -59,6 +60,10 @@ func ReadPreferencesFile() (err error) {
 	if err != nil {
 		clilog.Info.Printf("Error marshalling: %v\n", err)
 		return DeletePreferencesFile()
+	}
+
+	if cliPref.Staging {
+		UseStaging()
 	}
 
 	if cliPref.Org != "" {
@@ -134,6 +139,20 @@ func GetDefaultOrg() (org string) {
 func WriteDefaultOrg(org string) (err error) {
 	clilog.Info.Println("Default org: ", org)
 	cliPref.Org = org
+	data, err := json.Marshal(&cliPref)
+	if err != nil {
+		clilog.Info.Printf("Error marshalling: %v\n", err)
+		return err
+	}
+	clilog.Info.Println("Writing ", string(data))
+	return WriteByteArrayToFile(path.Join(usr.HomeDir, apigeecliFile), false, data)
+}
+
+func SetStaging(usestage bool) (err error) {
+	if usestage == cliPref.Staging {
+		return nil
+	}
+	cliPref.Staging = usestage
 	data, err := json.Marshal(&cliPref)
 	if err != nil {
 		clilog.Info.Printf("Error marshalling: %v\n", err)

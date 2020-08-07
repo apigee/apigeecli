@@ -25,14 +25,22 @@ var SetCmd = &cobra.Command{
 	Short: "Set default preferences for apigeecli",
 	Long:  "Set default preferences for apigeecli",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		return apiclient.WriteDefaultOrg(org)
+		if err = apiclient.WriteDefaultOrg(org); err != nil {
+			return err
+		}
+
+		return apiclient.SetStaging(usestage)
 	},
 }
 
 var org string
+var usestage bool
 
 func init() {
 
 	SetCmd.Flags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
+
+	SetCmd.Flags().BoolVarP(&usestage, "staging", "s",
+		false, "Use Apigee staging; format: -s=true")
 }

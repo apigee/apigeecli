@@ -22,7 +22,8 @@ import (
 )
 
 //BaseURL is the Apigee control plane endpoint
-const BaseURL = "https://apigee.googleapis.com/v1/organizations/"
+var BaseURL = "https://apigee.googleapis.com/v1/organizations/"
+var StageBaseURL = "https://staging-apigee.sandbox.googleapis.com/v1/organizations/"
 
 // ApigeeClientOptions is the base struct to hold all command arguments
 type ApigeeClientOptions struct {
@@ -87,11 +88,16 @@ func NewApigeeClient(o ApigeeClientOptions) {
 
 }
 
+// UseStaging
+func UseStaging() {
+	BaseURL = StageBaseURL
+}
+
 //SetApigeeOrg sets the org variable
 func SetApigeeOrg(org string) (err error) {
 	if org == "" {
 		if GetApigeeOrg() == "" {
-			return fmt.Errorf("An org name was not set in preferences in supplied in the command")
+			return fmt.Errorf("An org name was not set in preferences or supplied in the command")
 		}
 		return nil
 	}
