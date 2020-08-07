@@ -90,7 +90,7 @@ func generateJWT(privateKey string) (string, error) {
 //generateAccessToken generates a Google OAuth access token from a service account
 func generateAccessToken(privateKey string) (string, error) {
 
-	const tokenEndpoint = "https://www.googleapis.com/oauth2/v4/token"
+	const tokenEndpoint = "https://oauth2.googleapis.com/token"
 	const grantType = "urn:ietf:params:oauth:grant-type:jwt-bearer"
 
 	//oAuthAccessToken is a structure to hold OAuth response
@@ -168,7 +168,7 @@ func checkAccessToken() bool {
 		return true
 	}
 
-	const tokenInfo = "https://www.googleapis.com/oauth2/v1/tokeninfo"
+	const tokenInfo = "https://oauth2.googleapis.com/tokeninfo"
 	u, _ := url.Parse(tokenInfo)
 	q := u.Query()
 	q.Set("access_token", GetApigeeToken())
