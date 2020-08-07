@@ -62,7 +62,7 @@ func ReadPreferencesFile() (err error) {
 	}
 
 	if cliPref.Org != "" {
-		SetApigeeOrg(cliPref.Org)
+		return SetApigeeOrg(cliPref.Org)
 	}
 	return nil
 }
