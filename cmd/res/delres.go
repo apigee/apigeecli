@@ -26,6 +26,7 @@ var DelCmd = &cobra.Command{
 	Short: "Delete a resource file",
 	Long:  "Delete a resource file",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetApigeeEnv(env)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

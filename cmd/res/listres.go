@@ -26,6 +26,7 @@ var ListCmd = &cobra.Command{
 	Short: "List all resources in your environment",
 	Long:  "List all resources in your environment",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetApigeeEnv(env)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

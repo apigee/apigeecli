@@ -26,6 +26,7 @@ var CreateCmd = &cobra.Command{
 	Short: "Create a resource file",
 	Long:  "Create a resource file",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetApigeeEnv(env)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
@@ -41,7 +42,7 @@ func init() {
 	CreateCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of the resource file")
 	CreateCmd.Flags().StringVarP(&resType, "type", "p",
-		"", "Resource type")
+		"", "Resource type; Valid types include java, js, jsc, properties, py, wsdl, xsd, or xsl.")
 	CreateCmd.Flags().StringVarP(&resPath, "respath", "r",
 		"", "Resource Path")
 
