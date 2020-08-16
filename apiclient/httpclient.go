@@ -29,9 +29,11 @@ import (
 )
 
 //PostHttpOctet method is used to send resources, proxy bundles, shared flows etc.
-func PostHttpOctet(print bool, url string, proxyName string) (respBody []byte, err error) {
+func PostHttpOctet(print bool, update bool, url string, proxyName string) (respBody []byte, err error) {
 	file, _ := os.Open(proxyName)
 	defer file.Close()
+
+	var req *http.Request
 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
@@ -54,7 +56,12 @@ func PostHttpOctet(print bool, url string, proxyName string) (respBody []byte, e
 	client := &http.Client{}
 
 	clilog.Info.Println("Connecting to : ", url)
-	req, err := http.NewRequest("POST", url, body)
+	if !update {
+		req, err = http.NewRequest("POST", url, body)
+	} else {
+		req, err = http.NewRequest("PUT", url, body)
+	}
+
 	if err != nil {
 		clilog.Error.Println("error in client: ", err)
 		return nil, err
