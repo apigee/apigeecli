@@ -35,7 +35,7 @@ func Create(name string, resPath string, resourceType string) (respBody []byte, 
 		q.Set("name", name)
 		u.RawQuery = q.Encode()
 	}
-	respBody, err = apiclient.PostHttpOctet(true, u.String(), resPath)
+	respBody, err = apiclient.PostHttpOctet(true, false, u.String(), resPath)
 	return respBody, err
 }
 
@@ -58,6 +58,17 @@ func Get(name string, resourceType string) (err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "resourcefiles", resourceType, name)
 	err = apiclient.DownloadResource(u.String(), name, resourceType)
+	return
+}
+
+//Update
+func Update(name string, resPath string, resourceType string) (err error) {
+	if !validate(resourceType) {
+		return fmt.Errorf("invalid resource type")
+	}
+	u, _ := url.Parse(apiclient.BaseURL)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "resourcefiles", resourceType, name)
+	_, err = apiclient.PostHttpOctet(true, true, u.String(), resPath)
 	return
 }
 

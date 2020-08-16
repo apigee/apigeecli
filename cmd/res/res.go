@@ -42,4 +42,5 @@ func init() {
 	Cmd.AddCommand(DelCmd)
 	Cmd.AddCommand(ListCmd)
 	Cmd.AddCommand(GetCmd)
+	Cmd.AddCommand(UpdateCmd)
 }
