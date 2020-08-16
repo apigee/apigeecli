@@ -210,7 +210,7 @@ func ImportBundle(entityType string, name string, bundlePath string) error {
 		return err
 	}
 
-	_, err = PostHttpOctet(true, u.String(), bundlePath)
+	_, err = PostHttpOctet(true, false, u.String(), bundlePath)
 	if err != nil {
 		clilog.Error.Println(err)
 		return err

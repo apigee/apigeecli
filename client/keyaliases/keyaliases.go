@@ -50,13 +50,13 @@ func Create(keystoreName string, name string, format string, password string, ig
 			q.Set("password", password)
 		}
 		u.RawQuery = q.Encode()
-		respBody, err = apiclient.PostHttpOctet(true, u.String(), name+".pem")
+		respBody, err = apiclient.PostHttpOctet(true, false, u.String(), name+".pem")
 	case "pkcs12":
 		if password != "" {
 			q.Set("password", password)
 		}
 		u.RawQuery = q.Encode()
-		respBody, err = apiclient.PostHttpOctet(true, u.String(), name+".pfx")
+		respBody, err = apiclient.PostHttpOctet(true, false, u.String(), name+".pfx")
 	case "selfsignedcert":
 		var jsonPayload map[string]interface{}
 		err = json.Unmarshal([]byte(payload), &jsonPayload)
