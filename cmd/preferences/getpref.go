@@ -16,18 +16,20 @@ package preferences
 
 import (
 	"github.com/spf13/cobra"
+	"github.com/srinandan/apigeecli/apiclient"
 )
 
-//Cmd to manage preferences
-var Cmd = &cobra.Command{
-	Use:     "preferences",
-	Aliases: []string{"prefs"},
-	Short:   "Manage apigeecli preferences",
-	Long:    "Manage apigeecli preferences",
-}
+//Cmd to get org details
+var GetCmd = &cobra.Command{
+	Use:   "get",
+	Short: "Get preferences for apigeecli",
+	Long:  "Get preferences for apigeecli",
+	RunE: func(cmd *cobra.Command, args []string) (err error) {
 
-func init() {
-	Cmd.AddCommand(CleanCmd)
-	Cmd.AddCommand(SetCmd)
-	Cmd.AddCommand(GetCmd)
+		if err = apiclient.GetPreferences(); err != nil {
+			return err
+		}
+
+		return nil
+	},
 }
