@@ -29,11 +29,15 @@ var SetCmd = &cobra.Command{
 			return err
 		}
 
+		if err = apiclient.SetProxy(proxyUrl); err != nil {
+			return err
+		}
+
 		return apiclient.SetStaging(usestage)
 	},
 }
 
-var org string
+var org, proxyUrl string
 var usestage bool
 
 func init() {
@@ -43,4 +47,7 @@ func init() {
 
 	SetCmd.Flags().BoolVarP(&usestage, "staging", "s",
 		false, "Use Apigee staging; format: -s=true")
+
+	SetCmd.Flags().StringVarP(&proxyUrl, "proxy", "p",
+		"", "Use http proxy before contacting the control plane")
 }
