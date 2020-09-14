@@ -34,6 +34,7 @@ type apigeeCLI struct {
 	LastCheck string `json:"lastCheck,omitempty"`
 	Org       string `json:"defaultOrg,omitempty"`
 	Staging   bool   `json:"staging,omitempty"`
+	ProxyUrl  string `json:"proxyUrl,omitempty"`
 }
 
 var cliPref *apigeeCLI //= apigeeCLI{}
@@ -64,6 +65,10 @@ func ReadPreferencesFile() (err error) {
 
 	if cliPref.Staging {
 		UseStaging()
+	}
+
+	if cliPref.ProxyUrl != "" {
+		SetProxyURL(cliPref.ProxyUrl)
 	}
 
 	if cliPref.Org != "" {
@@ -160,4 +165,30 @@ func SetStaging(usestage bool) (err error) {
 	}
 	clilog.Info.Println("Writing ", string(data))
 	return WriteByteArrayToFile(path.Join(usr.HomeDir, apigeecliFile), false, data)
+}
+
+func SetProxy(url string) (err error) {
+	if url == "" {
+		return nil
+	}
+
+	cliPref.ProxyUrl = url
+	data, err := json.Marshal(&cliPref)
+	if err != nil {
+		clilog.Info.Printf("Error marshalling: %v\n", err)
+		return err
+	}
+	clilog.Info.Println("Writing ", string(data))
+	return WriteByteArrayToFile(path.Join(usr.HomeDir, apigeecliFile), false, data)
+}
+
+func GetPreferences() (err error) {
+	output, err := json.Marshal(&cliPref)
+	if err != nil {
+		clilog.Error.Println(err)
+		return err
+	}
+
+	PrettyPrint(output)
+	return nil
 }

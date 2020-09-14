@@ -36,6 +36,7 @@ type ApigeeClientOptions struct {
 	SkipCheck      bool   //skip checking access token expiry
 	SkipCache      bool   //skip writing access token to file
 	PrintOutput    bool   //prints output from http calls
+	ProxyUrl       string //use a proxy url
 }
 
 var options *ApigeeClientOptions
@@ -185,4 +186,14 @@ func SetPrintOutput(output bool) {
 //GetPrintOutput
 func GetPrintOutput() bool {
 	return options.PrintOutput
+}
+
+//GetProxyURL
+func GetProxyURL() string {
+	return options.ProxyUrl
+}
+
+//SetProxyURL
+func SetProxyURL(proxyurl string) {
+	options.ProxyUrl = proxyurl
 }

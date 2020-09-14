@@ -23,6 +23,7 @@ import (
 	"io/ioutil"
 	"mime/multipart"
 	"net/http"
+	"net/url"
 	"os"
 
 	"github.com/srinandan/apigeecli/clilog"
@@ -53,7 +54,11 @@ func PostHttpOctet(print bool, update bool, url string, proxyName string) (respB
 		clilog.Error.Println("error closing multi-part: ", err)
 		return nil, err
 	}
-	client := &http.Client{}
+
+	client, err := getHttpClient()
+	if err != nil {
+		return nil, err
+	}
 
 	clilog.Info.Println("Connecting to : ", url)
 	if !update {
@@ -110,7 +115,10 @@ func DownloadResource(url string, name string, resType string) error {
 	}
 	defer out.Close()
 
-	client := &http.Client{}
+	client, err := getHttpClient()
+	if err != nil {
+		return err
+	}
 
 	clilog.Info.Println("Connecting to : ", url)
 	req, err := http.NewRequest("GET", url, nil)
@@ -152,7 +160,11 @@ func HttpClient(print bool, params ...string) (respBody []byte, err error) {
 	var req *http.Request
 	contentType := "application/json"
 
-	client := &http.Client{}
+	client, err := getHttpClient()
+	if err != nil {
+		return nil, err
+	}
+
 	clilog.Info.Println("Connecting to: ", params[0])
 
 	switch paramLen := len(params); paramLen {
@@ -239,4 +251,22 @@ func getRequest(params []string) (req *http.Request, err error) {
 		return nil, errors.New("unsupported method")
 	}
 	return req, err
+}
+
+func getHttpClient() (client *http.Client, err error) {
+
+	if GetProxyURL() != "" {
+		if pUrl, err := url.Parse(GetProxyURL()); err != nil {
+			client = &http.Client{
+				Transport: &http.Transport{
+					Proxy: http.ProxyURL(pUrl),
+				},
+			}
+		} else {
+			return nil, err
+		}
+	} else {
+		client = &http.Client{}
+	}
+	return client, nil
 }
