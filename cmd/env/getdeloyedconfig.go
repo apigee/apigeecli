@@ -16,22 +16,21 @@ package env
 
 import (
 	"github.com/spf13/cobra"
+	"github.com/srinandan/apigeecli/apiclient"
+	environments "github.com/srinandan/apigeecli/client/env"
 )
 
-//DeployCmd to manage api deployments for an environment
-var DeployCmd = &cobra.Command{
-	Use:   "deployments",
-	Short: "Manage deployments for the environment",
-	Long:  "Manage deployments for the environment",
-}
-
-func init() {
-
-	DeployCmd.PersistentFlags().StringVarP(&environment, "env", "e",
-		"", "Apigee environment name")
-
-	_ = DeployCmd.MarkPersistentFlagRequired("env")
-
-	DeployCmd.AddCommand(GetDeployCmd)
-	DeployCmd.AddCommand(GetConfigCmd)
+//GetConfigCmd to get deployed apis in an env
+var GetConfigCmd = &cobra.Command{
+	Use:   "config",
+	Short: "Get deployment configuration for an Environment",
+	Long:  "Get deployment configuration for an Environment",
+	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetApigeeEnv(environment)
+		return apiclient.SetApigeeOrg(org)
+	},
+	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		_, err = environments.GetDeployedConfig()
+		return
+	},
 }
