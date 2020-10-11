@@ -26,10 +26,10 @@ import (
 //{"identities":["serviceAccount:srinandans-apigee@srinandans-apigee.iam.gserviceaccount.com"]}
 
 //Cmd to set identities
-var SetCmd = &cobra.Command{
-	Use:   "set",
-	Short: "Set identity with access to control plane resources",
-	Long:  "Set identity with access to control plane resources",
+var RemoveCmd = &cobra.Command{
+	Use:   "remove",
+	Short: "Remove identity with access to control plane resources",
+	Long:  "Remove identity with access to control plane resources",
 	Args: func(cmd *cobra.Command, args []string) error {
 		if !strings.Contains(identity, ".iam.gserviceaccount.com") {
 			return fmt.Errorf("identity[0] must have .iam.gserviceaccount.com suffix"+
@@ -38,7 +38,7 @@ var SetCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = sync.Set(identity)
+		_, err = sync.Remove(identity)
 		return
 
 	},
@@ -46,8 +46,8 @@ var SetCmd = &cobra.Command{
 
 func init() {
 
-	SetCmd.Flags().StringVarP(&identity, "ity", "i",
+	RemoveCmd.Flags().StringVarP(&identity, "ity", "i",
 		"", "IAM Identity")
 
-	_ = SetCmd.MarkFlagRequired("ity")
+	_ = RemoveCmd.MarkFlagRequired("ity")
 }

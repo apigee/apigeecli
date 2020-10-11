@@ -16,6 +16,7 @@ package sync
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/url"
 	"path"
 	"strings"
@@ -25,6 +26,11 @@ import (
 
 type iAMIdentities struct {
 	Identities []string `json:"identities,omitempty"`
+}
+
+type syncResponse struct {
+	Identities []string `json:"identities,omitempty"`
+	Etag       string   `json:"etag,omitempty"`
 }
 
 func validate(i string) string {
@@ -53,12 +59,94 @@ func Reset() (respBody []byte, err error) {
 
 //Set
 func Set(identity string) (respBody []byte, err error) {
+
 	u, _ := url.Parse(apiclient.BaseURL)
-	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg()+":setSyncAuthorization")
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg()+":getSyncAuthorization")
+	apiclient.SetPrintOutput(false)
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "")
+	if err != nil {
+		return respBody, err
+	}
+
+	response := syncResponse{}
+	err = json.Unmarshal(respBody, &response)
+	if err != nil {
+		return respBody, err
+	}
+
 	identity = validate(identity)
+
+	for _, setIdentity := range response.Identities {
+		if identity == setIdentity {
+			return respBody, fmt.Errorf("identity %s already set", identity)
+		}
+	}
+
+	response.Identities = append(response.Identities, identity)
+
 	identities := iAMIdentities{}
-	identities.Identities = append(identities.Identities, identity)
-	payload, _ := json.Marshal(&identities)
+	identities.Identities = response.Identities
+	payload, err := json.Marshal(&identities)
+	if err != nil {
+		return respBody, err
+	}
+
+	apiclient.SetPrintOutput(true)
+	u, _ = url.Parse(apiclient.BaseURL)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg()+":setSyncAuthorization")
 	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), string(payload))
+
+	return respBody, err
+}
+
+//Remove
+func Remove(identity string) (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.BaseURL)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg()+":getSyncAuthorization")
+	apiclient.SetPrintOutput(false)
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "")
+	if err != nil {
+		return respBody, err
+	}
+
+	response := syncResponse{}
+	err = json.Unmarshal(respBody, &response)
+	if err != nil {
+		return respBody, err
+	}
+
+	identity = validate(identity)
+	found := false
+
+	numIdentities := len(response.Identities)
+	if numIdentities < 1 {
+		return respBody, fmt.Errorf("identity %s not found", identity)
+	}
+
+	for i, setIdentity := range response.Identities {
+		if identity == setIdentity {
+			response.Identities[i] = response.Identities[numIdentities-1]
+			response.Identities[numIdentities-1] = ""
+			response.Identities = response.Identities[:numIdentities-1]
+			found = true
+		}
+	}
+
+	if !found {
+		return respBody, fmt.Errorf("identity %s not found", identity)
+	}
+
+	identities := iAMIdentities{}
+	identities.Identities = response.Identities
+	payload, err := json.Marshal(&identities)
+	if err != nil {
+		return respBody, err
+	}
+
+	apiclient.SetPrintOutput(true)
+	u, _ = url.Parse(apiclient.BaseURL)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg()+":setSyncAuthorization")
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), string(payload))
+
 	return respBody, err
 }

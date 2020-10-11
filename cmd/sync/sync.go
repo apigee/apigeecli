@@ -25,7 +25,7 @@ var Cmd = &cobra.Command{
 	Long:  "Manage identities with grant access to control plane resources",
 }
 
-var org string
+var org, identity string
 
 func init() {
 
@@ -35,4 +35,5 @@ func init() {
 	Cmd.AddCommand(SetCmd)
 	Cmd.AddCommand(GetCmd)
 	Cmd.AddCommand(ResetCmd)
+	Cmd.AddCommand(RemoveCmd)
 }
