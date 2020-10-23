@@ -15,6 +15,8 @@
 package org
 
 import (
+	"fmt"
+
 	"github.com/spf13/cobra"
 	"github.com/srinandan/apigeecli/apiclient"
 	"github.com/srinandan/apigeecli/client/orgs"
@@ -26,16 +28,22 @@ var CreateCmd = &cobra.Command{
 	Short: "Create a new Apigee Org",
 	Long:  "Create a new Apigee Org; Your GCP project must be whitelist for this operation",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		if runtimeType != "HYBRID" && runtimeType != "CLOUD" {
+			return fmt.Errorf("runtime type must be CLOUD or HYBRID")
+		}
+		if runtimeType == "CLOUD" && network == "" {
+			return fmt.Errorf("authorized network must be supplied")
+		}
 		apiclient.SetProjectID(projectID)
 		return apiclient.SetApigeeOrg(projectID)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = orgs.Create(region)
+		_, err = orgs.Create(region, network, runtimeType)
 		return
 	},
 }
 
-var region, projectID string
+var region, projectID, network, runtimeType string
 
 func init() {
 
@@ -43,7 +51,12 @@ func init() {
 		"", "Analytics region name")
 	CreateCmd.Flags().StringVarP(&projectID, "prj", "p",
 		"", "GCP Project ID")
+	CreateCmd.Flags().StringVarP(&network, "net", "n",
+		"default", "Authorized network")
+	CreateCmd.Flags().StringVarP(&runtimeType, "runtime-type", "",
+		"HYBRID", "Runtime type: CLOUD or HYBRID")
 
 	_ = CreateCmd.MarkFlagRequired("prj")
 	_ = CreateCmd.MarkFlagRequired("reg")
+	_ = CreateCmd.MarkFlagRequired("runtime-type")
 }

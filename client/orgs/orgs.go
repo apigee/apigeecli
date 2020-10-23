@@ -38,7 +38,7 @@ func validRegion(region string) bool {
 }
 
 //Create
-func Create(region string) (respBody []byte, err error) {
+func Create(region string, network string, runtimeType string) (respBody []byte, err error) {
 	const baseURL = "https://apigee.googleapis.com/v1/organizations"
 
 	if !validRegion(region) {
@@ -55,6 +55,10 @@ func Create(region string) (respBody []byte, err error) {
 	orgPayload := []string{}
 	orgPayload = append(orgPayload, "\"name\":\""+apiclient.GetApigeeOrg()+"\"")
 	orgPayload = append(orgPayload, "\"analyticsRegion\":\""+region+"\"")
+	orgPayload = append(orgPayload, "\"runtimeType\":\""+runtimeType+"\"")
+	if runtimeType == "CLOUD" {
+		orgPayload = append(orgPayload, "\"authorizedNetwork\":\""+network+"\"")
+	}
 
 	payload := "{" + strings.Join(orgPayload, ",") + "}"
 	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload)
