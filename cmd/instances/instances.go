@@ -37,4 +37,5 @@ func init() {
 	Cmd.AddCommand(GetCmd)
 	Cmd.AddCommand(DeleteCmd)
 	Cmd.AddCommand(AttachCmd)
+	Cmd.AddCommand(NatCmd)
 }
