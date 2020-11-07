@@ -38,7 +38,7 @@ func ReserveNatIP(name string, natid string) (respBody []byte, err error) {
 func ActivateNatIP(name string, natid string) (respBody []byte, err error) {
 	payload := "{}"
 	u, _ := url.Parse(apiclient.BaseURL)
-	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "instances", name, "natAddresses", natid)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "instances", name, "natAddresses", natid, ":activate")
 	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload)
 	return respBody, err
 }

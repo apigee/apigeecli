@@ -27,6 +27,7 @@ import (
 	"github.com/srinandan/apigeecli/cmd/apis"
 	"github.com/srinandan/apigeecli/cmd/apps"
 	cache "github.com/srinandan/apigeecli/cmd/cache"
+	"github.com/srinandan/apigeecli/cmd/datacollectors"
 	"github.com/srinandan/apigeecli/cmd/developers"
 	"github.com/srinandan/apigeecli/cmd/env"
 	"github.com/srinandan/apigeecli/cmd/envgroup"
@@ -102,6 +103,7 @@ func init() {
 	RootCmd.AddCommand(envgroup.Cmd)
 	RootCmd.AddCommand(env.Cmd)
 	RootCmd.AddCommand(products.Cmd)
+	RootCmd.AddCommand(datacollectors.Cmd)
 	RootCmd.AddCommand(developers.Cmd)
 	RootCmd.AddCommand(apps.Cmd)
 	RootCmd.AddCommand(sharedflows.Cmd)
