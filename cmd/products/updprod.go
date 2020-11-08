@@ -15,9 +15,12 @@
 package products
 
 import (
+	"io/ioutil"
+
 	"github.com/spf13/cobra"
 	"github.com/srinandan/apigeecli/apiclient"
 	"github.com/srinandan/apigeecli/client/products"
+	"github.com/srinandan/apigeecli/clilog"
 )
 
 //Cmd to update a product
@@ -29,7 +32,21 @@ var UpdateCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = products.Update(name, description, approval, displayName, quota, quotaInterval, quotaUnit, environments, proxies, scopes, attrs)
+		if legacy {
+			_, err = products.UpdateLegacy(name, description, approval, displayName, quota, quotaInterval, quotaUnit, environments, proxies, scopes, attrs)
+		} else {
+			if operationGroupFile != "" {
+				var operationGrp []byte
+				operationGrp, err = ioutil.ReadFile(operationGroupFile)
+				if err != nil {
+					clilog.Info.Println(err)
+					return err
+				}
+				_, err = products.UpdateProxyOperationGroup(name, description, approval, displayName, quota, quotaInterval, quotaUnit, environments, scopes, operationGrp, attrs)
+			} else {
+				_, err = products.Update(name, description, approval, displayName, quota, quotaInterval, quotaUnit, environments, proxies, scopes, attrs)
+			}
+		}
 		return
 	},
 }
@@ -58,7 +75,10 @@ func init() {
 		"", "Approval type")
 	UpdateCmd.Flags().StringToStringVar(&attrs, "attrs",
 		nil, "Custom attributes")
-
+	UpdateCmd.Flags().StringVarP(&operationGroupFile, "opgrp", "g",
+		"", "File containing Operation Group JSON. See samples for how to create the file")
+	UpdateCmd.Flags().BoolVarP(&legacy, "legacy", "l",
+		false, "Legacy product object")
 	//TODO: apiresource -r later
 
 	_ = UpdateCmd.MarkFlagRequired("name")

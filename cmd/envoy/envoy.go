@@ -25,8 +25,10 @@ var Cmd = &cobra.Command{
 	Long:  "Manage Envoy API Product Bindings Apigee",
 }
 
-var org, productName, kid, folder string
-var serviceNames []string
+var name, description, approval, displayName, quota, quotaInterval, quotaUnit, org, kid, productName, folder string
+var environments, scopes, serviceNames []string
+var attrs map[string]string
+var legacy bool
 
 const envoyAttributeName = "apigee-remote-service-targets"
 
@@ -37,4 +39,5 @@ func init() {
 	Cmd.AddCommand(GenCmd)
 	Cmd.AddCommand(GenJwtCmd)
 	Cmd.AddCommand(AddCmd)
+	Cmd.AddCommand(AddBindCmd)
 }

@@ -31,29 +31,48 @@ var CreateCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetPrintOutput(false)
-		_, err = products.GetAttribute(productName, envoyAttributeName)
-		apiclient.SetPrintOutput(true)
-		if err != nil {
-			attr := make(map[string]string)
-			attr[string(envoyAttributeName)] = strings.Join(serviceNames, ",")
-			_, err = products.Update(productName, "", "", "", "", "", "", nil, nil, nil, attr)
-			return err
+		if legacy {
+			if attrs == nil {
+				attrs = make(map[string]string)
+			}
+			attrs[envoyAttributeName] = strings.Join(serviceNames, ",")
+			_, err = products.CreateLegacy(name, description, approval, displayName, quota, quotaInterval, quotaUnit, environments, remoteServiceProxy, scopes, attrs)
 		} else {
-			_, err = products.UpdateAttribute(productName, envoyAttributeName, strings.Join(serviceNames, ","))
-			return err
+			_, err = products.CreateRemoteServiceOperationGroup(name, description, approval, displayName, quota, quotaInterval, quotaUnit, environments, serviceNames, scopes, attrs)
 		}
+		return
 	},
 }
 
+var remoteServiceProxy = []string{"remote-service"}
+
 func init() {
-	CreateCmd.Flags().StringVarP(&org, "org", "o",
-		"", "Apigee organization name")
-	CreateCmd.Flags().StringVarP(&productName, "prod", "p",
-		"", "Apigee API Product name")
-	CreateCmd.Flags().StringArrayVarP(&serviceNames, "svcs", "s",
-		[]string{}, "Envoy Service names")
+	CreateCmd.Flags().StringVarP(&name, "name", "n",
+		"", "Name of the API Product")
+	CreateCmd.Flags().StringVarP(&displayName, "displayname", "m",
+		"", "Display Name of the API Product")
+	CreateCmd.Flags().StringVarP(&description, "desc", "d",
+		"", "Description for the API Product")
+	CreateCmd.Flags().StringArrayVarP(&environments, "envs", "e",
+		[]string{}, "Environments to enable")
+	CreateCmd.Flags().StringArrayVarP(&serviceNames, "remote-svcs", "r",
+		[]string{}, "Envoy Service names. Ex: -s service1 -s service2")
+	CreateCmd.Flags().StringArrayVarP(&scopes, "scopes", "s",
+		[]string{}, "OAuth scopes")
+	CreateCmd.Flags().StringVarP(&quota, "quota", "q",
+		"", "Quota Amount")
+	CreateCmd.Flags().StringVarP(&quotaInterval, "interval", "i",
+		"", "Quota Interval")
+	CreateCmd.Flags().StringVarP(&quotaUnit, "unit", "u",
+		"", "Quota Unit")
+	CreateCmd.Flags().StringVarP(&approval, "approval", "f",
+		"", "Approval type")
+	CreateCmd.Flags().StringToStringVar(&attrs, "attrs",
+		nil, "Custom attributes")
+	CreateCmd.Flags().BoolVarP(&legacy, "legacy", "l",
+		false, "Legacy product object")
 
 	_ = CreateCmd.MarkFlagRequired("prod")
-	_ = CreateCmd.MarkFlagRequired("svc")
+	_ = CreateCmd.MarkFlagRequired("remote-svcs")
+	_ = CreateCmd.MarkFlagRequired("approval")
 }

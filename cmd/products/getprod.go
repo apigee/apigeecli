@@ -42,6 +42,5 @@ func init() {
 	GetCmd.Flags().StringVarP(&name, "name", "n",
 		"", "name of the API Product")
 
-	_ = GetCmd.MarkFlagRequired("org")
 	_ = GetCmd.MarkFlagRequired("name")
 }

@@ -16,12 +16,13 @@ package products
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/url"
 	"os"
 	"path"
+	"reflect"
 	"strconv"
-	"strings"
 	"sync"
 
 	"github.com/srinandan/apigeecli/apiclient"
@@ -36,19 +37,46 @@ type apiProduct struct {
 	Name string `json:"name,omitempty"`
 }
 
+const proxyOperationConfigType = "proxy"
+const remoteServiceOperationConfigType = "remoteservice"
+
 type product struct {
-	Name          string      `json:"name,omitempty"`
-	DisplayName   string      `json:"displayName,omitempty"`
-	Description   string      `json:"description,omitempty"`
-	ApprovalType  string      `json:"approvalType,omitempty"`
-	Attributes    []attribute `json:"attributes,omitempty"`
-	APIResources  []string    `json:"apiResources,omitempty"`
-	Environments  []string    `json:"environments,omitempty"`
-	Proxies       []string    `json:"proxies,omitempty"`
-	Quota         string      `json:"quota,omitempty"`
-	QuotaInterval string      `json:"quotaInterval,omitempty"`
-	QuotaTimeUnit string      `json:"quotaTimeUnit,omitempty"`
-	Scopes        []string    `json:"scopes,omitempty"`
+	Name           string          `json:"name,omitempty"`
+	DisplayName    string          `json:"displayName,omitempty"`
+	Description    string          `json:"description,omitempty"`
+	ApprovalType   string          `json:"approvalType,omitempty"`
+	Attributes     []attribute     `json:"attributes,omitempty"`
+	APIResources   []string        `json:"apiResources,omitempty"`
+	OperationGroup *operationGroup `json:"operationGroup,omitempty"`
+	Environments   []string        `json:"environments,omitempty"`
+	Proxies        []string        `json:"proxies,omitempty"`
+	Quota          string          `json:"quota,omitempty"`
+	QuotaInterval  string          `json:"quotaInterval,omitempty"`
+	QuotaTimeUnit  string          `json:"quotaTimeUnit,omitempty"`
+	Scopes         []string        `json:"scopes,omitempty"`
+}
+
+type operationGroup struct {
+	OperationConfigs    []operationConfig `json:"operationConfigs,omitempty"`
+	OperationConfigType string            `json:"operationConfigType,omitempty"`
+}
+
+type operationConfig struct {
+	APISource  string      `json:"apiSource,omitempty"`
+	Operations []operation `json:"operations,omitempty"`
+	Quota      *quota      `json:"quota,omitempty"`
+	Attributes []attribute `json:"attributes,omitempty"`
+}
+
+type operation struct {
+	Resource string   `json:"resource,omitempty"`
+	Methods  []string `json:"methods,omitempty"`
+}
+
+type quota struct {
+	Limit    string `json:"limit,omitempty"`
+	Interval string `json:"interval,omitempty"`
+	TimeUnit string `json:"timeUnit,omitempty"`
 }
 
 //attribute to used to hold custom attributes for entities
@@ -57,56 +85,135 @@ type attribute struct {
 	Value string `json:"value,omitempty"`
 }
 
-//Create
+func CreateLegacy(name string, description string, approval string, displayName string, quota string, quotaInterval string, quotaUnit string, environments []string, proxies []string, scopes []string, attrs map[string]string) (respBody []byte, err error) {
+	return createProduct(name, description, approval, displayName, quota, quotaInterval, quotaUnit, environments, proxies, scopes, nil, true, attrs, true)
+}
+
 func Create(name string, description string, approval string, displayName string, quota string, quotaInterval string, quotaUnit string, environments []string, proxies []string, scopes []string, attrs map[string]string) (respBody []byte, err error) {
+	return createProduct(name, description, approval, displayName, quota, quotaInterval, quotaUnit, environments, proxies, scopes, nil, true, attrs, false)
+}
+
+func CreateRemoteServiceOperationGroup(name string, description string, approval string, displayName string, quota string, quotaInterval string, quotaUnit string, environments []string, proxies []string, scopes []string, attrs map[string]string) (respBody []byte, err error) {
+	return createProduct(name, description, approval, displayName, quota, quotaInterval, quotaUnit, environments, proxies, scopes, nil, false, attrs, false)
+}
+
+func CreateProxyOperationGroup(name string, description string, approval string, displayName string, quota string, quotaInterval string, quotaUnit string, environments []string, scopes []string, operationGrp []byte, attrs map[string]string) (respBody []byte, err error) {
+	return createProduct(name, description, approval, displayName, quota, quotaInterval, quotaUnit, environments, nil, scopes, operationGrp, true, attrs, false)
+}
+
+func UpdateLegacy(name string, description string, approval string, displayName string, quota string, quotaInterval string, quotaUnit string, environments []string, proxies []string, scopes []string, attrs map[string]string) (respBody []byte, err error) {
+	return updateProduct(name, description, approval, displayName, quota, quotaInterval, quotaUnit, environments, proxies, scopes, nil, true, attrs, true)
+}
+
+func Update(name string, description string, approval string, displayName string, quota string, quotaInterval string, quotaUnit string, environments []string, proxies []string, scopes []string, attrs map[string]string) (respBody []byte, err error) {
+	return updateProduct(name, description, approval, displayName, quota, quotaInterval, quotaUnit, environments, proxies, scopes, nil, true, attrs, false)
+}
+
+func UpdateRemoteServiceOperationGroup(name string, services []string) (respBody []byte, err error) {
+	return updateProduct(name, "", "", "", "", "", "", nil, services, nil, nil, false, nil, false)
+}
+
+func UpdateProxyOperationGroup(name string, description string, approval string, displayName string, quota string, quotaInterval string, quotaUnit string, environments []string, scopes []string, operationGrp []byte, attrs map[string]string) (respBody []byte, err error) {
+	return updateProduct(name, description, approval, displayName, quota, quotaInterval, quotaUnit, environments, nil, scopes, operationGrp, true, attrs, false)
+}
+
+//createProduct
+func createProduct(name string, description string, approval string, displayName string, quota string, quotaInterval string, quotaUnit string, environments []string, proxies []string, scopes []string, operationGrp []byte, proxyOperationGroup bool, attrs map[string]string, legacy bool) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
+	var Product = new(product)
+	var OperationGroup = new(operationGroup)
 
-	product := []string{}
+	if len(proxies) > 0 && len(operationGrp) > 0 {
+		return nil, fmt.Errorf("A product cannot have proxies and operation group")
+	}
 
-	product = append(product, "\"name\":\""+name+"\"")
+	Product.Name = name
+	Product.ApprovalType = approval
+
+	if len(operationGrp) > 0 {
+		err = json.Unmarshal(operationGrp, OperationGroup)
+		if err != nil {
+			clilog.Info.Println(err)
+			return nil, err
+		}
+		if reflect.DeepEqual(*OperationGroup, operationGroup{}) {
+			return nil, fmt.Errorf("can't unmarshal json to OperationGroup")
+		}
+		Product.OperationGroup = OperationGroup
+	}
 
 	if displayName == "" {
-		product = append(product, "\"displayName\":\""+name+"\"")
+		Product.DisplayName = name
 	} else {
-		product = append(product, "\"displayName\":\""+displayName+"\"")
+		Product.DisplayName = displayName
 	}
 
 	if description != "" {
-		product = append(product, "\"description\":\""+description+"\"")
+		Product.Description = description
 	}
-	product = append(product, "\"environments\":[\""+getArrayStr(environments)+"\"]")
+
+	if len(environments) > 0 {
+		Product.Environments = environments
+	}
 
 	if len(proxies) > 0 {
-		product = append(product, "\"proxies\":[\""+getArrayStr(proxies)+"\"]")
+		if legacy {
+			Product.Proxies = proxies
+		} else {
+			OperationConfigs := []operationConfig{}
+			Operations := []operation{}
+			Operation := operation{}
+			Operations = append(Operations, Operation)
+
+			for _, proxy := range proxies {
+				OperationConfig := operationConfig{}
+				OperationConfig.APISource = proxy
+				OperationConfig.Operations = Operations
+				OperationConfigs = append(OperationConfigs, OperationConfig)
+			}
+			OperationGroup.OperationConfigs = OperationConfigs
+			if proxyOperationGroup {
+				OperationGroup.OperationConfigType = proxyOperationConfigType
+			} else {
+				OperationGroup.OperationConfigType = remoteServiceOperationConfigType
+			}
+			Product.OperationGroup = OperationGroup
+		}
 	}
 
 	if len(scopes) > 0 {
-		product = append(product, "\"scopes\":[\""+getArrayStr(scopes)+"\"]")
+		Product.Scopes = scopes
 	}
-
-	product = append(product, "\"approvalType\":\""+approval+"\"")
 
 	if quota != "" {
-		product = append(product, "\"quota\":\""+quota+"\"")
+		Product.Quota = quota
 	}
 	if quotaInterval != "" {
-		product = append(product, "\"quotaInterval\":\""+quotaInterval+"\"")
-	}
-	if quotaUnit != "" {
-		product = append(product, "\"quotaTimeUnit\":\""+quotaUnit+"\"")
-	}
-	if len(attrs) != 0 {
-		attributes := []string{}
-		for key, value := range attrs {
-			attributes = append(attributes, "{\"name\":\""+key+"\",\"value\":\""+value+"\"}")
-		}
-		attributesStr := "\"attributes\":[" + strings.Join(attributes, ",") + "]"
-		product = append(product, attributesStr)
+		Product.QuotaInterval = quotaInterval
 	}
 
-	payload := "{" + strings.Join(product, ",") + "}"
+	if quotaUnit != "" {
+		Product.QuotaTimeUnit = quotaUnit
+	}
+
+	if len(attrs) > 0 {
+		//create new attributes
+		for k, v := range attrs {
+			a := attribute{}
+			a.Name = k
+			a.Value = v
+			Product.Attributes = append(Product.Attributes, a)
+		}
+	}
+
+	payload, err := json.Marshal(Product)
+	if err != nil {
+		clilog.Info.Println(err)
+		return nil, err
+	}
+
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts")
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload)
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), string(payload))
 	return respBody, err
 }
 
@@ -126,9 +233,14 @@ func Delete(name string) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//Update
-func Update(name string, description string, approval string, displayName string, quota string, quotaInterval string, quotaUnit string, environments []string, proxies []string, scopes []string, attrs map[string]string) (respBody []byte, err error) {
+//updateProduct
+func updateProduct(name string, description string, approval string, displayName string, quota string, quotaInterval string, quotaUnit string, environments []string, proxies []string, scopes []string, operationGrp []byte, proxyOperationGroup bool, attrs map[string]string, legacy bool) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
+
+	if len(proxies) > 0 && len(operationGrp) > 0 {
+		return nil, fmt.Errorf("A product cannot have proxies and operation group")
+	}
+
 	apiclient.SetPrintOutput(false)
 	respBody, err = Get(name)
 	if err != nil {
@@ -168,7 +280,29 @@ func Update(name string, description string, approval string, displayName string
 	}
 
 	if len(proxies) > 0 {
-		p.Proxies = append(p.Proxies, proxies...)
+		if legacy {
+			p.Proxies = append(p.Proxies, proxies...)
+		} else {
+			var OperationGroup = new(operationGroup)
+			OperationConfigs := []operationConfig{}
+			Operations := []operation{}
+			Operation := operation{}
+			Operations = append(Operations, Operation)
+
+			for _, proxy := range proxies {
+				OperationConfig := operationConfig{}
+				OperationConfig.APISource = proxy
+				OperationConfig.Operations = Operations
+				OperationConfigs = append(OperationConfigs, OperationConfig)
+			}
+			OperationGroup.OperationConfigs = OperationConfigs
+			if proxyOperationGroup {
+				OperationGroup.OperationConfigType = proxyOperationConfigType
+			} else {
+				OperationGroup.OperationConfigType = remoteServiceOperationConfigType
+			}
+			p.OperationGroup = OperationGroup
+		}
 	}
 
 	if len(scopes) > 0 {
@@ -187,6 +321,7 @@ func Update(name string, description string, approval string, displayName string
 
 	payload, err := json.Marshal(p)
 	if err != nil {
+		clilog.Info.Println(err)
 		return nil, err
 	}
 
@@ -358,12 +493,6 @@ func batchExport(entities []apiProduct, entityType string, pwg *sync.WaitGroup, 
 		go apiclient.GetAsyncEntity(u.String(), &bwg, mu)
 	}
 	bwg.Wait()
-}
-
-func getArrayStr(str []string) string {
-	tmp := strings.Join(str, ",")
-	tmp = strings.ReplaceAll(tmp, ",", "\",\"")
-	return tmp
 }
 
 //batch creates a batch of products to create

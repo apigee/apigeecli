@@ -33,39 +33,44 @@ var RemoveCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		fmt.Println("Current Values of Attribute: ")
-		respBody, err := products.GetAttribute(productName, envoyAttributeName)
-		if err != nil {
-			return err
-		}
-
-		var attributeValue map[string]string
-		err = json.Unmarshal(respBody, &attributeValue)
-		if err != nil {
-			return err
-		}
-
-		values := strings.Split(attributeValue["value"], ",")
-		var newValues []string
-		var found bool
-
-		for _, value := range values {
-			if strings.TrimSpace(value) != serviceName {
-				newValues = append(newValues, strings.TrimSpace(value))
-			} else {
-				found = true
-				fmt.Println(("Found service name, removing binding"))
+		if legacy {
+			fmt.Println("Current Values of Attribute: ")
+			respBody, err := products.GetAttribute(productName, envoyAttributeName)
+			if err != nil {
+				return err
 			}
-		}
 
-		if !found {
-			return fmt.Errorf("did not find value matching service name")
-		}
+			var attributeValue map[string]string
+			err = json.Unmarshal(respBody, &attributeValue)
+			if err != nil {
+				return err
+			}
 
-		fmt.Println("New Values of Attribute: ")
-		newAttributeValues := strings.Join(newValues, ",")
-		_, err = products.UpdateAttribute(productName, envoyAttributeName, newAttributeValues)
-		return err
+			values := strings.Split(attributeValue["value"], ",")
+			var newValues []string
+			var found bool
+
+			for _, value := range values {
+				if strings.TrimSpace(value) != serviceName {
+					newValues = append(newValues, strings.TrimSpace(value))
+				} else {
+					found = true
+					fmt.Println(("Found service name, removing binding"))
+				}
+			}
+
+			if !found {
+				return fmt.Errorf("did not find value matching service name")
+			}
+
+			fmt.Println("New Values of Attribute: ")
+			newAttributeValues := strings.Join(newValues, ",")
+			_, err = products.UpdateAttribute(productName, envoyAttributeName, newAttributeValues)
+			return err
+		} else {
+			_, err = products.UpdateRemoteServiceOperationGroup(productName, serviceNames)
+		}
+		return
 	},
 }
 
@@ -78,6 +83,8 @@ func init() {
 		"", "Apigee API Product name")
 	RemoveCmd.Flags().StringVarP(&serviceName, "svc", "s",
 		"", "Envoy Service name")
+	RemoveCmd.Flags().BoolVarP(&legacy, "legacy", "l",
+		false, "Legacy product object")
 
 	_ = RemoveCmd.MarkFlagRequired("org")
 	_ = RemoveCmd.MarkFlagRequired("prod")

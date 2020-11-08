@@ -49,5 +49,4 @@ func init() {
 	ListCmd.Flags().BoolVarP(&expand, "expand", "x",
 		false, "Expand Details")
 
-	_ = ListCmd.MarkFlagRequired("org")
 }

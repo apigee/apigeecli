@@ -15,9 +15,13 @@
 package products
 
 import (
+	"fmt"
+	"io/ioutil"
+
 	"github.com/spf13/cobra"
 	"github.com/srinandan/apigeecli/apiclient"
 	"github.com/srinandan/apigeecli/client/products"
+	"github.com/srinandan/apigeecli/clilog"
 )
 
 //Cmd to create a new product
@@ -26,13 +30,33 @@ var CreateCmd = &cobra.Command{
 	Short: "Create an API product",
 	Long:  "Create an API product",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		if !legacy && operationGroupFile != "" {
+			return fmt.Errorf("operationGroupFile cannot be used with legacy mode")
+		}
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = products.Create(name, description, approval, displayName, quota, quotaInterval, quotaUnit, environments, proxies, scopes, attrs)
+		if legacy {
+			_, err = products.CreateLegacy(name, description, approval, displayName, quota, quotaInterval, quotaUnit, environments, proxies, scopes, attrs)
+		} else {
+			if operationGroupFile != "" {
+				var operationGrp []byte
+				operationGrp, err = ioutil.ReadFile(operationGroupFile)
+				if err != nil {
+					clilog.Info.Println(err)
+					return err
+				}
+				_, err = products.CreateProxyOperationGroup(name, description, approval, displayName, quota, quotaInterval, quotaUnit, environments, scopes, operationGrp, attrs)
+			} else {
+				_, err = products.Create(name, description, approval, displayName, quota, quotaInterval, quotaUnit, environments, proxies, scopes, attrs)
+			}
+		}
 		return
 	},
 }
+
+var legacy bool
+var operationGroupFile string
 
 func init() {
 
@@ -45,7 +69,7 @@ func init() {
 	CreateCmd.Flags().StringArrayVarP(&environments, "envs", "e",
 		[]string{}, "Environments to enable")
 	CreateCmd.Flags().StringArrayVarP(&proxies, "proxies", "p",
-		[]string{}, "API Proxies in product")
+		[]string{}, "API Proxies in product. Ex: -p proxy1 -p proxy2")
 	CreateCmd.Flags().StringArrayVarP(&scopes, "scopes", "s",
 		[]string{}, "OAuth scopes")
 	CreateCmd.Flags().StringVarP(&quota, "quota", "q",
@@ -58,10 +82,13 @@ func init() {
 		"", "Approval type")
 	CreateCmd.Flags().StringToStringVar(&attrs, "attrs",
 		nil, "Custom attributes")
+	CreateCmd.Flags().StringVarP(&operationGroupFile, "opgrp", "g",
+		"", "File containing Operation Group JSON. See samples for how to create the file")
+	CreateCmd.Flags().BoolVarP(&legacy, "legacy", "l",
+		false, "Legacy product object")
 
 	//TODO: apiresource -r later
 
 	_ = CreateCmd.MarkFlagRequired("name")
-	_ = CreateCmd.MarkFlagRequired("envs")
 	_ = CreateCmd.MarkFlagRequired("approval")
 }
