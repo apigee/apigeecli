@@ -1,0 +1,27 @@
+{
+  "operationConfigs": [
+    {
+      "apiSource": "httpbin",
+      "operations": [
+        {
+          "resource": "/httpbin",
+          "methods": [
+            "GET"
+          ]
+        }
+      ],
+      "quota": {
+        "limit": "1",
+        "interval": "1",
+        "timeUnit": "second"
+      },
+      "attributes": [
+        {
+          "name": "key1",
+          "value": "value1"
+        }
+      ]
+    }
+  ],
+  "operationConfigType": "proxy"
+}

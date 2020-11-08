@@ -45,7 +45,7 @@ func TestMain(t *testing.T) {
 
 // orgs test
 func TestListOrgs(t *testing.T) {
-	cmd := exec.Command(apigeecli, "orgs", "list", "-t", token, "-l")
+	cmd := exec.Command(apigeecli, "orgs", "list", "-t", token)
 	err := cmd.Run()
 	if err != nil {
 		t.Fatal(err)
@@ -53,7 +53,7 @@ func TestListOrgs(t *testing.T) {
 }
 
 func TestGetOrg(t *testing.T) {
-	cmd := exec.Command(apigeecli, "orgs", "get", "-o", org, "-t", token, "-l")
+	cmd := exec.Command(apigeecli, "orgs", "get", "-o", org, "-t", token)
 	err := cmd.Run()
 	if err != nil {
 		t.Fatal(err)
@@ -62,7 +62,7 @@ func TestGetOrg(t *testing.T) {
 
 // env tests
 func TestListEnvs(t *testing.T) {
-	cmd := exec.Command(apigeecli, "envs", "list", "-o", org, "-t", token, "-l")
+	cmd := exec.Command(apigeecli, "envs", "list", "-o", org, "-t", token)
 	err := cmd.Run()
 	if err != nil {
 		t.Fatal(err)
@@ -70,7 +70,7 @@ func TestListEnvs(t *testing.T) {
 }
 
 func TestGetEnv(t *testing.T) {
-	cmd := exec.Command(apigeecli, "envs", "get", "-o", org, "-e", env, "-t", token, "-l")
+	cmd := exec.Command(apigeecli, "envs", "get", "-o", org, "-e", env, "-t", token)
 	err := cmd.Run()
 	if err != nil {
 		t.Fatal(err)
@@ -84,7 +84,7 @@ func TestCreateDeveloper(t *testing.T) {
 	user := "username"
 
 	cmd := exec.Command(apigeecli, "developers", "create", "-o", org, "-n", email, "-f", first, "-s",
-		last, "-u", user, "--attrs", attrs, "-t", token, "-l")
+		last, "-u", user, "--attrs", attrs, "-t", token)
 	err := cmd.Run()
 	if err != nil {
 		t.Fatal(err)
@@ -93,7 +93,7 @@ func TestCreateDeveloper(t *testing.T) {
 
 func TestGetDeveloper(t *testing.T) {
 
-	cmd := exec.Command(apigeecli, "developers", "get", "-o", org, "-n", email, "-t", token, "-l")
+	cmd := exec.Command(apigeecli, "developers", "get", "-o", org, "-n", email, "-t", token)
 	err := cmd.Run()
 	if err != nil {
 		t.Fatal(err)
@@ -102,7 +102,7 @@ func TestGetDeveloper(t *testing.T) {
 
 func TestListDeveloper(t *testing.T) {
 
-	cmd := exec.Command(apigeecli, "developers", "list", "-o", org, "-t", token, "-l")
+	cmd := exec.Command(apigeecli, "developers", "list", "-o", org, "-t", token)
 	err := cmd.Run()
 	if err != nil {
 		t.Fatal(err)
@@ -112,7 +112,7 @@ func TestListDeveloper(t *testing.T) {
 func TestListExpandDeveloper(t *testing.T) {
 	expand := "true"
 
-	cmd := exec.Command(apigeecli, "developers", "list", "-o", org, "-x", expand, "-t", token, "-l")
+	cmd := exec.Command(apigeecli, "developers", "list", "-o", org, "-x", expand, "-t", token)
 	err := cmd.Run()
 	if err != nil {
 		t.Fatal(err)
@@ -122,7 +122,7 @@ func TestListExpandDeveloper(t *testing.T) {
 // kvm test
 func TestCreateKVM(t *testing.T) {
 
-	cmd := exec.Command(apigeecli, "kvms", "create", "-o", org, "-e", env, "-n", name, "-t", token, "-l")
+	cmd := exec.Command(apigeecli, "kvms", "create", "-o", org, "-e", env, "-n", name, "-t", token)
 	err := cmd.Run()
 	if err != nil {
 		t.Fatal(err)
@@ -131,7 +131,7 @@ func TestCreateKVM(t *testing.T) {
 
 func TestListKVM(t *testing.T) {
 
-	cmd := exec.Command(apigeecli, "kvms", "list", "-o", org, "-e", env, "-t", token, "-l")
+	cmd := exec.Command(apigeecli, "kvms", "list", "-o", org, "-e", env, "-t", token)
 	err := cmd.Run()
 	if err != nil {
 		t.Fatal(err)
@@ -141,7 +141,7 @@ func TestListKVM(t *testing.T) {
 // sync tests
 func TestGetSync(t *testing.T) {
 
-	cmd := exec.Command(apigeecli, "sync", "get", "-o", org, "-t", token, "-l")
+	cmd := exec.Command(apigeecli, "sync", "get", "-o", org, "-t", token)
 	err := cmd.Run()
 	if err != nil {
 		t.Fatal(err)
@@ -150,7 +150,7 @@ func TestGetSync(t *testing.T) {
 
 func TestSetSync(t *testing.T) {
 	ity := "test@gmail.com"
-	cmd := exec.Command(apigeecli, "sync", "set", "-o", org, "-i", ity, "-t", token, "-l")
+	cmd := exec.Command(apigeecli, "sync", "set", "-o", org, "-i", ity, "-t", token)
 	err := cmd.Run()
 	if err == nil {
 		t.Fatal("Invalid identity test should have failed")
@@ -158,19 +158,32 @@ func TestSetSync(t *testing.T) {
 }
 
 func TestCreateProxy(t *testing.T) {
-	cmd := exec.Command(apigeecli, "apis", "create", "-o", org, "-n", name, "-t", token, "-l")
+	cmd := exec.Command(apigeecli, "apis", "create", "-o", org, "-n", name, "-t", token)
 	err := cmd.Run()
 	if err != nil {
 		t.Fatal(err)
 	}
 }
 
-func TestCreateProduct(t *testing.T) {
+func TestCreateProductLegacy(t *testing.T) {
 	proxy := "test"
 	approval := "auto"
 
-	cmd := exec.Command(apigeecli, "products", "create", "-o", org, "-n", name, "-e", envs, "-p", proxy,
-		"-f", approval, "--attrs", attrs, "-t", token, "-l")
+	cmd := exec.Command(apigeecli, "products", "create", "-o", org, "-n", name+"-legacy", "-e", envs, "-p", proxy,
+		"-f", approval, "--attrs", attrs, "-t", token)
+	err := cmd.Run()
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCreateProductGroup(t *testing.T) {
+	proxy := "test"
+	approval := "auto"
+	operationGroupFile := "./test/apiproduct-op-group.json"
+
+	cmd := exec.Command(apigeecli, "products", "create", "-o", org, "-n", name+"-group", "-e", envs,
+		"-g", operationGroupFile, "-f", approval, "--attrs", attrs, "-t", token)
 	err := cmd.Run()
 	if err != nil {
 		t.Fatal(err)
@@ -181,7 +194,7 @@ func TestCreateApp(t *testing.T) {
 	product := "test"
 
 	cmd := exec.Command(apigeecli, "apps", "create", "-o", org, "-n", name, "-e", email, "-p", product,
-		"--attrs", attrs, "-t", token, "-l")
+		"--attrs", attrs, "-t", token)
 
 	var out bytes.Buffer
 	cmd.Stdout = &out
@@ -198,7 +211,7 @@ func TestCreateApp(t *testing.T) {
 
 func TestListApp(t *testing.T) {
 
-	cmd := exec.Command(apigeecli, "apps", "list", "-o", org, "-t", token, "-l")
+	cmd := exec.Command(apigeecli, "apps", "list", "-o", org, "-t", token)
 	err := cmd.Run()
 	if err != nil {
 		t.Fatal(err)
@@ -208,7 +221,7 @@ func TestListApp(t *testing.T) {
 
 func TestGetProduct(t *testing.T) {
 
-	cmd := exec.Command(apigeecli, "products", "get", "-o", org, "-n", name, "-t", token, "-l")
+	cmd := exec.Command(apigeecli, "products", "get", "-o", org, "-n", name, "-t", token)
 	err := cmd.Run()
 	if err != nil {
 		t.Fatal(err)
@@ -217,7 +230,7 @@ func TestGetProduct(t *testing.T) {
 
 func TestListProduct(t *testing.T) {
 
-	cmd := exec.Command(apigeecli, "products", "list", "-o", org, "-t", token, "-l")
+	cmd := exec.Command(apigeecli, "products", "list", "-o", org, "-t", token)
 	err := cmd.Run()
 	if err != nil {
 		t.Fatal(err)
@@ -226,7 +239,7 @@ func TestListProduct(t *testing.T) {
 
 func TestDeleteDeveloper(t *testing.T) {
 
-	cmd := exec.Command(apigeecli, "developers", "delete", "-o", org, "-n", email, "-t", token, "-l")
+	cmd := exec.Command(apigeecli, "developers", "delete", "-o", org, "-n", email, "-t", token)
 	err := cmd.Run()
 	if err != nil {
 		t.Fatal(err)
@@ -237,7 +250,7 @@ func TestCreateTS(t *testing.T) {
 	host := "example.com"
 
 	cmd := exec.Command(apigeecli, "targetservers", "create", "-o", org, "-n", name, "-e", env, "-s",
-		host, "-t", token, "-l")
+		host, "-t", token)
 	err := cmd.Run()
 	if err != nil {
 		t.Fatal(err)
@@ -247,7 +260,7 @@ func TestCreateTS(t *testing.T) {
 
 func TestGetTS(t *testing.T) {
 
-	cmd := exec.Command(apigeecli, "targetservers", "get", "-o", org, "-e", env, "-n", name, "-t", token, "-l")
+	cmd := exec.Command(apigeecli, "targetservers", "get", "-o", org, "-e", env, "-n", name, "-t", token)
 	err := cmd.Run()
 	if err != nil {
 		t.Fatal(err)
@@ -257,7 +270,7 @@ func TestGetTS(t *testing.T) {
 
 func TestListTS(t *testing.T) {
 
-	cmd := exec.Command(apigeecli, "targetservers", "list", "-o", org, "-e", env, "-t", token, "-l")
+	cmd := exec.Command(apigeecli, "targetservers", "list", "-o", org, "-e", env, "-t", token)
 	err := cmd.Run()
 	if err != nil {
 		t.Fatal(err)
@@ -267,7 +280,7 @@ func TestListTS(t *testing.T) {
 
 func TestDeleteTS(t *testing.T) {
 
-	cmd := exec.Command(apigeecli, "targetservers", "delete", "-o", org, "-e", env, "-n", name, "-t", token, "-l")
+	cmd := exec.Command(apigeecli, "targetservers", "delete", "-o", org, "-e", env, "-n", name, "-t", token)
 	err := cmd.Run()
 	if err != nil {
 		t.Fatal(err)
@@ -277,7 +290,7 @@ func TestDeleteTS(t *testing.T) {
 
 func TestExportProducts(t *testing.T) {
 
-	cmd := exec.Command(apigeecli, "products", "export", "-o", org, "-t", token, "-l")
+	cmd := exec.Command(apigeecli, "products", "export", "-o", org, "-t", token)
 	err := cmd.Run()
 	if err != nil {
 		t.Fatal(err)
@@ -286,7 +299,7 @@ func TestExportProducts(t *testing.T) {
 
 func TestDeleteKVM(t *testing.T) {
 
-	cmd := exec.Command(apigeecli, "kvms", "delete", "-o", org, "-e", env, "-n", name, "-t", token, "-l")
+	cmd := exec.Command(apigeecli, "kvms", "delete", "-o", org, "-e", env, "-n", name, "-t", token)
 	err := cmd.Run()
 	if err != nil {
 		t.Fatal(err)
@@ -295,7 +308,7 @@ func TestDeleteKVM(t *testing.T) {
 
 func TestDeleteProduct(t *testing.T) {
 
-	cmd := exec.Command(apigeecli, "products", "delete", "-o", org, "-n", name, "-t", token, "-l")
+	cmd := exec.Command(apigeecli, "products", "delete", "-o", org, "-n", name, "-t", token)
 	err := cmd.Run()
 	if err != nil {
 		t.Fatal(err)
@@ -305,7 +318,7 @@ func TestDeleteProduct(t *testing.T) {
 func TestCreateEncKVM(t *testing.T) {
 	name := "testEnc"
 
-	cmd := exec.Command(apigeecli, "kvms", "create", "-o", org, "-e", env, "-n", name, "-c", "-t", token, "-l")
+	cmd := exec.Command(apigeecli, "kvms", "create", "-o", org, "-e", env, "-n", name, "-c", "-t", token)
 	err := cmd.Run()
 	if err != nil {
 		t.Fatal(err)
@@ -315,7 +328,7 @@ func TestCreateEncKVM(t *testing.T) {
 func TestDeleteEncKVM(t *testing.T) {
 	name := "testEnc"
 
-	cmd := exec.Command(apigeecli, "kvms", "delete", "-o", org, "-e", env, "-n", name, "-t", token, "-l")
+	cmd := exec.Command(apigeecli, "kvms", "delete", "-o", org, "-e", env, "-n", name, "-t", token)
 	err := cmd.Run()
 	if err != nil {
 		t.Fatal(err)
@@ -323,7 +336,7 @@ func TestDeleteEncKVM(t *testing.T) {
 }
 
 func TestDeleteProxy(t *testing.T) {
-	cmd := exec.Command(apigeecli, "apis", "delete", "-o", org, "-n", name, "-t", token, "-l")
+	cmd := exec.Command(apigeecli, "apis", "delete", "-o", org, "-n", name, "-t", token)
 	err := cmd.Run()
 	if err != nil {
 		t.Fatal(err)
@@ -394,7 +407,7 @@ func TestCreateKeyAliasSelfSigned(t *testing.T) {
 
 //get requires an app id. run list and get an app id or get it from create
 /*func TestGetApp(t *testing.T) {
-	cmd := exec.Command(apigeecli, "apps", "get", "-o", org, "-i", appID, "-t", token, "-l")
+	cmd := exec.Command(apigeecli, "apps", "get", "-o", org, "-i", appID, "-t", token)
 	err := cmd.Run()
 	if err != nil {
 		t.Fatal(err)
@@ -407,7 +420,7 @@ func TestCreateKeyAliasSelfSigned(t *testing.T) {
 	if mart == "" {
 		t.Log("MART not set, skipping")
 	} else {
-		cmd := exec.Command(apigeecli, "orgs", "setmart", "-o", org, "-m", mart, "-t", token, "-l")
+		cmd := exec.Command(apigeecli, "orgs", "setmart", "-o", org, "-m", mart, "-t", token)
 		err := cmd.Run()
 		if err != nil {
 			t.Fatal(err)
@@ -420,7 +433,7 @@ func TestSetMartWhiteList(t *testing.T) {
 	if mart == "" {
 		t.Log("MART not set, skipping")
 	} else {
-		cmd := exec.Command(apigeecli, "orgs", "setmart", "-o", org, "-m", mart, "-w", "false", "-t", token, "-l")
+		cmd := exec.Command(apigeecli, "orgs", "setmart", "-o", org, "-m", mart, "-w", "false", "-t", token)
 		err := cmd.Run()
 		if err != nil {
 			t.Fatal(err)
@@ -430,7 +443,7 @@ func TestSetMartWhiteList(t *testing.T) {
 
 func TestDeleteApp(t *testing.T) {
 
-	cmd := exec.Command(apigeecli, "apps", "delete", "-o", org, "-n", name, "-t", token, "-l")
+	cmd := exec.Command(apigeecli, "apps", "delete", "-o", org, "-n", name, "-t", token)
 	err := cmd.Run()
 	if err != nil {
 		t.Fatal(err)
