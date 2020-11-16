@@ -16,29 +16,29 @@ package env
 
 import (
 	"github.com/spf13/cobra"
+	"github.com/srinandan/apigeecli/apiclient"
+	"github.com/srinandan/apigeecli/client/env"
 )
 
-//Cmd to manage envs
-var Cmd = &cobra.Command{
-	Use:     "envs",
-	Aliases: []string{"environments"},
-	Short:   "Manage Apigee environments",
-	Long:    "Manage Apigee environments",
+//DelCmd to delete env
+var DelCmd = &cobra.Command{
+	Use:   "delete",
+	Short: "Delete an environment",
+	Long:  "Delete an environment",
+	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetApigeeEnv(environment)
+		return apiclient.SetApigeeOrg(org)
+	},
+	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		_, err = env.Delete()
+		return
+	},
 }
-
-var org, environment string
 
 func init() {
 
-	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
-		"", "Apigee organization name")
+	DelCmd.Flags().StringVarP(&environment, "env", "e",
+		"", "Apigee environment name")
 
-	Cmd.AddCommand(ListCmd)
-	Cmd.AddCommand(GetCmd)
-	Cmd.AddCommand(DelCmd)
-	Cmd.AddCommand(IamCmd)
-	Cmd.AddCommand(DebugCmd)
-	Cmd.AddCommand(ObCmd)
-	Cmd.AddCommand(PropCmd)
-	Cmd.AddCommand(DeployCmd)
+	_ = DelCmd.MarkFlagRequired("env")
 }
