@@ -31,19 +31,24 @@ var CreateCmd = &cobra.Command{
 		if runtimeType != "HYBRID" && runtimeType != "CLOUD" {
 			return fmt.Errorf("runtime type must be CLOUD or HYBRID")
 		}
-		if runtimeType == "CLOUD" && network == "" {
-			return fmt.Errorf("authorized network must be supplied")
+		if runtimeType == "CLOUD" {
+			if network == "" {
+				return fmt.Errorf("authorized network must be supplied")
+			}
+			if databaseKey == "" {
+				return fmt.Errorf("runtime database encryption key must be supplied")
+			}
 		}
 		apiclient.SetProjectID(projectID)
 		return apiclient.SetApigeeOrg(projectID)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = orgs.Create(region, network, runtimeType)
+		_, err = orgs.Create(region, network, runtimeType, databaseKey)
 		return
 	},
 }
 
-var region, projectID, network, runtimeType string
+var region, projectID, network, runtimeType, databaseKey string
 
 func init() {
 
@@ -53,6 +58,8 @@ func init() {
 		"", "GCP Project ID")
 	CreateCmd.Flags().StringVarP(&network, "net", "n",
 		"default", "Authorized network")
+	CreateCmd.Flags().StringVarP(&databaseKey, "key", "k",
+		"", "Runtime Database Encryption Key")
 	CreateCmd.Flags().StringVarP(&runtimeType, "runtime-type", "",
 		"HYBRID", "Runtime type: CLOUD or HYBRID")
 
