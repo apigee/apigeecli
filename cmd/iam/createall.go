@@ -24,8 +24,8 @@ import (
 //Cmd to get org details
 var CallCmd = &cobra.Command{
 	Use:   "createall",
-	Short: "Create a new IAM Service Account with all permissions for Apigee Rnutime",
-	Long:  "Create a new IAM Service Account with all permissions for Apigee Rnutime",
+	Short: "Create a new IAM Service Account with all permissions for Apigee Runtime",
+	Long:  "Create a new IAM Service Account with all permissions for Apigee Runtime",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		if !generateName && name == "" {
 			return fmt.Errorf("provide a service account name or allow the tool to generate one")
