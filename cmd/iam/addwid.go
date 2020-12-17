@@ -15,40 +15,39 @@
 package iam
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 	"github.com/srinandan/apigeecli/apiclient"
 )
 
-//Cmd to get org details
-var CmetCmd = &cobra.Command{
-	Use:   "createmetrics",
-	Short: "Create a new IAM Service Account for SD Metrics",
-	Long:  "Create a new IAM Service Account for SD Metrics",
+//WidCmd to get org details
+var WidCmd = &cobra.Command{
+	Use:   "addwid",
+	Short: "Provide WID role to a Service Account for Apigee Runtime",
+	Long:  "Provide Workload Identity user role to an IAM Service Account for Apigee Runtime",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		if !generateName && name == "" {
-			return fmt.Errorf("provide a service account name or allow the tool to generate one")
-		}
 		apiclient.SetProjectID(projectID)
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		if generateName {
-			name = GenerateName("apigee-met-")
-		}
-		return apiclient.CreateIAMServiceAccount(name, "metrics")
+		return apiclient.AddWid(projectID, namespace, kServiceAccount, gServiceAccount)
 	},
 }
 
+var namespace, kServiceAccount, gServiceAccount string
+
 func init() {
 
-	CmetCmd.Flags().StringVarP(&projectID, "prj", "p",
+	WidCmd.Flags().StringVarP(&projectID, "prj", "p",
 		"", "GCP Project ID")
-	CmetCmd.Flags().StringVarP(&name, "name", "n",
-		"", "Service Account Name")
-	CmetCmd.Flags().BoolVarP(&generateName, "gen", "g",
-		false, "Generate account name")
+	WidCmd.Flags().StringVarP(&namespace, "namespace", "n",
+		"apigee", "Apigee runtime namespace")
+	WidCmd.Flags().StringVarP(&gServiceAccount, "gsa", "g",
+		"", "Google Service Account Name")
+	WidCmd.Flags().StringVarP(&kServiceAccount, "ksa", "k",
+		"", "Kubernetes Service Account Name")
 
-	_ = CmetCmd.MarkFlagRequired("prj")
+	_ = WidCmd.MarkFlagRequired("prj")
+	_ = WidCmd.MarkFlagRequired("namespace")
+	_ = WidCmd.MarkFlagRequired("gsa")
+	_ = WidCmd.MarkFlagRequired("ksa")
 }

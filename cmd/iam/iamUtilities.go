@@ -28,3 +28,12 @@ func GenerateName(prefix string) string {
 	}
 	return prefix + string(b)
 }
+
+func ValidateRoleType(role string) bool {
+	for _, r := range roles {
+		if role == r {
+			return true
+		}
+	}
+	return false
+}

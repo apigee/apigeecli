@@ -21,34 +21,40 @@ import (
 	"github.com/srinandan/apigeecli/apiclient"
 )
 
-//CruntimeCmd
-var CruntimeCmd = &cobra.Command{
-	Use:   "creatert",
-	Short: "Create a new IAM Service Account for Apigee Watcher",
-	Long:  "Create a new IAM Service Account for Apigee Watcher",
+//Cmd to get org details
+var CallCmd = &cobra.Command{
+	Use:   "create",
+	Short: "Create a new IAM Service Account with permissions for Apigee Runtime",
+	Long:  "Create a new IAM Service Account with permissions for Apigee Runtime",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		if !generateName && name == "" {
 			return fmt.Errorf("provide a service account name or allow the tool to generate one")
+		}
+		if !ValidateRoleType(roleType) {
+			return fmt.Errorf("The role type %s is not a valid type. Please use one of %s", roleType, roles)
 		}
 		apiclient.SetProjectID(projectID)
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		if generateName {
-			name = GenerateName("apigee-watcher-")
+			name = GenerateName("apigee-" + roleType + "-")
 		}
-		return apiclient.CreateIAMServiceAccount(name, "watcher")
+		return apiclient.CreateIAMServiceAccount(name, roleType)
 	},
 }
 
 func init() {
 
-	CruntimeCmd.Flags().StringVarP(&projectID, "prj", "p",
+	CallCmd.Flags().StringVarP(&projectID, "prj", "p",
 		"", "GCP Project ID")
-	CruntimeCmd.Flags().StringVarP(&name, "name", "n",
+	CallCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Service Account Name")
-	CruntimeCmd.Flags().BoolVarP(&generateName, "gen", "g",
+	CallCmd.Flags().BoolVarP(&generateName, "gen", "g",
 		false, "Generate account name")
+	CallCmd.Flags().StringVarP(&roleType, "role", "r",
+		"", "IAM Role Type")
 
-	_ = CruntimeCmd.MarkFlagRequired("prj")
+	_ = CallCmd.MarkFlagRequired("prj")
+	_ = CallCmd.MarkFlagRequired("role")
 }
