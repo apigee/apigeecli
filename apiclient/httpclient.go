@@ -181,7 +181,7 @@ func HttpClient(print bool, params ...string) (respBody []byte, err error) {
 		if req, err = getRequest(params); err != nil {
 			return nil, err
 		}
-		contentType = params[2]
+		contentType = params[3]
 	default:
 		return nil, errors.New("unsupported method")
 	}
@@ -199,6 +199,7 @@ func HttpClient(print bool, params ...string) (respBody []byte, err error) {
 
 	clilog.Info.Println("Setting token : ", GetApigeeToken())
 	req.Header.Add("Authorization", "Bearer "+GetApigeeToken())
+	clilog.Info.Println("Content-Type : ", contentType)
 	req.Header.Set("Content-Type", contentType)
 
 	resp, err := client.Do(req)
@@ -220,7 +221,7 @@ func HttpClient(print bool, params ...string) (respBody []byte, err error) {
 		clilog.Error.Println("error in response: ", string(respBody))
 		return nil, errors.New("error in response")
 	}
-	if print {
+	if print && contentType == "application/json" {
 		return respBody, PrettyPrint(respBody)
 	}
 	return respBody, nil
@@ -247,6 +248,9 @@ func getRequest(params []string) (req *http.Request, err error) {
 	} else if params[2] == "PATCH" {
 		clilog.Info.Println("Payload: ", params[1])
 		req, err = http.NewRequest("PATCH", params[0], bytes.NewBuffer([]byte(params[1])))
+	} else if params[2] == "POST" {
+		clilog.Info.Println("Payload: ", params[1])
+		req, err = http.NewRequest("POST", params[0], bytes.NewBuffer([]byte(params[1])))
 	} else {
 		return nil, errors.New("unsupported method")
 	}

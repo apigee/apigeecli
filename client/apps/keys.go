@@ -15,6 +15,7 @@
 package apps
 
 import (
+	"fmt"
 	"net/url"
 	"path"
 	"strings"
@@ -127,6 +128,22 @@ func UpdateKeyProducts(developerEmail string, appID string, consumerKey string, 
 
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", developerEmail, "apps", appID, "keys", consumerKey)
 	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload)
+
+	return respBody, err
+}
+
+func ManageKey(developerEmail string, appID string, consumerKey string, action string) (respBody []byte, err error) {
+
+	if action != "revoke" && action != "approve" {
+		return nil, fmt.Errorf("invalid action. action must be revoke or approve")
+	}
+
+	u, _ := url.Parse(apiclient.BaseURL)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", developerEmail, "apps", appID, "keys", consumerKey)
+	q := u.Query()
+	q.Set("action", action)
+	u.RawQuery = q.Encode()
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "", "POST", "application/octet-stream")
 
 	return respBody, err
 }

@@ -29,6 +29,7 @@ import (
 
 //CrmURL is the endpoint for cloud resource manager
 const CrmURL = "https://cloudresourcemanager.googleapis.com/v1/projects/"
+const crmBetaURL = "https://cloudresourcemanager.googleapis.com/v1beta1/projects/"
 
 //binding for IAM Roles
 type roleBinding struct {
@@ -68,7 +69,6 @@ func CreateIAMServiceAccount(name string, iamRole string) (err error) {
 	}
 
 	const iamURL = "https://iam.googleapis.com/v1/projects/"
-	const crmBetaURL = "https://cloudresourcemanager.googleapis.com/v1beta1/projects/"
 	var role string
 
 	serviceAccountName := name + "@" + GetProjectID() + ".iam.gserviceaccount.com"
@@ -391,6 +391,32 @@ func RemoveIAMServiceAccount(serviceAccountName string, iamRole string) (err err
 	}
 
 	_, err = HttpClient(false, u.String(), string(removeIamPolicyBody))
+
+	return err
+}
+
+//AddWid add workload identity role to a service account
+func AddWid(projectID string, namespace string, kServiceAccount string, gServiceAccount string) (err error) {
+	const role = "roles/iam.workloadIdentityUser"
+	var setIamPolicyBody []byte
+	iamPolicy := iamPolicy{}
+	binding := roleBinding{}
+
+	binding.Role = role
+	binding.Members = append(binding.Members, "serviceAccount:"+projectID+".svc.id.goog["+namespace+"/"+kServiceAccount+"]")
+
+	iamPolicy.Bindings = append(iamPolicy.Bindings, binding)
+
+	setIamPolicy := setIamPolicy{}
+	setIamPolicy.Policy = iamPolicy
+	if setIamPolicyBody, err = json.Marshal(setIamPolicy); err != nil {
+		return err
+	}
+
+	u, _ := url.Parse(crmBetaURL)
+	u.Path = path.Join(u.Path, GetProjectID()+":setIamPolicy")
+
+	_, err = HttpClient(false, u.String(), string(setIamPolicyBody))
 
 	return err
 }

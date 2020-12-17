@@ -42,4 +42,5 @@ func init() {
 	KeysCmd.AddCommand(GetKeyCmd)
 	KeysCmd.AddCommand(DeleteKeyCmd)
 	KeysCmd.AddCommand(UpdateKeyCmd)
+	KeysCmd.AddCommand(ManageKeyCmd)
 }
