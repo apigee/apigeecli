@@ -15,7 +15,6 @@
 package datacollectors
 
 import (
-	"fmt"
 	"net/url"
 	"path"
 	"strings"
@@ -34,8 +33,6 @@ func Create(name string, description string, collectorType string) (respBody []b
 	datacollector = append(datacollector, "\"type\":\""+collectorType+"\"")
 
 	payload := "{" + strings.Join(datacollector, ",") + "}"
-
-	fmt.Println(payload)
 
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "datacollectors")
