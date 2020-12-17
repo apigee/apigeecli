@@ -1,24 +1,21 @@
-## apigeecli apps keys create
+## apigeecli apps keys manage
 
-Create a developer app key
+Approve or revoke a developer app key
 
 ### Synopsis
 
-Create a a developer app key
+Approve or revoke a developer app key
 
 ```
-apigeecli apps keys create [flags]
+apigeecli apps keys manage [flags]
 ```
 
 ### Options
 
 ```
-      --attrs stringToString   Custom attributes (default [])
-  -h, --help                   help for create
-  -k, --key string             Developer app consumer key
-  -p, --prods stringArray      A list of api products
-  -s, --scopes stringArray     OAuth scopes
-  -r, --secret string          Developer app consumer secret
+  -x, --action string   Action to perform - revoke or approve (default "revoke")
+  -h, --help            help for manage
+  -k, --key string      Developer app consumer key
 ```
 
 ### Options inherited from parent commands
