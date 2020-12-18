@@ -16,6 +16,7 @@ package apps
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/url"
 	"os"
@@ -126,6 +127,22 @@ func Get(appID string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apps", appID)
 	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	return respBody, err
+}
+
+//Manage
+func Manage(appID string, action string) (respBody []byte, err error) {
+	if action != "revoke" && action != "approve" {
+		return nil, fmt.Errorf("invalid action. action must be revoke or approve")
+	}
+
+	u, _ := url.Parse(apiclient.BaseURL)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apps", appID)
+	q := u.Query()
+	q.Set("action", action)
+	u.RawQuery = q.Encode()
+
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "", "POST", "application/octet-stream")
 	return respBody, err
 }
 
