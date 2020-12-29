@@ -30,7 +30,7 @@ var CreateCmd = &cobra.Command{
 	Short: "Create an API product",
 	Long:  "Create an API product",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		if !legacy && operationGroupFile != "" {
+		if legacy && operationGroupFile != "" {
 			return fmt.Errorf("operationGroupFile cannot be used with legacy mode")
 		}
 		return apiclient.SetApigeeOrg(org)
