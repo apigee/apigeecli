@@ -39,10 +39,10 @@ var CreateCmd = &cobra.Command{
 		switch format {
 		case "pem":
 			fileformat = "pem"
+			format = "keycertfile"
 		case "pkcs12":
 			fileformat = "pfx"
-		case "jar":
-			fileformat = "jar"
+			format = "pkcs12"
 		default:
 			return fmt.Errorf("invalid foramt key alias for %s", format)
 		}
@@ -62,9 +62,9 @@ func init() {
 	CreateCmd.Flags().StringVarP(&keystoreName, "key", "k",
 		"", "Name of the key store")
 	CreateCmd.Flags().StringVarP(&name, "alias", "s",
-		"", "Name of the key alias file. File name of pem, jar or pfx file. Do not add the extension")
+		"", "Name of the key alias file. File name of pem or pfx file. Do not add the extension")
 	CreateCmd.Flags().StringVarP(&format, "format", "f",
-		"", "Format of the certificate")
+		"", "Format of the certificate; pem or pfx")
 	CreateCmd.Flags().StringVarP(&password, "password", "p",
 		"", "PKCS12 password")
 	CreateCmd.Flags().BoolVarP(&ignoreExpiry, "exp", "x",
