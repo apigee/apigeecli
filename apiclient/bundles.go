@@ -150,16 +150,20 @@ func GetEntityPayloadList() [][]byte {
 	return entityPayloadList
 }
 
+func ClearEntityPayloadList() {
+	entityPayloadList = entityPayloadList[:0]
+}
+
 //FetchAsyncBundle can download a shared flow or a proxy bundle
-func FetchAsyncBundle(entityType string, name string, revision string, wg *sync.WaitGroup) {
+func FetchAsyncBundle(entityType string, folder string, name string, revision string, wg *sync.WaitGroup) {
 	//this method is meant to be called asynchronously
 	defer wg.Done()
 
-	_ = FetchBundle(entityType, name, revision)
+	_ = FetchBundle(entityType, folder, name, revision)
 }
 
 //FetchBundle can download a shared flow or proxy bundle
-func FetchBundle(entityType string, name string, revision string) error {
+func FetchBundle(entityType string, folder string, name string, revision string) error {
 	u, _ := url.Parse(BaseURL)
 	q := u.Query()
 	q.Set("format", "bundle")
@@ -172,6 +176,11 @@ func FetchBundle(entityType string, name string, revision string) error {
 		clilog.Error.Println(err)
 		return err
 	}
+
+	if len(folder) > 0 {
+		_ = os.Rename(name+".zip", path.Join(folder, name+".zip"))
+	}
+
 	return nil
 }
 

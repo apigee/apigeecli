@@ -249,11 +249,11 @@ func Undeploy(name string, revision int) (respBody []byte, err error) {
 
 //Fetch
 func Fetch(name string, revision int) (err error) {
-	return apiclient.FetchBundle("sharedflows", name, strconv.Itoa(revision))
+	return apiclient.FetchBundle("sharedflows", "", name, strconv.Itoa(revision))
 }
 
 //Export
-func Export(conn int) (err error) {
+func Export(conn int, folder string) (err error) {
 	//parent workgroup
 	var pwg sync.WaitGroup
 	const entityType = "sharedflows"
@@ -293,7 +293,7 @@ func Export(conn int) (err error) {
 		pwg.Add(1)
 		end = (i * conn) + conn
 		clilog.Info.Printf("Exporting batch %d of proxies\n", (i + 1))
-		go batchExport(entities.Proxies[start:end], entityType, &pwg)
+		go batchExport(entities.Proxies[start:end], entityType, folder, &pwg)
 		start = end
 		pwg.Wait()
 	}
@@ -301,7 +301,7 @@ func Export(conn int) (err error) {
 	if remaining > 0 {
 		pwg.Add(1)
 		clilog.Info.Printf("Exporting remaining %d proxies\n", remaining)
-		go batchExport(entities.Proxies[start:numEntities], entityType, &pwg)
+		go batchExport(entities.Proxies[start:numEntities], entityType, folder, &pwg)
 		pwg.Wait()
 	}
 
@@ -360,7 +360,7 @@ func Import(conn int, folder string) error {
 	return nil
 }
 
-func batchExport(entities []sharedflow, entityType string, pwg *sync.WaitGroup) {
+func batchExport(entities []sharedflow, entityType string, folder string, pwg *sync.WaitGroup) {
 	defer pwg.Done()
 	//batch workgroup
 	var bwg sync.WaitGroup
@@ -370,7 +370,7 @@ func batchExport(entities []sharedflow, entityType string, pwg *sync.WaitGroup) 
 	for _, entity := range entities {
 		//download only the last revision
 		lastRevision := len(entity.Revision)
-		go apiclient.FetchAsyncBundle(entityType, entity.Name, entity.Revision[lastRevision-1], &bwg)
+		go apiclient.FetchAsyncBundle(entityType, folder, entity.Name, entity.Revision[lastRevision-1], &bwg)
 	}
 	bwg.Wait()
 }

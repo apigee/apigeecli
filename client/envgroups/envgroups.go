@@ -17,12 +17,26 @@ package envgroups
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/url"
+	"os"
 	"path"
 	"strings"
 
 	"github.com/srinandan/apigeecli/apiclient"
 )
+
+type environmentgroups struct {
+	EnvironmentGroup []environmentgroup `json:"environmentGroups,omitempty"`
+}
+
+type environmentgroup struct {
+	Name           string   `json:"name,omitempty"`
+	Hostnames      []string `json:"hostnames,omitempty"`
+	CreatedAt      string   `json:"createdAt,omitempty"`
+	LastModifiedAt string   `json:"lastModifiedAt,omitempty"`
+	State          string   `json:"state,omitempty"`
+}
 
 //Create
 func Create(name string, hostnames []string) (respBody []byte, err error) {
@@ -148,4 +162,48 @@ func getArrayStr(str []string) string {
 	tmp := strings.Join(str, ",")
 	tmp = strings.ReplaceAll(tmp, ",", "\",\"")
 	return tmp
+}
+
+//Import
+func Import(filePath string) (err error) {
+
+	environmentGroups := environmentgroups{}
+
+	if environmentGroups, err = readEnvGroupsFile(filePath); err != nil {
+		return err
+	}
+
+	for _, environmentGroup := range environmentGroups.EnvironmentGroup {
+		if _, err = Create(environmentGroup.Name, environmentGroup.Hostnames); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func readEnvGroupsFile(filePath string) (environmentgroups, error) {
+
+	environmentGroups := environmentgroups{}
+
+	jsonFile, err := os.Open(filePath)
+
+	if err != nil {
+		return environmentGroups, err
+	}
+
+	defer jsonFile.Close()
+
+	byteValue, err := ioutil.ReadAll(jsonFile)
+
+	if err != nil {
+		return environmentGroups, err
+	}
+
+	err = json.Unmarshal(byteValue, &environmentGroups)
+
+	if err != nil {
+		return environmentGroups, err
+	}
+
+	return environmentGroups, nil
 }

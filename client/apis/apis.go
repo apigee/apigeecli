@@ -79,7 +79,7 @@ func DeployProxy(name string, revision int, overrides bool) (respBody []byte, er
 
 //FetchProxy
 func FetchProxy(name string, revision int) (err error) {
-	return apiclient.FetchBundle("apis", name, strconv.Itoa(revision))
+	return apiclient.FetchBundle("apis", "", name, strconv.Itoa(revision))
 }
 
 //GetProxy
@@ -246,7 +246,7 @@ func CleanProxy(name string, reportOnly bool) (err error) {
 }
 
 //ExportProxies
-func ExportProxies(conn int) (err error) {
+func ExportProxies(conn int, folder string) (err error) {
 	//parent workgroup
 	var pwg sync.WaitGroup
 	const entityType = "apis"
@@ -286,7 +286,7 @@ func ExportProxies(conn int) (err error) {
 		pwg.Add(1)
 		end = (i * conn) + conn
 		clilog.Info.Printf("Exporting batch %d of proxies\n", (i + 1))
-		go batchExport(entities.Proxies[start:end], entityType, &pwg)
+		go batchExport(entities.Proxies[start:end], entityType, folder, &pwg)
 		start = end
 		pwg.Wait()
 	}
@@ -294,7 +294,7 @@ func ExportProxies(conn int) (err error) {
 	if remaining > 0 {
 		pwg.Add(1)
 		clilog.Info.Printf("Exporting remaining %d proxies\n", remaining)
-		go batchExport(entities.Proxies[start:numEntities], entityType, &pwg)
+		go batchExport(entities.Proxies[start:numEntities], entityType, folder, &pwg)
 		pwg.Wait()
 	}
 
@@ -354,7 +354,7 @@ func ImportProxies(conn int, folder string) error {
 	return nil
 }
 
-func batchExport(entities []proxy, entityType string, pwg *sync.WaitGroup) {
+func batchExport(entities []proxy, entityType string, folder string, pwg *sync.WaitGroup) {
 
 	defer pwg.Done()
 	//batch workgroup
@@ -365,7 +365,7 @@ func batchExport(entities []proxy, entityType string, pwg *sync.WaitGroup) {
 	for _, entity := range entities {
 		//download only the last revision
 		lastRevision := len(entity.Revision)
-		go apiclient.FetchAsyncBundle(entityType, entity.Name, entity.Revision[lastRevision-1], &bwg)
+		go apiclient.FetchAsyncBundle(entityType, folder, entity.Name, entity.Revision[lastRevision-1], &bwg)
 	}
 	bwg.Wait()
 }

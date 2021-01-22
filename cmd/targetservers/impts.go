@@ -1,4 +1,4 @@
-// Copyright 2020 Google LLC
+// Copyright 2021 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,32 +12,36 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package sharedflows
+package targetservers
 
 import (
 	"github.com/spf13/cobra"
 	"github.com/srinandan/apigeecli/apiclient"
-	"github.com/srinandan/apigeecli/client/sharedflows"
+	"github.com/srinandan/apigeecli/client/targetservers"
 )
 
-//Cmd to export shared flows
-var ExpCmd = &cobra.Command{
-	Use:   "export",
-	Short: "export Sharedflow bundles from an org",
-	Long:  "export Sharedflow bundles from an org",
+//ImpCmd to import ts
+var ImpCmd = &cobra.Command{
+	Use:   "import",
+	Short: "Import a file containing target servers",
+	Long:  "Import a file containing target servers",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetApigeeEnv(env)
 		return apiclient.SetApigeeOrg(org)
 	},
-	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		return sharedflows.Export(conn, folder)
+	RunE: func(cmd *cobra.Command, args []string) error {
+		return targetservers.Import(conn, filePath)
 	},
 }
 
+var filePath string
+
 func init() {
 
-	ExpCmd.Flags().IntVarP(&conn, "conn", "c",
+	ImpCmd.Flags().StringVarP(&filePath, "file", "f",
+		"", "File containing API Products")
+	ImpCmd.Flags().IntVarP(&conn, "conn", "c",
 		4, "Number of connections")
-	ExpCmd.Flags().StringVarP(&folder, "folder", "f",
-		"", "folder to export sharedflow bundles")
+
+	_ = ImpCmd.MarkFlagRequired("file")
 }

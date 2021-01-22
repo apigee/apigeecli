@@ -15,12 +15,27 @@
 package datacollectors
 
 import (
+	"encoding/json"
+	"io/ioutil"
 	"net/url"
+	"os"
 	"path"
 	"strings"
 
 	"github.com/srinandan/apigeecli/apiclient"
 )
+
+type dcollectors struct {
+	DataCollector []datacollector `json:"dataCollectors,omitempty"`
+}
+
+type datacollector struct {
+	Name           string `json:"name,omitempty"`
+	Description    string `json:"description,omitempty"`
+	Type           string `json:"type,omitempty"`
+	CreatedAt      string `json:"createdAt,omitempty"`
+	LastModifiedAt string `json:"lastModifiedAt,omitempty"`
+}
 
 //Create
 func Create(name string, description string, collectorType string) (respBody []byte, err error) {
@@ -62,4 +77,48 @@ func List() (respBody []byte, err error) {
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "datacollectors")
 	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
 	return respBody, err
+}
+
+//Import
+func Import(filePath string) (err error) {
+
+	dCollectors := dcollectors{}
+
+	if dCollectors, err = readDataCollectorsFile(filePath); err != nil {
+		return err
+	}
+
+	for _, dCollector := range dCollectors.DataCollector {
+		if _, err = Create(dCollector.Name, dCollector.Description, dCollector.Type); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func readDataCollectorsFile(filePath string) (dcollectors, error) {
+
+	dCollectors := dcollectors{}
+
+	jsonFile, err := os.Open(filePath)
+
+	if err != nil {
+		return dCollectors, err
+	}
+
+	defer jsonFile.Close()
+
+	byteValue, err := ioutil.ReadAll(jsonFile)
+
+	if err != nil {
+		return dCollectors, err
+	}
+
+	err = json.Unmarshal(byteValue, &dCollectors)
+
+	if err != nil {
+		return dCollectors, err
+	}
+
+	return dCollectors, nil
 }

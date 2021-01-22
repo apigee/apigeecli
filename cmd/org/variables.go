@@ -1,4 +1,4 @@
-// Copyright 2020 Google LLC
+// Copyright 2021 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,30 +14,20 @@
 
 package org
 
-import (
-	"github.com/spf13/cobra"
+const (
+	productsFileName     = "products.json"
+	developersFileName   = "developers.json"
+	appsFileName         = "apps.json"
+	targetServerFileName = "targetservers.json"
+	envGroupsFileName    = "envgroups.json"
+	dataCollFileName     = "datacollectors.json"
+	refFileName          = "references.json"
+	kVMFileName          = "kvms.json"
+	keyStoresFileName    = "keystores.json"
+	syncAuthFileName     = "syncauth.json"
+
+	proxiesFolderName     = "proxies"
+	sharedFlowsFolderName = "sharedflows"
 )
 
-//Cmd to manage orgs
-var Cmd = &cobra.Command{
-	Use:     "orgs",
-	Aliases: []string{"organizations"},
-	Short:   "Manage Apigee Orgs",
-	Long:    "Manage Apigee Orgs",
-}
-
-var org string
-
-func init() {
-	Cmd.AddCommand(CreateCmd)
-	Cmd.AddCommand(ListCmd)
-	Cmd.AddCommand(GetCmd)
-	Cmd.AddCommand(MartCmd)
-	Cmd.AddCommand(AcCmd)
-	Cmd.AddCommand(WlCmd)
-	Cmd.AddCommand(PropCmd)
-	Cmd.AddCommand(ObCmd)
-	Cmd.AddCommand(IngressCmd)
-	Cmd.AddCommand(ExportCmd)
-	Cmd.AddCommand(ImportCmd)
-}
+var conn int

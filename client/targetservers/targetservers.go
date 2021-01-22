@@ -16,7 +16,9 @@ package targetservers
 
 import (
 	"encoding/json"
+	"io/ioutil"
 	"net/url"
+	"os"
 	"path"
 	"strconv"
 	"strings"
@@ -25,6 +27,32 @@ import (
 	"github.com/srinandan/apigeecli/apiclient"
 	"github.com/srinandan/apigeecli/clilog"
 )
+
+type targetserver struct {
+	Name        string   `json:"name,omitempty"`
+	Description string   `json:"description,omitempty"`
+	Host        string   `json:"host,omitempty"`
+	Port        int      `json:"port,omitempty"`
+	IsEnabled   bool     `json:"isEnabled,omitempty"`
+	SslInfo     *sslInfo `json:"sSLInfo,omitempty"`
+}
+
+type sslInfo struct {
+	Enabled                bool        `json:"enabled,omitempty"`
+	ClientAuthEnabled      string      `json:"clientAuthEnabled,omitempty"`
+	Keystore               string      `json:"keyStore,omitempty"`
+	Keyalias               string      `json:"keyAlias,omitempty"`
+	Truststore             string      `json:"trustStore,omitempty"`
+	IgnoreValidationErrors bool        `json:"ignoreValidationErrors,omitempty"`
+	Protocols              []string    `json:"protocols,omitempty"`
+	Ciphers                []string    `json:"ciphers,omitempty"`
+	CommonName             *commonName `json:"commonName,omitempty"`
+}
+
+type commonName struct {
+	Value         string `json:"value,omitempty"`
+	WildcardMatch bool   `json:"wildcardMatch,omitempty"`
+}
 
 //Create
 func Create(name string, description string, host string, port int, enable bool) (respBody []byte, err error) {
@@ -126,7 +154,10 @@ func Export(conn int) (payload [][]byte, err error) {
 		pwg.Wait()
 	}
 
-	return apiclient.GetEntityPayloadList(), nil
+	payload = make([][]byte, len(apiclient.GetEntityPayloadList()))
+	copy(payload, apiclient.GetEntityPayloadList())
+	apiclient.ClearEntityPayloadList()
+	return payload, nil
 }
 
 //batch created a batch of targetservers to query
@@ -144,4 +175,107 @@ func batchExport(entities []string, entityType string, pwg *sync.WaitGroup, mu *
 		go apiclient.GetAsyncEntity(u.String(), &bwg, mu)
 	}
 	bwg.Wait()
+}
+
+//Import
+func Import(conn int, filePath string) (err error) {
+	var pwg sync.WaitGroup
+	const entityType = "targetservers"
+
+	u, _ := url.Parse(apiclient.BaseURL)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), entityType)
+
+	entities, err := readTargetServersFile(filePath)
+	if err != nil {
+		clilog.Error.Println("Error reading file: ", err)
+		return err
+	}
+
+	numEntities := len(entities)
+	clilog.Info.Printf("Found %d target servers in the file\n", numEntities)
+	clilog.Info.Printf("Create target servers with %d connections\n", conn)
+
+	numOfLoops, remaining := numEntities/conn, numEntities%conn
+
+	//ensure connections aren't greater than entities
+	if conn > numEntities {
+		conn = numEntities
+	}
+
+	start := 0
+
+	for i, end := 0, 0; i < numOfLoops; i++ {
+		pwg.Add(1)
+		end = (i * conn) + conn
+		clilog.Info.Printf("Creating batch %d of target servers\n", (i + 1))
+		go batchImport(u.String(), entities[start:end], &pwg)
+		start = end
+		pwg.Wait()
+	}
+
+	if remaining > 0 {
+		pwg.Add(1)
+		clilog.Info.Printf("Creating remaining %d target servers\n", remaining)
+		go batchImport(u.String(), entities[start:numEntities], &pwg)
+		pwg.Wait()
+	}
+
+	return nil
+}
+
+//batch creates a batch of target servers to create
+func batchImport(url string, entities []targetserver, pwg *sync.WaitGroup) {
+
+	defer pwg.Done()
+	//batch workgroup
+	var bwg sync.WaitGroup
+
+	bwg.Add(len(entities))
+
+	for _, entity := range entities {
+		go createAsyncTargetServer(url, entity, &bwg)
+	}
+	bwg.Wait()
+}
+
+func createAsyncTargetServer(url string, entity targetserver, wg *sync.WaitGroup) {
+	defer wg.Done()
+	out, err := json.Marshal(entity)
+	if err != nil {
+		clilog.Error.Println(err)
+		return
+	}
+	_, err = apiclient.HttpClient(apiclient.GetPrintOutput(), url, string(out))
+	if err != nil {
+		clilog.Error.Println(err)
+		return
+	}
+	clilog.Info.Printf("Completed entity: %s", entity.Name)
+}
+
+func readTargetServersFile(filePath string) ([]targetserver, error) {
+
+	targetservers := []targetserver{}
+
+	jsonFile, err := os.Open(filePath)
+
+	if err != nil {
+		return targetservers, err
+	}
+
+	defer jsonFile.Close()
+
+	byteValue, err := ioutil.ReadAll(jsonFile)
+
+	if err != nil {
+		return targetservers, err
+	}
+
+	err = json.Unmarshal(byteValue, &targetservers)
+
+	if err != nil {
+		return targetservers, err
+	}
+
+	return targetservers, nil
 }

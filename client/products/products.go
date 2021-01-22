@@ -394,13 +394,13 @@ func Export(conn int) (payload [][]byte, err error) {
 	//don't print to sysout
 	respBody, err := apiclient.HttpClient(false, u.String())
 	if err != nil {
-		return apiclient.GetEntityPayloadList(), nil
+		return apiclient.GetEntityPayloadList(), err
 	}
 
 	var products = apiProducts{}
 	err = json.Unmarshal(respBody, &products)
 	if err != nil {
-		return apiclient.GetEntityPayloadList(), nil
+		return apiclient.GetEntityPayloadList(), err
 	}
 
 	numProd := len(products.APIProducts)
@@ -432,7 +432,10 @@ func Export(conn int) (payload [][]byte, err error) {
 		pwg.Wait()
 	}
 
-	return apiclient.GetEntityPayloadList(), nil
+	payload = make([][]byte, len(apiclient.GetEntityPayloadList()))
+	copy(payload, apiclient.GetEntityPayloadList())
+	apiclient.ClearEntityPayloadList()
+	return payload, nil
 }
 
 //Import

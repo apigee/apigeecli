@@ -44,7 +44,7 @@ func init() {
 	CreateCmd.Flags().StringVarP(&name, "name", "n",
 		"", "KVM Map name")
 	CreateCmd.Flags().BoolVarP(&encrypt, "encrypt", "c",
-		false, "Enable cncrypted KVM")
+		true, "Enable cncrypted KVM")
 
 	_ = CreateCmd.MarkFlagRequired("env")
 	_ = CreateCmd.MarkFlagRequired("name")

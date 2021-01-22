@@ -99,6 +99,43 @@ func Set(identity string) (respBody []byte, err error) {
 	return respBody, err
 }
 
+//SetList
+func SetList(identities []string) (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.BaseURL)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg()+":getSyncAuthorization")
+	apiclient.SetPrintOutput(false)
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "")
+	if err != nil {
+		return respBody, err
+	}
+
+	response := syncResponse{}
+	err = json.Unmarshal(respBody, &response)
+	if err != nil {
+		return respBody, err
+	}
+
+	for count := 0; count < len(identities); count++ {
+		identities[count] = validate(identities[count])
+	}
+
+	response.Identities = append(response.Identities, identities...)
+
+	iamidentities := iAMIdentities{}
+	iamidentities.Identities = response.Identities
+	payload, err := json.Marshal(&iamidentities)
+	if err != nil {
+		return respBody, err
+	}
+
+	apiclient.SetPrintOutput(true)
+	u, _ = url.Parse(apiclient.BaseURL)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg()+":setSyncAuthorization")
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), string(payload))
+
+	return respBody, err
+}
+
 //Remove
 func Remove(identity string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)

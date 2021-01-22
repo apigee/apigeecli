@@ -29,7 +29,7 @@ var ExpCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		return apis.ExportProxies(conn)
+		return apis.ExportProxies(conn, folder)
 	},
 }
 
@@ -37,4 +37,7 @@ func init() {
 
 	ExpCmd.Flags().IntVarP(&conn, "conn", "c",
 		4, "Number of connections")
+	ExpCmd.Flags().StringVarP(&folder, "folder", "f",
+		"", "folder to export API proxy bundles")
+
 }

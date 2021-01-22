@@ -53,7 +53,7 @@ type credential struct {
 	APIProducts    []apiProduct `json:"apiProducts,omitempty"`
 	ConsumerKey    string       `json:"consumerKey,omitempty"`
 	ConsumerSecret string       `json:"consumerSecret,omitempty"`
-	ExpiresAt      int          `json:"expiresAt,omitempty"`
+	ExpiresAt      string       `json:"expiresAt,omitempty"`
 	Status         string       `json:"status,omitempty"`
 	Scopes         []string     `json:"scopes,omitempty"`
 }
@@ -279,8 +279,10 @@ func Export(conn int) (payload [][]byte, err error) {
 		go batchExport(entities.Apps[start:numEntities], entityType, &pwg, &mu)
 		pwg.Wait()
 	}
-
-	return apiclient.GetEntityPayloadList(), nil
+	payload = make([][]byte, len(apiclient.GetEntityPayloadList()))
+	copy(payload, apiclient.GetEntityPayloadList())
+	apiclient.ClearEntityPayloadList()
+	return payload, nil
 }
 
 //Import

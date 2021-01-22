@@ -28,12 +28,16 @@ import (
 	"github.com/srinandan/apigeecli/clilog"
 )
 
-type developer struct {
+type appdeveloper struct {
 	EMail      string      `json:"email,omitempty"`
 	FirstName  string      `json:"firstName,omitempty"`
 	LastName   string      `json:"lastName,omitempty"`
 	Attributes []attribute `json:"attributes,omitempty"`
 	Username   string      `json:"userName,omitempty"`
+}
+
+type appdevelopers struct {
+	Developer []appdeveloper `json:"developer,omitempty"`
 }
 
 //attribute to used to hold custom attributes for entities
@@ -144,7 +148,7 @@ func Import(conn int, filePath string) error {
 		return err
 	}
 
-	numEntities := len(entities)
+	numEntities := len(entities.Developer)
 	clilog.Info.Printf("Found %d developers in the file\n", numEntities)
 	clilog.Info.Printf("Create developers with %d connections\n", conn)
 
@@ -161,7 +165,7 @@ func Import(conn int, filePath string) error {
 		pwg.Add(1)
 		end = (i * conn) + conn
 		clilog.Info.Printf("Creating batch %d of developers\n", (i + 1))
-		go batchImport(u.String(), entities[start:end], &pwg)
+		go batchImport(u.String(), entities.Developer[start:end], &pwg)
 		start = end
 		pwg.Wait()
 	}
@@ -169,14 +173,14 @@ func Import(conn int, filePath string) error {
 	if remaining > 0 {
 		pwg.Add(1)
 		clilog.Info.Printf("Creating remaining %d developers\n", remaining)
-		go batchImport(u.String(), entities[start:numEntities], &pwg)
+		go batchImport(u.String(), entities.Developer[start:numEntities], &pwg)
 		pwg.Wait()
 	}
 
 	return nil
 }
 
-func createAsyncDeveloper(url string, dev developer, wg *sync.WaitGroup) {
+func createAsyncDeveloper(url string, dev appdeveloper, wg *sync.WaitGroup) {
 	defer wg.Done()
 	out, err := json.Marshal(dev)
 	if err != nil {
@@ -193,7 +197,7 @@ func createAsyncDeveloper(url string, dev developer, wg *sync.WaitGroup) {
 }
 
 //batch creates a batch of developers to create
-func batchImport(url string, entities []developer, pwg *sync.WaitGroup) {
+func batchImport(url string, entities []appdeveloper, pwg *sync.WaitGroup) {
 
 	defer pwg.Done()
 	//batch workgroup
@@ -207,9 +211,9 @@ func batchImport(url string, entities []developer, pwg *sync.WaitGroup) {
 	bwg.Wait()
 }
 
-func readDevelopersFile(filePath string) ([]developer, error) {
+func readDevelopersFile(filePath string) (appdevelopers, error) {
 
-	devs := []developer{}
+	devs := appdevelopers{}
 
 	jsonFile, err := os.Open(filePath)
 
