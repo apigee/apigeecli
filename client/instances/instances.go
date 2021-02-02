@@ -15,6 +15,7 @@
 package instances
 
 import (
+	"fmt"
 	"net/url"
 	"path"
 	"strings"
@@ -23,13 +24,21 @@ import (
 )
 
 //Create
-func Create(name string, location string, diskEncryptionKeyName string) (respBody []byte, err error) {
+func Create(name string, location string, diskEncryptionKeyName string, cidrRange string) (respBody []byte, err error) {
 
 	instance := []string{}
 
 	instance = append(instance, "\"name\":\""+name+"\"")
 	instance = append(instance, "\"location\":\""+location+"\"")
 	instance = append(instance, "\"diskEncryptionKeyName\":\""+diskEncryptionKeyName+"\"")
+
+	if cidrRange != "" {
+		if cidrRange != "SLASH_20" && cidrRange != "SLASH_16" {
+			return nil, fmt.Errorf("Invalid range parameter. Must be SLASH_20 or SLASH_16")
+		} else {
+			instance = append(instance, "\"peeringCidrRange\":\""+cidrRange+"\"")
+		}
+	}
 
 	payload := "{" + strings.Join(instance, ",") + "}"
 

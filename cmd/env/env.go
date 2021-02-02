@@ -34,6 +34,7 @@ func init() {
 		"", "Apigee organization name")
 
 	Cmd.AddCommand(ListCmd)
+	Cmd.AddCommand(CreateCmd)
 	Cmd.AddCommand(GetCmd)
 	Cmd.AddCommand(DelCmd)
 	Cmd.AddCommand(IamCmd)

@@ -22,9 +22,9 @@ import (
 
 //Cmd to get env details
 var CreateCmd = &cobra.Command{
-	Use:   "get",
-	Short: "Get properties of an environment",
-	Long:  "Get properties of an environment",
+	Use:   "create",
+	Short: "Create a new environment",
+	Long:  "Create a new environment",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetApigeeEnv(environment)
 		return apiclient.SetApigeeOrg(org)

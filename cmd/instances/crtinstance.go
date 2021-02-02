@@ -37,12 +37,12 @@ var CreateCmd = &cobra.Command{
 		if !ok {
 			return fmt.Errorf("custom role must be of the format projects/{project-id}/locations/{location}/keyRings/{test}/cryptoKeys/{cryptoKey}")
 		}
-		_, err = instances.Create(name, location, diskEncryptionKeyName)
+		_, err = instances.Create(name, location, diskEncryptionKeyName, cidrRange)
 		return
 	},
 }
 
-var diskEncryptionKeyName string
+var diskEncryptionKeyName, cidrRange string
 
 func init() {
 
@@ -52,6 +52,8 @@ func init() {
 		"", "Instance location")
 	CreateCmd.Flags().StringVarP(&diskEncryptionKeyName, "diskenc", "d",
 		"", "CloudKMS key name")
+	CreateCmd.Flags().StringVarP(&cidrRange, "cidr", "r",
+		"", "Peering CIDR Range; default is SLASH_16, other supported values SLASH_20")
 
 	_ = CreateCmd.MarkFlagRequired("name")
 	_ = CreateCmd.MarkFlagRequired("location")
