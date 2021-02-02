@@ -40,13 +40,20 @@ func validRegion(region string) bool {
 //Create
 func Create(region string, network string, runtimeType string, databaseKey string) (respBody []byte, err error) {
 	const baseURL = "https://apigee.googleapis.com/v1/organizations"
+	var stageBaseURL = "https://staging-apigee.sandbox.googleapis.com/v1/organizations/"
 
 	if !validRegion(region) {
 		return respBody, fmt.Errorf("invalid analytics region."+
 			" Analytics region must be one of : %v", analyticsRegions)
 	}
 
-	u, _ := url.Parse(baseURL)
+	var u *url.URL
+	if apiclient.GetStaging() {
+		u, _ = url.Parse(stageBaseURL)
+	} else {
+		u, _ = url.Parse(baseURL)
+	}
+
 	u.Path = path.Join(u.Path)
 	q := u.Query()
 	q.Set("parent", "projects/"+apiclient.GetProjectID())

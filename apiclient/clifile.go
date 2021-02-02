@@ -167,6 +167,10 @@ func SetStaging(usestage bool) (err error) {
 	return WriteByteArrayToFile(path.Join(usr.HomeDir, apigeecliFile), false, data)
 }
 
+func GetStaging() bool {
+	return cliPref.Staging
+}
+
 func SetProxy(url string) (err error) {
 	if url == "" {
 		return nil
