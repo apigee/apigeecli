@@ -15,6 +15,8 @@
 package instances
 
 import (
+	"encoding/json"
+	"fmt"
 	"net/url"
 	"path"
 	"strings"
@@ -32,6 +34,57 @@ func Attach(name string, environment string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "instances", name, "attachments")
 	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload)
+	return respBody, err
+}
+
+//DetachEnv
+func DetachEnv(instance string) (respBody []byte, err error) {
+
+	var attachmentName string
+
+	type instanceAttachment struct {
+		Name        string `json:"name,omitempty"`
+		Environment string `json:"environment,omitempty"`
+		CreatedAt   string `json:"createdAt,omitempty"`
+	}
+
+	type instanceAttachments struct {
+		Attachments []instanceAttachment `json:"attachments,omitempty"`
+	}
+
+	instAttach := instanceAttachments{}
+
+	u, _ := url.Parse(apiclient.BaseURL)
+
+	apiclient.SetPrintOutput(false)
+	listAttachments, err := ListAttach(instance)
+	if err != nil {
+		return nil, err
+	}
+	apiclient.SetPrintOutput(true)
+
+	err = json.Unmarshal(listAttachments, &instAttach)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(instAttach.Attachments) < 1 {
+		return nil, fmt.Errorf("no environments attached to the instance")
+	}
+
+	for _, attachedEnv := range instAttach.Attachments {
+		if attachedEnv.Environment == apiclient.GetApigeeEnv() {
+			attachmentName = attachedEnv.Name
+			break
+		}
+	}
+
+	if attachmentName == "" {
+		return nil, fmt.Errorf("The environment %s, does not appear to be attached to the instance %s", apiclient.GetApigeeEnv(), instance)
+	}
+
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "instances", instance, "attachments", attachmentName)
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "", "DELETE")
 	return respBody, err
 }
 
