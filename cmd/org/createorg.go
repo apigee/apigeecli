@@ -57,7 +57,7 @@ func init() {
 	CreateCmd.Flags().StringVarP(&projectID, "prj", "p",
 		"", "GCP Project ID")
 	CreateCmd.Flags().StringVarP(&network, "net", "n",
-		"default", "Authorized network")
+		"default", "Authorized network; if using a shared VPC format is projects/{host-project-id}/{location}/networks/{network-name}")
 	CreateCmd.Flags().StringVarP(&databaseKey, "key", "k",
 		"", "Runtime Database Encryption Key")
 	CreateCmd.Flags().StringVarP(&runtimeType, "runtime-type", "",
