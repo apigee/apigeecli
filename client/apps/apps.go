@@ -131,13 +131,13 @@ func Get(appID string) (respBody []byte, err error) {
 }
 
 //Manage
-func Manage(appID string, action string) (respBody []byte, err error) {
+func Manage(appID string, developerEmail string, action string) (respBody []byte, err error) {
 	if action != "revoke" && action != "approve" {
 		return nil, fmt.Errorf("invalid action. action must be revoke or approve")
 	}
 
 	u, _ := url.Parse(apiclient.BaseURL)
-	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apps", appID)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", developerEmail, "apps", appID)
 	q := u.Query()
 	q.Set("action", action)
 	u.RawQuery = q.Encode()

@@ -29,7 +29,7 @@ var ManageCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = apps.Manage(name, action)
+		_, err = apps.Manage(name, developerEmail, action)
 		return
 	},
 }
@@ -38,9 +38,12 @@ func init() {
 
 	ManageCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Developer app name")
+	ManageCmd.Flags().StringVarP(&developerEmail, "email", "d",
+		"", "Developer Email")
 	ManageCmd.Flags().StringVarP(&action, "action", "x",
 		"revoke", "Action to perform - revoke or approve")
 
 	_ = ManageCmd.MarkFlagRequired("name")
 	_ = ManageCmd.MarkFlagRequired("action")
+	_ = ManageCmd.MarkFlagRequired("email")
 }
