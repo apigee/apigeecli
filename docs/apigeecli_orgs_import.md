@@ -1,20 +1,22 @@
-## apigeecli orgs ingressconfig
+## apigeecli orgs import
 
-Show details of the Ingress configuration for an Apigee Org
+Import Apigee Configuration
 
 ### Synopsis
 
-Show details of the Ingress configuration for an Apigee Org
+Import Apigee Configuration
 
 ```
-apigeecli orgs ingressconfig [flags]
+apigeecli orgs import [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help         help for ingressconfig
-  -o, --org string   Apigee organization name
+  -c, --conn int        Number of connections (default 4)
+  -f, --folder string   folder containing API proxy bundles
+  -h, --help            help for import
+  -o, --org string      Apigee organization name
 ```
 
 ### Options inherited from parent commands
