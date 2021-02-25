@@ -40,4 +40,5 @@ func init() {
 	Cmd.AddCommand(IngressCmd)
 	Cmd.AddCommand(ExportCmd)
 	Cmd.AddCommand(ImportCmd)
+	Cmd.AddCommand(UpdateCmd)
 }

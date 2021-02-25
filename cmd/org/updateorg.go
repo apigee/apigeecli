@@ -22,11 +22,11 @@ import (
 	"github.com/srinandan/apigeecli/client/orgs"
 )
 
-//Cmd to get org details
-var CreateCmd = &cobra.Command{
-	Use:   "create",
-	Short: "Create a new Apigee Org",
-	Long:  "Create a new Apigee Org",
+//UpdateCmd to get org details
+var UpdateCmd = &cobra.Command{
+	Use:   "update",
+	Short: "Update settings of an Apigee Org",
+	Long:  "Update settings of an Apigee Org",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		if runtimeType != "HYBRID" && runtimeType != "CLOUD" {
 			return fmt.Errorf("runtime type must be CLOUD or HYBRID")
@@ -43,29 +43,25 @@ var CreateCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(projectID)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = orgs.Create(region, network, runtimeType, databaseKey)
+		_, err = orgs.Update(description, "", region, network, runtimeType, databaseKey)
 		return
 	},
 }
 
-var region, projectID, network, runtimeType, description, databaseKey string
-
 func init() {
 
-	CreateCmd.Flags().StringVarP(&region, "reg", "r",
+	UpdateCmd.Flags().StringVarP(&region, "reg", "r",
 		"", "Analytics region name")
-	CreateCmd.Flags().StringVarP(&projectID, "prj", "p",
-		"", "GCP Project ID")
-	CreateCmd.Flags().StringVarP(&description, "desc", "d",
+	UpdateCmd.Flags().StringVarP(&description, "desc", "d",
 		"", "Apigee org description")
-	CreateCmd.Flags().StringVarP(&network, "net", "n",
+	UpdateCmd.Flags().StringVarP(&network, "net", "n",
 		"default", "Authorized network; if using a shared VPC format is projects/{host-project-id}/{location}/networks/{network-name}")
-	CreateCmd.Flags().StringVarP(&databaseKey, "key", "k",
+	UpdateCmd.Flags().StringVarP(&databaseKey, "key", "k",
 		"", "Runtime Database Encryption Key")
-	CreateCmd.Flags().StringVarP(&runtimeType, "runtime-type", "",
+	UpdateCmd.Flags().StringVarP(&runtimeType, "runtime-type", "",
 		"HYBRID", "Runtime type: CLOUD or HYBRID")
 
-	_ = CreateCmd.MarkFlagRequired("prj")
-	_ = CreateCmd.MarkFlagRequired("reg")
-	_ = CreateCmd.MarkFlagRequired("runtime-type")
+	_ = UpdateCmd.MarkFlagRequired("prj")
+	_ = UpdateCmd.MarkFlagRequired("reg")
+	_ = UpdateCmd.MarkFlagRequired("runtime-type")
 }

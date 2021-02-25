@@ -28,6 +28,36 @@ var analyticsRegions = [...]string{"asia-east1", "asia-east1", "asia-northeast1"
 	"europe-west1", "us-central1", "us-east1", "us-east4", "us-west1", "australia-southeast1",
 	"europe-west2"}
 
+//OrgProperty contains an individual org flag or property
+type orgProperty struct {
+	Name  string `json:"name,omitempty"`
+	Value string `json:"value,omitempty"`
+}
+
+//OrgProperties stores all the org feature flags and properties
+type orgProperties struct {
+	Property []orgProperty `json:"property,omitempty"`
+}
+
+type organization struct {
+	Name                     string        `json:"name,omitempty"`
+	DisplayName              string        `json:"displayName,omitempty"`
+	Description              string        `json:"description,omitempty"`
+	CreatedAt                string        `json:"createdAt,omitempty"`
+	LastModifiedAt           string        `json:"lastModifiedAt,omitempty"`
+	Environments             []string      `json:"environments,omitempty"`
+	Properties               orgProperties `json:"properties,omitempty"`
+	AnalyticsRegion          string        `json:"analyticsRegion,omitempty"`
+	AuthorizedNetwork        string        `json:"authorizedNetwork,omitempty"`
+	RuntimeType              string        `json:"runtimeType,omitempty"`
+	SubscriptionType         string        `json:"subscriptionType,omitempty"`
+	CaCertificate            string        `json:"caCertificate,omitempty"`
+	RuntimeEncryptionKeyName string        `json:"runtimeDatabaseEncryptionKeyName,omitempty"`
+	ProjectId                string        `json:"projectId,omitempty"`
+	State                    string        `json:"state,omitempty"`
+	BillingType              string        `json:"BillingType,omitempty"`
+}
+
 func validRegion(region string) bool {
 	for _, r := range analyticsRegions {
 		if region == r {
@@ -98,24 +128,6 @@ func GetDeployedIngressConfig() (respBody []byte, err error) {
 
 //SetOrgProperty is used to set org properties
 func SetOrgProperty(name string, value string) (err error) {
-	//OrgProperty contains an individual org flag or property
-	type orgProperty struct {
-		Name  string `json:"name,omitempty"`
-		Value string `json:"value,omitempty"`
-	}
-	//OrgProperties stores all the org feature flags and properties
-	type orgProperties struct {
-		Property []orgProperty `json:"property,omitempty"`
-	}
-	//Org structure
-	type organization struct {
-		Name            string        `json:"name,omitempty"`
-		CreatedAt       string        `json:"-,omitempty"`
-		LastModifiedAt  string        `json:"-,omitempty"`
-		Environments    []string      `json:"-,omitempty"`
-		Properties      orgProperties `json:"properties,omitempty"`
-		AnalyticsRegion string        `json:"-,omitempty"`
-	}
 
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg())
@@ -161,4 +173,56 @@ func SetOrgProperty(name string, value string) (err error) {
 	_, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), string(newOrgBody), "PUT")
 
 	return err
+}
+
+//Update
+func Update(description string, displayName string, region string, network string, runtimeType string, databaseKey string) (respBody []byte, err error) {
+
+	apiclient.SetPrintOutput(false)
+	orgBody, err := Get()
+	if err != nil {
+		return nil, err
+	}
+	apiclient.SetPrintOutput(true)
+
+	org := organization{}
+	err = json.Unmarshal(orgBody, &org)
+	if err != nil {
+		return nil, err
+	}
+
+	if description != "" {
+		org.Description = description
+	}
+
+	if displayName != "" {
+		org.DisplayName = displayName
+	}
+
+	if region != "" {
+		org.AnalyticsRegion = region
+	}
+
+	if network != "" {
+		org.AuthorizedNetwork = network
+	}
+
+	if runtimeType != "" {
+		org.RuntimeType = runtimeType
+	}
+
+	if databaseKey != "" {
+		org.RuntimeEncryptionKeyName = databaseKey
+	}
+
+	newOrgBody, err := json.Marshal(org)
+	if err != nil {
+		return nil, err
+	}
+
+	u, _ := url.Parse(apiclient.BaseURL)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg())
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), string(newOrgBody), "PUT")
+
+	return respBody, err
 }

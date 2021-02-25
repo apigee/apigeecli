@@ -1,23 +1,22 @@
-## apigeecli orgs create
+## apigeecli orgs update
 
-Create a new Apigee Org
+Update settings of an Apigee Org
 
 ### Synopsis
 
-Create a new Apigee Org
+Update settings of an Apigee Org
 
 ```
-apigeecli orgs create [flags]
+apigeecli orgs update [flags]
 ```
 
 ### Options
 
 ```
   -d, --desc string           Apigee org description
-  -h, --help                  help for create
+  -h, --help                  help for update
   -k, --key string            Runtime Database Encryption Key
   -n, --net string            Authorized network; if using a shared VPC format is projects/{host-project-id}/{location}/networks/{network-name} (default "default")
-  -p, --prj string            GCP Project ID
   -r, --reg string            Analytics region name
       --runtime-type string   Runtime type: CLOUD or HYBRID (default "HYBRID")
 ```
