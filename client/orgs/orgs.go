@@ -226,3 +226,34 @@ func Update(description string, displayName string, region string, network strin
 
 	return respBody, err
 }
+
+//SetAddons
+func SetAddons(advancedApiOpsConfig bool, integrationConfig bool, monetizationConfig bool) (respBody []byte, err error) {
+
+	addonPayload := []string{}
+
+	if !advancedApiOpsConfig && !integrationConfig && !monetizationConfig {
+		return nil, fmt.Errorf("At least one addon must be enabled")
+	}
+
+	if advancedApiOpsConfig {
+		addonPayload = append(addonPayload, "\"advancedApiOpsConfig\":{\"enabled\":true}")
+	}
+
+	if integrationConfig {
+		addonPayload = append(addonPayload, "\"integrationConfig\":{\"enabled\":true}")
+	}
+
+	if monetizationConfig {
+		addonPayload = append(addonPayload, "\"monetizationConfig\":{\"enabled\":true}")
+	}
+
+	payload := "{\"addonsConfig\":{" + strings.Join(addonPayload, ",") + "}}"
+
+	u, _ := url.Parse(apiclient.BaseURL)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg()+":setAddons")
+
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload)
+
+	return respBody, err
+}

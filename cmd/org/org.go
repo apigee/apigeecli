@@ -41,4 +41,5 @@ func init() {
 	Cmd.AddCommand(ExportCmd)
 	Cmd.AddCommand(ImportCmd)
 	Cmd.AddCommand(UpdateCmd)
+	Cmd.AddCommand(SetAddonCmd)
 }
