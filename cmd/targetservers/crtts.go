@@ -30,14 +30,14 @@ var CreateCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = targetservers.Create(name, description, host, port, enable)
+		_, err = targetservers.Create(name, description, host, port, enable, grpc)
 		return
 
 	},
 }
 
 var description, host string
-var enable bool
+var enable, grpc bool
 var port int
 
 func init() {
@@ -50,6 +50,8 @@ func init() {
 		"", "Host name of the target")
 	CreateCmd.Flags().BoolVarP(&enable, "enable", "b",
 		true, "Enabling/disabling a TargetServer")
+	CreateCmd.Flags().BoolVarP(&grpc, "grpc", "g",
+		false, "Enable target server for gRPC")
 	CreateCmd.Flags().IntVarP(&port, "port", "p",
 		80, "port number")
 

@@ -55,7 +55,7 @@ type commonName struct {
 }
 
 //Create
-func Create(name string, description string, host string, port int, enable bool) (respBody []byte, err error) {
+func Create(name string, description string, host string, port int, enable bool, grpc bool) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 
 	targetserver := []string{}
@@ -68,6 +68,10 @@ func Create(name string, description string, host string, port int, enable bool)
 
 	targetserver = append(targetserver, "\"host\":\""+host+"\"")
 	targetserver = append(targetserver, "\"port\":"+strconv.Itoa(port))
+
+	if grpc {
+		targetserver = append(targetserver, "\"protocol\":\"GRPC\"")
+	}
 
 	if enable {
 		targetserver = append(targetserver, "\"isEnabled\":"+strconv.FormatBool(enable))
