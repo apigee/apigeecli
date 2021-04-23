@@ -1,4 +1,4 @@
-// Copyright 2020 Google LLC
+// Copyright 2021 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,32 +16,24 @@ package env
 
 import (
 	"github.com/spf13/cobra"
+	"github.com/srinandan/apigeecli/apiclient"
+	"github.com/srinandan/apigeecli/client/env"
 )
 
-//Cmd to manage envs
-var Cmd = &cobra.Command{
-	Use:     "envs",
-	Aliases: []string{"environments"},
-	Short:   "Manage Apigee environments",
-	Long:    "Manage Apigee environments",
+//Cmd to list envs
+var ListArchiveCmd = &cobra.Command{
+	Use:   "list",
+	Short: "List archives deployed to the environment",
+	Long:  "List archives deployed to the environment",
+	Args: func(cmd *cobra.Command, args []string) (err error) {
+		return apiclient.SetApigeeOrg(org)
+	},
+	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		_, err = env.ListArchives()
+		return
+	},
 }
-
-var org, environment string
 
 func init() {
 
-	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
-		"", "Apigee organization name")
-
-	Cmd.AddCommand(ListCmd)
-	Cmd.AddCommand(CreateCmd)
-	Cmd.AddCommand(GetCmd)
-	Cmd.AddCommand(DelCmd)
-	Cmd.AddCommand(IamCmd)
-	Cmd.AddCommand(DebugCmd)
-	Cmd.AddCommand(ObCmd)
-	Cmd.AddCommand(PropCmd)
-	Cmd.AddCommand(DeployCmd)
-	Cmd.AddCommand(TraceConfigCmd)
-	Cmd.AddCommand(ArchiveCmd)
 }
