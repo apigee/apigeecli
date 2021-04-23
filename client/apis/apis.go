@@ -148,7 +148,7 @@ func UndeployProxy(name string, revision int) (respBody []byte, err error) {
 }
 
 //CleanProxy
-func CleanProxy(name string, reportOnly bool) (err error) {
+func CleanProxy(name string, reportOnly bool, keepList []string) (err error) {
 
 	type deploymentsDef struct {
 		Environment    string `json:"environment,omitempty"`
@@ -220,19 +220,26 @@ func CleanProxy(name string, reportOnly bool) (err error) {
 	apiclient.SetPrintOutput(true)
 
 	for _, proxyRevision := range proxyRevisions.Revision {
+
+		deleteRevision := false
+		//the user passed a list of revisions, check if the revision should be preserved
+		deleteRevision = keepRevision(proxyRevision, keepList)
+
 		if !isRevisionDeployed(deployedRevisions, proxyRevision) {
 			//step 3. clean up proxy revisions that are not deployed
 			if reportOnly {
-				if !reportRevisions[proxyRevision] {
+				if !reportRevisions[proxyRevision] && deleteRevision {
 					reportRevisions[proxyRevision] = true
 				}
 			} else {
-				if revision, err = strconv.Atoi(proxyRevision); err != nil {
-					return err
-				}
-				fmt.Println("Deleting revision: " + proxyRevision)
-				if _, err = DeleteProxy(name, revision); err != nil {
-					return err
+				if deleteRevision {
+					if revision, err = strconv.Atoi(proxyRevision); err != nil {
+						return err
+					}
+					fmt.Println("Deleting revision: " + proxyRevision)
+					if _, err = DeleteProxy(name, revision); err != nil {
+						return err
+					}
 				}
 			}
 		}
@@ -401,4 +408,19 @@ func getRevisions(r map[string]bool) string {
 		arr = append(arr, s)
 	}
 	return strings.Join(arr, ",")
+}
+
+func keepRevision(revision string, keepList []string) bool {
+
+	//if there no keeplist, return true
+	if len(keepList) == 0 {
+		return true
+	}
+
+	for _, r := range keepList {
+		if r == revision {
+			return false
+		}
+	}
+	return true
 }

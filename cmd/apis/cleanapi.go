@@ -29,17 +29,20 @@ var CleanCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		return apis.CleanProxy(name, reportOnly)
+		return apis.CleanProxy(name, reportOnly, keepList)
 	},
 }
 
 var reportOnly bool
+var keepList []string
 
 func init() {
 	CleanCmd.Flags().StringVarP(&name, "name", "n",
 		"", "API proxy name")
 	CleanCmd.Flags().BoolVarP(&reportOnly, "report", "",
 		true, "Report which API proxy revisions will be deleted")
+	CleanCmd.Flags().StringArrayVarP(&keepList, "keepList", "k",
+		[]string{}, "List of revisions to keep, -k 1 -k 2")
 
 	_ = CleanCmd.MarkFlagRequired("name")
 }
