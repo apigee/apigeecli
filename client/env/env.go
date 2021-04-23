@@ -25,9 +25,17 @@ import (
 )
 
 //Create
-func Create() (respBody []byte, err error) {
+func Create(deploymentType string) (respBody []byte, err error) {
+
 	environment := []string{}
 	environment = append(environment, "\"name\":\""+apiclient.GetApigeeEnv()+"\"")
+
+	if deploymentType != "" {
+		if deploymentType != "PROXY" && deploymentType != "ARCHIVE" {
+			return nil, fmt.Errorf("deploymentType must be PROXY or ARCHIVE")
+		}
+		environment = append(environment, "\"deployment_type\":\""+deploymentType+"\"")
+	}
 
 	payload := "{" + strings.Join(environment, ",") + "}"
 

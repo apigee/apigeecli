@@ -30,15 +30,19 @@ var CreateCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = env.Create()
+		_, err = env.Create(deploymentType)
 		return
 	},
 }
+
+var deploymentType string
 
 func init() {
 
 	CreateCmd.Flags().StringVarP(&environment, "env", "e",
 		"", "Apigee environment name")
+	CreateCmd.Flags().StringVarP(&deploymentType, "deptype", "d",
+		"", "Deployment type - must be PROXY or ARCHIVE")
 
 	_ = CreateCmd.MarkFlagRequired("env")
 }
