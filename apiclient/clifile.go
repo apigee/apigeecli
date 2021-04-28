@@ -35,6 +35,7 @@ type apigeeCLI struct {
 	Org       string `json:"defaultOrg,omitempty"`
 	Staging   bool   `json:"staging,omitempty"`
 	ProxyUrl  string `json:"proxyUrl,omitempty"`
+	Nocheck   bool   `json:"nocheck,omitempty" default:"false"`
 }
 
 var cliPref *apigeeCLI //= apigeeCLI{}
@@ -113,6 +114,23 @@ func GetToken() (token string) {
 
 func GetLastCheck() (lastCheck string) {
 	return cliPref.LastCheck
+}
+
+func GetNoCheck() bool {
+	return cliPref.Nocheck
+}
+
+func SetNoCheck(nocheck bool) (err error) {
+	clilog.Info.Println("Nocheck set to: ", nocheck)
+	cliPref.Nocheck = nocheck
+
+	data, err := json.Marshal(&cliPref)
+	if err != nil {
+		clilog.Info.Printf("Error marshalling: %v\n", err)
+		return err
+	}
+	clilog.Info.Println("Writing ", string(data))
+	return WriteByteArrayToFile(path.Join(usr.HomeDir, apigeecliFile), false, data)
 }
 
 func TestAndUpdateLastCheck() (updated bool, err error) {

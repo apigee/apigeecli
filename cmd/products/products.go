@@ -46,4 +46,5 @@ func init() {
 	Cmd.AddCommand(ExpCmd)
 	Cmd.AddCommand(UpdateCmd)
 	Cmd.AddCommand(AttributesCmd)
+	Cmd.AddCommand(RatePlanCmd)
 }

@@ -33,12 +33,18 @@ var SetCmd = &cobra.Command{
 			return err
 		}
 
+		if nocheck {
+			if err = apiclient.SetNoCheck(nocheck); err != nil {
+				return err
+			}
+		}
+
 		return apiclient.SetStaging(usestage)
 	},
 }
 
 var org, proxyUrl string
-var usestage bool
+var usestage, nocheck bool
 
 func init() {
 
@@ -50,4 +56,7 @@ func init() {
 
 	SetCmd.Flags().StringVarP(&proxyUrl, "proxy", "p",
 		"", "Use http proxy before contacting the control plane")
+
+	SetCmd.Flags().BoolVarP(&nocheck, "nocheck", "",
+		false, "Don't check for newer versions of cmd")
 }

@@ -25,6 +25,8 @@ var ArchiveCmd = &cobra.Command{
 	Long:  "Manage archive deployments for the environment",
 }
 
+var name string
+
 func init() {
 
 	ArchiveCmd.PersistentFlags().StringVarP(&environment, "env", "e",
@@ -33,4 +35,6 @@ func init() {
 	_ = ArchiveCmd.MarkPersistentFlagRequired("env")
 
 	ArchiveCmd.AddCommand(ListArchiveCmd)
+	ArchiveCmd.AddCommand(CreateArchiveCmd)
+	ArchiveCmd.AddCommand(GetArchiveCmd)
 }

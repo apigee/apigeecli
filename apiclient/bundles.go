@@ -18,6 +18,7 @@ import (
 	"archive/zip"
 	"bytes"
 	"errors"
+	"io/ioutil"
 	"net/url"
 	"os"
 	"path"
@@ -30,6 +31,43 @@ import (
 
 //entityPayloadList stores list of entities
 var entityPayloadList [][]byte //types.EntityPayloadList
+
+//ReadArchive confirms f the file format is zip and reads the contents are a byte[]
+func ReadArchive(filename string) ([]byte, error) {
+	if !strings.HasSuffix(filename, ".zip") {
+		clilog.Error.Println("proxy bundle must be a zip file")
+		return nil, errors.New("source must be a zipfile")
+	}
+
+	file, err := os.Open(filename)
+	if err != nil {
+		clilog.Error.Println("cannot open/read archive: ", err)
+		return nil, err
+	}
+
+	defer file.Close()
+
+	fi, err := file.Stat()
+	if err != nil {
+		clilog.Error.Println("error accessing file: ", err)
+		return nil, err
+	}
+
+	_, err = zip.NewReader(file, fi.Size())
+
+	if err != nil {
+		clilog.Error.Println("invalid archive format: ", err)
+		return nil, err
+	}
+
+	archiveFile, err := ioutil.ReadFile(filename)
+	if err != nil {
+		clilog.Error.Println("Error reading archive: %s", err)
+		return nil, err
+	}
+
+	return archiveFile, nil
+}
 
 //ReadBundle confirms if the file format is a zip file
 func ReadBundle(filename string) error {

@@ -29,6 +29,53 @@ import (
 	"github.com/srinandan/apigeecli/clilog"
 )
 
+//PostHttpZip method is used to send resources, proxy bundles, shared flows etc.
+func PostHttpZip(print bool, auth bool, method string, url string, headers map[string]string, zipfile string) (err error) {
+
+	var req *http.Request
+
+	payload, err := ioutil.ReadFile(zipfile)
+	if err != nil {
+		return err
+	}
+
+	client, err := getHttpClient()
+	if err != nil {
+		return err
+	}
+
+	clilog.Info.Println("Connecting to : ", url)
+	req, err = http.NewRequest(method, url, bytes.NewBuffer(payload))
+	if err != nil {
+		clilog.Error.Println("error in client: ", err)
+		return err
+	}
+
+	for headerName, headerValue := range headers {
+		clilog.Info.Printf("%s : %s\n", headerName, headerValue)
+		req.Header.Set(headerName, headerValue)
+	}
+
+	if auth { //do not pass auth header when using with archives
+		req, err = setAuthHeader(req)
+		if err != nil {
+			return err
+		}
+	}
+
+	resp, err := client.Do(req)
+	if err != nil {
+		clilog.Error.Println("error connecting: ", err)
+		return err
+	}
+
+	if resp != nil {
+		defer resp.Body.Close()
+	}
+
+	return nil
+}
+
 //PostHttpOctet method is used to send resources, proxy bundles, shared flows etc.
 func PostHttpOctet(print bool, update bool, url string, proxyName string) (respBody []byte, err error) {
 	file, _ := os.Open(proxyName)
@@ -72,8 +119,11 @@ func PostHttpOctet(print bool, update bool, url string, proxyName string) (respB
 		return nil, err
 	}
 
-	clilog.Info.Println("Setting token : ", GetApigeeToken())
-	req.Header.Add("Authorization", "Bearer "+GetApigeeToken())
+	req, err = setAuthHeader(req)
+	if err != nil {
+		return nil, err
+	}
+
 	req.Header.Set("Content-Type", writer.FormDataContentType())
 	resp, err := client.Do(req)
 
@@ -82,20 +132,7 @@ func PostHttpOctet(print bool, update bool, url string, proxyName string) (respB
 		return nil, err
 	}
 
-	defer resp.Body.Close()
-	respBody, err = ioutil.ReadAll(resp.Body)
-	if err != nil {
-		clilog.Error.Println("error in response: ", err)
-		return nil, err
-	} else if resp.StatusCode != 200 {
-		clilog.Error.Println("error in response: ", string(respBody))
-		return nil, errors.New("error in response")
-	}
-	if print {
-		return respBody, PrettyPrint(respBody)
-	}
-
-	return respBody, nil
+	return handleResponse(print, resp)
 }
 
 //DownloadResource method is used to download resources, proxy bundles, sharedflows
@@ -127,8 +164,10 @@ func DownloadResource(url string, name string, resType string) error {
 		return err
 	}
 
-	clilog.Info.Println("Setting token : ", GetApigeeToken())
-	req.Header.Add("Authorization", "Bearer "+GetApigeeToken())
+	req, err = setAuthHeader(req)
+	if err != nil {
+		return err
+	}
 
 	resp, err := client.Do(req)
 
@@ -139,7 +178,16 @@ func DownloadResource(url string, name string, resType string) error {
 		clilog.Error.Println("error in response: ", resp.Body)
 		return errors.New("error in response")
 	}
-	defer resp.Body.Close()
+
+	if resp != nil {
+		defer resp.Body.Close()
+	}
+
+	if resp == nil {
+		clilog.Error.Println("error in response: Response was null")
+		return fmt.Errorf("error in response: Response was null")
+	}
+
 	_, err = io.Copy(out, resp.Body)
 	if err != nil {
 		clilog.Error.Println("error writing response to file: ", err)
@@ -182,6 +230,7 @@ func HttpClient(print bool, params ...string) (respBody []byte, err error) {
 			return nil, err
 		}
 		contentType = params[3]
+		fmt.Println("content type: ", contentType)
 	default:
 		return nil, errors.New("unsupported method")
 	}
@@ -191,14 +240,11 @@ func HttpClient(print bool, params ...string) (respBody []byte, err error) {
 		return nil, err
 	}
 
-	if GetApigeeToken() == "" {
-		if err = SetAccessToken(); err != nil {
-			return nil, err
-		}
+	req, err = setAuthHeader(req)
+	if err != nil {
+		return nil, err
 	}
 
-	clilog.Info.Println("Setting token : ", GetApigeeToken())
-	req.Header.Add("Authorization", "Bearer "+GetApigeeToken())
 	clilog.Info.Println("Content-Type : ", contentType)
 	req.Header.Set("Content-Type", contentType)
 
@@ -209,22 +255,7 @@ func HttpClient(print bool, params ...string) (respBody []byte, err error) {
 		return nil, err
 	}
 
-	if resp != nil {
-		defer resp.Body.Close()
-	}
-
-	respBody, err = ioutil.ReadAll(resp.Body)
-	if err != nil {
-		clilog.Error.Println("error in response: ", err)
-		return nil, err
-	} else if resp.StatusCode > 299 {
-		clilog.Error.Println("error in response: ", string(respBody))
-		return nil, errors.New("error in response")
-	}
-	if print && contentType == "application/json" {
-		return respBody, PrettyPrint(respBody)
-	}
-	return respBody, nil
+	return handleResponse(print, resp)
 }
 
 //PrettyPrint method prints formatted json
@@ -257,6 +288,17 @@ func getRequest(params []string) (req *http.Request, err error) {
 	return req, err
 }
 
+func setAuthHeader(req *http.Request) (*http.Request, error) {
+	if GetApigeeToken() == "" {
+		if err := SetAccessToken(); err != nil {
+			return nil, err
+		}
+	}
+	clilog.Info.Println("Setting token : ", GetApigeeToken())
+	req.Header.Add("Authorization", "Bearer "+GetApigeeToken())
+	return req, nil
+}
+
 func getHttpClient() (client *http.Client, err error) {
 
 	if GetProxyURL() != "" {
@@ -273,4 +315,30 @@ func getHttpClient() (client *http.Client, err error) {
 		client = &http.Client{}
 	}
 	return client, nil
+}
+
+func handleResponse(print bool, resp *http.Response) (respBody []byte, err error) {
+
+	if resp != nil {
+		defer resp.Body.Close()
+	}
+
+	if resp == nil {
+		clilog.Error.Println("error in response: Response was null")
+		return nil, nil
+	}
+
+	respBody, err = ioutil.ReadAll(resp.Body)
+	if err != nil {
+		clilog.Error.Println("error in response: ", err)
+		return nil, err
+	} else if resp.StatusCode != 200 {
+		clilog.Error.Println("error in response: ", string(respBody))
+		return nil, errors.New("error in response")
+	}
+	if print {
+		return respBody, PrettyPrint(respBody)
+	}
+
+	return respBody, nil
 }
