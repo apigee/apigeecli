@@ -15,6 +15,8 @@
 package apis
 
 import (
+	"fmt"
+
 	"github.com/spf13/cobra"
 	"github.com/srinandan/apigeecli/apiclient"
 	bundle "github.com/srinandan/apigeecli/bundlegen"
@@ -28,6 +30,13 @@ var CreateCmd = &cobra.Command{
 	Short: "Creates an API proxy in an Apigee Org",
 	Long:  "Creates an API proxy in an Apigee Org",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		if proxy != "" && (oasFile != "" || oasURI != "") {
+			return fmt.Errorf("Importing a bundle (--proxy) cannot be combined with importing via an OAS file")
+		}
+
+		if oasFile != "" && oasURI != "" {
+			return fmt.Errorf("Cannot be combined with importing via an OAS through a file and URI")
+		}
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
