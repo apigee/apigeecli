@@ -41,24 +41,30 @@ const proxyOperationConfigType = "proxy"
 const remoteServiceOperationConfigType = "remoteservice"
 
 type product struct {
-	Name           string          `json:"name,omitempty"`
-	DisplayName    string          `json:"displayName,omitempty"`
-	Description    string          `json:"description,omitempty"`
-	ApprovalType   string          `json:"approvalType,omitempty"`
-	Attributes     []attribute     `json:"attributes,omitempty"`
-	APIResources   []string        `json:"apiResources,omitempty"`
-	OperationGroup *operationGroup `json:"operationGroup,omitempty"`
-	Environments   []string        `json:"environments,omitempty"`
-	Proxies        []string        `json:"proxies,omitempty"`
-	Quota          string          `json:"quota,omitempty"`
-	QuotaInterval  string          `json:"quotaInterval,omitempty"`
-	QuotaTimeUnit  string          `json:"quotaTimeUnit,omitempty"`
-	Scopes         []string        `json:"scopes,omitempty"`
+	Name                  string                 `json:"name,omitempty"`
+	DisplayName           string                 `json:"displayName,omitempty"`
+	Description           string                 `json:"description,omitempty"`
+	ApprovalType          string                 `json:"approvalType,omitempty"`
+	Attributes            []attribute            `json:"attributes,omitempty"`
+	APIResources          []string               `json:"apiResources,omitempty"`
+	OperationGroup        *operationGroup        `json:"operationGroup,omitempty"`
+	GraphQLOperationGroup *graphqlOperationGroup `json:"graphqlOperationGroup,omitempty"`
+	Environments          []string               `json:"environments,omitempty"`
+	Proxies               []string               `json:"proxies,omitempty"`
+	Quota                 string                 `json:"quota,omitempty"`
+	QuotaInterval         string                 `json:"quotaInterval,omitempty"`
+	QuotaTimeUnit         string                 `json:"quotaTimeUnit,omitempty"`
+	Scopes                []string               `json:"scopes,omitempty"`
 }
 
 type operationGroup struct {
 	OperationConfigs    []operationConfig `json:"operationConfigs,omitempty"`
 	OperationConfigType string            `json:"operationConfigType,omitempty"`
+}
+
+type graphqlOperationGroup struct {
+	OperationConfigs    []graphQLOperationConfig `json:"operationConfigs,omitempty"`
+	OperationConfigType string                   `json:"operationConfigType,omitempty"`
 }
 
 type operationConfig struct {
@@ -68,9 +74,21 @@ type operationConfig struct {
 	Attributes []attribute `json:"attributes,omitempty"`
 }
 
+type graphQLOperationConfig struct {
+	APISource  string             `json:"apiSource,omitempty"`
+	Operations []graphQLoperation `json:"operations,omitempty"`
+	Quota      *quota             `json:"quota,omitempty"`
+	Attributes []attribute        `json:"attributes,omitempty"`
+}
+
 type operation struct {
 	Resource string   `json:"resource,omitempty"`
 	Methods  []string `json:"methods,omitempty"`
+}
+
+type graphQLoperation struct {
+	OperationTypes []string `json:"operationTypes,omitempty"`
+	Operation      string   `json:"operation,omitempty"`
 }
 
 type quota struct {
@@ -85,53 +103,113 @@ type attribute struct {
 	Value string `json:"value,omitempty"`
 }
 
+type ProductSettings struct {
+	Name            string
+	Description     string
+	Approval        string
+	DisplayName     string
+	Quota           string
+	QuotaInterval   string
+	QuotaUnit       string
+	Environments    []string
+	Proxies         []string
+	Scopes          []string
+	Attrs           map[string]string
+	OperationGrp    []byte
+	GqlOperationGrp []byte
+	Legacy          bool
+}
+
 func CreateLegacy(name string, description string, approval string, displayName string, quota string, quotaInterval string, quotaUnit string, environments []string, proxies []string, scopes []string, attrs map[string]string) (respBody []byte, err error) {
-	return createProduct(name, description, approval, displayName, quota, quotaInterval, quotaUnit, environments, proxies, scopes, nil, true, attrs, true)
+	productSettings := ProductSettings{}
+	productSettings.Name = name
+	productSettings.Description = description
+	productSettings.Approval = approval
+	productSettings.DisplayName = displayName
+	productSettings.Quota = quota
+	productSettings.QuotaInterval = quotaInterval
+	productSettings.QuotaUnit = quotaUnit
+	productSettings.Environments = environments
+	productSettings.Proxies = proxies
+	productSettings.Scopes = scopes
+	productSettings.Attrs = attrs
+	productSettings.Legacy = true
+
+	return createProduct(productSettings)
 }
 
-func Create(name string, description string, approval string, displayName string, quota string, quotaInterval string, quotaUnit string, environments []string, proxies []string, scopes []string, attrs map[string]string) (respBody []byte, err error) {
-	return createProduct(name, description, approval, displayName, quota, quotaInterval, quotaUnit, environments, proxies, scopes, nil, true, attrs, false)
-}
+func CreateProxyOperationGroup(name string, description string, approval string, displayName string, quota string, quotaInterval string, quotaUnit string, environments []string, scopes []string, operationGrp []byte, gqlOperationGrp []byte, attrs map[string]string) (respBody []byte, err error) {
+	productSettings := ProductSettings{}
+	productSettings.Name = name
+	productSettings.Description = description
+	productSettings.Approval = approval
+	productSettings.DisplayName = displayName
+	productSettings.Quota = quota
+	productSettings.QuotaInterval = quotaInterval
+	productSettings.QuotaUnit = quotaUnit
+	productSettings.Environments = environments
+	productSettings.Scopes = scopes
+	productSettings.Attrs = attrs
 
-func CreateRemoteServiceOperationGroup(name string, description string, approval string, displayName string, quota string, quotaInterval string, quotaUnit string, environments []string, proxies []string, scopes []string, attrs map[string]string) (respBody []byte, err error) {
-	return createProduct(name, description, approval, displayName, quota, quotaInterval, quotaUnit, environments, proxies, scopes, nil, false, attrs, false)
-}
+	productSettings.OperationGrp = operationGrp
+	productSettings.GqlOperationGrp = gqlOperationGrp
 
-func CreateProxyOperationGroup(name string, description string, approval string, displayName string, quota string, quotaInterval string, quotaUnit string, environments []string, scopes []string, operationGrp []byte, attrs map[string]string) (respBody []byte, err error) {
-	return createProduct(name, description, approval, displayName, quota, quotaInterval, quotaUnit, environments, nil, scopes, operationGrp, true, attrs, false)
+	productSettings.Legacy = false
+
+	return createProduct(productSettings)
 }
 
 func UpdateLegacy(name string, description string, approval string, displayName string, quota string, quotaInterval string, quotaUnit string, environments []string, proxies []string, scopes []string, attrs map[string]string) (respBody []byte, err error) {
-	return updateProduct(name, description, approval, displayName, quota, quotaInterval, quotaUnit, environments, proxies, scopes, nil, true, attrs, true)
+	productSettings := ProductSettings{}
+	productSettings.Name = name
+	productSettings.Description = description
+	productSettings.Approval = approval
+	productSettings.DisplayName = displayName
+	productSettings.Quota = quota
+	productSettings.QuotaInterval = quotaInterval
+	productSettings.QuotaUnit = quotaUnit
+	productSettings.Environments = environments
+	productSettings.Proxies = proxies
+	productSettings.Scopes = scopes
+	productSettings.Attrs = attrs
+	productSettings.Legacy = true
+
+	return updateProduct(productSettings)
 }
 
-func Update(name string, description string, approval string, displayName string, quota string, quotaInterval string, quotaUnit string, environments []string, proxies []string, scopes []string, attrs map[string]string) (respBody []byte, err error) {
-	return updateProduct(name, description, approval, displayName, quota, quotaInterval, quotaUnit, environments, proxies, scopes, nil, true, attrs, false)
-}
+func UpdateProxyOperationGroup(name string, description string, approval string, displayName string, quota string, quotaInterval string, quotaUnit string, environments []string, scopes []string, operationGrp []byte, gqlOperationGrp []byte, attrs map[string]string) (respBody []byte, err error) {
+	productSettings := ProductSettings{}
+	productSettings.Name = name
+	productSettings.Description = description
+	productSettings.Approval = approval
+	productSettings.DisplayName = displayName
+	productSettings.Quota = quota
+	productSettings.QuotaInterval = quotaInterval
+	productSettings.QuotaUnit = quotaUnit
+	productSettings.Environments = environments
+	productSettings.Scopes = scopes
+	productSettings.Attrs = attrs
 
-func UpdateRemoteServiceOperationGroup(name string, services []string) (respBody []byte, err error) {
-	return updateProduct(name, "", "", "", "", "", "", nil, services, nil, nil, false, nil, false)
-}
+	productSettings.OperationGrp = operationGrp
+	productSettings.GqlOperationGrp = gqlOperationGrp
 
-func UpdateProxyOperationGroup(name string, description string, approval string, displayName string, quota string, quotaInterval string, quotaUnit string, environments []string, scopes []string, operationGrp []byte, attrs map[string]string) (respBody []byte, err error) {
-	return updateProduct(name, description, approval, displayName, quota, quotaInterval, quotaUnit, environments, nil, scopes, operationGrp, true, attrs, false)
+	productSettings.Legacy = false
+
+	return updateProduct(productSettings)
 }
 
 //createProduct
-func createProduct(name string, description string, approval string, displayName string, quota string, quotaInterval string, quotaUnit string, environments []string, proxies []string, scopes []string, operationGrp []byte, proxyOperationGroup bool, attrs map[string]string, legacy bool) (respBody []byte, err error) {
+func createProduct(productSettings ProductSettings) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	var Product = new(product)
 	var OperationGroup = new(operationGroup)
+	var GraphqlOperationGroup = new(graphqlOperationGroup)
 
-	if len(proxies) > 0 && len(operationGrp) > 0 {
-		return nil, fmt.Errorf("A product cannot have proxies and operation group")
-	}
+	Product.Name = productSettings.Name
+	Product.ApprovalType = productSettings.Approval
 
-	Product.Name = name
-	Product.ApprovalType = approval
-
-	if len(operationGrp) > 0 {
-		err = json.Unmarshal(operationGrp, OperationGroup)
+	if len(productSettings.OperationGrp) > 0 {
+		err = json.Unmarshal(productSettings.OperationGrp, OperationGroup)
 		if err != nil {
 			clilog.Info.Println(err)
 			return nil, err
@@ -142,63 +220,71 @@ func createProduct(name string, description string, approval string, displayName
 		Product.OperationGroup = OperationGroup
 	}
 
-	if displayName == "" {
-		Product.DisplayName = name
+	if len(productSettings.GqlOperationGrp) > 0 {
+		err = json.Unmarshal(productSettings.GqlOperationGrp, GraphqlOperationGroup)
+		if err != nil {
+			clilog.Info.Println(err)
+			return nil, err
+		}
+		if reflect.DeepEqual(*GraphqlOperationGroup, graphqlOperationGroup{}) {
+			return nil, fmt.Errorf("can't unmarshal json to GraphqlOperationGroup")
+		}
+		Product.GraphQLOperationGroup = GraphqlOperationGroup
+	}
+
+	if productSettings.DisplayName == "" {
+		Product.DisplayName = productSettings.Name
 	} else {
-		Product.DisplayName = displayName
+		Product.DisplayName = productSettings.DisplayName
 	}
 
-	if description != "" {
-		Product.Description = description
+	if productSettings.Description != "" {
+		Product.Description = productSettings.Description
 	}
 
-	if len(environments) > 0 {
-		Product.Environments = environments
+	if len(productSettings.Environments) > 0 {
+		Product.Environments = productSettings.Environments
 	}
 
-	if len(proxies) > 0 {
-		if legacy {
-			Product.Proxies = proxies
-		} else {
+	if len(productSettings.Proxies) > 0 {
+		if productSettings.Legacy {
+			Product.Proxies = productSettings.Proxies
+		} else if len(productSettings.OperationGrp) == 0 {
 			OperationConfigs := []operationConfig{}
 			Operations := []operation{}
 			Operation := operation{}
 			Operations = append(Operations, Operation)
 
-			for _, proxy := range proxies {
+			for _, proxy := range productSettings.Proxies {
 				OperationConfig := operationConfig{}
 				OperationConfig.APISource = proxy
 				OperationConfig.Operations = Operations
 				OperationConfigs = append(OperationConfigs, OperationConfig)
 			}
 			OperationGroup.OperationConfigs = OperationConfigs
-			if proxyOperationGroup {
-				OperationGroup.OperationConfigType = proxyOperationConfigType
-			} else {
-				OperationGroup.OperationConfigType = remoteServiceOperationConfigType
-			}
+			OperationGroup.OperationConfigType = proxyOperationConfigType
 			Product.OperationGroup = OperationGroup
 		}
 	}
 
-	if len(scopes) > 0 {
-		Product.Scopes = scopes
+	if len(productSettings.Scopes) > 0 {
+		Product.Scopes = productSettings.Scopes
 	}
 
-	if quota != "" {
-		Product.Quota = quota
+	if productSettings.Quota != "" {
+		Product.Quota = productSettings.Quota
 	}
-	if quotaInterval != "" {
-		Product.QuotaInterval = quotaInterval
-	}
-
-	if quotaUnit != "" {
-		Product.QuotaTimeUnit = quotaUnit
+	if productSettings.QuotaInterval != "" {
+		Product.QuotaInterval = productSettings.QuotaInterval
 	}
 
-	if len(attrs) > 0 {
+	if productSettings.QuotaUnit != "" {
+		Product.QuotaTimeUnit = productSettings.QuotaUnit
+	}
+
+	if len(productSettings.Attrs) > 0 {
 		//create new attributes
-		for k, v := range attrs {
+		for k, v := range productSettings.Attrs {
 			a := attribute{}
 			a.Name = k
 			a.Value = v
@@ -234,15 +320,13 @@ func Delete(name string) (respBody []byte, err error) {
 }
 
 //updateProduct
-func updateProduct(name string, description string, approval string, displayName string, quota string, quotaInterval string, quotaUnit string, environments []string, proxies []string, scopes []string, operationGrp []byte, proxyOperationGroup bool, attrs map[string]string, legacy bool) (respBody []byte, err error) {
+func updateProduct(productSettings ProductSettings) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
-
-	if len(proxies) > 0 && len(operationGrp) > 0 {
-		return nil, fmt.Errorf("A product cannot have proxies and operation group")
-	}
+	var OperationGroup = new(operationGroup)
+	var GraphqlOperationGroup = new(graphqlOperationGroup)
 
 	apiclient.SetPrintOutput(false)
-	respBody, err = Get(name)
+	respBody, err = Get(productSettings.Name)
 	if err != nil {
 		return nil, err
 	}
@@ -255,63 +339,85 @@ func updateProduct(name string, description string, approval string, displayName
 		return nil, err
 	}
 
-	if displayName != "" {
-		p.DisplayName = displayName
+	if productSettings.DisplayName != "" {
+		p.DisplayName = productSettings.DisplayName
 	}
 
-	if description != "" {
-		p.Description = description
+	if productSettings.Description != "" {
+		p.Description = productSettings.Description
 	}
 
-	if quota != "" {
-		p.Quota = quota
+	if productSettings.Quota != "" {
+		p.Quota = productSettings.Quota
 	}
 
-	if quotaInterval != "" {
-		p.QuotaInterval = quotaInterval
+	if productSettings.QuotaInterval != "" {
+		p.QuotaInterval = productSettings.QuotaInterval
 	}
 
-	if quotaUnit != "" {
-		p.QuotaTimeUnit = quotaUnit
+	if productSettings.QuotaUnit != "" {
+		p.QuotaTimeUnit = productSettings.QuotaUnit
 	}
 
-	if len(environments) > 0 {
-		p.Environments = append(p.Environments, environments...)
+	if len(productSettings.Environments) > 0 {
+		p.Environments = append(p.Environments, productSettings.Environments...)
 	}
 
-	if len(proxies) > 0 {
-		if legacy {
-			p.Proxies = append(p.Proxies, proxies...)
-		} else {
+	//TODO: Merge groups...
+
+	if len(productSettings.OperationGrp) > 0 {
+		err = json.Unmarshal(productSettings.OperationGrp, OperationGroup)
+		if err != nil {
+			clilog.Info.Println(err)
+			return nil, err
+		}
+		if reflect.DeepEqual(*OperationGroup, operationGroup{}) {
+			return nil, fmt.Errorf("can't unmarshal json to OperationGroup")
+		}
+		p.OperationGroup = OperationGroup
+	}
+
+	if len(productSettings.GqlOperationGrp) > 0 {
+		err = json.Unmarshal(productSettings.GqlOperationGrp, GraphqlOperationGroup)
+		if err != nil {
+			clilog.Info.Println(err)
+			return nil, err
+		}
+		if reflect.DeepEqual(*GraphqlOperationGroup, graphqlOperationGroup{}) {
+			return nil, fmt.Errorf("can't unmarshal json to GraphqlOperationGroup")
+		}
+		p.GraphQLOperationGroup = GraphqlOperationGroup
+	}
+
+	if len(productSettings.Proxies) > 0 {
+		if productSettings.Legacy {
+			p.Proxies = append(p.Proxies, productSettings.Proxies...)
+		} else if len(productSettings.OperationGrp) == 0 {
 			var OperationGroup = new(operationGroup)
 			OperationConfigs := []operationConfig{}
 			Operations := []operation{}
 			Operation := operation{}
 			Operations = append(Operations, Operation)
 
-			for _, proxy := range proxies {
+			for _, proxy := range productSettings.Proxies {
 				OperationConfig := operationConfig{}
 				OperationConfig.APISource = proxy
 				OperationConfig.Operations = Operations
 				OperationConfigs = append(OperationConfigs, OperationConfig)
 			}
 			OperationGroup.OperationConfigs = OperationConfigs
-			if proxyOperationGroup {
-				OperationGroup.OperationConfigType = proxyOperationConfigType
-			} else {
-				OperationGroup.OperationConfigType = remoteServiceOperationConfigType
-			}
+			OperationGroup.OperationConfigType = proxyOperationConfigType
 			p.OperationGroup = OperationGroup
 		}
 	}
 
-	if len(scopes) > 0 {
-		p.Scopes = append(p.Scopes, scopes...)
+	if len(productSettings.Scopes) > 0 {
+		p.Scopes = append(p.Scopes, productSettings.Scopes...)
 	}
 
-	if len(attrs) > 0 {
+	if len(productSettings.Attrs) > 0 {
 		//create new attributes
-		for k, v := range attrs {
+		for k, v := range productSettings.Attrs {
 			a := attribute{}
 			a.Name = k
 			a.Value = v
@@ -325,7 +431,7 @@ func updateProduct(name string, description string, approval string, displayName
 		return nil, err
 	}
 
-	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts", name)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts", productSettings.Name)
 	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), string(payload), "PUT")
 
 	return respBody, err

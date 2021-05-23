@@ -30,8 +30,8 @@ var CreateCmd = &cobra.Command{
 	Short: "Create an API product",
 	Long:  "Create an API product",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		if legacy && operationGroupFile != "" {
-			return fmt.Errorf("operationGroupFile cannot be used with legacy mode")
+		if legacy && (operationGroupFile != "" || gqlOperationGroupFile != "") {
+			return fmt.Errorf("operationGroupFile/gqlOperationGroupFile cannot be used with legacy mode")
 		}
 		return apiclient.SetApigeeOrg(org)
 	},
@@ -39,24 +39,29 @@ var CreateCmd = &cobra.Command{
 		if legacy {
 			_, err = products.CreateLegacy(name, description, approval, displayName, quota, quotaInterval, quotaUnit, environments, proxies, scopes, attrs)
 		} else {
+			var operationGrp, gqlOperationGrp []byte
 			if operationGroupFile != "" {
-				var operationGrp []byte
 				operationGrp, err = ioutil.ReadFile(operationGroupFile)
 				if err != nil {
 					clilog.Info.Println(err)
 					return err
 				}
-				_, err = products.CreateProxyOperationGroup(name, description, approval, displayName, quota, quotaInterval, quotaUnit, environments, scopes, operationGrp, attrs)
-			} else {
-				_, err = products.Create(name, description, approval, displayName, quota, quotaInterval, quotaUnit, environments, proxies, scopes, attrs)
 			}
+			if gqlOperationGroupFile != "" {
+				gqlOperationGrp, err = ioutil.ReadFile(gqlOperationGroupFile)
+				if err != nil {
+					clilog.Info.Println(err)
+					return err
+				}
+			}
+			_, err = products.CreateProxyOperationGroup(name, description, approval, displayName, quota, quotaInterval, quotaUnit, environments, scopes, operationGrp, gqlOperationGrp, attrs)
 		}
 		return
 	},
 }
 
 var legacy bool
-var operationGroupFile string
+var operationGroupFile, gqlOperationGroupFile string
 
 func init() {
 
@@ -82,8 +87,10 @@ func init() {
 		"", "Approval type")
 	CreateCmd.Flags().StringToStringVar(&attrs, "attrs",
 		nil, "Custom attributes")
-	CreateCmd.Flags().StringVarP(&operationGroupFile, "opgrp", "g",
+	CreateCmd.Flags().StringVarP(&operationGroupFile, "opgrp", "",
 		"", "File containing Operation Group JSON. See samples for how to create the file")
+	CreateCmd.Flags().StringVarP(&gqlOperationGroupFile, "gqlopgrp", "",
+		"", "File containing GraphQL Operation Group JSON. See samples for how to create the file")
 	CreateCmd.Flags().BoolVarP(&legacy, "legacy", "l",
 		false, "Legacy product object")
 

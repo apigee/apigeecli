@@ -1,14 +1,13 @@
 {
   "operationConfigs": [
     {
-      "apiSource": "orders",
-      "operations": [
-        {
-          "resource": "/",
-          "methods": [
-            "GET", "POST"
-          ]
-        }
+      "apiSource": "orders-gql",
+      "operations": [{
+        "operationTypes": [
+          "query"
+        ],
+        "operation": "getOrder"
+      }
       ],
       "quota": {
         "limit": "1",

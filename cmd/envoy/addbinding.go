@@ -31,22 +31,20 @@ var AddBindCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		if legacy {
-			apiclient.SetPrintOutput(false)
-			_, err = products.GetAttribute(productName, envoyAttributeName)
-			apiclient.SetPrintOutput(true)
-			if err != nil {
-				attr := make(map[string]string)
-				attr[string(envoyAttributeName)] = strings.Join(serviceNames, ",")
-				_, err = products.Update(productName, "", "", "", "", "", "", nil, nil, nil, attr)
-				return err
-			} else {
-				_, err = products.UpdateAttribute(productName, envoyAttributeName, strings.Join(serviceNames, ","))
-				return err
-			}
+
+		apiclient.SetPrintOutput(false)
+		_, err = products.GetAttribute(productName, envoyAttributeName)
+		apiclient.SetPrintOutput(true)
+		if err != nil {
+			attr := make(map[string]string)
+			attr[string(envoyAttributeName)] = strings.Join(serviceNames, ",")
+			_, err = products.UpdateLegacy(productName, "", "", "", "", "", "", nil, nil, nil, attr)
+			return err
 		} else {
-			_, err = products.UpdateRemoteServiceOperationGroup(productName, serviceNames)
+			_, err = products.UpdateAttribute(productName, envoyAttributeName, strings.Join(serviceNames, ","))
+			return err
 		}
+
 		return err
 	},
 }
@@ -58,8 +56,6 @@ func init() {
 		"", "Apigee API Product name")
 	AddBindCmd.Flags().StringArrayVarP(&serviceNames, "remote-svcs", "r",
 		[]string{}, "Envoy Service names")
-	AddBindCmd.Flags().BoolVarP(&legacy, "legacy", "l",
-		false, "Legacy product object")
 
 	_ = AddBindCmd.MarkFlagRequired("prod")
 	_ = AddBindCmd.MarkFlagRequired("remote-svcs")
