@@ -310,7 +310,7 @@ func RemoveIAMServiceAccount(serviceAccountName string, iamRole string) (err err
 	numBindings := len(getIamPolicy.Bindings)
 
 	if numBindings < 1 {
-		return fmt.Errorf("role %s not found for envrionment %s", iamRole, GetApigeeEnv())
+		return fmt.Errorf("role %s not found for environment %s", iamRole, GetApigeeEnv())
 	} else if numBindings == 1 { //there is only 1 binding
 		clilog.Info.Printf("comparing %s and %s\n", getIamPolicy.Bindings[0].Role, iamRole)
 		if getIamPolicy.Bindings[0].Role == iamRole {
@@ -328,18 +328,18 @@ func RemoveIAMServiceAccount(serviceAccountName string, iamRole string) (err err
 					}
 				}
 				if !foundMember {
-					return fmt.Errorf("member %s not set for role %s in envrionment %s", serviceAccountName, iamRole, GetApigeeEnv())
+					return fmt.Errorf("member %s not set for role %s in environment %s", serviceAccountName, iamRole, GetApigeeEnv())
 				}
 			} else { //there is one member, one role
 				if getIamPolicy.Bindings[0].Members[0] == serviceAccountName {
 					clilog.Info.Printf("comparing %s and %s\n", getIamPolicy.Bindings[0].Members[0], serviceAccountName)
 					removeIamPolicy.Policy.Etag = getIamPolicy.Etag
 				} else {
-					return fmt.Errorf("member %s not set for role %s in envrionment %s", serviceAccountName, iamRole, GetApigeeEnv())
+					return fmt.Errorf("member %s not set for role %s in environment %s", serviceAccountName, iamRole, GetApigeeEnv())
 				}
 			}
 		} else {
-			return fmt.Errorf("role %s not found for envrionment %s", iamRole, GetApigeeEnv())
+			return fmt.Errorf("role %s not found for environment %s", iamRole, GetApigeeEnv())
 		}
 	} else { //there are many bindings, loop through them
 		removeIamPolicy.Policy.Etag = getIamPolicy.Etag
@@ -357,13 +357,13 @@ func RemoveIAMServiceAccount(serviceAccountName string, iamRole string) (err err
 						}
 					}
 					if !foundMember {
-						return fmt.Errorf("member %s not set for role %s in envrionment %s", serviceAccountName, iamRole, GetApigeeEnv())
+						return fmt.Errorf("member %s not set for role %s in environment %s", serviceAccountName, iamRole, GetApigeeEnv())
 					}
 				} else { //there is only one member in the role
 					if binding.Members[0] == serviceAccountName {
 						foundMember = true
 					} else {
-						return fmt.Errorf("member %s not set for role %s in envrionment %s", serviceAccountName, iamRole, GetApigeeEnv())
+						return fmt.Errorf("member %s not set for role %s in environment %s", serviceAccountName, iamRole, GetApigeeEnv())
 					}
 				}
 				copyRoleBinding := roleBinding{}
@@ -377,7 +377,7 @@ func RemoveIAMServiceAccount(serviceAccountName string, iamRole string) (err err
 		}
 
 		if !foundRole {
-			return fmt.Errorf("role %s not found for envrionment %s", iamRole, GetApigeeEnv())
+			return fmt.Errorf("role %s not found for environment %s", iamRole, GetApigeeEnv())
 		}
 	}
 
