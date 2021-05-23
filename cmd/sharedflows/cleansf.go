@@ -23,8 +23,8 @@ import (
 //CleanCmd to delete sf
 var CleanCmd = &cobra.Command{
 	Use:   "clean",
-	Short: "Deletes undeployed/unsed reivisions of a Sharedflow",
-	Long:  "Deletes undeployed/unsed reivisions of a Sharedflow",
+	Short: "Deletes undeployed/unused reivisions of a Sharedflow",
+	Long:  "Deletes undeployed/unused reivisions of a Sharedflow",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		return apiclient.SetApigeeOrg(org)
 	},
