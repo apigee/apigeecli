@@ -34,9 +34,18 @@ var CreateCmd = &cobra.Command{
 			return fmt.Errorf("Importing a bundle (--proxy) cannot be combined with importing via an OAS file")
 		}
 
-		if oasFile != "" && oasURI != "" {
-			return fmt.Errorf("Cannot be combined with importing via an OAS through a file and URI")
+		if proxy != "" && (gqlFile != "" || gqlURI != "") {
+			return fmt.Errorf("Importing a bundle (--proxy) cannot be combined with importing via an GraphQL file")
 		}
+
+		if oasFile != "" && oasURI != "" {
+			return fmt.Errorf("Cannot combine importing an OAS through a file and URI")
+		}
+
+		if gqlFile != "" && gqlURI != "" {
+			return fmt.Errorf("Cannot combine importing a GraphQL schema through a file and URI")
+		}
+
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
@@ -54,12 +63,12 @@ var CreateCmd = &cobra.Command{
 				return err
 			}
 
-			err = bundle.GenerateAPIProxyDefFromOAS(name, oasDocName, skipPolicy)
+			err = bundle.GenerateAPIProxyDefFromOAS(name, oasDocName, skipPolicy, addCORS)
 			if err != nil {
 				return err
 			}
 
-			err = proxybundle.GenerateAPIProxyBundle(name, string(content), oasDocName, skipPolicy)
+			err = proxybundle.GenerateAPIProxyBundle(name, string(content), oasDocName, "oas", skipPolicy, addCORS)
 			if err != nil {
 				return err
 			}
@@ -76,8 +85,8 @@ var CreateCmd = &cobra.Command{
 	},
 }
 
-var proxy, oasFile, oasURI string
-var importProxy, validateSpec, skipPolicy bool
+var proxy, oasFile, oasURI, gqlFile, gqlURI string
+var importProxy, validateSpec, skipPolicy, addCORS bool
 
 func init() {
 
@@ -95,6 +104,8 @@ func init() {
 		true, "Validate Spec before generating proxy")
 	CreateCmd.Flags().BoolVarP(&skipPolicy, "skip-policy", "",
 		false, "Skip adding the OAS Validate policy")
+	CreateCmd.Flags().BoolVarP(&addCORS, "add-cors", "",
+		false, "Add a CORS policy")
 
 	_ = CreateCmd.MarkFlagRequired("name")
 }

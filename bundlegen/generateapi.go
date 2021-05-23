@@ -106,7 +106,7 @@ func isFileYaml(name string) bool {
 	return false
 }
 
-func GenerateAPIProxyDefFromOAS(name string, oasDocName string, skipPolicy bool) (err error) {
+func GenerateAPIProxyDefFromOAS(name string, oasDocName string, skipPolicy bool, addCORS bool) (err error) {
 
 	if doc == nil {
 		return fmt.Errorf("Open API document not loaded")
@@ -140,6 +140,11 @@ func GenerateAPIProxyDefFromOAS(name string, oasDocName string, skipPolicy bool)
 	target.NewTargetEndpoint(u.Scheme + "://" + u.Hostname())
 
 	proxies.NewProxyEndpoint(u.Path)
+
+	if addCORS {
+		proxies.AddStepToPreFlowRequest("Add-CORS")
+		apiproxy.AddPolicy("Add-CORS")
+	}
 
 	if !skipPolicy {
 		proxies.AddStepToPreFlowRequest("OpenAPI-Spec-Validation-1")

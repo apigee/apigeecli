@@ -45,6 +45,19 @@ var oauth2Policy = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
     <Tokens/>
 </OAuthV2>`
 
+var corsPolicy = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<CORS async="false" continueOnError="false" enabled="true" name="Add-CORS">
+    <DisplayName>Add CORS</DisplayName>
+    <AllowOrigins>{request.header.origin}</AllowOrigins>
+    <AllowMethods>GET, PUT, POST, DELETE</AllowMethods>
+    <AllowHeaders>origin, x-requested-with, accept, content-type</AllowHeaders>
+    <ExposeHeaders>*</ExposeHeaders>
+    <MaxAge>3628800</MaxAge>
+    <AllowCredentials>false</AllowCredentials>
+    <GeneratePreflightResponse>true</GeneratePreflightResponse>
+    <IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
+</CORS>`
+
 func AddOpenAPIValidatePolicy(name string) string {
 	return replaceTemplateWithPolicy(name)
 }
@@ -55,6 +68,10 @@ func AddVerifyApiKeyPolicy() string {
 
 func AddOAuth2Policy() string {
 	return oauth2Policy
+}
+
+func AddCORSPolicy() string {
+	return corsPolicy
 }
 
 func replaceTemplateWithPolicy(name string) string {

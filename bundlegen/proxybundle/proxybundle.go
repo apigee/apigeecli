@@ -28,7 +28,7 @@ import (
 	target "github.com/srinandan/apigeecli/bundlegen/targetendpoint"
 )
 
-func GenerateAPIProxyBundle(name string, content string, fileName string, skipPolicy bool) (err error) {
+func GenerateAPIProxyBundle(name string, content string, fileName string, resourceType string, skipPolicy bool, addCORS bool) (err error) {
 	const rootDir = "apiproxy"
 	var apiProxyData, proxyEndpointData, targetEndpointData string
 
@@ -49,7 +49,7 @@ func GenerateAPIProxyBundle(name string, content string, fileName string, skipPo
 	proxiesDirPath := rootDir + string(os.PathSeparator) + "proxies"
 	policiesDirPath := rootDir + string(os.PathSeparator) + "policies"
 	targetDirPath := rootDir + string(os.PathSeparator) + "targets"
-	oasDirPath := rootDir + string(os.PathSeparator) + "resources" + string(os.PathSeparator) + "oas"
+	resDirPath := rootDir + string(os.PathSeparator) + "resources" + string(os.PathSeparator) + resourceType //"oas"
 
 	if err = os.Mkdir(proxiesDirPath, os.ModePerm); err != nil {
 		return err
@@ -77,10 +77,10 @@ func GenerateAPIProxyBundle(name string, content string, fileName string, skipPo
 	}
 
 	if !skipPolicy {
-		if err = os.MkdirAll(oasDirPath, os.ModePerm); err != nil {
+		if err = os.MkdirAll(resDirPath, os.ModePerm); err != nil {
 			return err
 		}
-		if err = writeXMLData(oasDirPath+string(os.PathSeparator)+fileName, content); err != nil {
+		if err = writeXMLData(resDirPath+string(os.PathSeparator)+fileName, content); err != nil {
 			return err
 		}
 	}
@@ -106,6 +106,13 @@ func GenerateAPIProxyBundle(name string, content string, fileName string, skipPo
 	if !skipPolicy {
 		//add oas policy
 		if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"OpenAPI-Spec-Validation-1.xml", policies.AddOpenAPIValidatePolicy(fileName)); err != nil {
+			return err
+		}
+	}
+
+	if addCORS {
+		//add cors policy
+		if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"Add-CORS.xml", policies.AddCORSPolicy()); err != nil {
 			return err
 		}
 	}
