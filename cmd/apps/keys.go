@@ -18,11 +18,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//KeysCmd
+//KeysCmd manages developer app keys
 var KeysCmd = &cobra.Command{
 	Use:   "keys",
 	Short: "Manage developer app keys",
-	Long:  "Manage developer apps keys",
+	Long:  "Manage developer app keys",
 }
 
 var developerEmail, key, secret string
