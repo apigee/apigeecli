@@ -363,8 +363,6 @@ func updateProduct(productSettings ProductSettings) (respBody []byte, err error)
 		p.Environments = append(p.Environments, productSettings.Environments...)
 	}
 
-	//TODO: Merge groups...
-
 	if len(productSettings.OperationGrp) > 0 {
 		err = json.Unmarshal(productSettings.OperationGrp, OperationGroup)
 		if err != nil {
@@ -374,7 +372,11 @@ func updateProduct(productSettings ProductSettings) (respBody []byte, err error)
 		if reflect.DeepEqual(*OperationGroup, operationGroup{}) {
 			return nil, fmt.Errorf("can't unmarshal json to OperationGroup")
 		}
-		p.OperationGroup = OperationGroup
+		//check to see the operation config type is the same
+		if OperationGroup.OperationConfigType != p.OperationGroup.OperationConfigType {
+			return nil, fmt.Errorf("updated operationConfigType must match the existing operationConfigType - ", OperationGroup.OperationConfigType)
+		}
+		p.OperationGroup.OperationConfigs = append(p.OperationGroup.OperationConfigs, OperationGroup.OperationConfigs...)
 	}
 
 	if len(productSettings.GqlOperationGrp) > 0 {
@@ -386,7 +388,11 @@ func updateProduct(productSettings ProductSettings) (respBody []byte, err error)
 		if reflect.DeepEqual(*GraphqlOperationGroup, graphqlOperationGroup{}) {
 			return nil, fmt.Errorf("can't unmarshal json to GraphqlOperationGroup")
 		}
-		p.GraphQLOperationGroup = GraphqlOperationGroup
+		//check to see the operation config type is the same
+		if GraphqlOperationGroup.OperationConfigType != p.GraphQLOperationGroup.OperationConfigType {
+			return nil, fmt.Errorf("updated operationConfigType must match the existing operationConfigType - ", GraphqlOperationGroup.OperationConfigType)
+		}
+		p.GraphQLOperationGroup.OperationConfigs = append(p.GraphQLOperationGroup.OperationConfigs, GraphqlOperationGroup.OperationConfigs...)
 	}
 
 	if len(productSettings.Proxies) > 0 {
