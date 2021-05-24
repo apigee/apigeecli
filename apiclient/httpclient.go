@@ -230,7 +230,6 @@ func HttpClient(print bool, params ...string) (respBody []byte, err error) {
 			return nil, err
 		}
 		contentType = params[3]
-		fmt.Println("content type: ", contentType)
 	default:
 		return nil, errors.New("unsupported method")
 	}
@@ -332,8 +331,8 @@ func handleResponse(print bool, resp *http.Response) (respBody []byte, err error
 	if err != nil {
 		clilog.Error.Println("error in response: ", err)
 		return nil, err
-	} else if resp.StatusCode != 200 {
-		clilog.Error.Println("error in response: ", string(respBody))
+	} else if resp.StatusCode > 399 {
+		clilog.Error.Printf("status code %d, error in response: %s\n", resp.StatusCode, string(respBody))
 		return nil, errors.New("error in response")
 	}
 	if print {
