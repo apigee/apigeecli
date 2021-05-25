@@ -16,6 +16,7 @@ package developers
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/url"
 	"os"
@@ -28,20 +29,21 @@ import (
 	"github.com/srinandan/apigeecli/clilog"
 )
 
-type appdeveloper struct {
-	EMail      string      `json:"email,omitempty"`
-	FirstName  string      `json:"firstName,omitempty"`
-	LastName   string      `json:"lastName,omitempty"`
-	Attributes []attribute `json:"attributes,omitempty"`
-	Username   string      `json:"userName,omitempty"`
+type Appdeveloper struct {
+	EMail       string      `json:"email,omitempty"`
+	FirstName   string      `json:"firstName,omitempty"`
+	LastName    string      `json:"lastName,omitempty"`
+	Attributes  []Attribute `json:"attributes,omitempty"`
+	Username    string      `json:"userName,omitempty"`
+	DeveloperId string      `json:"developerId,omitempty"`
 }
 
-type appdevelopers struct {
-	Developer []appdeveloper `json:"developer,omitempty"`
+type Appdevelopers struct {
+	Developer []Appdeveloper `json:"developer,omitempty"`
 }
 
 //attribute to used to hold custom attributes for entities
-type attribute struct {
+type Attribute struct {
 	Name  string `json:"name,omitempty"`
 	Value string `json:"value,omitempty"`
 }
@@ -86,6 +88,20 @@ func Get(email string) (respBody []byte, err error) {
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", email)
 	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
 	return respBody, err
+}
+
+func GetDeveloperId(email string) (developerId string, err error) {
+	apiclient.SetPrintOutput(false)
+	var developerMap map[string]interface{}
+	u, _ := url.Parse(apiclient.BaseURL)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", email)
+	respBody, err := apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	apiclient.SetPrintOutput(true)
+	err = json.Unmarshal(respBody, &developerMap)
+	if err != nil {
+		return "", err
+	}
+	return fmt.Sprintf("%v", developerMap["developerId"]), nil
 }
 
 //GetApps
@@ -142,7 +158,7 @@ func Import(conn int, filePath string) error {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers")
 
-	entities, err := readDevelopersFile(filePath)
+	entities, err := ReadDevelopersFile(filePath)
 	if err != nil {
 		clilog.Error.Println("Error reading file: ", err)
 		return err
@@ -180,7 +196,7 @@ func Import(conn int, filePath string) error {
 	return nil
 }
 
-func createAsyncDeveloper(url string, dev appdeveloper, wg *sync.WaitGroup) {
+func createAsyncDeveloper(url string, dev Appdeveloper, wg *sync.WaitGroup) {
 	defer wg.Done()
 	out, err := json.Marshal(dev)
 	if err != nil {
@@ -197,7 +213,7 @@ func createAsyncDeveloper(url string, dev appdeveloper, wg *sync.WaitGroup) {
 }
 
 //batch creates a batch of developers to create
-func batchImport(url string, entities []appdeveloper, pwg *sync.WaitGroup) {
+func batchImport(url string, entities []Appdeveloper, pwg *sync.WaitGroup) {
 
 	defer pwg.Done()
 	//batch workgroup
@@ -211,9 +227,9 @@ func batchImport(url string, entities []appdeveloper, pwg *sync.WaitGroup) {
 	bwg.Wait()
 }
 
-func readDevelopersFile(filePath string) (appdevelopers, error) {
+func ReadDevelopersFile(filePath string) (Appdevelopers, error) {
 
-	devs := appdevelopers{}
+	devs := Appdevelopers{}
 
 	jsonFile, err := os.Open(filePath)
 

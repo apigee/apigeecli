@@ -111,6 +111,25 @@ func Get() (respBody []byte, err error) {
 	return respBody, err
 }
 
+func GetOrgField(key string) (value string, err error) {
+	u, _ := url.Parse(apiclient.BaseURL)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg())
+
+	apiclient.SetPrintOutput(false)
+	orgBody, err := apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	if err != nil {
+		return "", err
+	}
+	apiclient.SetPrintOutput(true)
+
+	var orgMap map[string]interface{}
+	err = json.Unmarshal(orgBody, &orgMap)
+	if err != nil {
+		return "", err
+	}
+	return fmt.Sprintf("%v", orgMap[key]), nil
+}
+
 //List
 func List() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)

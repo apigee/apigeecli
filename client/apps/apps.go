@@ -26,6 +26,7 @@ import (
 	"sync"
 
 	"github.com/srinandan/apigeecli/apiclient"
+	"github.com/srinandan/apigeecli/client/developers"
 	"github.com/srinandan/apigeecli/clilog"
 	"github.com/thedevsaddam/gojsonq"
 )
@@ -286,10 +287,10 @@ func Export(conn int) (payload [][]byte, err error) {
 }
 
 //Import
-func Import(conn int, filePath string) error {
+func Import(conn int, filePath string, developersFilePath string) error {
 	var pwg sync.WaitGroup
 
-	entities, err := readAppsFile(filePath)
+	entities, developerEntities, err := readAppsFile(filePath, developersFilePath)
 	if err != nil {
 		clilog.Error.Println("error reading file: ", err)
 		return err
@@ -312,7 +313,7 @@ func Import(conn int, filePath string) error {
 		pwg.Add(1)
 		end = (i * conn) + conn
 		clilog.Info.Printf("Creating batch %d of apps\n", (i + 1))
-		go batchImport(entities[start:end], &pwg)
+		go batchImport(entities[start:end], developerEntities, &pwg)
 		start = end
 		pwg.Wait()
 	}
@@ -320,38 +321,41 @@ func Import(conn int, filePath string) error {
 	if remaining > 0 {
 		pwg.Add(1)
 		clilog.Info.Printf("Creating remaining %d apps\n", remaining)
-		go batchImport(entities[start:numEntities], &pwg)
+		go batchImport(entities[start:numEntities], developerEntities, &pwg)
 		pwg.Wait()
 	}
 
 	return nil
 }
 
-func readAppsFile(filePath string) ([]application, error) {
+func readAppsFile(filePath string, developersFilePath string) ([]application, developers.Appdevelopers, error) {
 
 	apps := []application{}
+	devs := developers.Appdevelopers{}
 
 	jsonFile, err := os.Open(filePath)
-
 	if err != nil {
-		return apps, err
+		return apps, devs, err
 	}
 
 	defer jsonFile.Close()
 
 	byteValue, err := ioutil.ReadAll(jsonFile)
-
 	if err != nil {
-		return apps, err
+		return apps, devs, err
 	}
 
 	err = json.Unmarshal(byteValue, &apps)
-
 	if err != nil {
-		return apps, err
+		return apps, devs, err
 	}
 
-	return apps, nil
+	devs, err = developers.ReadDevelopersFile(developersFilePath)
+	if err != nil {
+		return apps, devs, err
+	}
+
+	return apps, devs, nil
 }
 
 //batch created a batch of apps to query
@@ -372,7 +376,7 @@ func batchExport(entities []app, entityType string, pwg *sync.WaitGroup, mu *syn
 }
 
 //batch creates a batch of apps to create
-func batchImport(entities []application, pwg *sync.WaitGroup) {
+func batchImport(entities []application, developerEntities developers.Appdevelopers, pwg *sync.WaitGroup) {
 
 	defer pwg.Done()
 	//batch workgroup
@@ -381,12 +385,12 @@ func batchImport(entities []application, pwg *sync.WaitGroup) {
 	bwg.Add(len(entities))
 
 	for _, entity := range entities {
-		go createAsyncApp(entity, &bwg)
+		go createAsyncApp(entity, developerEntities, &bwg)
 	}
 	bwg.Wait()
 }
 
-func createAsyncApp(app application, wg *sync.WaitGroup) {
+func createAsyncApp(app application, developerEntities developers.Appdevelopers, wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	//importing an app will be a two step process.
@@ -394,7 +398,7 @@ func createAsyncApp(app application, wg *sync.WaitGroup) {
 	//2. create/import the credential
 	u, _ := url.Parse(apiclient.BaseURL)
 	//store the developer and the credential
-	developerID := *app.DeveloperID
+	developerID, err := getNewDeveloperId(*app.DeveloperID, developerEntities) //*app.DeveloperID
 	credentials := *app.Credentials
 
 	//remove the developer id and credentials from the payload
@@ -413,31 +417,59 @@ func createAsyncApp(app application, wg *sync.WaitGroup) {
 		clilog.Error.Println(err)
 		return
 	}
-	u, _ = url.Parse(apiclient.BaseURL)
-	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", developerID, "apps", app.Name, "keys", "create")
+
+	createDeveloperAppUrl, _ := url.Parse(apiclient.BaseURL)
+	createDeveloperAppUrl.Path = path.Join(createDeveloperAppUrl.Path, apiclient.GetApigeeOrg(), "developers", developerID, "apps", app.Name, "keys")
 	for _, credential := range credentials {
-		//construct a []string for products
-		var products []string
-		for _, apiProduct := range credential.APIProducts {
-			products = append(products, apiProduct.Name)
-		}
+
 		//create a new credential
 		importCred := importCredential{}
-		importCred.APIProducts = products
 		importCred.ConsumerKey = credential.ConsumerKey
 		importCred.ConsumerSecret = credential.ConsumerSecret
-		importCred.Scopes = credential.Scopes
 
 		impCredJSON, err := json.Marshal(importCred)
 		if err != nil {
 			clilog.Error.Println(err)
 			return
 		}
-		_, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), string(impCredJSON))
+
+		_, err = apiclient.HttpClient(apiclient.GetPrintOutput(), createDeveloperAppUrl.String(), string(impCredJSON))
 		if err != nil {
 			return
 		}
-		clilog.Warning.Println("NOTE: apiProducts are not associated with the app")
+
+		//update credentials
+
+		//construct a []string for products
+		var products []string
+		for _, apiProduct := range credential.APIProducts {
+			products = append(products, apiProduct.Name)
+		}
+
+		if len(products) > 0 {
+			//updateDeveloperApp
+			updateDeveloperAppUrl, _ := url.Parse(apiclient.BaseURL)
+			updateDeveloperAppUrl.Path = path.Join(updateDeveloperAppUrl.Path, apiclient.GetApigeeOrg(), "developers", developerID, "apps", app.Name, "keys", credential.ConsumerKey)
+
+			updateCred := importCredential{}
+			updateCred.ConsumerKey = credential.ConsumerKey
+			updateCred.ConsumerSecret = credential.ConsumerSecret
+			updateCred.APIProducts = products
+			updateCred.Scopes = credential.Scopes
+
+			updateCredJSON, err := json.Marshal(updateCred)
+			if err != nil {
+				clilog.Error.Println(err)
+				return
+			}
+
+			_, err = apiclient.HttpClient(apiclient.GetPrintOutput(), updateDeveloperAppUrl.String(), string(updateCredJSON))
+			if err != nil {
+				return
+			}
+		} else {
+			clilog.Warning.Println("NOTE: apiProducts are not associated with the app")
+		}
 	}
 	clilog.Info.Printf("Completed entity: %s", app.Name)
 }
@@ -446,4 +478,13 @@ func getArrayStr(str []string) string {
 	tmp := strings.Join(str, ",")
 	tmp = strings.ReplaceAll(tmp, ",", "\",\"")
 	return tmp
+}
+
+func getNewDeveloperId(oldDeveloerId string, developerEntities developers.Appdevelopers) (newDeveloperId string, err error) {
+	for _, developer := range developerEntities.Developer {
+		if oldDeveloerId == developer.DeveloperId {
+			return developers.GetDeveloperId(developer.EMail)
+		}
+	}
+	return "", fmt.Errorf("Developer not imported into Apigee")
 }

@@ -24,6 +24,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/srinandan/apigeecli/apiclient"
 	"github.com/srinandan/apigeecli/client/apis"
+	"github.com/srinandan/apigeecli/client/apps"
 	"github.com/srinandan/apigeecli/client/developers"
 	"github.com/srinandan/apigeecli/client/env"
 	"github.com/srinandan/apigeecli/client/envgroups"
@@ -32,6 +33,7 @@ import (
 	"github.com/srinandan/apigeecli/client/products"
 	"github.com/srinandan/apigeecli/client/sharedflows"
 	"github.com/srinandan/apigeecli/client/targetservers"
+	"github.com/srinandan/apigeecli/clilog"
 )
 
 //ImportCmd to get org details
@@ -45,6 +47,8 @@ var ImportCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 
 		var keystoreList, kvmList []string
+
+		clilog.Warning.Println("Calls to Apigee APIs have a quota of 6000 per min. Running this tool against large list of entities can exhaust that quota and impact the usage of the platform.")
 
 		fmt.Println("Importing API Proxies...")
 		if err = apis.ImportProxies(conn, path.Join(folder, proxiesFolderName)); err != nil {
@@ -66,6 +70,11 @@ var ImportCmd = &cobra.Command{
 		if isFileExists(path.Join(folder, developersFileName)) {
 			fmt.Println("Importing Developers...")
 			if err = developers.Import(conn, path.Join(folder, developersFileName)); err != nil {
+				return err
+			}
+
+			fmt.Println("Importing Apps...")
+			if err = apps.Import(conn, path.Join(folder, appsFileName), path.Join(folder, developersFileName)); err != nil {
 				return err
 			}
 		}

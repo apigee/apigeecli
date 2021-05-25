@@ -29,18 +29,21 @@ var ImpCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return apps.Import(conn, filePath)
+		return apps.Import(conn, filePath, developersFilePath)
 	},
 }
 
-var filePath string
+var filePath, developersFilePath string
 
 func init() {
 
 	ImpCmd.Flags().StringVarP(&filePath, "file", "f",
 		"", "File containing Developer Apps")
+	ImpCmd.Flags().StringVarP(&developersFilePath, "dev-file", "d",
+		"", "File containing Developers")
 	ImpCmd.Flags().IntVarP(&conn, "conn", "c",
 		4, "Number of connections")
 
 	_ = ImpCmd.MarkFlagRequired("file")
+	_ = ImpCmd.MarkFlagRequired("dev-file")
 }

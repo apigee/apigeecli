@@ -35,6 +35,7 @@ import (
 	"github.com/srinandan/apigeecli/client/sharedflows"
 	"github.com/srinandan/apigeecli/client/sync"
 	"github.com/srinandan/apigeecli/client/targetservers"
+	"github.com/srinandan/apigeecli/clilog"
 )
 
 //ExportCmd to get org details
@@ -49,13 +50,14 @@ var ExportCmd = &cobra.Command{
 
 		var productResponse, appsResponse, targetServerResponse [][]byte
 		var respBody []byte
-		var isCloudOrg bool
 
-		isCloudOrg, _ = IsCloudOrg()
+		runtimeType, _ := orgs.GetOrgField("runtimeType")
 
 		if err = createFolders(); err != nil {
 			return err
 		}
+
+		clilog.Warning.Println("Calls to Apigee APIs have a quota of 6000 per min. Running this tool against large list of entities can exhaust that quota and impact the usage of the platform.")
 
 		fmt.Println("Exporting API Proxies...")
 		if err = apis.ExportProxies(conn, proxiesFolderName); err != nil {
@@ -108,7 +110,7 @@ var ExportCmd = &cobra.Command{
 			return err
 		}
 
-		if !isCloudOrg {
+		if runtimeType == "HYBRID" {
 			fmt.Println("Exporting Sync Authorization Identities...")
 			if respBody, err = sync.Get(); err != nil {
 				return err
@@ -175,29 +177,6 @@ func init() {
 		"", "Apigee organization name")
 	ExportCmd.Flags().IntVarP(&conn, "conn", "c",
 		4, "Number of connections")
-}
-
-func IsCloudOrg() (orgtype bool, err error) {
-
-	apiclient.SetPrintOutput(false)
-	defer apiclient.SetPrintOutput(true)
-
-	var respBody []byte
-
-	//check org type
-	orgAttributesMap := make(map[string]interface{})
-	if respBody, err = orgs.Get(); err != nil {
-		return false, err
-	}
-	if err = json.Unmarshal([]byte(respBody), &orgAttributesMap); err != nil {
-		return false, err
-	}
-
-	if orgAttributesMap["runtimeType"] == "CLOUD" {
-		return true, nil
-	} else {
-		return false, nil
-	}
 }
 
 func createFolders() (err error) {

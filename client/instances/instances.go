@@ -15,7 +15,6 @@
 package instances
 
 import (
-	"fmt"
 	"net/url"
 	"path"
 	"strings"
@@ -30,14 +29,9 @@ func Create(name string, location string, diskEncryptionKeyName string, cidrRang
 
 	instance = append(instance, "\"name\":\""+name+"\"")
 	instance = append(instance, "\"location\":\""+location+"\"")
-	instance = append(instance, "\"diskEncryptionKeyName\":\""+diskEncryptionKeyName+"\"")
 
-	if cidrRange != "" {
-		if cidrRange != "SLASH_20" && cidrRange != "SLASH_16" {
-			return nil, fmt.Errorf("Invalid range parameter. Must be SLASH_20 or SLASH_16")
-		} else {
-			instance = append(instance, "\"peeringCidrRange\":\""+cidrRange+"\"")
-		}
+	if diskEncryptionKeyName != "" {
+		instance = append(instance, "\"diskEncryptionKeyName\":\""+diskEncryptionKeyName+"\"")
 	}
 
 	payload := "{" + strings.Join(instance, ",") + "}"
