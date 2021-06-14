@@ -372,11 +372,16 @@ func updateProduct(productSettings ProductSettings) (respBody []byte, err error)
 		if reflect.DeepEqual(*OperationGroup, operationGroup{}) {
 			return nil, fmt.Errorf("can't unmarshal json to OperationGroup")
 		}
-		//check to see the operation config type is the same
-		if OperationGroup.OperationConfigType != p.OperationGroup.OperationConfigType {
-			return nil, fmt.Errorf("updated operationConfigType must match the existing operationConfigType - ", OperationGroup.OperationConfigType)
+
+		if p.OperationGroup != nil {
+			//check to see the operation config type is the same
+			if OperationGroup.OperationConfigType != p.OperationGroup.OperationConfigType {
+				return nil, fmt.Errorf("updated operationConfigType must match the existing operationConfigType - ", OperationGroup.OperationConfigType)
+			}
+			p.OperationGroup.OperationConfigs = append(p.OperationGroup.OperationConfigs, OperationGroup.OperationConfigs...)
+		} else {
+			p.OperationGroup = OperationGroup
 		}
-		p.OperationGroup.OperationConfigs = append(p.OperationGroup.OperationConfigs, OperationGroup.OperationConfigs...)
 	}
 
 	if len(productSettings.GqlOperationGrp) > 0 {
