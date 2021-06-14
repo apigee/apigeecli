@@ -40,6 +40,7 @@ import (
 	"github.com/srinandan/apigeecli/cmd/kvm"
 	"github.com/srinandan/apigeecli/cmd/ops"
 	"github.com/srinandan/apigeecli/cmd/org"
+	"github.com/srinandan/apigeecli/cmd/overrides"
 	"github.com/srinandan/apigeecli/cmd/preferences"
 	"github.com/srinandan/apigeecli/cmd/products"
 	"github.com/srinandan/apigeecli/cmd/projects"
@@ -122,6 +123,7 @@ func init() {
 	RootCmd.AddCommand(instances.Cmd)
 	RootCmd.AddCommand(ops.Cmd)
 	RootCmd.AddCommand(preferences.Cmd)
+	RootCmd.AddCommand(overrides.Cmd)
 }
 
 func initConfig() {
