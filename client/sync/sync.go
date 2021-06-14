@@ -58,7 +58,7 @@ func Reset() (respBody []byte, err error) {
 }
 
 //Set
-func Set(identity string) (respBody []byte, err error) {
+func Set(identity interface{}) (respBody []byte, err error) {
 
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg()+":getSyncAuthorization")
@@ -74,15 +74,24 @@ func Set(identity string) (respBody []byte, err error) {
 		return respBody, err
 	}
 
-	identity = validate(identity)
-
-	for _, setIdentity := range response.Identities {
-		if identity == setIdentity {
-			return respBody, fmt.Errorf("identity %s already set", identity)
+	switch param := identity.(type) {
+	case []string:
+		var syncIdentities []string
+		for _, syncIdentity := range param {
+			syncIdentities = append(syncIdentities, validate(syncIdentity))
 		}
+		response.Identities = append(response.Identities, syncIdentities...)
+	case string:
+		param = validate(param)
+		for _, setIdentity := range response.Identities {
+			if param == setIdentity {
+				return respBody, fmt.Errorf("identity %s already set", param)
+			}
+		}
+		response.Identities = append(response.Identities, param)
+	default:
+		return nil, fmt.Errorf("unsupported identity type")
 	}
-
-	response.Identities = append(response.Identities, identity)
 
 	identities := iAMIdentities{}
 	identities.Identities = response.Identities

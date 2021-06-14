@@ -15,11 +15,14 @@
 package env
 
 import (
+	"fmt"
 	"net/url"
 	"path"
 
 	"github.com/srinandan/apigeecli/apiclient"
 )
+
+var validMemberTypes = []string{"serviceAccount", "group", "user", "domain"}
 
 //GetIAM
 func GetIAM() (respBody []byte, err error) {
@@ -30,13 +33,20 @@ func GetIAM() (respBody []byte, err error) {
 }
 
 //SetIAM
-func SetIAM(serviceAccountName string, permission string) (err error) {
-	return apiclient.SetIAMServiceAccount(serviceAccountName, permission)
+func SetIAM(memberName string, permission string, memberType string) (err error) {
+	if !isValidMemberType(memberType) {
+		return fmt.Errorf("Invalid memberType. Valid types are %v", validMemberTypes)
+	}
+	return apiclient.SetIAMPermission(memberName, permission, memberType)
 }
 
 //RemoveIAM
-func RemoveIAM(serviceAccountName string, role string) (err error) {
-	return apiclient.RemoveIAMServiceAccount(serviceAccountName, role)
+func RemoveIAM(memberName string, role string, memberType string) (err error) {
+	if !isValidMemberType(memberType) {
+		return fmt.Errorf("Invalid memberType. Valid types are %v", validMemberTypes)
+	}
+	member := memberType + ":" + memberName
+	return apiclient.RemoveIAMPermission(member, role)
 }
 
 //TestIAM
@@ -47,4 +57,13 @@ func TestIAM(resource string, verb string) (respBody []byte, err error) {
 	payload := "{\"permissions\":[\"" + permission + "\"]}"
 	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload)
 	return respBody, err
+}
+
+func isValidMemberType(memberType string) bool {
+	for _, validMember := range validMemberTypes {
+		if memberType == validMember {
+			return true
+		}
+	}
+	return false
 }

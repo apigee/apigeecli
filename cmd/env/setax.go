@@ -25,26 +25,28 @@ import (
 //Cmd to manage tracing of apis
 var SetAxCmd = &cobra.Command{
 	Use:   "setax",
-	Short: "Set Analytics Agent role for a SA on an environment",
-	Long:  "Set Analytics Agent role for a SA an Environment",
+	Short: "Set Analytics Agent role for a member on an environment",
+	Long:  "Set Analytics Agent role for a member an Environment",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetApigeeEnv(environment)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		err = environments.SetIAM(serviceAccountName, "analytics")
+		err = environments.SetIAM(memberName, "analytics", memberType)
 		if err != nil {
 			return err
 		}
-		fmt.Printf("Service account %s granted access to Apigee Analytics Viewer role\n", serviceAccountName)
+		fmt.Printf("Member %s granted access to Apigee Analytics Viewer role\n", memberName)
 		return nil
 	},
 }
 
 func init() {
 
-	SetAxCmd.Flags().StringVarP(&serviceAccountName, "name", "n",
-		"", "Service Account Name")
+	SetAxCmd.Flags().StringVarP(&memberName, "name", "n",
+		"", "Member Name, example Service Account Name")
+	SetAxCmd.Flags().StringVarP(&memberType, "memberType", "m",
+		"serviceAccount", "memberType must be serviceAccount, user or group")
 
 	_ = SetAxCmd.MarkFlagRequired("name")
 }

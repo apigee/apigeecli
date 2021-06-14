@@ -32,21 +32,23 @@ var RemoveRoleCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		err = environments.RemoveIAM(serviceAccountName, role)
+		err = environments.RemoveIAM(memberName, role, memberType)
 		if err != nil {
 			return err
 		}
-		fmt.Printf("Service account %s removed access to role %s\n", serviceAccountName, role)
+		fmt.Printf("Member %s (type = %s) removed access to role %s\n", memberName, memberType, role)
 		return nil
 	},
 }
 
 func init() {
 
-	RemoveRoleCmd.Flags().StringVarP(&serviceAccountName, "name", "n",
+	RemoveRoleCmd.Flags().StringVarP(&memberName, "name", "n",
 		"", "Service Account Name")
 	RemoveRoleCmd.Flags().StringVarP(&role, "role", "r",
 		"", "IAM Role")
+	RemoveRoleCmd.Flags().StringVarP(&memberType, "memberType", "m",
+		"serviceAccount", "memberType must be serviceAccount, user or group")
 
 	_ = RemoveRoleCmd.MarkFlagRequired("name")
 	_ = RemoveRoleCmd.MarkFlagRequired("role")

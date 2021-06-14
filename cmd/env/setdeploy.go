@@ -25,26 +25,28 @@ import (
 //Cmd to manage tracing of apis
 var SetDepCmd = &cobra.Command{
 	Use:   "setdeploy",
-	Short: "Set Apigee Deployer role for a SA on an environment",
-	Long:  "Set Apigee Deployer role for a SA on an environment",
+	Short: "Set Apigee Deployer role for a member on an environment",
+	Long:  "Set Apigee Deployer role for a member on an environment",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetApigeeEnv(environment)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		err = environments.SetIAM(serviceAccountName, "deploy")
+		err = environments.SetIAM(memberName, "deploy", memberType)
 		if err != nil {
 			return err
 		}
-		fmt.Printf("Service account %s granted access to Apigee Deployer role\n", serviceAccountName)
+		fmt.Printf("Member %s granted access to Apigee Deployer role\n", memberName)
 		return nil
 	},
 }
 
 func init() {
 
-	SetDepCmd.Flags().StringVarP(&serviceAccountName, "name", "n",
-		"", "Service Account Name")
+	SetDepCmd.Flags().StringVarP(&memberName, "name", "n",
+		"", "Member Name, example Service Account Name")
+	SetDepCmd.Flags().StringVarP(&memberType, "memberType", "m",
+		"serviceAccount", "memberType must be serviceAccount, user or group")
 
 	_ = SetDepCmd.MarkFlagRequired("name")
 }

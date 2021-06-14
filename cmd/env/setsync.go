@@ -25,26 +25,28 @@ import (
 //Cmd to manage tracing of apis
 var SetSyncCmd = &cobra.Command{
 	Use:   "setsync",
-	Short: "Set Synchronization Manager role for a SA on an environment",
-	Long:  "Set Synchronization Manager role for a SA on an environment",
+	Short: "Set Synchronization Manager role for a member on an environment",
+	Long:  "Set Synchronization Manager role for a member on an environment",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetApigeeEnv(environment)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		err = environments.SetIAM(serviceAccountName, "sync")
+		err = environments.SetIAM(memberName, "sync", memberType)
 		if err != nil {
 			return err
 		}
-		fmt.Printf("Service account %s granted access to Apigee Synchronizer Manager role\n", serviceAccountName)
+		fmt.Printf("Member %s granted access to Apigee Synchronizer Manager role\n", memberName)
 		return nil
 	},
 }
 
 func init() {
 
-	SetSyncCmd.Flags().StringVarP(&serviceAccountName, "name", "n",
-		"", "Service Account Name")
+	SetSyncCmd.Flags().StringVarP(&memberName, "name", "n",
+		"", "Member Name, example Service Account Name")
+	SetSyncCmd.Flags().StringVarP(&memberType, "memberType", "m",
+		"serviceAccount", "memberType must be serviceAccount, user or group")
 
 	_ = SetSyncCmd.MarkFlagRequired("name")
 }
