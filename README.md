@@ -39,7 +39,7 @@ For more information, refer to the [Apigee API Reference](https://cloud.google.c
 
 ## Service Account
 
-Create a service account with appropriate persmissions. Use `apigeecli` to create service accounts (`apigeectl iam`). Read more [here](https://cloud.google.com/apigee/docs/hybrid/v1.3/sa-about)
+Create a service account with appropriate persmissions. Use `apigeecli` to create service accounts (`apigeecli iam`). Read more [here](https://cloud.google.com/apigee/docs/hybrid/v1.3/sa-about)
 
 ## Access Token
 
