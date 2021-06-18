@@ -12,23 +12,48 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# goreleaser version 0.169.0
+# commit: a9ea729c96884a905505ef29b747675033f714a1
+# built at: 2021-06-05T02:13:45Z
+# built by: goreleaser
+# module version: v0.169.0, checksum: h1:QaTuoCK39LtVpRmocY6THXvnJCxdFHgyWJbqsHnS7K4=
+
 # .goreleaser.yml
 project_name: apigeecli
 
+before:
+  hooks:
+    - go mod tidy
+    - go mod download
+
 builds:
-  -
+  - id: apigeeclinix
     main: ./main.go
     binary: apigeecli
     goos:
       - linux
       - darwin
-      - windows
     flags:
     - -trimpath
     ldflags:
     - -s -w -a -extldflags "-static" -X main.Version={{.Tag}} -X main.Git={{.Commit}}
+    env:
+      - CGO_ENABLED=0 
     hooks:
       post: upx "{{ .Path }}"
+# Windows defender can have a false positive and think upx shrinked binaries are malware       
+  - id: apigeecliwin
+    main: ./main.go
+    binary: apigeecli
+    goos:
+      - windows
+    flags:
+    - -trimpath
+    ldflags:
+    - -s -w -a -extldflags "-static" -X main.Version={{.Tag}} -X main.Git={{.Commit}}   
+    env:
+      - CGO_ENABLED=0
+
 archives:
   - id: apigeecli
     format: zip
@@ -36,9 +61,19 @@ archives:
     replacements:
       darwin: Darwin
       linux: Linux
-      windows: Windows
       amd64: x86_64
-    wrap_in_directory: true    
+      windows: Windows
+    wrap_in_directory: true
+    builds:
+      - apigeeclinix
+      - apigeecliwin
+
+checksum:
+  name_template: 'checksums.txt'
+
+signs:
+  - artifacts: all  
+
 release:
   draft: true
   prerelease: true
