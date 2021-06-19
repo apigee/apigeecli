@@ -36,10 +36,6 @@ License: https://github.com/lestrrat/go-jwx/blob/master/LICENSE,MIT
 
 License: https://github.com/lestrrat-go/jwx/blob/master/LICENSE,MIT
 
-## github.com/srinandan/apigeecli
-
-License: https://github.com/srinandan/apigeecli/blob/master/LICENSE,Apache-2.0
-
 ## github.com/cpuguy83/go-md2man/md2man
 
 License: https://github.com/cpuguy83/go-md2man/blob/master/md2man/LICENSE.md,MIT
