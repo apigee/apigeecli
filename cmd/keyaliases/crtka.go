@@ -27,8 +27,8 @@ import (
 //CreateCmd to create key aliases
 var CreateCmd = &cobra.Command{
 	Use:   "create",
-	Short: "Create a Key Alias from PEM, JAR or PKCS12 file",
-	Long:  "Create a Key Alias from PEM, JAR or PKCS12 file",
+	Short: "Create a Key Alias from PEM or PKCS12 file",
+	Long:  "Create a Key Alias from PEM or PKCS12 file",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetApigeeEnv(env)
 		return apiclient.SetApigeeOrg(org)
@@ -44,7 +44,7 @@ var CreateCmd = &cobra.Command{
 			fileformat = "pfx"
 			format = "pkcs12"
 		default:
-			return fmt.Errorf("invalid foramt key alias for %s", format)
+			return fmt.Errorf("invalid format key alias for %s", format)
 		}
 		if !fileExists(name + "." + fileformat) {
 			return fmt.Errorf("file %s.%s not found. Do not specify file extension with key alias name", name, fileformat)
@@ -64,7 +64,7 @@ func init() {
 	CreateCmd.Flags().StringVarP(&name, "alias", "s",
 		"", "Name of the key alias file. File name of pem or pfx file. Do not add the extension")
 	CreateCmd.Flags().StringVarP(&format, "format", "f",
-		"", "Format of the certificate; pem or pfx")
+		"", "Format of the certificate; pem or pkcs12 (file extn is .pfx)")
 	CreateCmd.Flags().StringVarP(&password, "password", "p",
 		"", "PKCS12 password")
 	CreateCmd.Flags().BoolVarP(&ignoreExpiry, "exp", "x",
