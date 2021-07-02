@@ -20,7 +20,7 @@ import (
 	"github.com/srinandan/apigeecli/client/res"
 )
 
-//Cmd to get a resource
+//UpdateCmd to get a resource
 var UpdateCmd = &cobra.Command{
 	Use:   "update",
 	Short: "Update a resource file",
@@ -42,7 +42,7 @@ func init() {
 		"", "Resource type. Valid types include java, js, jsc, properties, py, wsdl, xsd, or xsl.")
 	UpdateCmd.Flags().StringVarP(&resPath, "respath", "r",
 		"", "Resource Path")
-	
+
 	_ = UpdateCmd.MarkFlagRequired("name")
 	_ = UpdateCmd.MarkFlagRequired("type")
 	_ = UpdateCmd.MarkFlagRequired("respath")
