@@ -20,8 +20,8 @@ import (
 
 //Cmd to manage developers
 var Cmd = &cobra.Command{
-	Use:     "devs",
-	Aliases: []string{"developers"},
+	Use:     "developers",
+	Aliases: []string{"devs"},
 	Short:   "Manage Apigee App Developers",
 	Long:    "Manage Apigee App Developers",
 }
