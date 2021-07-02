@@ -29,6 +29,7 @@ import (
 	"github.com/srinandan/apigeecli/clilog"
 )
 
+//Appdevelopers holds a single developer
 type Appdeveloper struct {
 	EMail       string      `json:"email,omitempty"`
 	FirstName   string      `json:"firstName,omitempty"`
@@ -38,11 +39,12 @@ type Appdeveloper struct {
 	DeveloperId string      `json:"developerId,omitempty"`
 }
 
+//Appdevelopers hold an array of developers
 type Appdevelopers struct {
 	Developer []Appdeveloper `json:"developer,omitempty"`
 }
 
-//attribute to used to hold custom attributes for entities
+//Attribute to used to hold custom attributes for entities
 type Attribute struct {
 	Name  string `json:"name,omitempty"`
 	Value string `json:"value,omitempty"`
@@ -77,7 +79,7 @@ func Create(email string, firstName string, lastName string, username string, at
 //Delete
 func Delete(email string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
-	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", email)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", url.QueryEscape(email)) //since developer emails can have +
 	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "", "DELETE")
 	return respBody, err
 }
@@ -85,16 +87,17 @@ func Delete(email string) (respBody []byte, err error) {
 //Get
 func Get(email string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
-	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", email)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", url.QueryEscape(email)) //since developer emails can have +
 	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
 	return respBody, err
 }
 
+//GetDeveloperId
 func GetDeveloperId(email string) (developerId string, err error) {
 	apiclient.SetPrintOutput(false)
 	var developerMap map[string]interface{}
 	u, _ := url.Parse(apiclient.BaseURL)
-	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", email)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", url.QueryEscape(email)) //since developer emails can have +
 	respBody, err := apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
 	apiclient.SetPrintOutput(true)
 	err = json.Unmarshal(respBody, &developerMap)
@@ -227,6 +230,7 @@ func batchImport(url string, entities []Appdeveloper, pwg *sync.WaitGroup) {
 	bwg.Wait()
 }
 
+//ReadDevelopersFile
 func ReadDevelopersFile(filePath string) (Appdevelopers, error) {
 
 	devs := Appdevelopers{}
