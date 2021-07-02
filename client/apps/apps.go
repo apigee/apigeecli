@@ -399,6 +399,11 @@ func createAsyncApp(app application, developerEntities developers.Appdevelopers,
 	u, _ := url.Parse(apiclient.BaseURL)
 	//store the developer and the credential
 	developerID, err := getNewDeveloperId(*app.DeveloperID, developerEntities) //*app.DeveloperID
+	if err != nil {
+		clilog.Error.Println(err)
+		return
+	}
+
 	credentials := *app.Credentials
 
 	//remove the developer id and credentials from the payload
