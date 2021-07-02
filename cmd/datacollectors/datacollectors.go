@@ -20,9 +20,10 @@ import (
 
 //Cmd to manage datacollectors
 var Cmd = &cobra.Command{
-	Use:   "datacollectors",
-	Short: "Manage Apigee datacollectors entities",
-	Long:  "Manage Apigee datacollectors entities",
+	Use:     "datacollectors",
+	Aliases: []string{"dc"},
+	Short:   "Manage Apigee datacollectors entities",
+	Long:    "Manage Apigee datacollectors entities",
 }
 
 var org, name string

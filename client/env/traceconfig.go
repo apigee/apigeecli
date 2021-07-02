@@ -15,6 +15,7 @@
 package env
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/url"
 	"path"
@@ -22,6 +23,17 @@ import (
 
 	"github.com/srinandan/apigeecli/apiclient"
 )
+
+type traceCfg struct {
+	Exporter       string      `json:"exporter,omitempty"`
+	Endpoint       string      `json:"endpoint,omitempty"`
+	SamplingConfig samplingCfg `json:"samplingConfig,omitempty"`
+}
+
+type samplingCfg struct {
+	Sampler      string  `json:"sampler,omitempty"`
+	SamplingRate float64 `json:"samplingRate,omitempty"`
+}
 
 //GetTraceConfig
 func GetTraceConfig() (respBody []byte, err error) {
@@ -47,12 +59,7 @@ func UpdateTraceConfig(exporter string, endpoint string, sampler string, sample_
 		traceConfig = append(traceConfig, "\"endpoint\":\""+endpoint+"\"")
 	}
 
-	sampling := []string{}
-	sampling = append(sampling, "\"sampler\":\""+sampler+"\"")
-	sampling = append(sampling, "\"sampling_rate\":"+sample_rate)
-	sampling_config := "\"sampling_config\":{" + strings.Join(sampling, ",") + "}"
-
-	traceConfig = append(traceConfig, sampling_config)
+	traceConfig = append(traceConfig, getSamplingConfig(sampler, sample_rate))
 
 	payload := "{" + strings.Join(traceConfig, ",") + "}"
 
@@ -60,4 +67,45 @@ func UpdateTraceConfig(exporter string, endpoint string, sampler string, sample_
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "traceConfig")
 	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload, "PATCH")
 	return respBody, err
+}
+
+func DisableTraceConfig() (respBody []byte, err error) {
+
+	var traceRespBody []byte
+	var payload []byte
+
+	apiclient.SetPrintOutput(false)
+	if traceRespBody, err = GetTraceConfig(); err != nil {
+		return nil, err
+	}
+	apiclient.SetPrintOutput(true)
+
+	traceResp := traceCfg{}
+	if err = json.Unmarshal(traceRespBody, &traceResp); err != nil {
+		return nil, err
+	}
+
+	if traceResp.Exporter != "CLOUD_TRACE" && traceResp.Exporter != "JAEGER" {
+		return nil, fmt.Errorf("Distributed trace not configured for the environment")
+	}
+
+	//disable trace
+	traceResp.SamplingConfig.Sampler = "OFF"
+
+	if payload, err = json.Marshal(traceResp); err != nil {
+		return nil, err
+	}
+
+	u, _ := url.Parse(apiclient.BaseURL)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "traceConfig")
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), string(payload), "PATCH")
+	return respBody, err
+}
+
+func getSamplingConfig(sampler string, sample_rate string) (sampling_config string) {
+	sampling := []string{}
+	sampling = append(sampling, "\"sampler\":\""+sampler+"\"")
+	sampling = append(sampling, "\"sampling_rate\":"+sample_rate)
+	sampling_config = "\"sampling_config\":{" + strings.Join(sampling, ",") + "}"
+	return sampling_config
 }
