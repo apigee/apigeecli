@@ -20,8 +20,8 @@ import (
 
 //Cmd to manage envs
 var Cmd = &cobra.Command{
-	Use:     "envs",
-	Aliases: []string{"environments"},
+	Use:     "environments",
+	Aliases: []string{"envs"},
 	Short:   "Manage Apigee environments",
 	Long:    "Manage Apigee environments",
 }
