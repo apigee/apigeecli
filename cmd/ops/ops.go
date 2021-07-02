@@ -20,8 +20,8 @@ import (
 
 //Cmd to manage ops
 var Cmd = &cobra.Command{
-	Use:     "ops",
-	Aliases: []string{"operations"},
+	Use:     "operations",
+	Aliases: []string{"ops"},
 	Short:   "View Apigee Operations",
 	Long:    "View Apigee Operations",
 }
