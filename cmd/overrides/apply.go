@@ -72,7 +72,7 @@ var ApplyCmd = &cobra.Command{
 			//check if env exists
 			apiclient.SetApigeeEnv(environment)
 			if _, err = env.Get(false); err != nil {
-				if _, err = env.Create("PROXY"); err != nil {
+				if _, err = env.Create("PROXY", "PROGRAMMABLE"); err != nil {
 					return err
 				}
 				fmt.Printf("Environment %s created", environment)
