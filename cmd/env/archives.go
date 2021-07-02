@@ -37,4 +37,5 @@ func init() {
 	ArchiveCmd.AddCommand(ListArchiveCmd)
 	ArchiveCmd.AddCommand(CreateArchiveCmd)
 	ArchiveCmd.AddCommand(GetArchiveCmd)
+	ArchiveCmd.AddCommand(DelArchiveCmd)
 }
