@@ -178,7 +178,6 @@ func TestCreateProductLegacy(t *testing.T) {
 }
 
 func TestCreateProductGroup(t *testing.T) {
-	proxy := "test"
 	approval := "auto"
 	operationGroupFile := "./test/apiproduct-op-group.json"
 
