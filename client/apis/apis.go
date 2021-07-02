@@ -221,9 +221,8 @@ func CleanProxy(name string, reportOnly bool, keepList []string) (err error) {
 
 	for _, proxyRevision := range proxyRevisions.Revision {
 
-		deleteRevision := false
 		//the user passed a list of revisions, check if the revision should be preserved
-		deleteRevision = keepRevision(proxyRevision, keepList)
+		deleteRevision := keepRevision(proxyRevision, keepList)
 
 		if !isRevisionDeployed(deployedRevisions, proxyRevision) {
 			//step 3. clean up proxy revisions that are not deployed
