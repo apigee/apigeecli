@@ -19,21 +19,14 @@ import (
 )
 
 //Cmd to manage tracing of apis
-var TraceConfigCmd = &cobra.Command{
-	Use:   "traceconfig",
-	Short: "Manage Distributed Trace config for the environment",
-	Long:  "Manage Distributed Trace config for the environment",
+var TraceOverridesCmd = &cobra.Command{
+	Use:   "overrides",
+	Short: "Manage Distributed Trace config overrides for the environment",
+	Long:  "Manage Distributed Trace config overrides for the environment",
 }
 
 func init() {
-
-	TraceConfigCmd.PersistentFlags().StringVarP(&environment, "env", "e",
-		"", "Apigee environment name")
-
-	_ = TraceConfigCmd.MarkPersistentFlagRequired("env")
-
-	TraceConfigCmd.AddCommand(GetTraceConfigCmd)
-	TraceConfigCmd.AddCommand(UpdateTraceConfigCmd)
-	TraceConfigCmd.AddCommand(DisableTraceConfigCmd)
-	TraceConfigCmd.AddCommand(TraceOverridesCmd)
+	TraceOverridesCmd.AddCommand(GetTraceOverridesCmd)
+	TraceOverridesCmd.AddCommand(ListTraceOverridesCmd)
+	TraceOverridesCmd.AddCommand(CrtTraceOverridesCmd)
 }

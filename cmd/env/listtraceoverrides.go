@@ -16,24 +16,21 @@ package env
 
 import (
 	"github.com/spf13/cobra"
+	"github.com/srinandan/apigeecli/apiclient"
+	environments "github.com/srinandan/apigeecli/client/env"
 )
 
-//Cmd to manage tracing of apis
-var TraceConfigCmd = &cobra.Command{
-	Use:   "traceconfig",
-	Short: "Manage Distributed Trace config for the environment",
-	Long:  "Manage Distributed Trace config for the environment",
-}
-
-func init() {
-
-	TraceConfigCmd.PersistentFlags().StringVarP(&environment, "env", "e",
-		"", "Apigee environment name")
-
-	_ = TraceConfigCmd.MarkPersistentFlagRequired("env")
-
-	TraceConfigCmd.AddCommand(GetTraceConfigCmd)
-	TraceConfigCmd.AddCommand(UpdateTraceConfigCmd)
-	TraceConfigCmd.AddCommand(DisableTraceConfigCmd)
-	TraceConfigCmd.AddCommand(TraceOverridesCmd)
+//ListTraceOverridesCmd to manage tracing of apis
+var ListTraceOverridesCmd = &cobra.Command{
+	Use:   "list",
+	Short: "List Distributed Trace config overrides",
+	Long:  "List Distributed Trace config overrides",
+	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetApigeeEnv(environment)
+		return apiclient.SetApigeeOrg(org)
+	},
+	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		_, err = environments.ListTraceOverrides()
+		return
+	},
 }
