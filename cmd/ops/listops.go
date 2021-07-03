@@ -29,11 +29,15 @@ var ListCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = operations.List()
+		_, err = operations.List(state)
 		return
 	},
 }
 
+var state string
+
 func init() {
 
+	ListCmd.Flags().StringVarP(&state, "state", "s",
+		"", "filter by operation state: FINISHED, ERROR, IN_PROGRESS")
 }

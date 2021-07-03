@@ -15,11 +15,42 @@
 package operations
 
 import (
+	"encoding/json"
+	"fmt"
 	"net/url"
 	"path"
 
 	"github.com/srinandan/apigeecli/apiclient"
 )
+
+type ops struct {
+	Operations []op `json:"operations,omitempty"`
+}
+
+type op struct {
+	Name     string         `json:"name,omitempty"`
+	Metadata metadata       `json:"metadata,omitempty"`
+	Done     bool           `json:"done,omitempty"`
+	Error    operationError `json:"error,omitempty"`
+}
+
+type operationError struct {
+	Message string `json:"message,omitempty"`
+	Code    int    `json:"code,omitempty"`
+}
+
+type metadata struct {
+	Type               string   `json:"@type,omitempty"`
+	OperationType      string   `json:"operationType,omitempty"`
+	TargetResourceName string   `json:"targetResourceName,omitempty"`
+	State              string   `json:"state,omitempty"`
+	Progress           progress `json:"progress,omitempty"`
+}
+
+type progress struct {
+	Description string `json:"description,omitempty"`
+	PercentDone int    `json:"percentDone,omitempty"`
+}
 
 //Get
 func Get(name string) (respBody []byte, err error) {
@@ -30,9 +61,41 @@ func Get(name string) (respBody []byte, err error) {
 }
 
 //List
-func List() (respBody []byte, err error) {
+func List(state string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "operations")
+	if state != "" {
+		apiclient.SetPrintOutput(false)
+		if respBody, err = apiclient.HttpClient(false, u.String()); err != nil {
+			return nil, err
+		}
+		return filterOperation(respBody, state)
+	}
+
 	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
 	return respBody, err
+}
+
+func filterOperation(respBody []byte, state string) (operationsRespBody []byte, err error) {
+	operationsResponse := ops{}
+	filteredOperationsResponse := ops{}
+	if err = json.Unmarshal(respBody, &operationsResponse); err != nil {
+		return nil, err
+	}
+
+	for _, operationResponse := range operationsResponse.Operations {
+		if operationResponse.Metadata.State == state {
+			fmt.Println(operationResponse.Metadata.State)
+			filteredOperationsResponse.Operations = append(filteredOperationsResponse.Operations, operationResponse)
+		}
+	}
+
+	if operationsRespBody, err = json.Marshal(filteredOperationsResponse); err != nil {
+		return nil, err
+	}
+
+	if apiclient.GetPrintOutput() {
+		apiclient.PrettyPrint(operationsRespBody)
+	}
+	return operationsRespBody, nil
 }
