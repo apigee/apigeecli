@@ -20,54 +20,49 @@ import (
 	"github.com/srinandan/apigeecli/client/targetservers"
 )
 
-//CreateCmd to create target servers
-var CreateCmd = &cobra.Command{
-	Use:   "create",
-	Short: "Create a Target Server",
-	Long:  "Create a Target Server",
+//UpdateCmd to get target servers
+var UpdateCmd = &cobra.Command{
+	Use:   "update",
+	Short: "Update a Target Server",
+	Long:  "Update a Target Server",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetApigeeEnv(env)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = targetservers.Create(name, description, host, port, enable, grpc, keyStore, keyAlias, tlsenabled, clientAuthEnabled, ignoreValidationErrors)
+		_, err = targetservers.Update(name, description, host, port, enable, grpc, keyStore, keyAlias, tlsenabled, clientAuthEnabled, ignoreValidationErrors)
 		return
-
 	},
 }
 
-var description, host, keyStore, keyAlias string
-var enable, grpc, tlsenabled, clientAuthEnabled, ignoreValidationErrors bool
-var port int
-
 func init() {
 
-	CreateCmd.Flags().StringVarP(&name, "name", "n",
+	UpdateCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of the targetserver")
-	CreateCmd.Flags().StringVarP(&description, "desc", "d",
+	UpdateCmd.Flags().StringVarP(&description, "desc", "d",
 		"", "Description for the Target Server")
-	CreateCmd.Flags().StringVarP(&host, "host", "s",
+	UpdateCmd.Flags().StringVarP(&host, "host", "s",
 		"", "Host name of the target")
-	CreateCmd.Flags().BoolVarP(&enable, "enable", "b",
+	UpdateCmd.Flags().BoolVarP(&enable, "enable", "b",
 		true, "Enabling/disabling a TargetServer")
-	CreateCmd.Flags().BoolVarP(&grpc, "grpc", "g",
+	UpdateCmd.Flags().BoolVarP(&grpc, "grpc", "g",
 		false, "Enable target server for gRPC")
 
-	CreateCmd.Flags().StringVarP(&keyStore, "keyStore", "",
+	UpdateCmd.Flags().StringVarP(&keyStore, "keyStore", "",
 		"", "Key store for the target server")
-	CreateCmd.Flags().StringVarP(&keyAlias, "keyAlias", "",
+	UpdateCmd.Flags().StringVarP(&keyAlias, "keyAlias", "",
 		"", "Key alias for the target server")
 
-	CreateCmd.Flags().BoolVarP(&tlsenabled, "tls", "",
+	UpdateCmd.Flags().BoolVarP(&tlsenabled, "tls", "",
 		false, "Enable TLS for the target server")
-	CreateCmd.Flags().BoolVarP(&clientAuthEnabled, "clientAuth", "c",
+	UpdateCmd.Flags().BoolVarP(&clientAuthEnabled, "clientAuth", "c",
 		false, "Enable mTLS for the target server")
-	CreateCmd.Flags().BoolVarP(&ignoreValidationErrors, "ignoreErr", "i",
+	UpdateCmd.Flags().BoolVarP(&ignoreValidationErrors, "ignoreErr", "i",
 		false, "Ignore TLS validation errors for the target server")
 
-	CreateCmd.Flags().IntVarP(&port, "port", "p",
+	UpdateCmd.Flags().IntVarP(&port, "port", "p",
 		-1, "port number")
 
-	_ = CreateCmd.MarkFlagRequired("name")
-	_ = CreateCmd.MarkFlagRequired("host")
+	_ = UpdateCmd.MarkFlagRequired("name")
+
 }

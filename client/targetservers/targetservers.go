@@ -20,8 +20,6 @@ import (
 	"net/url"
 	"os"
 	"path"
-	"strconv"
-	"strings"
 	"sync"
 
 	"github.com/srinandan/apigeecli/apiclient"
@@ -29,24 +27,25 @@ import (
 )
 
 type targetserver struct {
-	Name        string   `json:"name,omitempty"`
-	Description string   `json:"description,omitempty"`
-	Host        string   `json:"host,omitempty"`
-	Port        int      `json:"port,omitempty"`
-	IsEnabled   bool     `json:"isEnabled,omitempty"`
-	SslInfo     *sslInfo `json:"sSLInfo,omitempty"`
+	Name        string  `json:"name,omitempty"`
+	Description string  `json:"description,omitempty"`
+	Host        string  `json:"host,omitempty"`
+	Port        int     `json:"port,omitempty"`
+	IsEnabled   bool    `json:"isEnabled,omitempty"`
+	Protocol    string  `json:"protocol,omitempty"`
+	SslInfo     sslInfo `json:"sSLInfo,omitempty"`
 }
 
 type sslInfo struct {
-	Enabled                bool        `json:"enabled,omitempty"`
-	ClientAuthEnabled      string      `json:"clientAuthEnabled,omitempty"`
-	Keystore               string      `json:"keyStore,omitempty"`
-	Keyalias               string      `json:"keyAlias,omitempty"`
-	Truststore             string      `json:"trustStore,omitempty"`
-	IgnoreValidationErrors bool        `json:"ignoreValidationErrors,omitempty"`
-	Protocols              []string    `json:"protocols,omitempty"`
-	Ciphers                []string    `json:"ciphers,omitempty"`
-	CommonName             *commonName `json:"commonName,omitempty"`
+	Enabled                bool       `json:"enabled,omitempty"`
+	ClientAuthEnabled      bool       `json:"clientAuthEnabled,omitempty"`
+	Keystore               string     `json:"keyStore,omitempty"`
+	Keyalias               string     `json:"keyAlias,omitempty"`
+	Truststore             string     `json:"trustStore,omitempty"`
+	IgnoreValidationErrors bool       `json:"ignoreValidationErrors,omitempty"`
+	Protocols              []string   `json:"protocols,omitempty"`
+	Ciphers                []string   `json:"ciphers,omitempty"`
+	CommonName             commonName `json:"commonName,omitempty"`
 }
 
 type commonName struct {
@@ -55,31 +54,90 @@ type commonName struct {
 }
 
 //Create
-func Create(name string, description string, host string, port int, enable bool, grpc bool) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+func Create(name string, description string, host string, port int, enable bool, grpc bool, keyStore string, keyAlias string, tlsenabled bool, clientAuthEnabled bool, ignoreValidationErrors bool) (respBody []byte, err error) {
+	targetsvr := targetserver{}
+	targetsvr.Name = name
 
-	targetserver := []string{}
+	return createOrUpdate("create", targetsvr, name, description, host, port, enable, grpc, keyStore, keyAlias, tlsenabled, clientAuthEnabled, ignoreValidationErrors)
+}
 
-	targetserver = append(targetserver, "\"name\":\""+name+"\"")
+//Update
+func Update(name string, description string, host string, port int, enable bool, grpc bool, keyStore string, keyAlias string, tlsenabled bool, clientAuthEnabled bool, ignoreValidationErrors bool) (respBody []byte, err error) {
 
-	if description != "" {
-		targetserver = append(targetserver, "\"description\":\""+description+"\"")
+	var targetRespBody []byte
+	var targetsvr = targetserver{}
+
+	apiclient.SetPrintOutput(false)
+	if targetRespBody, err = Get(name); err != nil {
+		return nil, err
+	}
+	apiclient.SetPrintOutput(true)
+
+	if err = json.Unmarshal(targetRespBody, &targetsvr); err != nil {
+		return nil, err
 	}
 
-	targetserver = append(targetserver, "\"host\":\""+host+"\"")
-	targetserver = append(targetserver, "\"port\":"+strconv.Itoa(port))
+	return createOrUpdate("update", targetsvr, name, description, host, port, enable, grpc, keyStore, keyAlias, tlsenabled, clientAuthEnabled, ignoreValidationErrors)
+}
+
+func createOrUpdate(action string, targetsvr targetserver, name string, description string, host string, port int, enable bool, grpc bool, keyStore string, keyAlias string, tlsenabled bool, clientAuthEnabled bool, ignoreValidationErrors bool) (respBody []byte, err error) {
+
+	var reqBody []byte
+
+	if description != "" {
+		targetsvr.Description = description
+	}
+
+	if host != "" {
+		targetsvr.Host = host
+	}
+
+	if port != -1 {
+		targetsvr.Port = port
+	}
 
 	if grpc {
-		targetserver = append(targetserver, "\"protocol\":\"GRPC\"")
+		targetsvr.Protocol = "GRPC"
 	}
 
 	if enable {
-		targetserver = append(targetserver, "\"isEnabled\":"+strconv.FormatBool(enable))
+		targetsvr.IsEnabled = enable
 	}
 
-	payload := "{" + strings.Join(targetserver, ",") + "}"
-	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "targetservers")
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload)
+	if tlsenabled {
+		targetsvr.SslInfo.Enabled = tlsenabled
+	}
+
+	if clientAuthEnabled {
+		targetsvr.SslInfo.ClientAuthEnabled = clientAuthEnabled
+	}
+
+	if ignoreValidationErrors {
+		targetsvr.SslInfo.IgnoreValidationErrors = ignoreValidationErrors
+	}
+
+	if keyAlias != "" {
+		targetsvr.SslInfo.Keyalias = keyAlias
+	}
+
+	if keyStore != "" {
+		targetsvr.SslInfo.Keystore = keyStore
+	}
+
+	if reqBody, err = json.Marshal(targetsvr); err != nil {
+		return nil, err
+	}
+
+	u, _ := url.Parse(apiclient.BaseURL)
+
+	if action == "create" {
+		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "targetservers")
+		respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), string(reqBody))
+	} else {
+		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "targetservers", name)
+		respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), string(reqBody), "PUT")
+	}
+
 	return respBody, err
 }
 
