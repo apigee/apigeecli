@@ -1,13 +1,13 @@
-## apigeecli targetservers create
+## apigeecli targetservers update
 
-Create a Target Server
+Update a Target Server
 
 ### Synopsis
 
-Create a Target Server
+Update a Target Server
 
 ```
-apigeecli targetservers create [flags]
+apigeecli targetservers update [flags]
 ```
 
 ### Options
@@ -17,7 +17,7 @@ apigeecli targetservers create [flags]
   -d, --desc string       Description for the Target Server
   -b, --enable            Enabling/disabling a TargetServer (default true)
   -g, --grpc              Enable target server for gRPC
-  -h, --help              help for create
+  -h, --help              help for update
   -s, --host string       Host name of the target
   -i, --ignoreErr         Ignore TLS validation errors for the target server
       --keyAlias string   Key alias for the target server
