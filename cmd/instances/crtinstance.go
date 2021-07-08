@@ -51,7 +51,7 @@ var CreateCmd = &cobra.Command{
 		}
 
 		if billingType == "EVALUATION" {
-			_, err = instances.Create(name, location, "", "SLASH_23")
+			_, err = instances.Create(name, location, "", "SLASH_22")
 		} else {
 			_, err = instances.Create(name, location, diskEncryptionKeyName, cidrRange)
 		}
@@ -71,7 +71,7 @@ func init() {
 	CreateCmd.Flags().StringVarP(&diskEncryptionKeyName, "diskenc", "d",
 		"", "CloudKMS key name")
 	CreateCmd.Flags().StringVarP(&cidrRange, "cidr", "r",
-		"", "Peering CIDR Range; default is SLASH_16, other supported values SLASH_20, SLASH_23 for eval")
+		"", "Peering CIDR Range; default is SLASH_16, other supported values SLASH_20, SLASH_22 for eval")
 
 	_ = CreateCmd.MarkFlagRequired("name")
 	_ = CreateCmd.MarkFlagRequired("location")
