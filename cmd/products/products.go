@@ -23,7 +23,7 @@ var Cmd = &cobra.Command{
 	Use:     "products",
 	Aliases: []string{"prods"},
 	Short:   "Manage Apigee API products",
-	Long:    "Manage Apigee API products",
+	Long:    "Manage Apigee API products and Rate Plans for Monetization",
 }
 
 var org, name string
