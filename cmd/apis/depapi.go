@@ -30,12 +30,13 @@ var DepCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = apis.DeployProxy(name, revision, overrides)
+		_, err = apis.DeployProxy(name, revision, overrides, serviceAccountName)
 		return
 	},
 }
 
 var overrides bool
+var serviceAccountName string
 
 func init() {
 
@@ -47,6 +48,8 @@ func init() {
 		-1, "API Proxy revision")
 	DepCmd.Flags().BoolVarP(&overrides, "ovr", "r",
 		false, "Forces deployment of the new revision")
+	DepCmd.Flags().StringVarP(&serviceAccountName, "sa", "s",
+		false, "The format must be {ACCOUNT_ID}@{PROJECT}.iam.gserviceaccount.com.")
 
 	_ = DepCmd.MarkFlagRequired("env")
 	_ = DepCmd.MarkFlagRequired("name")

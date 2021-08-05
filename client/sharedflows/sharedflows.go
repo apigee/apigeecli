@@ -127,11 +127,16 @@ func ListRevisionDeployments(name string, revision int) (respBody []byte, err er
 }
 
 //Deploy
-func Deploy(name string, revision int, overrides bool) (respBody []byte, err error) {
+func Deploy(name string, revision int, overrides bool, serviceAccountName string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
-	if overrides {
+	if overrides || serviceAccountName != "" {
 		q := u.Query()
-		q.Set("override", "true")
+		if overrides {
+			q.Set("override", "true")
+		}
+		if serviceAccountName != "" {
+			q.Set("serviceAccount", serviceAccountName)
+		}
 		u.RawQuery = q.Encode()
 	}
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(),
