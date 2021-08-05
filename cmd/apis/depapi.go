@@ -49,7 +49,7 @@ func init() {
 	DepCmd.Flags().BoolVarP(&overrides, "ovr", "r",
 		false, "Forces deployment of the new revision")
 	DepCmd.Flags().StringVarP(&serviceAccountName, "sa", "s",
-		false, "The format must be {ACCOUNT_ID}@{PROJECT}.iam.gserviceaccount.com.")
+		"", "The format must be {ACCOUNT_ID}@{PROJECT}.iam.gserviceaccount.com.")
 
 	_ = DepCmd.MarkFlagRequired("env")
 	_ = DepCmd.MarkFlagRequired("name")

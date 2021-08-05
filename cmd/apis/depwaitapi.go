@@ -36,7 +36,7 @@ var DepWaitCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 
-		if _, err = apis.DeployProxy(name, revision, overrides); err != nil {
+		if _, err = apis.DeployProxy(name, revision, overrides, serviceAccountName); err != nil {
 			return err
 		}
 
@@ -85,6 +85,8 @@ func init() {
 		-1, "API Proxy revision")
 	DepWaitCmd.Flags().BoolVarP(&overrides, "ovr", "r",
 		false, "Forces deployment of the new revision")
+	DepWaitCmd.Flags().StringVarP(&serviceAccountName, "sa", "s",
+		"", "The format must be {ACCOUNT_ID}@{PROJECT}.iam.gserviceaccount.com.")
 
 	_ = DepWaitCmd.MarkFlagRequired("env")
 	_ = DepWaitCmd.MarkFlagRequired("name")
