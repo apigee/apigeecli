@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"net/url"
 	"path"
+	"strings"
 
 	"github.com/srinandan/apigeecli/apiclient"
 )
@@ -41,12 +42,12 @@ func SetIAM(memberName string, permission string, memberType string) (err error)
 }
 
 //RemoveIAM
-func RemoveIAM(memberName string, role string, memberType string) (err error) {
-	if !isValidMemberType(memberType) {
+func RemoveIAM(memberName string, role string) (err error) {
+	parts := strings.Split(memberName, ":")
+	if !isValidMemberType(parts[0]) {
 		return fmt.Errorf("Invalid memberType. Valid types are %v", validMemberTypes)
 	}
-	member := memberType + ":" + memberName
-	return apiclient.RemoveIAMPermission(member, role)
+	return apiclient.RemoveIAMPermission(memberName, role)
 }
 
 //TestIAM
