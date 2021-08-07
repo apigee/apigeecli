@@ -66,9 +66,9 @@ func CreateKey(developerEmail string, appID string, consumerKey string, consumer
 }
 
 //DeleteKey
-func DeleteKey(developerEmail string, appID string, key string) (respBody []byte, err error) {
+func DeleteKey(developerEmail string, appName string, key string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
-	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", developerEmail, "apps", appID, "keys", key)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", developerEmail, "apps", appName, "keys", key)
 	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "", "DELETE")
 	return respBody, err
 }
