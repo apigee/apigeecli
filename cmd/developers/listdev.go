@@ -29,12 +29,13 @@ var ListCmd = &cobra.Command{
 	},
 	Long: "Lists all developers in an organization by email address",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = developers.List(count, expand)
+		_, err = developers.List(count, expand, ids)
 		return
 	},
 }
 
 var count int
+var ids string
 
 func init() {
 
@@ -43,4 +44,7 @@ func init() {
 
 	ListCmd.Flags().BoolVarP(&expand, "expand", "x",
 		false, "Expand Details")
+
+	ListCmd.Flags().StringVarP(&ids, "ids", "i",
+		"", "List of IDs to include, separated by commas")
 }

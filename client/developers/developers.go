@@ -123,7 +123,7 @@ func GetApps(name string, expand bool) (respBody []byte, err error) {
 }
 
 //List
-func List(count int, expand bool) (respBody []byte, err error) {
+func List(count int, expand bool, ids string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers")
 	q := u.Query()
@@ -135,6 +135,10 @@ func List(count int, expand bool) (respBody []byte, err error) {
 	if count != -1 {
 		q.Set("count", strconv.Itoa(count))
 	}
+	if ids != "" {
+		q.Set("ids", ids)
+	}
+
 	u.RawQuery = q.Encode()
 	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
 	return respBody, err
