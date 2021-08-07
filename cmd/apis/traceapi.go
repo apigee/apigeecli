@@ -20,9 +20,9 @@ import (
 
 //TraceCmd to manage tracing of apis
 var TraceCmd = &cobra.Command{
-	Use:   "trace",
-	Short: "Manage debugging/tracing of Apigee API proxies",
-	Long:  "Manage debugging/tracing of Apigee API proxy revisions deployed in an environment",
+	Use:   "debugsessions",
+	Short: "Manage debusessions of Apigee API proxies",
+	Long:  "Manage debusessions of Apigee API proxy revisions deployed in an environment",
 }
 
 func init() {
