@@ -50,5 +50,4 @@ func init() {
 	_ = CreateKeyCmd.MarkFlagRequired("name")
 	_ = CreateKeyCmd.MarkFlagRequired("key")
 	_ = CreateKeyCmd.MarkFlagRequired("secret")
-	_ = CreateKeyCmd.MarkFlagRequired("prods")
 }
