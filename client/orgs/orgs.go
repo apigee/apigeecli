@@ -55,7 +55,7 @@ type organization struct {
 	RuntimeEncryptionKeyName string        `json:"runtimeDatabaseEncryptionKeyName,omitempty"`
 	ProjectId                string        `json:"projectId,omitempty"`
 	State                    string        `json:"state,omitempty"`
-	BillingType              string        `json:"BillingType,omitempty"`
+	BillingType              string        `json:"billingType,omitempty"`
 }
 
 func validRegion(region string) bool {
