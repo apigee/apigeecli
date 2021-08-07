@@ -398,7 +398,7 @@ func createAsyncApp(app application, developerEntities developers.Appdevelopers,
 	//2. create/import the credential
 	u, _ := url.Parse(apiclient.BaseURL)
 	//store the developer and the credential
-	developerID, err := getNewDeveloperId(*app.DeveloperID, developerEntities) //*app.DeveloperID
+	developerEmail, developerID, err := getNewDeveloperId(*app.DeveloperID, developerEntities) //*app.DeveloperID
 	if err != nil {
 		clilog.Error.Println(err)
 		return
@@ -417,7 +417,27 @@ func createAsyncApp(app application, developerEntities developers.Appdevelopers,
 	}
 
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", developerID, "apps")
-	_, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), string(out))
+	appRespBody, err := apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), string(out))
+	if err != nil {
+		clilog.Error.Println(err)
+		return
+	}
+
+	//get the new appId & keyId
+	var newDeveloperApp map[string]interface{}
+	err = json.Unmarshal(appRespBody, &newDeveloperApp)
+	if err != nil {
+		clilog.Error.Println(err)
+		return
+	}
+
+	//delete the auto-generated key
+	newAppCredentials := newDeveloperApp["credentials"].([]interface{})
+	temporaryCredential := newAppCredentials[0].(map[string]interface{})
+	printSetting := apiclient.GetPrintOutput()
+	apiclient.SetPrintOutput(false)
+	_, err = DeleteKey(developerEmail, newDeveloperApp["name"].(string), temporaryCredential["consumerKey"].(string))
+	apiclient.SetPrintOutput(printSetting)
 	if err != nil {
 		clilog.Error.Println(err)
 		return
@@ -485,11 +505,12 @@ func getArrayStr(str []string) string {
 	return tmp
 }
 
-func getNewDeveloperId(oldDeveloerId string, developerEntities developers.Appdevelopers) (newDeveloperId string, err error) {
+func getNewDeveloperId(oldDeveloperId string, developerEntities developers.Appdevelopers) (developerEmail string, newDeveloperId string, err error) {
 	for _, developer := range developerEntities.Developer {
-		if oldDeveloerId == developer.DeveloperId {
-			return developers.GetDeveloperId(developer.EMail)
+		if oldDeveloperId == developer.DeveloperId {
+			newDeveloperId, err = developers.GetDeveloperId(developer.EMail)
+			return developer.EMail, newDeveloperId, err
 		}
 	}
-	return "", fmt.Errorf("Developer not imported into Apigee")
+	return "", "", fmt.Errorf("Developer not imported into Apigee")
 }
