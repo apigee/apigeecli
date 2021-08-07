@@ -23,8 +23,8 @@ import (
 //Cmd to set mart endpoint
 var AcCmd = &cobra.Command{
 	Use:   "enable-apigee-connect",
-	Short: "Set MART endpoint for an Apigee Org",
-	Long:  "Set MART endpoint for an Apigee Org",
+	Short: "Enable Apigee Connect for an Apigee Org",
+	Long:  "Enable Apigee Connect for an Apigee Org",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		return apiclient.SetApigeeOrg(org)
 	},
