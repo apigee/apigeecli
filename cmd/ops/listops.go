@@ -15,6 +15,8 @@
 package ops
 
 import (
+	"fmt"
+
 	"github.com/spf13/cobra"
 	"github.com/srinandan/apigeecli/apiclient"
 	"github.com/srinandan/apigeecli/client/operations"
@@ -26,18 +28,36 @@ var ListCmd = &cobra.Command{
 	Short: "List operations in an Apigee Org",
 	Long:  "List operations in an Apigee Org",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		if state == "" && completeState != "" {
+			return fmt.Errorf("both state and completeState must be passed")
+		}
+		if completeState != "Success" && completeState != "Failed" && completeState != "Both" && completeState != "" {
+			return fmt.Errorf("completeState must be oneOf: Success, Failed, Both or empty")
+		}
+		if state != "IN_PROGRESS" && state != "FINISHED" && state != "ERROR" {
+			return fmt.Errorf("state must be oneOf IN_PROGRESS, FINISHED or ERROR")
+		}
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = operations.List(state)
+		if completeState == "Success" {
+			_, err = operations.List(state, operations.Success)
+		} else if completeState == "Failed" {
+			_, err = operations.List(state, operations.Failed)
+		} else {
+			_, err = operations.List(state, operations.Both)
+		}
 		return
 	},
 }
 
 var state string
+var completeState string
 
 func init() {
 
 	ListCmd.Flags().StringVarP(&state, "state", "s",
 		"", "filter by operation state: FINISHED, ERROR, IN_PROGRESS")
+	ListCmd.Flags().StringVarP(&completeState, "completeState", "c",
+		"", "filter by operation compeleted state: Success, Failed or Both")
 }

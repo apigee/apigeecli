@@ -16,7 +16,6 @@ package operations
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/url"
 	"path"
 
@@ -52,6 +51,14 @@ type progress struct {
 	PercentDone int    `json:"percentDone,omitempty"`
 }
 
+type OperationCompleteState string
+
+const (
+	Success OperationCompleteState = "Success"
+	Failed                         = "Failed"
+	Both                           = "Both"
+)
+
 //Get
 func Get(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
@@ -61,22 +68,21 @@ func Get(name string) (respBody []byte, err error) {
 }
 
 //List
-func List(state string) (respBody []byte, err error) {
+func List(state string, completeState OperationCompleteState) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "operations")
 	if state != "" {
-		apiclient.SetPrintOutput(false)
 		if respBody, err = apiclient.HttpClient(false, u.String()); err != nil {
 			return nil, err
 		}
-		return filterOperation(respBody, state)
+		return filterOperation(respBody, state, completeState)
 	}
 
 	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
 	return respBody, err
 }
 
-func filterOperation(respBody []byte, state string) (operationsRespBody []byte, err error) {
+func filterOperation(respBody []byte, state string, completeState OperationCompleteState) (operationsRespBody []byte, err error) {
 	operationsResponse := ops{}
 	filteredOperationsResponse := ops{}
 	if err = json.Unmarshal(respBody, &operationsResponse); err != nil {
@@ -85,8 +91,17 @@ func filterOperation(respBody []byte, state string) (operationsRespBody []byte, 
 
 	for _, operationResponse := range operationsResponse.Operations {
 		if operationResponse.Metadata.State == state {
-			fmt.Println(operationResponse.Metadata.State)
-			filteredOperationsResponse.Operations = append(filteredOperationsResponse.Operations, operationResponse)
+			if completeState == Both {
+				filteredOperationsResponse.Operations = append(filteredOperationsResponse.Operations, operationResponse)
+			} else if completeState == Success {
+				if operationResponse.Error == (operationError{}) {
+					filteredOperationsResponse.Operations = append(filteredOperationsResponse.Operations, operationResponse)
+				}
+			} else if completeState == Failed {
+				if operationResponse.Error != (operationError{}) {
+					filteredOperationsResponse.Operations = append(filteredOperationsResponse.Operations, operationResponse)
+				}
+			}
 		}
 	}
 
