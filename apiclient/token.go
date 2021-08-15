@@ -92,6 +92,7 @@ func generateAccessToken(privateKey string) (string, error) {
 
 	const tokenEndpoint = "https://oauth2.googleapis.com/token"
 	const grantType = "urn:ietf:params:oauth:grant-type:jwt-bearer"
+	var respBody []byte
 
 	//oAuthAccessToken is a structure to hold OAuth response
 	type oAuthAccessToken struct {
@@ -125,19 +126,32 @@ func generateAccessToken(privateKey string) (string, error) {
 		clilog.Error.Println("failed to generate oauth token: ", err)
 		return "", err
 	}
-	defer resp.Body.Close()
-	if resp.StatusCode != 200 {
-		bodyBytes, _ := ioutil.ReadAll(resp.Body)
-		clilog.Error.Println("error in response: ", string(bodyBytes))
-		return "", errors.New("error in response")
+
+	if resp != nil {
+		defer resp.Body.Close()
 	}
-	decoder := json.NewDecoder(resp.Body)
-	accessToken := oAuthAccessToken{}
-	if err := decoder.Decode(&accessToken); err != nil {
+
+	if resp == nil {
+		clilog.Error.Println("error in response: Response was null")
+		return "", errors.New("error in response: Response was null")
+	}
+
+	respBody, err = ioutil.ReadAll(resp.Body)
+	if err != nil {
 		clilog.Error.Println("error in response: ", err)
-		return "", errors.New("error in response")
+		return "", fmt.Errorf("error in response: ", err)
+	} else if resp.StatusCode > 399 {
+		clilog.Error.Printf("status code %d, error in response: %s\n", resp.StatusCode, string(respBody))
+		return "", fmt.Errorf("status code %d, error in response: %s\n", resp.StatusCode, string(respBody))
 	}
+
+	accessToken := oAuthAccessToken{}
+	if err = json.Unmarshal(respBody, &accessToken); err != nil {
+		return "", err
+	}
+
 	clilog.Info.Println("access token : ", accessToken)
+
 	SetApigeeToken(accessToken.AccessToken)
 	_ = WriteToken(accessToken.AccessToken)
 	return accessToken.AccessToken, nil

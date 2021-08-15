@@ -139,6 +139,10 @@ func writeXMLData(fileName string, data string) error {
 	return nil
 }
 
+func GenerateArchiveBundle(pathToZip, destinationPath string) error {
+	return archiveBundle(pathToZip, destinationPath)
+}
+
 func archiveBundle(pathToZip, destinationPath string) error {
 	destinationFile, err := os.Create(destinationPath)
 	if err != nil {
