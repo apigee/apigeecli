@@ -374,8 +374,9 @@ func batchExport(entities []sharedflow, entityType string, folder string, pwg *s
 
 	for _, entity := range entities {
 		//download only the last revision
-		lastRevision := len(entity.Revision)
-		go apiclient.FetchAsyncBundle(entityType, folder, entity.Name, entity.Revision[lastRevision-1], &bwg)
+		lastRevision := maxRevision(entity.Revision)
+		clilog.Info.Printf("Downloading revision %s of sharedflow %s\n", lastRevision, entity.Name)
+		go apiclient.FetchAsyncBundle(entityType, folder, entity.Name, lastRevision, &bwg)
 	}
 	bwg.Wait()
 }
@@ -411,4 +412,15 @@ func getRevisions(r map[string]bool) string {
 		arr = append(arr, s)
 	}
 	return strings.Join(arr, ",")
+}
+
+func maxRevision(revisionList []string) string {
+	max := 1
+	for i := 0; i < len(revisionList); i++ {
+		revisionInt, _ := strconv.Atoi(revisionList[i])
+		if max < revisionInt {
+			max = revisionInt
+		}
+	}
+	return strconv.Itoa(max)
 }
