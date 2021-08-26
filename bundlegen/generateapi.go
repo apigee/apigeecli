@@ -38,19 +38,19 @@ type pathDetailDef struct {
 
 var generateOAuthPolicy, generateAPIKeyPolicy bool
 
-var doc *openapi3.Swagger
+var doc *openapi3.T
 
 func LoadDocumentFromFile(filePath string, validate bool) (string, []byte, error) {
 	var err error
 	var jsonContent []byte
 
-	doc, err = openapi3.NewSwaggerLoader().LoadSwaggerFromFile(filePath)
+	doc, err = openapi3.NewLoader().LoadFromFile(filePath)
 	if err != nil {
 		return "", nil, err
 	}
 
 	if validate {
-		if err = doc.Validate(openapi3.NewSwaggerLoader().Context); err != nil {
+		if err = doc.Validate(openapi3.NewLoader().Context); err != nil {
 			return "", nil, err
 		}
 	}
@@ -76,13 +76,13 @@ func LoadDocumentFromURI(uri string, validate bool) (string, []byte, error) {
 		return "", nil, err
 	}
 
-	doc, err = openapi3.NewSwaggerLoader().LoadSwaggerFromURI(u)
+	doc, err = openapi3.NewLoader().LoadFromURI(u)
 	if err != nil {
 		return "", nil, err
 	}
 
 	if validate {
-		if err = doc.Validate(openapi3.NewSwaggerLoader().Context); err != nil {
+		if err = doc.Validate(openapi3.NewLoader().Context); err != nil {
 			return "", nil, err
 		}
 	}
@@ -165,7 +165,7 @@ func GenerateAPIProxyDefFromOAS(name string, oasDocName string, skipPolicy bool,
 	return nil
 }
 
-func GetEndpoint(doc *openapi3.Swagger) (u *url.URL, err error) {
+func GetEndpoint(doc *openapi3.T) (u *url.URL, err error) {
 	if doc.Servers == nil {
 		return nil, fmt.Errorf("at least one server must be present")
 	}
