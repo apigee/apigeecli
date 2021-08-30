@@ -15,6 +15,9 @@
 package apis
 
 import (
+	"fmt"
+	"os"
+
 	"github.com/spf13/cobra"
 	"github.com/srinandan/apigeecli/apiclient"
 	"github.com/srinandan/apigeecli/client/apis"
@@ -29,9 +32,14 @@ var ExpCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		return apis.ExportProxies(conn, folder)
+		if err = folderExists(folder); err != nil {
+			return err
+		}
+		return apis.ExportProxies(conn, folder, allRevisions)
 	},
 }
+
+var allRevisions bool
 
 func init() {
 
@@ -39,5 +47,17 @@ func init() {
 		4, "Number of connections")
 	ExpCmd.Flags().StringVarP(&folder, "folder", "f",
 		"", "folder to export API proxy bundles")
+	ExpCmd.Flags().BoolVarP(&allRevisions, "all", "",
+		false, "Export all proxy revisions")
+}
 
+func folderExists(folder string) (err error) {
+	if folder == "" {
+		return nil
+	}
+	_, err = os.Stat(folder)
+	if err != nil {
+		return fmt.Errorf("folder not found or write permission denied")
+	}
+	return nil
 }

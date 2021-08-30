@@ -60,7 +60,7 @@ var ExportCmd = &cobra.Command{
 		clilog.Warning.Println("Calls to Apigee APIs have a quota of 6000 per min. Running this tool against large list of entities can exhaust that quota and impact the usage of the platform.")
 
 		fmt.Println("Exporting API Proxies...")
-		if err = apis.ExportProxies(conn, proxiesFolderName); err != nil {
+		if err = apis.ExportProxies(conn, proxiesFolderName, allRevisions); err != nil {
 			return err
 		}
 
@@ -171,12 +171,16 @@ var ExportCmd = &cobra.Command{
 	},
 }
 
+var allRevisions bool
+
 func init() {
 
 	ExportCmd.Flags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
 	ExportCmd.Flags().IntVarP(&conn, "conn", "c",
 		4, "Number of connections")
+	ExportCmd.Flags().BoolVarP(&allRevisions, "all", "",
+		false, "Expose all revisions")
 }
 
 func createFolders() (err error) {
