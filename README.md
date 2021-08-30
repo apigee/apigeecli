@@ -1,6 +1,5 @@
 # apigeecli
 
-[![TravisCI](https://travis-ci.org/srinandan/apigeecli.svg?branch=master)](https://travis-ci.org/srinandan/apigeecli)
 [![Go Report Card](https://goreportcard.com/badge/github.com/srinandan/apigeecli)](https://goreportcard.com/report/github.com/srinandan/apigeecli)
 [![GitHub release](https://img.shields.io/github/v/release/srinandan/apigeecli)](https://github.com/srinandan/apigeecli/releases)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
