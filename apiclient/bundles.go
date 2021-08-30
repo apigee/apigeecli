@@ -208,7 +208,9 @@ func FetchBundle(entityType string, folder string, name string, revision string)
 	u.RawQuery = q.Encode()
 	u.Path = path.Join(u.Path, GetApigeeOrg(), entityType, name, "revisions", revision)
 
-	err := DownloadResource(u.String(), name, ".zip")
+	proxyName := name + "_" + revision
+
+	err := DownloadResource(u.String(), proxyName, ".zip")
 	if err != nil {
 		clilog.Error.Fatalf("error with entity: %s", name)
 		clilog.Error.Println(err)
@@ -216,7 +218,7 @@ func FetchBundle(entityType string, folder string, name string, revision string)
 	}
 
 	if len(folder) > 0 {
-		_ = os.Rename(name+".zip", path.Join(folder, name+".zip"))
+		_ = os.Rename(proxyName+".zip", path.Join(folder, proxyName+".zip"))
 	}
 
 	return nil
