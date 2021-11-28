@@ -78,6 +78,10 @@ func CreateIAMServiceAccount(name string, iamRole string) (err error) {
 		role = "roles/apigee.synchronizerManager"
 	case "analytics":
 		role = "roles/apigee.analyticsAgent"
+	case "analyticsAgent":
+		role = "roles/apigee.analyticsAgent"
+	case "analyticsViewer":
+		role = "roles/apigee.analyticsViewer"
 	case "metric":
 		role = "roles/monitoring.metricWriter"
 	case "logger":
@@ -222,6 +226,10 @@ func SetIAMPermission(memberName string, iamRole string, memberType string) (err
 	case "sync":
 		role = "roles/apigee.synchronizerManager"
 	case "analytics":
+		role = "roles/apigee.analyticsAgent"
+	case "analyticsViewer":
+		role = "roles/apigee.analyticsViewer"
+	case "analyticsAgent":
 		role = "roles/apigee.analyticsAgent"
 	case "deploy":
 		role = "roles/apigee.deployer"

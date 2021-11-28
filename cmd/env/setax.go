@@ -28,15 +28,18 @@ var SetAxCmd = &cobra.Command{
 	Short: "Set Analytics Agent role for a member on an environment",
 	Long:  "Set Analytics Agent role for a member an Environment",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		if role != "analyticsAgent" && role != "analyticsViewer" {
+			return fmt.Errorf("invalid memberRole. Member role must be analyticsViewer or analyticsAgent")
+		}
 		apiclient.SetApigeeEnv(environment)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		err = environments.SetIAM(memberName, "analytics", memberType)
+		err = environments.SetIAM(memberName, role, memberType)
 		if err != nil {
 			return err
 		}
-		fmt.Printf("Member %s granted access to Apigee Analytics Viewer role\n", memberName)
+		fmt.Printf("Member %s granted access to %s role\n", memberName, role)
 		return nil
 	},
 }
@@ -47,6 +50,7 @@ func init() {
 		"", "Member Name, example Service Account Name")
 	SetAxCmd.Flags().StringVarP(&memberType, "memberType", "m",
 		"serviceAccount", "memberType must be serviceAccount, user or group")
-
+	SetAxCmd.Flags().StringVarP(&role, "memberRole", "r",
+		"analyticsAgent", "memberRole must be analyticsViewer or analyticsAgent")
 	_ = SetAxCmd.MarkFlagRequired("name")
 }
