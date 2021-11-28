@@ -1,0 +1,21 @@
+{
+  "operationConfigs": [
+    {
+      "apiSource": "customers.apps.svc.cluster.local:8080",
+      "operations": [
+        {
+          "resource": "/",
+          "methods": [
+            "GET"
+          ]
+        }
+      ],
+      "quota": {
+        "limit": "10",
+        "interval": "1",
+        "timeUnit": "minute"
+      }
+    }
+  ],
+  "operationConfigType": "remoteservice"
+}
