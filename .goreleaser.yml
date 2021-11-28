@@ -47,6 +47,9 @@ builds:
     binary: apigeecli
     goos:
       - windows
+    ignore:
+      - goos: windows
+        goarch: arm64      
     flags:
     - -trimpath
     ldflags:
@@ -84,6 +87,8 @@ dockers:
     image_templates:
     - "docker.io/nandanks/apigeecli:{{ .Tag }}"
     dockerfile: Dockerfile
+    use: buildpacks
+
 brews:
   - tap:
       owner: srinandan
