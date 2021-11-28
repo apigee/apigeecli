@@ -52,13 +52,17 @@ func CreateProxy(name string, proxy string) (respBody []byte, err error) {
 }
 
 //DeleteProxy
-func DeleteProxy(name string, revision int) (respBody []byte, err error) {
+func DeleteProxy(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
-	if revision != -1 {
-		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apis", name)
-	} else {
-		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apis", name, "revisions", strconv.Itoa(revision))
-	}
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apis", name)
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "", "DELETE")
+	return respBody, err
+}
+
+//DeleteProxyRevision
+func DeleteProxyRevision(name string, revision int) (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.BaseURL)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apis", name, "revisions", strconv.Itoa(revision))
 	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "", "DELETE")
 	return respBody, err
 }
@@ -97,6 +101,27 @@ func GetProxy(name string, revision int) (respBody []byte, err error) {
 	} else {
 		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apis", name)
 	}
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	return respBody, err
+}
+
+//GenerateDeployChangeReport
+func GenerateDeployChangeReport(name string, revision int, overrides bool) (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.BaseURL)
+	if apiclient.GetApigeeEnv() == "" {
+		return respBody, fmt.Errorf("environment name missing")
+	}
+
+	if overrides {
+		q := u.Query()
+		if overrides {
+			q.Set("override", "true")
+		}
+		u.RawQuery = q.Encode()
+	}
+
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "apis", name, "revisions",
+		strconv.Itoa(revision), "deployments:generateDeployChangeReport")
 	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
 	return respBody, err
 }
@@ -243,7 +268,7 @@ func CleanProxy(name string, reportOnly bool, keepList []string) (err error) {
 						return err
 					}
 					fmt.Println("Deleting revision: " + proxyRevision)
-					if _, err = DeleteProxy(name, revision); err != nil {
+					if _, err = DeleteProxyRevision(name, revision); err != nil {
 						return err
 					}
 				}
