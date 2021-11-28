@@ -134,12 +134,33 @@ var ImportCmd = &cobra.Command{
 					}
 				}
 			}
+
+			if importDebugmask {
+				if isFileExists(path.Join(folder, environment+debugmaskFileName)) {
+					fmt.Println("\tImporting Debug Mask configuration...")
+					debugMask, _ := readEntityFileAsString(path.Join(folder, environment+debugmaskFileName))
+					if _, err = env.SetDebug(debugMask); err != nil {
+						return err
+					}
+				}
+			}
+
+			if importTrace {
+				if isFileExists(path.Join(folder, environment+tracecfgFileName)) {
+					fmt.Println("\tImporting Trace configuration...")
+					traceCfg, _ := readEntityFileAsString(path.Join(folder, environment+tracecfgFileName))
+					if _, err = env.ImportTraceConfig(traceCfg); err != nil {
+						return err
+					}
+				}
+			}
 		}
 
 		return err
 	},
 }
 
+var importTrace, importDebugmask bool
 var folder string
 
 func init() {
@@ -150,6 +171,10 @@ func init() {
 		4, "Number of connections")
 	ImportCmd.Flags().StringVarP(&folder, "folder", "f",
 		"", "folder containing API proxy bundles")
+	ImportCmd.Flags().BoolVarP(&importTrace, "importTrace", "",
+		false, "Import distributed trace configuration; default false")
+	ImportCmd.Flags().BoolVarP(&importDebugmask, "importDebugmask", "",
+		false, "Import debugmask configuration; default false")
 
 	_ = ImportCmd.MarkFlagRequired("folder")
 }
@@ -182,4 +207,20 @@ func readEntityFile(filePath string) ([]string, error) {
 	}
 
 	return entities, nil
+}
+
+func readEntityFileAsString(filePath string) (string, error) {
+	jsonFile, err := os.Open(filePath)
+	if err != nil {
+		return "", err
+	}
+
+	defer jsonFile.Close()
+
+	byteValue, err := ioutil.ReadAll(jsonFile)
+	if err != nil {
+		return "", err
+	}
+
+	return string(byteValue[:]), nil
 }

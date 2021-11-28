@@ -69,6 +69,13 @@ func UpdateTraceConfig(exporter string, endpoint string, sampler string, sample_
 	return respBody, err
 }
 
+func ImportTraceConfig(payload string) (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.BaseURL)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "traceConfig")
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload, "PATCH")
+	return respBody, err
+}
+
 func DisableTraceConfig() (respBody []byte, err error) {
 
 	var traceRespBody []byte
