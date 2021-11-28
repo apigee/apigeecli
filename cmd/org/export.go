@@ -165,6 +165,23 @@ var ExportCmd = &cobra.Command{
 			if err = apiclient.WriteByteArrayToFile(environment+"_"+kVMFileName, false, respBody); err != nil {
 				return err
 			}
+
+			fmt.Println("\tExporting debugmask configuration...")
+			if respBody, err = env.GetDebug(); err != nil {
+				return err
+			}
+			if err = apiclient.WriteByteArrayToFile(environment+debugmaskFileName, false, respBody); err != nil {
+				return err
+			}
+
+			fmt.Println("\tExporting traceconfig...")
+			if respBody, err = env.GetTraceConfig(); err != nil {
+				return err
+			}
+			if err = apiclient.WriteByteArrayToFile(environment+tracecfgFileName, false, respBody); err != nil {
+				return err
+			}
+
 		}
 
 		return
