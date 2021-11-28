@@ -138,8 +138,13 @@ func List() (respBody []byte, err error) {
 }
 
 //GetDeployedIngressConfig
-func GetDeployedIngressConfig() (respBody []byte, err error) {
+func GetDeployedIngressConfig(view bool) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
+	if view {
+		q := u.Query()
+		q.Set("view", "full")
+		u.RawQuery = q.Encode()
+	}
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "deployedIngressConfig")
 	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
 	return respBody, err

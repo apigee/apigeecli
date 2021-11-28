@@ -29,12 +29,16 @@ var IngressCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = orgs.GetDeployedIngressConfig()
+		_, err = orgs.GetDeployedIngressConfig(view)
 		return
 	},
 }
 
+var view bool
+
 func init() {
 	IngressCmd.Flags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
+	IngressCmd.Flags().BoolVarP(&view, "full", "",
+		false, "View full details")
 }
