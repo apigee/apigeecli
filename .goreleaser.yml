@@ -80,14 +80,15 @@ signs:
 release:
   draft: true
   prerelease: true
-dockers:
-  -
-    goos: linux
-    goarch: amd64
-    image_templates:
-    - "docker.io/nandanks/apigeecli:{{ .Tag }}"
-    dockerfile: Dockerfile
-    use: buildpacks
+# dockers:
+#   -
+#     goos: linux
+#     goarch: amd64
+#     image_templates:
+#     - "gcr.io/nandanks/apigeecli:{{ .Tag }}"
+#     dockerfile: Dockerfile
+#     skip_push: true
+#     use: buildpacks
 
 brews:
   - tap:
