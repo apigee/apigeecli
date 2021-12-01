@@ -3,7 +3,7 @@ module github.com/srinandan/apigeecli
 go 1.16
 
 require (
-	github.com/getkin/kin-openapi v0.74.0
+	github.com/getkin/kin-openapi v0.83.0
 	github.com/ghodss/yaml v1.0.0
 	github.com/lestrrat-go/jwx v1.0.1
 	github.com/lestrrat/go-jwx v0.0.0-20210302221443-a9d01c1b7121
