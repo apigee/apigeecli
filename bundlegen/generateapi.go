@@ -40,13 +40,20 @@ var generateOAuthPolicy, generateAPIKeyPolicy bool
 
 var doc *openapi3.T
 
-func LoadDocumentFromFile(filePath string, validate bool) (string, []byte, error) {
+func LoadDocumentFromFile(filePath string, validate bool, formatValidation bool) (string, []byte, error) {
 	var err error
 	var jsonContent []byte
 
 	doc, err = openapi3.NewLoader().LoadFromFile(filePath)
 	if err != nil {
 		return "", nil, err
+	}
+
+	//add custom string definitions
+	openapi3.DefineStringFormat("uuid", openapi3.FormatOfStringForUUIDOfRFC4122)
+
+	if !formatValidation {
+		openapi3.SchemaFormatValidationDisabled = true
 	}
 
 	if validate {
@@ -67,7 +74,7 @@ func LoadDocumentFromFile(filePath string, validate bool) (string, []byte, error
 	}
 }
 
-func LoadDocumentFromURI(uri string, validate bool) (string, []byte, error) {
+func LoadDocumentFromURI(uri string, validate bool, formatValidation bool) (string, []byte, error) {
 	var err error
 	var jsonContent []byte
 
@@ -79,6 +86,13 @@ func LoadDocumentFromURI(uri string, validate bool) (string, []byte, error) {
 	doc, err = openapi3.NewLoader().LoadFromURI(u)
 	if err != nil {
 		return "", nil, err
+	}
+
+	//add custom string definitions
+	openapi3.DefineStringFormat("uuid", openapi3.FormatOfStringForUUIDOfRFC4122)
+
+	if !formatValidation {
+		openapi3.SchemaFormatValidationDisabled = true
 	}
 
 	if validate {
