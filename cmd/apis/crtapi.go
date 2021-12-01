@@ -55,9 +55,9 @@ var CreateCmd = &cobra.Command{
 			var content []byte
 			var oasDocName string
 			if oasFile != "" {
-				oasDocName, content, err = bundle.LoadDocumentFromFile(oasFile, validateSpec)
+				oasDocName, content, err = bundle.LoadDocumentFromFile(oasFile, validateSpec, formatValidation)
 			} else {
-				oasDocName, content, err = bundle.LoadDocumentFromURI(oasURI, validateSpec)
+				oasDocName, content, err = bundle.LoadDocumentFromURI(oasURI, validateSpec, formatValidation)
 			}
 			if err != nil {
 				return err
@@ -86,7 +86,7 @@ var CreateCmd = &cobra.Command{
 }
 
 var proxy, oasFile, oasURI, gqlFile, gqlURI string
-var importProxy, validateSpec, skipPolicy, addCORS bool
+var importProxy, validateSpec, skipPolicy, addCORS, formatValidation bool
 
 func init() {
 
@@ -106,6 +106,8 @@ func init() {
 		false, "Skip adding the OAS Validate policy")
 	CreateCmd.Flags().BoolVarP(&addCORS, "add-cors", "",
 		false, "Add a CORS policy")
+	CreateCmd.Flags().BoolVarP(&formatValidation, "formatValidation", "",
+		true, "disables validation of schema type formats")
 
 	_ = CreateCmd.MarkFlagRequired("name")
 }
