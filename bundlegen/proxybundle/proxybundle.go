@@ -16,20 +16,31 @@ package proxybundle
 
 import (
 	"archive/zip"
+	"context"
+	"errors"
+	"fmt"
 	"io"
+	"net/http"
 	"os"
+	"path"
 	"path/filepath"
+	"regexp"
 	"strings"
 
+	"github.com/google/go-github/github"
 	genapi "github.com/srinandan/apigeecli/bundlegen"
 	apiproxy "github.com/srinandan/apigeecli/bundlegen/apiproxydef"
 	policies "github.com/srinandan/apigeecli/bundlegen/policies"
 	proxies "github.com/srinandan/apigeecli/bundlegen/proxies"
 	target "github.com/srinandan/apigeecli/bundlegen/targetendpoint"
+	"github.com/srinandan/apigeecli/clilog"
+	"golang.org/x/oauth2"
 )
 
+const rootDir = "apiproxy"
+
 func GenerateAPIProxyBundle(name string, content string, fileName string, resourceType string, skipPolicy bool, addCORS bool) (err error) {
-	const rootDir = "apiproxy"
+
 	var apiProxyData, proxyEndpointData, targetEndpointData string
 
 	if err = os.Mkdir(rootDir, os.ModePerm); err != nil {
@@ -143,21 +154,27 @@ func GenerateArchiveBundle(pathToZip, destinationPath string) error {
 	return archiveBundle(pathToZip, destinationPath)
 }
 
-func archiveBundle(pathToZip, destinationPath string) error {
-	destinationFile, err := os.Create(destinationPath)
+func archiveBundle(pathToZip, destinationPath string) (err error) {
+
+	var destinationFile *os.File
+
+	destinationFile, err = os.Create(destinationPath)
 	if err != nil {
 		return err
 	}
+
 	myZip := zip.NewWriter(destinationFile)
 	err = filepath.Walk(pathToZip, func(filePath string, info os.FileInfo, err error) error {
 		if info.IsDir() {
-			return nil
+			relPath := strings.TrimPrefix(filePath, filepath.Dir(pathToZip))
+			_, err = myZip.Create(strings.TrimPrefix(relPath, "/") + "/")
+			return err
 		}
 		if err != nil {
 			return err
 		}
 		relPath := strings.TrimPrefix(filePath, filepath.Dir(pathToZip))
-		zipFile, err := myZip.Create(relPath)
+		zipFile, err := myZip.Create(strings.TrimPrefix(relPath, "/"))
 		if err != nil {
 			return err
 		}
@@ -178,5 +195,140 @@ func archiveBundle(pathToZip, destinationPath string) error {
 	if err != nil {
 		return err
 	}
+	return nil
+}
+
+func GitHubImportBundle(owner string, repo string, repopath string) (err error) {
+
+	//clean up any files or folders
+	CleanUp()
+	os.RemoveAll(rootDir)
+
+	//
+	token := os.Getenv("GITHUB_TOKEN")
+	ctx := context.Background()
+	ts := oauth2.StaticTokenSource(&oauth2.Token{AccessToken: token})
+	tc := oauth2.NewClient(ctx, ts)
+	client := github.NewClient(tc)
+
+	//1. download the proxy
+	if err := downloadProxyFromRepo(client, ctx, owner, repo, repopath); err != nil {
+		return err
+	}
+
+	if client != nil {
+		fmt.Println("")
+	}
+
+	//2. compress the proxy folder
+	curDir, _ := os.Getwd()
+	if err := archiveBundle(path.Join(curDir, rootDir), path.Join(curDir, rootDir+".zip")); err != nil {
+		return err
+	}
+
+	defer os.RemoveAll(rootDir) // clean up
+	return err
+}
+
+func CleanUp() {
+	if _, err := os.Stat(rootDir + ".zip"); err == nil {
+		_ = os.Remove(rootDir + ".zip")
+	}
+}
+
+func downloadProxyFromRepo(client *github.Client, ctx context.Context, owner string, repo string, repopath string) (err error) {
+
+	var fileContent *github.RepositoryContent
+	var directoryContents []*github.RepositoryContent
+
+	if fileContent, directoryContents, _, err = client.Repositories.GetContents(ctx, owner, repo, repopath, nil); err != nil {
+		return err
+	}
+
+	if fileContent != nil {
+		if err = downloadResource(*fileContent.Path, *fileContent.DownloadURL); err != nil {
+			return err
+		}
+	}
+
+	if len(directoryContents) > 0 {
+		for _, directoryContent := range directoryContents {
+			if *directoryContent.Type == "dir" {
+				if err = downloadProxyFromRepo(client, ctx, owner, repo, path.Join(repopath, *directoryContent.Name)); err != nil {
+					return err
+				}
+			} else if *directoryContent.Type == "file" {
+				if err = downloadResource(*directoryContent.Path, *directoryContent.DownloadURL); err != nil {
+					return err
+				}
+			}
+		}
+	}
+	return nil
+}
+
+func getApiProxyFolder(repoPath string) (apiProxyFolder string, apiProxyFile string) {
+	re := regexp.MustCompile(`(\S*)?(\/?)apiproxy`)
+
+	apiProxyFileBytes := re.ReplaceAll([]byte(repoPath), []byte(rootDir))
+	apiProxyFile = string(apiProxyFileBytes)
+
+	apiProxyFolder = filepath.Dir(apiProxyFile)
+	return apiProxyFolder, apiProxyFile
+}
+
+//downloadResource method is used to download resources, proxy bundles, sharedflows
+func downloadResource(repoPath string, url string) (err error) {
+
+	var apiproxyFolder, apiproxyFile string
+
+	if apiproxyFolder, apiproxyFile = getApiProxyFolder(repoPath); err != nil {
+		return err
+	}
+
+	_ = os.MkdirAll(apiproxyFolder, 0755)
+
+	out, err := os.Create(apiproxyFile)
+	if err != nil {
+		clilog.Info.Println("error creating file: ", err)
+		return err
+	}
+	defer out.Close()
+
+	client := &http.Client{}
+
+	clilog.Info.Println("Connecting to : ", url)
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		clilog.Info.Println("error in client: ", err)
+		return err
+	}
+
+	resp, err := client.Do(req)
+
+	if err != nil {
+		clilog.Info.Println("error connecting: ", err)
+		return err
+	} else if resp.StatusCode > 299 {
+		clilog.Info.Println("error in response: ", resp.Body)
+		return errors.New("error in response")
+	}
+
+	if resp != nil {
+		defer resp.Body.Close()
+	}
+
+	if resp == nil {
+		clilog.Info.Println("error in response: Response was null")
+		return fmt.Errorf("error in response: Response was null")
+	}
+
+	_, err = io.Copy(out, resp.Body)
+	if err != nil {
+		clilog.Info.Println("error writing response to file: ", err)
+		return err
+	}
+
+	clilog.Info.Println("Resource " + apiproxyFolder + " completed")
 	return nil
 }

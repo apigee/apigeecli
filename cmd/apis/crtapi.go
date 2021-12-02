@@ -16,6 +16,8 @@ package apis
 
 import (
 	"fmt"
+	"os"
+	"regexp"
 
 	"github.com/spf13/cobra"
 	"github.com/srinandan/apigeecli/apiclient"
@@ -30,12 +32,17 @@ var CreateCmd = &cobra.Command{
 	Short: "Creates an API proxy in an Apigee Org",
 	Long:  "Creates an API proxy in an Apigee Org",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		if proxy != "" && (oasFile != "" || oasURI != "") {
-			return fmt.Errorf("Importing a bundle (--proxy) cannot be combined with importing via an OAS file")
+
+		if useGitHub, err = gitHubValidations(); err != nil {
+			return err
 		}
 
-		if proxy != "" && (gqlFile != "" || gqlURI != "") {
-			return fmt.Errorf("Importing a bundle (--proxy) cannot be combined with importing via an GraphQL file")
+		if proxy != "" && (oasFile != "" || oasURI != "" || useGitHub) {
+			return fmt.Errorf("Importing a bundle (--proxy) cannot be combined with importing via an OAS file or GitHub import")
+		}
+
+		if proxy != "" && (gqlFile != "" || gqlURI != "" || useGitHub) {
+			return fmt.Errorf("Importing a bundle (--proxy) cannot be combined with importing via an GraphQL file or GitHub import")
 		}
 
 		if oasFile != "" && oasURI != "" {
@@ -46,10 +53,27 @@ var CreateCmd = &cobra.Command{
 			return fmt.Errorf("Cannot combine importing a GraphQL schema through a file and URI")
 		}
 
+		if useGitHub && (oasFile != "" || oasURI != "") {
+			return fmt.Errorf("Cannot combine importing via OAS document and Github")
+		}
+
+		if useGitHub && (gqlFile != "" || gqlURI != "") {
+			return fmt.Errorf("Cannot combine importing via GraphQL schema and Github")
+		}
+
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		if proxy != "" {
+
+		if useGitHub {
+			if err = proxybundle.GitHubImportBundle(ghOwner, ghRepo, ghPath); err != nil {
+				proxybundle.CleanUp()
+				return err
+			}
+			_, err = apis.CreateProxy(name, bundleName)
+			proxybundle.CleanUp()
+			return err
+		} else if proxy != "" {
 			_, err = apis.CreateProxy(name, proxy)
 		} else if oasFile != "" || oasURI != "" {
 			var content []byte
@@ -85,8 +109,11 @@ var CreateCmd = &cobra.Command{
 	},
 }
 
+const bundleName = "apiproxy.zip"
+
 var proxy, oasFile, oasURI, gqlFile, gqlURI string
-var importProxy, validateSpec, skipPolicy, addCORS bool
+var ghOwner, ghRepo, ghPath string
+var importProxy, validateSpec, skipPolicy, addCORS, useGitHub bool
 
 func init() {
 
@@ -106,6 +133,47 @@ func init() {
 		false, "Skip adding the OAS Validate policy")
 	CreateCmd.Flags().BoolVarP(&addCORS, "add-cors", "",
 		false, "Add a CORS policy")
+	CreateCmd.Flags().StringVarP(&ghOwner, "gh-owner", "",
+		"", "The github organization or username. ex: In https://github.com/srinandan, srinandan is the user")
+	CreateCmd.Flags().StringVarP(&ghRepo, "gh-repo", "",
+		"", "The github repo name. ex: https://github.com/srinandan/sample-apps, sample-apps is the repo")
+	CreateCmd.Flags().StringVarP(&ghPath, "gh-proxy-path", "",
+		"", "The path in the repo to the apiproxy folder. ex: my-repo/apiproxy")
 
 	_ = CreateCmd.MarkFlagRequired("name")
+}
+
+func gitHubValidations() (bool, error) {
+
+	if ghOwner == "" && ghRepo == "" && ghPath == "" {
+		return false, nil
+	}
+
+	if ghOwner == "" && (ghRepo != "" || ghPath != "") {
+		return false, fmt.Errorf("GitHub Owner must be set along with GitHub Repo and GitHub path")
+	}
+
+	if ghRepo == "" && (ghOwner != "" || ghPath != "") {
+		return false, fmt.Errorf("GitHub repo must be set along with GitHub owner and GitHub path")
+	}
+
+	if ghPath == "" && (ghRepo != "" || ghOwner != "") {
+		return false, fmt.Errorf("GitHub path must be set along with GitHub Repo and GitHub owner")
+	}
+
+	if os.Getenv("GITHUB_TOKEN") == "" {
+		return false, fmt.Errorf("Github access token must be set with this feature")
+	}
+
+	//(\w+)?\/apiproxy$
+	re := regexp.MustCompile(`(\w+)?\/apiproxy$`)
+	if ok := re.Match([]byte(ghPath)); !ok {
+		return false, fmt.Errorf("Github path must end with /apiproxy")
+	}
+
+	if ghOwner != "" {
+		return true, nil
+	}
+
+	return false, nil
 }
