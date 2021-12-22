@@ -193,22 +193,28 @@ func ClearEntityPayloadList() {
 }
 
 //FetchAsyncBundle can download a shared flow or a proxy bundle
-func FetchAsyncBundle(entityType string, folder string, name string, revision string, wg *sync.WaitGroup) {
+func FetchAsyncBundle(entityType string, folder string, name string, revision string, allRevisions bool, wg *sync.WaitGroup) {
 	//this method is meant to be called asynchronously
 	defer wg.Done()
 
-	_ = FetchBundle(entityType, folder, name, revision)
+	_ = FetchBundle(entityType, folder, name, revision, allRevisions)
 }
 
 //FetchBundle can download a shared flow or proxy bundle
-func FetchBundle(entityType string, folder string, name string, revision string) error {
+func FetchBundle(entityType string, folder string, name string, revision string, allRevisions bool) error {
+	var proxyName string
+
 	u, _ := url.Parse(BaseURL)
 	q := u.Query()
 	q.Set("format", "bundle")
 	u.RawQuery = q.Encode()
 	u.Path = path.Join(u.Path, GetApigeeOrg(), entityType, name, "revisions", revision)
 
-	proxyName := name + "_" + revision
+	if allRevisions {
+		proxyName = name + "_" + revision
+	} else {
+		proxyName = name
+	}
 
 	err := DownloadResource(u.String(), proxyName, ".zip")
 	if err != nil {

@@ -113,7 +113,7 @@ const bundleName = "apiproxy.zip"
 
 var proxy, oasFile, oasURI, gqlFile, gqlURI string
 var ghOwner, ghRepo, ghPath string
-var importProxy, validateSpec, skipPolicy, addCORS, useGitHub bool
+var importProxy, validateSpec, skipPolicy, addCORS, useGitHub, formatValidation bool
 
 func init() {
 

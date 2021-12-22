@@ -90,7 +90,7 @@ func DeployProxy(name string, revision int, overrides bool, serviceAccountName s
 
 //FetchProxy
 func FetchProxy(name string, revision int) (err error) {
-	return apiclient.FetchBundle("apis", "", name, strconv.Itoa(revision))
+	return apiclient.FetchBundle("apis", "", name, strconv.Itoa(revision), true)
 }
 
 //GetProxy
@@ -410,13 +410,13 @@ func batchExport(entities []proxy, entityType string, folder string, allRevision
 			//download only the last revision
 			lastRevision := maxRevision(entity.Revision)
 			clilog.Info.Printf("Downloading revision %s of proxy %s\n", lastRevision, entity.Name)
-			go apiclient.FetchAsyncBundle(entityType, folder, entity.Name, lastRevision, &bwg)
+			go apiclient.FetchAsyncBundle(entityType, folder, entity.Name, lastRevision, allRevisions, &bwg)
 		} else {
 			//download all revisions
 			if len(entity.Revision) == 1 {
 				lastRevision := maxRevision(entity.Revision)
 				clilog.Info.Printf("Downloading revision %s of proxy %s\n", lastRevision, entity.Name)
-				apiclient.FetchAsyncBundle(entityType, folder, entity.Name, lastRevision, &bwg)
+				apiclient.FetchAsyncBundle(entityType, folder, entity.Name, lastRevision, allRevisions, &bwg)
 			} else {
 
 				numRevisions := len(entity.Revision)
@@ -456,7 +456,7 @@ func batchExportRevisions(entityType string, folder string, name string, revisio
 
 	for _, revision := range revisions {
 		clilog.Info.Printf("Exporting proxy %s revision %s\n", name, revision)
-		go apiclient.FetchAsyncBundle(entityType, folder, name, revision, &brwg)
+		go apiclient.FetchAsyncBundle(entityType, folder, name, revision, true, &brwg)
 	}
 	brwg.Wait()
 }

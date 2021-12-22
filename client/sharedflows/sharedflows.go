@@ -254,7 +254,7 @@ func Undeploy(name string, revision int) (respBody []byte, err error) {
 
 //Fetch
 func Fetch(name string, revision int) (err error) {
-	return apiclient.FetchBundle("sharedflows", "", name, strconv.Itoa(revision))
+	return apiclient.FetchBundle("sharedflows", "", name, strconv.Itoa(revision), true)
 }
 
 //Export
@@ -376,7 +376,7 @@ func batchExport(entities []sharedflow, entityType string, folder string, pwg *s
 		//download only the last revision
 		lastRevision := maxRevision(entity.Revision)
 		clilog.Info.Printf("Downloading revision %s of sharedflow %s\n", lastRevision, entity.Name)
-		go apiclient.FetchAsyncBundle(entityType, folder, entity.Name, lastRevision, &bwg)
+		go apiclient.FetchAsyncBundle(entityType, folder, entity.Name, lastRevision, true, &bwg)
 	}
 	bwg.Wait()
 }
