@@ -416,7 +416,7 @@ func batchExport(entities []proxy, entityType string, folder string, allRevision
 			if len(entity.Revision) == 1 {
 				lastRevision := maxRevision(entity.Revision)
 				clilog.Info.Printf("Downloading revision %s of proxy %s\n", lastRevision, entity.Name)
-				apiclient.FetchAsyncBundle(entityType, folder, entity.Name, lastRevision, allRevisions, &bwg)
+				go apiclient.FetchAsyncBundle(entityType, folder, entity.Name, lastRevision, allRevisions, &bwg)
 			} else {
 
 				numRevisions := len(entity.Revision)
