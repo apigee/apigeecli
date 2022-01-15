@@ -18,6 +18,7 @@ import (
 	"archive/zip"
 	"bytes"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"net/url"
 	"os"
@@ -272,5 +273,16 @@ func ImportBundle(entityType string, name string, bundlePath string) error {
 	}
 
 	clilog.Info.Printf("Completed entity: %s", u.String())
+	return nil
+}
+
+func FolderExists(folder string) (err error) {
+	if folder == "" {
+		return nil
+	}
+	_, err = os.Stat(folder)
+	if err != nil {
+		return fmt.Errorf("folder not found or write permission denied")
+	}
 	return nil
 }

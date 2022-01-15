@@ -30,9 +30,14 @@ var ExpCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		return sharedflows.Export(conn, folder)
+		if err = apiclient.FolderExists(folder); err != nil {
+			return err
+		}
+		return sharedflows.Export(conn, folder, allRevisions)
 	},
 }
+
+var allRevisions bool
 
 func init() {
 
@@ -40,4 +45,6 @@ func init() {
 		4, "Number of connections")
 	ExpCmd.Flags().StringVarP(&folder, "folder", "f",
 		"", "folder to export sharedflow bundles")
+	ExpCmd.Flags().BoolVarP(&allRevisions, "all", "",
+		false, "Export all proxy revisions")
 }

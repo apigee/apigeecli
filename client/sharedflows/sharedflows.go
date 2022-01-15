@@ -258,7 +258,7 @@ func Fetch(name string, revision int) (err error) {
 }
 
 //Export
-func Export(conn int, folder string) (err error) {
+func Export(conn int, folder string, allRevisions bool) (err error) {
 	//parent workgroup
 	var pwg sync.WaitGroup
 	const entityType = "sharedflows"
@@ -298,7 +298,7 @@ func Export(conn int, folder string) (err error) {
 		pwg.Add(1)
 		end = (i * conn) + conn
 		clilog.Info.Printf("Exporting batch %d of proxies\n", (i + 1))
-		go batchExport(entities.Proxies[start:end], entityType, folder, &pwg)
+		go batchExport(entities.Proxies[start:end], entityType, folder, allRevisions, &pwg)
 		start = end
 		pwg.Wait()
 	}
@@ -306,7 +306,7 @@ func Export(conn int, folder string) (err error) {
 	if remaining > 0 {
 		pwg.Add(1)
 		clilog.Info.Printf("Exporting remaining %d proxies\n", remaining)
-		go batchExport(entities.Proxies[start:numEntities], entityType, folder, &pwg)
+		go batchExport(entities.Proxies[start:numEntities], entityType, folder, allRevisions, &pwg)
 		pwg.Wait()
 	}
 
@@ -365,20 +365,72 @@ func Import(conn int, folder string) error {
 	return nil
 }
 
-func batchExport(entities []sharedflow, entityType string, folder string, pwg *sync.WaitGroup) {
+func batchExport(entities []sharedflow, entityType string, folder string, allRevisions bool, pwg *sync.WaitGroup) {
 	defer pwg.Done()
 	//batch workgroup
 	var bwg sync.WaitGroup
+	//proxy revision wait group
+	var prwg sync.WaitGroup
+	//number of revisions to download concurrently
+	conn := 2
 
-	bwg.Add(len(entities))
+	numSharedFlows := len(entities)
+	bwg.Add(numSharedFlows)
 
 	for _, entity := range entities {
-		//download only the last revision
-		lastRevision := maxRevision(entity.Revision)
-		clilog.Info.Printf("Downloading revision %s of sharedflow %s\n", lastRevision, entity.Name)
-		go apiclient.FetchAsyncBundle(entityType, folder, entity.Name, lastRevision, true, &bwg)
+		if !allRevisions {
+			//download only the last revision
+			lastRevision := maxRevision(entity.Revision)
+			clilog.Info.Printf("Downloading revision %s of sharedflow %s\n", lastRevision, entity.Name)
+			go apiclient.FetchAsyncBundle(entityType, folder, entity.Name, lastRevision, allRevisions, &bwg)
+		} else {
+			//download all revisions
+			if len(entity.Revision) == 1 {
+				lastRevision := maxRevision(entity.Revision)
+				clilog.Info.Printf("Downloading revision %s of sharedflow %s\n", lastRevision, entity.Name)
+				go apiclient.FetchAsyncBundle(entityType, folder, entity.Name, lastRevision, allRevisions, &bwg)
+			} else {
+
+				numRevisions := len(entity.Revision)
+				numOfLoops, remaining := numRevisions/conn, numRevisions%conn
+
+				start := 0
+
+				for i, end := 0, 0; i < numOfLoops; i++ {
+					prwg.Add(1)
+					end = (i * conn) + conn
+					clilog.Info.Printf("Exporting batch %d of sharedflow revisions\n", (i + 1))
+					go batchExportRevisions(entityType, folder, entity.Name, entity.Revision[start:end], &prwg)
+					start = end
+					prwg.Wait()
+				}
+
+				if remaining > 0 {
+					prwg.Add(1)
+					clilog.Info.Printf("Exporting remaining %d sharedflow revisions\n", remaining)
+					go batchExportRevisions(entityType, folder, entity.Name, entity.Revision[start:numRevisions], &prwg)
+					prwg.Wait()
+				}
+				bwg.Done()
+			}
+		}
 	}
 	bwg.Wait()
+}
+
+//batchExportRevisions
+func batchExportRevisions(entityType string, folder string, name string, revisions []string, prwg *sync.WaitGroup) {
+	defer prwg.Done()
+	//batch workgroup
+	var brwg sync.WaitGroup
+
+	brwg.Add(len(revisions))
+
+	for _, revision := range revisions {
+		clilog.Info.Printf("Exporting sharedflow %s revision %s\n", name, revision)
+		go apiclient.FetchAsyncBundle(entityType, folder, name, revision, true, &brwg)
+	}
+	brwg.Wait()
 }
 
 //batch creates a batch of sharedflow to import

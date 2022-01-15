@@ -65,7 +65,7 @@ var ExportCmd = &cobra.Command{
 		}
 
 		fmt.Println("Exporting Sharedflows...")
-		if err = sharedflows.Export(conn, sharedFlowsFolderName); err != nil {
+		if err = sharedflows.Export(conn, sharedFlowsFolderName, allRevisions); err != nil {
 			return err
 		}
 
