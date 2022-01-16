@@ -42,25 +42,25 @@ var CreateCmd = &cobra.Command{
 			re := regexp.MustCompile(`projects\/([a-zA-Z0-9_-]+)\/locations\/([a-zA-Z0-9_-]+)\/keyRings\/([a-zA-Z0-9_-]+)\/cryptoKeys\/([a-zA-Z0-9_-]+)`)
 			ok := re.Match([]byte(diskEncryptionKeyName))
 			if !ok {
-				return fmt.Errorf("custom role must be of the format projects/{project-id}/locations/{location}/keyRings/{test}/cryptoKeys/{cryptoKey}")
-			}
-
-			if !isRangeValid(cidrRange) {
-				return fmt.Errorf("Valid ranges are SLASH_16,SLASH_17,SLASH_18,SLASH_19 or SLASH_20")
+				return fmt.Errorf("disk encryption key must be of the format projects/{project-id}/locations/{location}/keyRings/{test}/cryptoKeys/{cryptoKey}")
 			}
 		}
 
-		if billingType == "EVALUATION" {
-			_, err = instances.Create(name, location, "", "SLASH_22")
-		} else {
-			_, err = instances.Create(name, location, diskEncryptionKeyName, cidrRange)
+		if ipRange != "" {
+			re := regexp.MustCompile(`^([0-9]{1,3}\.){3}[0-9]{1,3}($|\/(22))$`)
+			ok := re.Match([]byte(ipRange))
+			if !ok {
+				return fmt.Errorf("ipRange must be a valid CIDR of range /22")
+			}
 		}
+
+		_, err = instances.Create(name, location, diskEncryptionKeyName, ipRange)
+
 		return
 	},
 }
 
-var diskEncryptionKeyName, cidrRange, billingType string
-var allowedRanges = []string{"SLASH_16", "SLASH_17", "SLASH_18", "SLASH_19", "SLASH_20"}
+var diskEncryptionKeyName, ipRange, billingType string
 
 func init() {
 
@@ -70,18 +70,9 @@ func init() {
 		"", "Instance location")
 	CreateCmd.Flags().StringVarP(&diskEncryptionKeyName, "diskenc", "d",
 		"", "CloudKMS key name")
-	CreateCmd.Flags().StringVarP(&cidrRange, "cidr", "r",
-		"", "Peering CIDR Range; default is SLASH_16, other supported values SLASH_20, SLASH_22 for eval")
+	CreateCmd.Flags().StringVarP(&ipRange, "iprange", "",
+		"", "Peering CIDR Range; must be /22 range")
 
 	_ = CreateCmd.MarkFlagRequired("name")
 	_ = CreateCmd.MarkFlagRequired("location")
-}
-
-func isRangeValid(cidrRange string) bool {
-	for _, allowedRange := range allowedRanges {
-		if allowedRange == cidrRange {
-			return true
-		}
-	}
-	return false
 }

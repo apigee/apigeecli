@@ -23,12 +23,16 @@ import (
 )
 
 //Create
-func Create(name string, location string, diskEncryptionKeyName string, cidrRange string) (respBody []byte, err error) {
+func Create(name string, location string, diskEncryptionKeyName string, ipRange string) (respBody []byte, err error) {
 
 	instance := []string{}
 
 	instance = append(instance, "\"name\":\""+name+"\"")
 	instance = append(instance, "\"location\":\""+location+"\"")
+
+	if ipRange != "" {
+		instance = append(instance, "\"ipRange\":\""+ipRange+"\"")
+	}
 
 	if diskEncryptionKeyName != "" {
 		instance = append(instance, "\"diskEncryptionKeyName\":\""+diskEncryptionKeyName+"\"")
