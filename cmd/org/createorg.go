@@ -31,6 +31,11 @@ var CreateCmd = &cobra.Command{
 		if runtimeType != "HYBRID" && runtimeType != "CLOUD" {
 			return fmt.Errorf("runtime type must be CLOUD or HYBRID")
 		}
+
+		if billingType != "SUBSCRIPTION" && billingType != "EVALUATION" {
+			return fmt.Errorf("Billing type must be SUBSCRIPTION or EVALUATION")
+		}
+
 		if runtimeType == "CLOUD" {
 			if network == "" {
 				return fmt.Errorf("authorized network must be supplied")
@@ -43,12 +48,12 @@ var CreateCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(projectID)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = orgs.Create(region, network, runtimeType, databaseKey)
+		_, err = orgs.Create(region, network, runtimeType, databaseKey, billingType)
 		return
 	},
 }
 
-var region, projectID, network, runtimeType, description, databaseKey string
+var region, projectID, network, runtimeType, description, databaseKey, billingType string
 
 func init() {
 
@@ -64,6 +69,8 @@ func init() {
 		"", "Runtime Database Encryption Key")
 	CreateCmd.Flags().StringVarP(&runtimeType, "runtime-type", "",
 		"HYBRID", "Runtime type: CLOUD or HYBRID")
+	CreateCmd.Flags().StringVarP(&runtimeType, "billing-type", "",
+		"", "Billing type: SUBSCRIPTION or EVALUATION")
 
 	_ = CreateCmd.MarkFlagRequired("prj")
 	_ = CreateCmd.MarkFlagRequired("reg")

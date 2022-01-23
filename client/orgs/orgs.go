@@ -68,7 +68,7 @@ func validRegion(region string) bool {
 }
 
 //Create
-func Create(region string, network string, runtimeType string, databaseKey string) (respBody []byte, err error) {
+func Create(region string, network string, runtimeType string, databaseKey string, billingType string) (respBody []byte, err error) {
 	const baseURL = "https://apigee.googleapis.com/v1/organizations"
 	var stageBaseURL = "https://staging-apigee.sandbox.googleapis.com/v1/organizations/"
 
@@ -96,6 +96,10 @@ func Create(region string, network string, runtimeType string, databaseKey strin
 	if runtimeType == "CLOUD" {
 		orgPayload = append(orgPayload, "\"authorizedNetwork\":\""+network+"\"")
 		orgPayload = append(orgPayload, "\"runtimeDatabaseEncryptionKeyName\":\""+databaseKey+"\"")
+	}
+
+	if billingType != "" {
+		orgPayload = append(orgPayload, "\"billingType\":\""+billingType+"\"")
 	}
 
 	payload := "{" + strings.Join(orgPayload, ",") + "}"
