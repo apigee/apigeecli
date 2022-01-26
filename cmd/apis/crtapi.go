@@ -17,6 +17,7 @@ package apis
 import (
 	"fmt"
 	"os"
+	"path"
 	"regexp"
 
 	"github.com/spf13/cobra"
@@ -33,15 +34,19 @@ var CreateCmd = &cobra.Command{
 	Long:  "Creates an API proxy in an Apigee Org",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 
+		if proxyZip != "" && proxyFolder != "" {
+			return fmt.Errorf("Proxy bundle (zip) and folder to an API proxy cannot be combined.")
+		}
+
 		if useGitHub, err = gitHubValidations(); err != nil {
 			return err
 		}
 
-		if proxy != "" && (oasFile != "" || oasURI != "" || useGitHub) {
+		if proxyZip != "" && (oasFile != "" || oasURI != "" || useGitHub) {
 			return fmt.Errorf("Importing a bundle (--proxy) cannot be combined with importing via an OAS file or GitHub import")
 		}
 
-		if proxy != "" && (gqlFile != "" || gqlURI != "" || useGitHub) {
+		if proxyZip != "" && (gqlFile != "" || gqlURI != "" || useGitHub) {
 			return fmt.Errorf("Importing a bundle (--proxy) cannot be combined with importing via an GraphQL file or GitHub import")
 		}
 
@@ -73,8 +78,16 @@ var CreateCmd = &cobra.Command{
 			_, err = apis.CreateProxy(name, bundleName)
 			proxybundle.CleanUp()
 			return err
-		} else if proxy != "" {
-			_, err = apis.CreateProxy(name, proxy)
+		} else if proxyZip != "" {
+			_, err = apis.CreateProxy(name, proxyZip)
+		} else if proxyFolder != "" {
+			curDir, _ := os.Getwd()
+			if err = proxybundle.GenerateArchiveBundle(proxyFolder, path.Join(curDir, name+".zip")); err != nil {
+				return err
+			}
+			_, err = apis.CreateProxy(name, name+".zip")
+			_ = os.Remove(name + ".zip")
+			return err
 		} else if oasFile != "" || oasURI != "" {
 			var content []byte
 			var oasDocName string
@@ -111,7 +124,7 @@ var CreateCmd = &cobra.Command{
 
 const bundleName = "apiproxy.zip"
 
-var proxy, oasFile, oasURI, gqlFile, gqlURI string
+var proxyZip, proxyFolder, oasFile, oasURI, gqlFile, gqlURI string
 var ghOwner, ghRepo, ghPath string
 var importProxy, validateSpec, skipPolicy, addCORS, useGitHub, formatValidation bool
 
@@ -119,8 +132,10 @@ func init() {
 
 	CreateCmd.Flags().StringVarP(&name, "name", "n",
 		"", "API Proxy name")
-	CreateCmd.Flags().StringVarP(&proxy, "proxy", "p",
+	CreateCmd.Flags().StringVarP(&proxyZip, "proxy-zip", "z",
 		"", "API Proxy Bundle path")
+	CreateCmd.Flags().StringVarP(&proxyFolder, "proxy", "p",
+		"", "API Proxy folder path")
 	CreateCmd.Flags().StringVarP(&oasFile, "oasfile", "f",
 		"", "Open API 3.0 Specification file")
 	CreateCmd.Flags().StringVarP(&oasURI, "oasuri", "u",
