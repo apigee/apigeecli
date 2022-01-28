@@ -32,14 +32,14 @@ import (
 	apiproxy "github.com/srinandan/apigeecli/bundlegen/apiproxydef"
 	policies "github.com/srinandan/apigeecli/bundlegen/policies"
 	proxies "github.com/srinandan/apigeecli/bundlegen/proxies"
-	target "github.com/srinandan/apigeecli/bundlegen/targetendpoint"
+	target "github.com/srinandan/apigeecli/bundlegen/targets"
 	"github.com/srinandan/apigeecli/clilog"
 	"golang.org/x/oauth2"
 )
 
 const rootDir = "apiproxy"
 
-func GenerateAPIProxyBundle(name string, content string, fileName string, resourceType string, skipPolicy bool, addCORS bool) (err error) {
+func GenerateAPIProxyBundle(name string, content string, fileName string, resourceType string, skipPolicy bool, addCORS bool, oasGoogleAcessTokenScopeLiteral string, oasGoogleIdTokenAudLiteral string, oasGoogleIdTokenAudRef string, oasTargetUrlRef string) (err error) {
 
 	var apiProxyData, proxyEndpointData, targetEndpointData string
 
@@ -98,6 +98,13 @@ func GenerateAPIProxyBundle(name string, content string, fileName string, resour
 
 	if err = os.Mkdir(policiesDirPath, os.ModePerm); err != nil {
 		return err
+	}
+
+	//add set target url
+	if genapi.GenerateSetTargetPolicy() {
+		if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"Set-Target-1.xml", policies.AddSetTargetEndpoint(oasTargetUrlRef)); err != nil {
+			return err
+		}
 	}
 
 	//add oauth policy

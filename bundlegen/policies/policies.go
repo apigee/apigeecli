@@ -16,6 +16,7 @@ package policies
 
 import (
 	"regexp"
+	"strings"
 )
 
 var oasPolicyTemplate = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -58,6 +59,15 @@ var corsPolicy = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
     <IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
 </CORS>`
 
+var setTargetEndpointPolicy = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<AssignMessage async="false" continueOnError="false" enabled="true" name="Set-Target-1">
+    <AssignVariable>
+        <Name>target.url</Name>
+        <Ref>dynamic.target.url</Ref>
+    </AssignVariable>
+    <IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
+</AssignMessage>`
+
 func AddOpenAPIValidatePolicy(name string) string {
 	return replaceTemplateWithPolicy(name)
 }
@@ -72,6 +82,10 @@ func AddOAuth2Policy() string {
 
 func AddCORSPolicy() string {
 	return corsPolicy
+}
+
+func AddSetTargetEndpoint(ref string) string {
+	return strings.Replace(setTargetEndpointPolicy, "dynamic.target.url", ref, -1)
 }
 
 func replaceTemplateWithPolicy(name string) string {

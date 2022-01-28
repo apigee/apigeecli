@@ -100,12 +100,28 @@ var CreateCmd = &cobra.Command{
 				return err
 			}
 
-			err = bundle.GenerateAPIProxyDefFromOAS(name, oasDocName, skipPolicy, addCORS)
+			err = bundle.GenerateAPIProxyDefFromOAS(name,
+				oasDocName,
+				skipPolicy,
+				addCORS,
+				oasGoogleAcessTokenScopeLiteral,
+				oasGoogleIdTokenAudLiteral,
+				oasGoogleIdTokenAudRef,
+				oasTargetUrlRef)
 			if err != nil {
 				return err
 			}
 
-			err = proxybundle.GenerateAPIProxyBundle(name, string(content), oasDocName, "oas", skipPolicy, addCORS)
+			err = proxybundle.GenerateAPIProxyBundle(name,
+				string(content),
+				oasDocName,
+				"oas",
+				skipPolicy,
+				addCORS,
+				oasGoogleAcessTokenScopeLiteral,
+				oasGoogleIdTokenAudLiteral,
+				oasGoogleIdTokenAudRef,
+				oasTargetUrlRef)
 			if err != nil {
 				return err
 			}
@@ -125,6 +141,7 @@ var CreateCmd = &cobra.Command{
 const bundleName = "apiproxy.zip"
 
 var proxyZip, proxyFolder, oasFile, oasURI, gqlFile, gqlURI string
+var oasGoogleAcessTokenScopeLiteral, oasGoogleIdTokenAudLiteral, oasGoogleIdTokenAudRef, oasTargetUrlRef string
 var ghOwner, ghRepo, ghPath string
 var importProxy, validateSpec, skipPolicy, addCORS, useGitHub, formatValidation bool
 
@@ -140,6 +157,16 @@ func init() {
 		"", "Open API 3.0 Specification file")
 	CreateCmd.Flags().StringVarP(&oasURI, "oasuri", "u",
 		"", "Open API 3.0 Specification URI location")
+
+	CreateCmd.Flags().StringVarP(&oasGoogleAcessTokenScopeLiteral, "oas-google-accesstoken-scope-literal", "",
+		"", "Generate Google Access token with target endpoint and set scope")
+	CreateCmd.Flags().StringVarP(&oasGoogleIdTokenAudLiteral, "oas-google-idtoken-aud-literal", "",
+		"", "Generate Google ID token with target endpoint and set audience")
+	CreateCmd.Flags().StringVarP(&oasGoogleIdTokenAudRef, "oas-google-idtoken-aud-ref", "",
+		"", "Generate Google ID token token with target endpoint and set audience reference")
+	CreateCmd.Flags().StringVarP(&oasTargetUrlRef, "oas-target-url-ref", "",
+		"", "Set a reference variable containing the target endpoint")
+
 	CreateCmd.Flags().BoolVarP(&importProxy, "import", "",
 		true, "Import API Proxy after generation from spec")
 	CreateCmd.Flags().BoolVarP(&validateSpec, "validate", "",
@@ -193,4 +220,13 @@ func gitHubValidations() (bool, error) {
 	}
 
 	return false, nil
+}
+
+func oasValidations() (bool, error) {
+	if oasFile == "" && oasURI == "" {
+		if oasGoogleAcessTokenScopeLiteral != "" || oasGoogleIdTokenAudLiteral != "" || oasGoogleIdTokenAudRef != "" || oasTargetUrlRef != "" {
+			return false, fmt.Errorf("oas parameters cannot be used if oasfile or oasuri are empty")
+		}
+	}
+	return true, nil
 }

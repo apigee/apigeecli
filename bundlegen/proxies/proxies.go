@@ -17,6 +17,8 @@ package proxies
 import (
 	"encoding/xml"
 	"fmt"
+
+	proxytypes "github.com/srinandan/apigeecli/bundlegen/common"
 )
 
 type proxyEndpointDef struct {
@@ -24,61 +26,17 @@ type proxyEndpointDef struct {
 	Name                string                 `xml:"name,attr"`
 	Description         string                 `xml:"Description,omitempty"`
 	FaultRules          string                 `xml:"FaultRules,omitempty"`
-	PreFlow             preFlowDef             `xml:"PreFlow,omitempty"`
-	PostFlow            postFlowDef            `xml:"PostFlow,omitempty"`
-	Flows               flowsDef               `xml:"Flows,omitempty"`
+	PreFlow             proxytypes.PreFlowDef  `xml:"PreFlow,omitempty"`
+	PostFlow            proxytypes.PostFlowDef `xml:"PostFlow,omitempty"`
+	Flows               proxytypes.FlowsDef    `xml:"Flows,omitempty"`
 	HTTPProxyConnection httpProxyConnectionDef `xml:"HTTPProxyConnection,omitempty"`
 	RouteRule           routeRuleDef           `xml:"RouteRule,omitempty"`
-}
-
-type preFlowDef struct {
-	XMLName  xml.Name        `xml:"PreFlow"`
-	Name     string          `xml:"name,attr"`
-	Request  requestFlowDef  `xml:"Request"`
-	Response responseFlowDef `xml:"Response"`
-}
-
-type postFlowDef struct {
-	XMLName  xml.Name        `xml:"PostFlow"`
-	Name     string          `xml:"name,attr"`
-	Request  requestFlowDef  `xml:"Request"`
-	Response responseFlowDef `xml:"Response"`
-}
-
-type requestFlowDef struct {
-	Step []*stepDef `xml:"Step"`
-}
-
-type responseFlowDef struct {
-	Step []*stepDef `xml:"Step"`
-}
-
-type stepDef struct {
-	Name string `xml:"Name"`
 }
 
 type routeRuleDef struct {
 	XMLName        xml.Name `xml:"RouteRule"`
 	Name           string   `xml:"name,attr"`
 	TargetEndpoint string   `xml:"TargetEndpoint"`
-}
-
-type flowsDef struct {
-	XMLName xml.Name  `xml:"Flows"`
-	Flow    []flowDef `xml:"Flow"`
-}
-
-type flowDef struct {
-	XMLName     xml.Name        `xml:"Flow"`
-	Name        string          `xml:"name,attr"`
-	Description string          `xml:"Description,omitempty"`
-	Request     requestFlowDef  `xml:"Request"`
-	Response    responseFlowDef `xml:"Response"`
-	Condition   conditionDef    `xml:"Condition"`
-}
-
-type conditionDef struct {
-	ConditionData string `xml:",innerxml"`
 }
 
 type httpProxyConnectionDef struct {
@@ -108,7 +66,7 @@ func NewProxyEndpoint(basePath string) {
 }
 
 func AddFlow(operationId string, keyPath string, method string, description string) {
-	flow := flowDef{}
+	flow := proxytypes.FlowDef{}
 	flow.Name = operationId
 	flow.Description = description
 	flow.Condition.ConditionData = "(proxy.pathsuffix MatchesPath \"" + keyPath + "\") and (request.verb = \"" + method + "\")"
@@ -116,7 +74,7 @@ func AddFlow(operationId string, keyPath string, method string, description stri
 }
 
 func AddStepToPreFlowRequest(name string) {
-	step := stepDef{}
+	step := proxytypes.StepDef{}
 	step.Name = name
 	proxyEndpoint.PreFlow.Request.Step = append(proxyEndpoint.PreFlow.Request.Step, &step)
 }
@@ -124,7 +82,7 @@ func AddStepToPreFlowRequest(name string) {
 func AddStepToFlowRequest(name string, flowName string) error {
 	for flowKey, flow := range proxyEndpoint.Flows.Flow {
 		if flow.Name == flowName {
-			step := stepDef{}
+			step := proxytypes.StepDef{}
 			step.Name = name
 			proxyEndpoint.Flows.Flow[flowKey].Request.Step = append(proxyEndpoint.Flows.Flow[flowKey].Request.Step, &step)
 			return nil

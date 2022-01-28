@@ -26,7 +26,7 @@ import (
 	"github.com/ghodss/yaml"
 	apiproxy "github.com/srinandan/apigeecli/bundlegen/apiproxydef"
 	proxies "github.com/srinandan/apigeecli/bundlegen/proxies"
-	target "github.com/srinandan/apigeecli/bundlegen/targetendpoint"
+	targets "github.com/srinandan/apigeecli/bundlegen/targets"
 )
 
 type pathDetailDef struct {
@@ -36,7 +36,7 @@ type pathDetailDef struct {
 	APIKeyPoicy bool
 }
 
-var generateOAuthPolicy, generateAPIKeyPolicy bool
+var generateOAuthPolicy, generateAPIKeyPolicy, generateSetTarget bool
 
 var doc *openapi3.T
 
@@ -120,7 +120,7 @@ func isFileYaml(name string) bool {
 	return false
 }
 
-func GenerateAPIProxyDefFromOAS(name string, oasDocName string, skipPolicy bool, addCORS bool) (err error) {
+func GenerateAPIProxyDefFromOAS(name string, oasDocName string, skipPolicy bool, addCORS bool, oasGoogleAcessTokenScopeLiteral string, oasGoogleIdTokenAudLiteral string, oasGoogleIdTokenAudRef string, oasTargetUrlRef string) (err error) {
 
 	if doc == nil {
 		return fmt.Errorf("Open API document not loaded")
@@ -151,7 +151,14 @@ func GenerateAPIProxyDefFromOAS(name string, oasDocName string, skipPolicy bool,
 
 	apiproxy.SetBasePath(u.Path)
 
-	target.NewTargetEndpoint(u.Scheme + "://" + u.Hostname())
+	//set a dynamic target url
+	if oasTargetUrlRef != "" {
+		targets.AddStepToPreFlowRequest("Set-Target-1")
+		apiproxy.AddPolicy("Set-Target-1")
+		generateSetTarget = true
+	}
+
+	targets.NewTargetEndpoint(u.Scheme+"://"+u.Hostname(), oasGoogleAcessTokenScopeLiteral, oasGoogleIdTokenAudLiteral, oasGoogleIdTokenAudRef)
 
 	proxies.NewProxyEndpoint(u.Path)
 
@@ -345,6 +352,10 @@ func GenerateOAuthPolicy() bool {
 
 func GenerateAPIKeyPolicy() bool {
 	return generateAPIKeyPolicy
+}
+
+func GenerateSetTargetPolicy() bool {
+	return generateSetTarget
 }
 
 func replacePathWithWildCard(keyPath string) string {
