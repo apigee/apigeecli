@@ -149,6 +149,10 @@ func GenerateAPIProxyDefFromOAS(name string, oasDocName string, skipPolicy bool,
 		return err
 	}
 
+	if u.Path == "" {
+		return fmt.Errorf("OpenAPI url is missing a path. Don't use https://api.example.com, instead try https://api.example.com/basePath")
+	}
+
 	apiproxy.SetBasePath(u.Path)
 
 	//set a dynamic target url
