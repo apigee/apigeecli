@@ -30,13 +30,34 @@ import (
 )
 
 type pathDetailDef struct {
-	OperationID string
-	Description string
-	OAuthPolicy bool
-	APIKeyPoicy bool
+	OperationID    string
+	Description    string
+	SecurityScheme securitySchemesDef
 }
 
-var generateOAuthPolicy, generateAPIKeyPolicy, generateSetTarget bool
+type oAuthPolicyDef struct {
+	OAuthPolicyEnabled bool
+}
+
+type securitySchemesListDef struct {
+	SecuritySchemes []securitySchemesDef
+}
+
+type securitySchemesDef struct {
+	SchemeName   string
+	OAuthPolicy  oAuthPolicyDef
+	APIKeyPolicy apiKeyPolicyDef
+}
+
+type apiKeyPolicyDef struct {
+	APIKeyPolicyEnabled bool
+	APIKeyLocation      string
+	APIKeyName          string
+}
+
+var generateSetTarget bool
+
+var securitySchemesList = securitySchemesListDef{}
 
 var doc *openapi3.T
 
@@ -126,6 +147,9 @@ func GenerateAPIProxyDefFromOAS(name string, oasDocName string, skipPolicy bool,
 		return fmt.Errorf("Open API document not loaded")
 	}
 
+	//load security schemes
+	loadSecurityRequirements(doc.Components.SecuritySchemes)
+
 	apiproxy.SetDisplayName(name)
 	if doc.Info != nil {
 		if doc.Info.Description != "" {
@@ -166,6 +190,15 @@ func GenerateAPIProxyDefFromOAS(name string, oasDocName string, skipPolicy bool,
 
 	proxies.NewProxyEndpoint(u.Path)
 
+	//add any preflow security schemes
+	if securityScheme := getSecurityRequirements(doc.Security); securityScheme.SchemeName != "" {
+		if securityScheme.APIKeyPolicy.APIKeyPolicyEnabled {
+			proxies.AddStepToPreFlowRequest("Verify-API-Key-" + securityScheme.SchemeName)
+		} else if securityScheme.OAuthPolicy.OAuthPolicyEnabled {
+			apiproxy.AddPolicy("OAuth-v20-1")
+		}
+	}
+
 	if addCORS {
 		proxies.AddStepToPreFlowRequest("Add-CORS")
 		apiproxy.AddPolicy("Add-CORS")
@@ -179,12 +212,12 @@ func GenerateAPIProxyDefFromOAS(name string, oasDocName string, skipPolicy bool,
 		return err
 	}
 
-	if GenerateAPIKeyPolicy() {
-		apiproxy.AddPolicy("Verify-API-Key-1")
-	}
-
-	if GenerateOAuthPolicy() {
-		apiproxy.AddPolicy("OAuth-v20-1")
+	for _, securityScheme := range securitySchemesList.SecuritySchemes {
+		if securityScheme.APIKeyPolicy.APIKeyPolicyEnabled {
+			apiproxy.AddPolicy("Verify-API-Key-" + securityScheme.SchemeName)
+		} else if securityScheme.OAuthPolicy.OAuthPolicyEnabled {
+			apiproxy.AddPolicy("OAuth-v20-1")
+		}
 	}
 
 	return nil
@@ -215,7 +248,7 @@ func GetHTTPMethod(pathItem *openapi3.PathItem, keyPath string) map[string]pathD
 		}
 		if pathItem.Get.Security != nil {
 			securityRequirements := []openapi3.SecurityRequirement(*pathItem.Get.Security)
-			getPathDetail.OAuthPolicy, getPathDetail.APIKeyPoicy = getSecurityRequirements(securityRequirements)
+			getPathDetail.SecurityScheme = getSecurityRequirements(securityRequirements)
 		}
 		pathMap["get"] = getPathDetail
 	}
@@ -232,7 +265,7 @@ func GetHTTPMethod(pathItem *openapi3.PathItem, keyPath string) map[string]pathD
 		}
 		if pathItem.Post.Security != nil {
 			securityRequirements := []openapi3.SecurityRequirement(*pathItem.Post.Security)
-			postPathDetail.OAuthPolicy, postPathDetail.APIKeyPoicy = getSecurityRequirements(securityRequirements)
+			postPathDetail.SecurityScheme = getSecurityRequirements(securityRequirements)
 		}
 		pathMap["post"] = postPathDetail
 	}
@@ -249,7 +282,7 @@ func GetHTTPMethod(pathItem *openapi3.PathItem, keyPath string) map[string]pathD
 		}
 		if pathItem.Put.Security != nil {
 			securityRequirements := []openapi3.SecurityRequirement(*pathItem.Put.Security)
-			putPathDetail.OAuthPolicy, putPathDetail.APIKeyPoicy = getSecurityRequirements(securityRequirements)
+			putPathDetail.SecurityScheme = getSecurityRequirements(securityRequirements)
 		}
 		pathMap["put"] = putPathDetail
 	}
@@ -266,7 +299,7 @@ func GetHTTPMethod(pathItem *openapi3.PathItem, keyPath string) map[string]pathD
 		}
 		if pathItem.Patch.Security != nil {
 			securityRequirements := []openapi3.SecurityRequirement(*pathItem.Patch.Security)
-			patchPathDetail.OAuthPolicy, patchPathDetail.APIKeyPoicy = getSecurityRequirements(securityRequirements)
+			patchPathDetail.SecurityScheme = getSecurityRequirements(securityRequirements)
 		}
 		pathMap["patch"] = patchPathDetail
 	}
@@ -283,7 +316,7 @@ func GetHTTPMethod(pathItem *openapi3.PathItem, keyPath string) map[string]pathD
 		}
 		if pathItem.Delete.Security != nil {
 			securityRequirements := []openapi3.SecurityRequirement(*pathItem.Delete.Security)
-			deletePathDetail.OAuthPolicy, deletePathDetail.APIKeyPoicy = getSecurityRequirements(securityRequirements)
+			deletePathDetail.SecurityScheme = getSecurityRequirements(securityRequirements)
 		}
 		pathMap["delete"] = deletePathDetail
 	}
@@ -335,27 +368,18 @@ func GenerateFlows(paths openapi3.Paths) (err error) {
 		pathMap := GetHTTPMethod(paths[keyPath], keyPath)
 		for method, pathDetail := range pathMap {
 			proxies.AddFlow(pathDetail.OperationID, replacePathWithWildCard(keyPath), method, pathDetail.Description)
-			if pathDetail.OAuthPolicy {
+			if pathDetail.SecurityScheme.OAuthPolicy.OAuthPolicyEnabled {
 				if err = proxies.AddStepToFlowRequest("OAuth-v20-1", pathDetail.OperationID); err != nil {
 					return err
 				}
-			}
-			if pathDetail.APIKeyPoicy {
-				if err = proxies.AddStepToFlowRequest("Verify-API-Key-1", pathDetail.OperationID); err != nil {
+			} else if pathDetail.SecurityScheme.APIKeyPolicy.APIKeyPolicyEnabled {
+				if err = proxies.AddStepToFlowRequest("Verify-API-Key-"+pathDetail.SecurityScheme.SchemeName, pathDetail.OperationID); err != nil {
 					return err
 				}
 			}
 		}
 	}
 	return nil
-}
-
-func GenerateOAuthPolicy() bool {
-	return generateOAuthPolicy
-}
-
-func GenerateAPIKeyPolicy() bool {
-	return generateAPIKeyPolicy
 }
 
 func GenerateSetTargetPolicy() bool {
@@ -371,27 +395,52 @@ func replacePathWithWildCard(keyPath string) string {
 	}
 }
 
-func getSecurityType(name string) (oauth bool, apikey bool) {
-	for schemeName, securityScheme := range doc.Components.SecuritySchemes {
-		if schemeName == name {
-			if securityScheme.Value.Type == "oauth2" {
-				generateOAuthPolicy = true
-				return true, false
-			}
-			if securityScheme.Value.Type == "apiKey" {
-				generateAPIKeyPolicy = true
-				return false, true
-			}
-		}
+func loadSecurityType(secSchemeName string, securityScheme openapi3.SecuritySchemeRef) (secScheme securitySchemesDef) {
+	secScheme = securitySchemesDef{}
+	apiKeyPolicy := apiKeyPolicyDef{}
+	oAuthPolicy := oAuthPolicyDef{}
+
+	if securityScheme.Value.Type == "oauth2" {
+		secScheme.SchemeName = secSchemeName
+		oAuthPolicy.OAuthPolicyEnabled = true
+		apiKeyPolicy.APIKeyPolicyEnabled = false
+		secScheme.OAuthPolicy = oAuthPolicy
+	} else if securityScheme.Value.Type == "apiKey" {
+		secScheme.SchemeName = secSchemeName
+		apiKeyPolicy.APIKeyPolicyEnabled = true
+		oAuthPolicy.OAuthPolicyEnabled = false
+		apiKeyPolicy.APIKeyLocation = securityScheme.Value.In
+		apiKeyPolicy.APIKeyName = securityScheme.Value.Name
+		secScheme.APIKeyPolicy = apiKeyPolicy
 	}
-	return false, false
+
+	return secScheme
 }
 
-func getSecurityRequirements(securityRequirements []openapi3.SecurityRequirement) (oauth bool, apikey bool) {
+func getSecurityType(secName string) securitySchemesDef {
+	for _, securityScheme := range securitySchemesList.SecuritySchemes {
+		if securityScheme.SchemeName == secName {
+			return securityScheme
+		}
+	}
+	return securitySchemesDef{}
+}
+
+func getSecurityRequirements(securityRequirements []openapi3.SecurityRequirement) securitySchemesDef {
 	for _, secReq := range securityRequirements {
 		for secReqName := range secReq {
 			return getSecurityType(secReqName)
 		}
 	}
-	return false, false
+	return securitySchemesDef{}
+}
+
+func loadSecurityRequirements(securitySchemes openapi3.SecuritySchemes) {
+	for secSchemeName, secScheme := range securitySchemes {
+		securitySchemesList.SecuritySchemes = append(securitySchemesList.SecuritySchemes, loadSecurityType(secSchemeName, *secScheme))
+	}
+}
+
+func GetSecuritySchemesList() []securitySchemesDef {
+	return securitySchemesList.SecuritySchemes
 }

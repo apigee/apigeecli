@@ -100,6 +100,7 @@ var CreateCmd = &cobra.Command{
 				return err
 			}
 
+			//Generate the apiproxy struct
 			err = bundle.GenerateAPIProxyDefFromOAS(name,
 				oasDocName,
 				skipPolicy,
@@ -108,10 +109,12 @@ var CreateCmd = &cobra.Command{
 				oasGoogleIdTokenAudLiteral,
 				oasGoogleIdTokenAudRef,
 				oasTargetUrlRef)
+
 			if err != nil {
 				return err
 			}
 
+			//Create the API proxy bundle
 			err = proxybundle.GenerateAPIProxyBundle(name,
 				string(content),
 				oasDocName,
@@ -122,6 +125,7 @@ var CreateCmd = &cobra.Command{
 				oasGoogleIdTokenAudLiteral,
 				oasGoogleIdTokenAudRef,
 				oasTargetUrlRef)
+
 			if err != nil {
 				return err
 			}

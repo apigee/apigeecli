@@ -107,17 +107,17 @@ func GenerateAPIProxyBundle(name string, content string, fileName string, resour
 		}
 	}
 
-	//add oauth policy
-	if genapi.GenerateOAuthPolicy() {
-		if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"OAuth-v20-1.xml", policies.AddOAuth2Policy()); err != nil {
-			return err
+	//add security policies
+	for _, securityScheme := range genapi.GetSecuritySchemesList() {
+		if securityScheme.APIKeyPolicy.APIKeyPolicyEnabled {
+			if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"Verify-API-Key-"+securityScheme.SchemeName+".xml", policies.AddVerifyApiKeyPolicy(securityScheme.APIKeyPolicy.APIKeyLocation, securityScheme.SchemeName, securityScheme.APIKeyPolicy.APIKeyName)); err != nil {
+				return err
+			}
 		}
-	}
-
-	//add api key policy
-	if genapi.GenerateAPIKeyPolicy() {
-		if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"Verify-API-Key-1.xml", policies.AddVerifyApiKeyPolicy()); err != nil {
-			return err
+		if securityScheme.OAuthPolicy.OAuthPolicyEnabled {
+			if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"OAuth-v20-1.xml", policies.AddOAuth2Policy()); err != nil {
+				return err
+			}
 		}
 	}
 

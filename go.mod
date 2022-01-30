@@ -3,7 +3,7 @@ module github.com/srinandan/apigeecli
 go 1.16
 
 require (
-	github.com/getkin/kin-openapi v0.83.0
+	github.com/getkin/kin-openapi v0.88.0
 	github.com/ghodss/yaml v1.0.0
 	github.com/google/go-github v17.0.0+incompatible
 	github.com/google/go-querystring v1.1.0 // indirect

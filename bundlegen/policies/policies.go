@@ -29,7 +29,7 @@ var oasPolicyTemplate = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 
 var verifyApiKeyPolicy = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <VerifyAPIKey async="false" continueOnError="false" enabled="true" name="Verify-API-Key-1">
-    <DisplayName>Verify API Key-1</DisplayName>
+    <DisplayName>Verify-API-Key-1</DisplayName>
     <Properties/>
     <APIKey ref="request.queryparam.apikey"/>
 </VerifyAPIKey>`
@@ -72,8 +72,15 @@ func AddOpenAPIValidatePolicy(name string) string {
 	return replaceTemplateWithPolicy(name)
 }
 
-func AddVerifyApiKeyPolicy() string {
-	return verifyApiKeyPolicy
+func AddVerifyApiKeyPolicy(location string, policyName string, keyName string) string {
+	var apiKeyLocation string
+	if location == "query" {
+		apiKeyLocation = "request.queryparam." + keyName
+	} else {
+		apiKeyLocation = "request.header." + keyName
+	}
+	tmp := strings.Replace(verifyApiKeyPolicy, "request.queryparam.apikey", apiKeyLocation, -1)
+	return strings.Replace(tmp, "Verify-API-Key-1", "Verify-API-Key-"+policyName, -1)
 }
 
 func AddOAuth2Policy() string {
