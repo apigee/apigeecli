@@ -39,7 +39,16 @@ import (
 
 const rootDir = "apiproxy"
 
-func GenerateAPIProxyBundle(name string, content string, fileName string, resourceType string, skipPolicy bool, addCORS bool, oasGoogleAcessTokenScopeLiteral string, oasGoogleIdTokenAudLiteral string, oasGoogleIdTokenAudRef string, oasTargetUrlRef string) (err error) {
+func GenerateAPIProxyBundle(name string,
+	content string,
+	fileName string,
+	resourceType string,
+	skipPolicy bool,
+	addCORS bool,
+	oasGoogleAcessTokenScopeLiteral string,
+	oasGoogleIdTokenAudLiteral string,
+	oasGoogleIdTokenAudRef string,
+	oasTargetUrlRef string) (err error) {
 
 	var apiProxyData, proxyEndpointData, targetEndpointData string
 
@@ -102,7 +111,8 @@ func GenerateAPIProxyBundle(name string, content string, fileName string, resour
 
 	//add set target url
 	if genapi.GenerateSetTargetPolicy() {
-		if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"Set-Target-1.xml", policies.AddSetTargetEndpoint(oasTargetUrlRef)); err != nil {
+		if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"Set-Target-1.xml",
+			policies.AddSetTargetEndpoint(oasTargetUrlRef)); err != nil {
 			return err
 		}
 	}
@@ -110,20 +120,39 @@ func GenerateAPIProxyBundle(name string, content string, fileName string, resour
 	//add security policies
 	for _, securityScheme := range genapi.GetSecuritySchemesList() {
 		if securityScheme.APIKeyPolicy.APIKeyPolicyEnabled {
-			if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"Verify-API-Key-"+securityScheme.SchemeName+".xml", policies.AddVerifyApiKeyPolicy(securityScheme.APIKeyPolicy.APIKeyLocation, securityScheme.SchemeName, securityScheme.APIKeyPolicy.APIKeyName)); err != nil {
+			if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"Verify-API-Key-"+securityScheme.SchemeName+".xml",
+				policies.AddVerifyApiKeyPolicy(securityScheme.APIKeyPolicy.APIKeyLocation,
+					securityScheme.SchemeName,
+					securityScheme.APIKeyPolicy.APIKeyName)); err != nil {
 				return err
 			}
 		}
 		if securityScheme.OAuthPolicy.OAuthPolicyEnabled {
-			if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"OAuth-v20-1.xml", policies.AddOAuth2Policy()); err != nil {
+			if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"OAuth-v20-1.xml",
+				policies.AddOAuth2Policy()); err != nil {
 				return err
 			}
 		}
 	}
 
+	//add quota policies
+	for quotaPolicyName, quotaPolicyContent := range genapi.GetQuotaPolicies() {
+		if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"Quota-"+quotaPolicyName+".xml", quotaPolicyContent); err != nil {
+			return err
+		}
+	}
+
+	//add spike arrest policies
+	for spikeArrestPolicyName, spikeArrestPolicyContent := range genapi.GetSpikeArrestPolicies() {
+		if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"Spike-Arrest-"+spikeArrestPolicyName+".xml", spikeArrestPolicyContent); err != nil {
+			return err
+		}
+	}
+
 	if !skipPolicy {
 		//add oas policy
-		if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"OpenAPI-Spec-Validation-1.xml", policies.AddOpenAPIValidatePolicy(fileName)); err != nil {
+		if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"OpenAPI-Spec-Validation-1.xml",
+			policies.AddOpenAPIValidatePolicy(fileName)); err != nil {
 			return err
 		}
 	}

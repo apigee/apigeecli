@@ -59,6 +59,37 @@ var corsPolicy = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
     <IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
 </CORS>`
 
+var spikeArrestPolicy = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<SpikeArrest async="false" continueOnError="false" enabled="true" name="Spike-Arrest-1">    
+  <DisplayName>Spike-Arrest-1</DisplayName>
+  <Properties/>
+  <Rate>1ps</Rate>
+  <Identifier/>
+  <UseEffectiveCount>true</UseEffectiveCount>
+</SpikeArrest>
+`
+
+var quotaPolicy1 = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Quota async="false" continueOnError="false" enabled="true" type="calendar" name="Quota-1">
+    <DisplayName>Quota-1</DisplayName>
+    <Identifier ref="quota.identifier"/>
+    <Allow count="1000000000000"/>
+    <Interval ref="quota.interval"/>
+    <TimeUnit ref="quota.unit"/>
+    <Distributed>true</Distributed>
+    <StartTime>2019-01-01 00:00:00</StartTime>
+</Quota>	
+`
+
+var quotaPolicy2 = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Quota async="false" continueOnError="false" enabled="true" type="calendar" name="Quota-1">
+    <DisplayName>Quota-1</DisplayName>
+    <UseQuotaConfigInAPIProduct>step</UseQuotaConfigInAPIProduct>
+    <Distributed>true</Distributed>
+    <StartTime>2019-01-01 00:00:00</StartTime>
+</Quota>	
+`
+
 var setTargetEndpointPolicy = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <AssignMessage async="false" continueOnError="false" enabled="true" name="Set-Target-1">
     <AssignVariable>
@@ -81,6 +112,59 @@ func AddVerifyApiKeyPolicy(location string, policyName string, keyName string) s
 	}
 	tmp := strings.Replace(verifyApiKeyPolicy, "request.queryparam.apikey", apiKeyLocation, -1)
 	return strings.Replace(tmp, "Verify-API-Key-1", "Verify-API-Key-"+policyName, -1)
+}
+
+func AddSpikeArrestPolicy(policyName string, identifierRef string, rateRef string, rateLiteral string) string {
+	policyString := strings.ReplaceAll(spikeArrestPolicy, "Spike-Arrest-1", policyName)
+	if rateLiteral != "" {
+		rate := "<Rate>" + rateLiteral + "</Rate>"
+		policyString = strings.ReplaceAll(policyString, "<Rate>1ps</Rate>", rate)
+	} else if rateRef != "" {
+		rate := "<Rate ref=\"" + rateRef + "\"/>"
+		policyString = strings.ReplaceAll(policyString, "<Rate>1ps</Rate>", rate)
+	}
+	if identifierRef != "" {
+		identifer := "<Identifier ref=\"" + identifierRef + "\"/>"
+		policyString = strings.ReplaceAll(policyString, "<Identifier/>", identifer)
+	}
+
+	return policyString
+}
+
+func AddQuotaPolicy(policyName string, useQuotaConfigStepName string,
+	allowRef string, allowLiteral string,
+	intervalRef string, intervalLiteral string,
+	timeUnitRef string, timeUnitLiteral string) string {
+	var policyString string
+
+	if useQuotaConfigStepName != "" {
+		policyString = strings.ReplaceAll(quotaPolicy2, "Quota-1", policyName)
+		policyString = strings.ReplaceAll(policyString, "step", useQuotaConfigStepName)
+	} else {
+		policyString = strings.ReplaceAll(quotaPolicy1, "Quota-1", policyName)
+		if allowRef != "" {
+			allow := "<Allow countRef=\"" + allowRef + "\"/>"
+			policyString = strings.ReplaceAll(policyString, "<Allow count=\"1000000000000\"/>", allow)
+		} else if allowLiteral != "" {
+			allow := "<Allow count=\"" + allowLiteral + "\"/>"
+			policyString = strings.ReplaceAll(policyString, "<Allow count=\"1000000000000\"/>", allow)
+		}
+		if intervalRef != "" {
+			interval := "<Interval ref=\"" + intervalRef + "\"/>"
+			policyString = strings.ReplaceAll(policyString, "<Interval ref=\"quota.interval\"/>", interval)
+		} else if intervalLiteral != "" {
+			interval := "<Interval>" + intervalLiteral + "</Interval>"
+			policyString = strings.ReplaceAll(policyString, "<Interval ref=\"quota.interval\"/>", interval)
+		}
+		if timeUnitRef != "" {
+			timeUnit := "<TimeUnit ref=\"" + timeUnitRef + "\"/>"
+			policyString = strings.ReplaceAll(policyString, "<TimeUnit ref=\"quota.unit\"/>", timeUnit)
+		} else if timeUnitLiteral != "" {
+			timeUnit := "<TimeUnit>" + timeUnitLiteral + "</TimeUnit>"
+			policyString = strings.ReplaceAll(policyString, "<TimeUnit ref=\"quota.unit\"/>", timeUnit)
+		}
+	}
+	return policyString
 }
 
 func AddOAuth2Policy() string {

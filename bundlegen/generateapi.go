@@ -15,6 +15,7 @@
 package bundlegen
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/url"
 	"path"
@@ -25,7 +26,8 @@ import (
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/ghodss/yaml"
 	apiproxy "github.com/srinandan/apigeecli/bundlegen/apiproxydef"
-	proxies "github.com/srinandan/apigeecli/bundlegen/proxies"
+	"github.com/srinandan/apigeecli/bundlegen/policies"
+	"github.com/srinandan/apigeecli/bundlegen/proxies"
 	targets "github.com/srinandan/apigeecli/bundlegen/targets"
 )
 
@@ -33,6 +35,28 @@ type pathDetailDef struct {
 	OperationID    string
 	Description    string
 	SecurityScheme securitySchemesDef
+	SpikeArrest    spikeArrestDef
+	Quota          quotaDef
+}
+
+type spikeArrestDef struct {
+	SpikeArrestEnabled       bool
+	SpikeArrestName          string
+	SpikeArrestIdentifierRef string
+	SpikeArrestRateRef       string
+	SpikeArrestRateLiteral   string
+}
+
+type quotaDef struct {
+	QuotaEnabled         bool
+	QuotaName            string
+	QuotaAllowRef        string
+	QuotaAllowLiteral    string
+	QuotaIntervalRef     string
+	QuotaIntervalLiteral string
+	QuotaTimeUnitRef     string
+	QuotaTimeUnitLiteral string
+	QuotaConfigStepName  string
 }
 
 type oAuthPolicyDef struct {
@@ -58,6 +82,9 @@ type apiKeyPolicyDef struct {
 var generateSetTarget bool
 
 var securitySchemesList = securitySchemesListDef{}
+
+var quotaPolicyContent = map[string]string{}
+var spikeArrestPolicyContent = map[string]string{}
 
 var doc *openapi3.T
 
@@ -141,7 +168,14 @@ func isFileYaml(name string) bool {
 	return false
 }
 
-func GenerateAPIProxyDefFromOAS(name string, oasDocName string, skipPolicy bool, addCORS bool, oasGoogleAcessTokenScopeLiteral string, oasGoogleIdTokenAudLiteral string, oasGoogleIdTokenAudRef string, oasTargetUrlRef string) (err error) {
+func GenerateAPIProxyDefFromOAS(name string,
+	oasDocName string,
+	skipPolicy bool,
+	addCORS bool,
+	oasGoogleAcessTokenScopeLiteral string,
+	oasGoogleIdTokenAudLiteral string,
+	oasGoogleIdTokenAudRef string,
+	oasTargetUrlRef string) (err error) {
 
 	if doc == nil {
 		return fmt.Errorf("Open API document not loaded")
@@ -195,7 +229,25 @@ func GenerateAPIProxyDefFromOAS(name string, oasDocName string, skipPolicy bool,
 		if securityScheme.APIKeyPolicy.APIKeyPolicyEnabled {
 			proxies.AddStepToPreFlowRequest("Verify-API-Key-" + securityScheme.SchemeName)
 		} else if securityScheme.OAuthPolicy.OAuthPolicyEnabled {
-			apiproxy.AddPolicy("OAuth-v20-1")
+			proxies.AddStepToPreFlowRequest("OAuth-v20-1")
+		}
+	}
+
+	//add any preflow quota or rate limit policies
+	if doc.Extensions != nil {
+		spikeArrestList, quotaList, err := processPreFlowExtensions(doc.Extensions)
+		if err != nil {
+			return err
+		}
+		if len(spikeArrestList) > 0 {
+			for _, spikeArrest := range spikeArrestList {
+				proxies.AddStepToPreFlowRequest("Spike-Arrest-" + spikeArrest.SpikeArrestName)
+			}
+		}
+		if len(quotaList) > 0 {
+			for _, quota := range quotaList {
+				proxies.AddStepToPreFlowRequest("Quota-" + quota.QuotaName)
+			}
 		}
 	}
 
@@ -231,8 +283,9 @@ func GetEndpoint(doc *openapi3.T) (u *url.URL, err error) {
 	return url.Parse(doc.Servers[0].URL)
 }
 
-func GetHTTPMethod(pathItem *openapi3.PathItem, keyPath string) map[string]pathDetailDef {
+func GetHTTPMethod(pathItem *openapi3.PathItem, keyPath string) (map[string]pathDetailDef, error) {
 
+	var err error
 	pathMap := make(map[string]pathDetailDef)
 	alternateOperationId := strings.ReplaceAll(keyPath, "\\", "_")
 
@@ -249,6 +302,12 @@ func GetHTTPMethod(pathItem *openapi3.PathItem, keyPath string) map[string]pathD
 		if pathItem.Get.Security != nil {
 			securityRequirements := []openapi3.SecurityRequirement(*pathItem.Get.Security)
 			getPathDetail.SecurityScheme = getSecurityRequirements(securityRequirements)
+		}
+		//check for google extensions
+		if pathItem.Get.Extensions != nil {
+			if getPathDetail, err = processPathExtensions(pathItem.Get.Extensions, getPathDetail); err != nil {
+				return nil, err
+			}
 		}
 		pathMap["get"] = getPathDetail
 	}
@@ -267,6 +326,12 @@ func GetHTTPMethod(pathItem *openapi3.PathItem, keyPath string) map[string]pathD
 			securityRequirements := []openapi3.SecurityRequirement(*pathItem.Post.Security)
 			postPathDetail.SecurityScheme = getSecurityRequirements(securityRequirements)
 		}
+		//check for google extensions
+		if pathItem.Post.Extensions != nil {
+			if postPathDetail, err = processPathExtensions(pathItem.Post.Extensions, postPathDetail); err != nil {
+				return nil, err
+			}
+		}
 		pathMap["post"] = postPathDetail
 	}
 
@@ -283,6 +348,12 @@ func GetHTTPMethod(pathItem *openapi3.PathItem, keyPath string) map[string]pathD
 		if pathItem.Put.Security != nil {
 			securityRequirements := []openapi3.SecurityRequirement(*pathItem.Put.Security)
 			putPathDetail.SecurityScheme = getSecurityRequirements(securityRequirements)
+		}
+		//check for google extensions
+		if pathItem.Put.Extensions != nil {
+			if putPathDetail, err = processPathExtensions(pathItem.Put.Extensions, putPathDetail); err != nil {
+				return nil, err
+			}
 		}
 		pathMap["put"] = putPathDetail
 	}
@@ -301,6 +372,12 @@ func GetHTTPMethod(pathItem *openapi3.PathItem, keyPath string) map[string]pathD
 			securityRequirements := []openapi3.SecurityRequirement(*pathItem.Patch.Security)
 			patchPathDetail.SecurityScheme = getSecurityRequirements(securityRequirements)
 		}
+		//check for google extensions
+		if pathItem.Patch.Extensions != nil {
+			if patchPathDetail, err = processPathExtensions(pathItem.Patch.Extensions, patchPathDetail); err != nil {
+				return nil, err
+			}
+		}
 		pathMap["patch"] = patchPathDetail
 	}
 
@@ -317,6 +394,12 @@ func GetHTTPMethod(pathItem *openapi3.PathItem, keyPath string) map[string]pathD
 		if pathItem.Delete.Security != nil {
 			securityRequirements := []openapi3.SecurityRequirement(*pathItem.Delete.Security)
 			deletePathDetail.SecurityScheme = getSecurityRequirements(securityRequirements)
+		}
+		//check for google extensions
+		if pathItem.Delete.Extensions != nil {
+			if deletePathDetail, err = processPathExtensions(pathItem.Delete.Extensions, deletePathDetail); err != nil {
+				return nil, err
+			}
 		}
 		pathMap["delete"] = deletePathDetail
 	}
@@ -360,12 +443,15 @@ func GetHTTPMethod(pathItem *openapi3.PathItem, keyPath string) map[string]pathD
 		pathMap["head"] = headPathDetail
 	}
 
-	return pathMap
+	return pathMap, nil
 }
 
 func GenerateFlows(paths openapi3.Paths) (err error) {
 	for keyPath := range paths {
-		pathMap := GetHTTPMethod(paths[keyPath], keyPath)
+		pathMap, err := GetHTTPMethod(paths[keyPath], keyPath)
+		if err != nil {
+			return err
+		}
 		for method, pathDetail := range pathMap {
 			proxies.AddFlow(pathDetail.OperationID, replacePathWithWildCard(keyPath), method, pathDetail.Description)
 			if pathDetail.SecurityScheme.OAuthPolicy.OAuthPolicyEnabled {
@@ -374,6 +460,16 @@ func GenerateFlows(paths openapi3.Paths) (err error) {
 				}
 			} else if pathDetail.SecurityScheme.APIKeyPolicy.APIKeyPolicyEnabled {
 				if err = proxies.AddStepToFlowRequest("Verify-API-Key-"+pathDetail.SecurityScheme.SchemeName, pathDetail.OperationID); err != nil {
+					return err
+				}
+			}
+			if pathDetail.SpikeArrest.SpikeArrestEnabled {
+				if err = proxies.AddStepToFlowRequest("Spike-Arrest-"+pathDetail.SpikeArrest.SpikeArrestName, pathDetail.OperationID); err != nil {
+					return err
+				}
+			}
+			if pathDetail.Quota.QuotaEnabled {
+				if err = proxies.AddStepToFlowRequest("Quota-"+pathDetail.Quota.QuotaName, pathDetail.OperationID); err != nil {
 					return err
 				}
 			}
@@ -443,4 +539,168 @@ func loadSecurityRequirements(securitySchemes openapi3.SecuritySchemes) {
 
 func GetSecuritySchemesList() []securitySchemesDef {
 	return securitySchemesList.SecuritySchemes
+}
+
+func getQuotaDefinition(i interface{}) (quotaDef, error) {
+	var jsonArrayMap []map[string]interface{}
+
+	quota := quotaDef{}
+	jsonMap := map[string]string{}
+	str := fmt.Sprintf("%s", i)
+
+	if err := json.Unmarshal([]byte(str), &jsonArrayMap); err != nil {
+		fmt.Println(err)
+		return quotaDef{}, err
+	}
+
+	for _, m := range jsonArrayMap {
+		for k, v := range m {
+			jsonMap[k] = fmt.Sprintf("%v", v)
+		}
+	}
+
+	if jsonMap["name"] != "" {
+		quota.QuotaName = jsonMap["name"]
+		quota.QuotaEnabled = true
+	} else {
+		return quotaDef{}, fmt.Errorf("x-google-quota extension must have a name")
+	}
+
+	if jsonMap["useQuotaConfigInAPIProduct"] != "" {
+		quota.QuotaConfigStepName = jsonMap["useQuotaConfigInAPIProduct"]
+	} else {
+		if jsonMap["allow-ref"] == "" && jsonMap["allow-literal"] == "" {
+			return quotaDef{}, fmt.Errorf("x-google-quota extension must have either allow-ref or allow-literal")
+		} else if jsonMap["allow-literal"] != "" {
+			quota.QuotaAllowLiteral = jsonMap["allow-literal"]
+		} else if jsonMap["allow-ref"] != "" {
+			quota.QuotaAllowRef = jsonMap["allow-ref"]
+		}
+
+		if jsonMap["interval-ref"] == "" && jsonMap["interval-literal"] == "" {
+			return quotaDef{}, fmt.Errorf("x-google-quota extension must have either interval-ref or interval-literal")
+		} else if jsonMap["interval-literal"] != "" {
+			quota.QuotaIntervalLiteral = jsonMap["interval-literal"]
+		} else if jsonMap["interval-ref"] != "" {
+			quota.QuotaIntervalRef = jsonMap["interval-ref"]
+		}
+
+		if jsonMap["timeunit-ref"] == "" && jsonMap["timeunit-literal"] == "" {
+			return quotaDef{}, fmt.Errorf("x-google-quota extension must have either timeunit-ref or timeunit-literal")
+		} else if jsonMap["timeunit-literal"] != "" {
+			quota.QuotaTimeUnitLiteral = jsonMap["timeunit-literal"]
+		} else if jsonMap["timeunit-ref"] != "" {
+			quota.QuotaTimeUnitRef = jsonMap["timeunit-ref"]
+		}
+	}
+
+	//store policy XML contents
+	quotaPolicyContent[quota.QuotaName] = policies.AddQuotaPolicy(
+		"Quota-"+quota.QuotaName,
+		quota.QuotaConfigStepName,
+		quota.QuotaAllowRef,
+		quota.QuotaAllowLiteral,
+		quota.QuotaIntervalRef,
+		quota.QuotaIntervalLiteral,
+		quota.QuotaTimeUnitRef,
+		quota.QuotaTimeUnitLiteral)
+
+	return quota, nil
+}
+
+func getSpikeArrestDefinition(i interface{}) (spikeArrestDef, error) {
+	var jsonArrayMap []map[string]interface{}
+
+	spikeArrest := spikeArrestDef{}
+	jsonMap := map[string]string{}
+	str := fmt.Sprintf("%s", i)
+
+	if err := json.Unmarshal([]byte(str), &jsonArrayMap); err != nil {
+		fmt.Println(err)
+		return spikeArrestDef{}, err
+	}
+
+	for _, m := range jsonArrayMap {
+		for k, v := range m {
+			jsonMap[k] = fmt.Sprintf("%v", v)
+		}
+	}
+
+	if jsonMap["identifier-ref"] != "" {
+		spikeArrest.SpikeArrestIdentifierRef = jsonMap["identifier-ref"]
+	} else {
+		return spikeArrestDef{}, fmt.Errorf("x-google-ratelimit extension must have an identifier-ref")
+	}
+
+	if jsonMap["name"] != "" {
+		spikeArrest.SpikeArrestName = jsonMap["name"]
+		spikeArrest.SpikeArrestEnabled = true
+	} else {
+		return spikeArrestDef{}, fmt.Errorf("x-google-ratelimit extension must have a name")
+	}
+
+	if jsonMap["rate-ref"] == "" && jsonMap["rate-literal"] == "" {
+		return spikeArrestDef{}, fmt.Errorf("x-google-ratelimit extension must have either rate-ref or rate-literal")
+	} else if jsonMap["rate-literal"] != "" {
+		spikeArrest.SpikeArrestRateLiteral = jsonMap["rate-literal"]
+	} else if jsonMap["rate-ref"] != "" {
+		spikeArrest.SpikeArrestRateRef = jsonMap["rate-ref"]
+	}
+
+	//store policy XML contents
+	spikeArrestPolicyContent[spikeArrest.SpikeArrestName] = policies.AddSpikeArrestPolicy("Spike-Arrest-"+spikeArrest.SpikeArrestName,
+		spikeArrest.SpikeArrestIdentifierRef,
+		spikeArrest.SpikeArrestRateRef,
+		spikeArrest.SpikeArrestRateLiteral)
+
+	return spikeArrest, nil
+}
+
+func processPathExtensions(extensions map[string]interface{}, pathDetail pathDetailDef) (pathDetailDef, error) {
+	var err error
+	for extensionName, extensionValue := range extensions {
+		if extensionName == "x-google-ratelimit" {
+			//process ratelimit
+			pathDetail.SpikeArrest, err = getSpikeArrestDefinition(extensionValue)
+		}
+		if extensionName == "x-google-quota" {
+			//process quota
+			pathDetail.Quota, err = getQuotaDefinition(extensionValue)
+		}
+	}
+	return pathDetail, err
+}
+
+func processPreFlowExtensions(extensions map[string]interface{}) ([]spikeArrestDef, []quotaDef, error) {
+	var err error
+	spikeArrestList := []spikeArrestDef{}
+	quotaList := []quotaDef{}
+
+	for extensionName, extensionValue := range extensions {
+		if extensionName == "x-google-ratelimit" {
+			//process ratelimit
+			spikeArrest, err := getSpikeArrestDefinition(extensionValue)
+			if err != nil {
+				return []spikeArrestDef{}, []quotaDef{}, err
+			}
+			spikeArrestList = append(spikeArrestList, spikeArrest)
+		}
+		if extensionName == "x-google-quota" {
+			//process quota
+			quota, err := getQuotaDefinition(extensionValue)
+			if err != nil {
+				return []spikeArrestDef{}, []quotaDef{}, err
+			}
+			quotaList = append(quotaList, quota)
+		}
+	}
+	return spikeArrestList, quotaList, err
+}
+
+func GetSpikeArrestPolicies() map[string]string {
+	return spikeArrestPolicyContent
+}
+
+func GetQuotaPolicies() map[string]string {
+	return quotaPolicyContent
 }
