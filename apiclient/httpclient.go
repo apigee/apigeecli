@@ -78,7 +78,11 @@ func PostHttpZip(print bool, auth bool, method string, url string, headers map[s
 
 //PostHttpOctet method is used to send resources, proxy bundles, shared flows etc.
 func PostHttpOctet(print bool, update bool, url string, proxyName string) (respBody []byte, err error) {
-	file, _ := os.Open(proxyName)
+	file, err := os.Open(proxyName)
+	if err != nil {
+		clilog.Error.Printf("failed to open the file %s with error: %v", proxyName, err)
+		return nil, err
+	}
 	defer file.Close()
 
 	var req *http.Request
