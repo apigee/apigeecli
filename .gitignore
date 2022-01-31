@@ -4,6 +4,7 @@
 *.dll
 *.so
 *.dylib
+*.zip
 apigeecli
 .DS_Store
 
@@ -17,6 +18,8 @@ apigeecli
 vendor/
 # binaries
 dist/
+
+apiproxy/
 
 #keys for envoy
 remote-service.*
