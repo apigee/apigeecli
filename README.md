@@ -209,12 +209,18 @@ The above configurations are mutually exclusive.
 
 #### SpikeArrest custom extension
 
+The following configuration allows the user to specify Spike Arrest parameters in the API Proxy.
+
 ```yaml
 x-google-ratelimit: 
   - name: test1 # this is appended to the quota policy name, ex: Spike-Arrest-test1
     rate-literal: 10ps # specify the allowed interval in the policy, use rate-ref to specify a variable
     identifier-ref: request.header.url #optional, specify msg ctx var for the identifier
 ```
+
+### Examples
+
+See this [OAS document](./test/petstore-ext1.yaml) for examples
 
 ___
 
