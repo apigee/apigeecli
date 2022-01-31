@@ -129,7 +129,7 @@ func GenerateAPIProxyBundle(name string,
 		}
 		if securityScheme.OAuthPolicy.OAuthPolicyEnabled {
 			if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"OAuth-v20-1.xml",
-				policies.AddOAuth2Policy()); err != nil {
+				policies.AddOAuth2Policy(securityScheme.OAuthPolicy.Scope)); err != nil {
 				return err
 			}
 		}

@@ -61,6 +61,7 @@ type quotaDef struct {
 
 type oAuthPolicyDef struct {
 	OAuthPolicyEnabled bool
+	Scope              string
 }
 
 type securitySchemesListDef struct {
@@ -500,6 +501,17 @@ func loadSecurityType(secSchemeName string, securityScheme openapi3.SecuritySche
 		secScheme.SchemeName = secSchemeName
 		oAuthPolicy.OAuthPolicyEnabled = true
 		apiKeyPolicy.APIKeyPolicyEnabled = false
+		if securityScheme.Value.Flows != nil {
+			if securityScheme.Value.Flows.Implicit != nil {
+				oAuthPolicy.Scope = readScopes(securityScheme.Value.Flows.Implicit.Scopes)
+			} else if securityScheme.Value.Flows.Password != nil {
+				oAuthPolicy.Scope = readScopes(securityScheme.Value.Flows.Password.Scopes)
+			} else if securityScheme.Value.Flows.ClientCredentials.Scopes != nil {
+				oAuthPolicy.Scope = readScopes(securityScheme.Value.Flows.ClientCredentials.Scopes)
+			} else if securityScheme.Value.Flows.AuthorizationCode.Scopes != nil {
+				oAuthPolicy.Scope = readScopes(securityScheme.Value.Flows.AuthorizationCode.Scopes)
+			}
+		}
 		secScheme.OAuthPolicy = oAuthPolicy
 	} else if securityScheme.Value.Type == "apiKey" {
 		secScheme.SchemeName = secSchemeName
@@ -703,4 +715,12 @@ func GetSpikeArrestPolicies() map[string]string {
 
 func GetQuotaPolicies() map[string]string {
 	return quotaPolicyContent
+}
+
+func readScopes(scopes map[string]string) string {
+	scopeString := ""
+	for scopeName := range scopes {
+		scopeString = scopeName + " " + scopeString
+	}
+	return strings.TrimSpace(scopeString)
 }

@@ -44,6 +44,7 @@ var oauth2Policy = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
     <SupportedGrantTypes/>
     <GenerateResponse enabled="true"/>
     <Tokens/>
+	<Scope/>
 </OAuthV2>`
 
 var corsPolicy = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -167,8 +168,14 @@ func AddQuotaPolicy(policyName string, useQuotaConfigStepName string,
 	return policyString
 }
 
-func AddOAuth2Policy() string {
-	return oauth2Policy
+func AddOAuth2Policy(scope string) string {
+	if scope != "" {
+		scopeTag := "<Scope>" + scope + "</Scope>"
+		policyString := strings.ReplaceAll(oauth2Policy, "<Scope/>", scopeTag)
+		return policyString
+	}
+	policyString := strings.ReplaceAll(oauth2Policy, "<Scope/>", "")
+	return policyString
 }
 
 func AddCORSPolicy() string {
