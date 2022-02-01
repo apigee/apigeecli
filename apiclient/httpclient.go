@@ -139,6 +139,43 @@ func PostHttpOctet(print bool, update bool, url string, proxyName string) (respB
 	return handleResponse(print, resp)
 }
 
+func DownloadFile(url string, auth bool) (resp *http.Response, err error) {
+	client, err := getHttpClient()
+	if err != nil {
+		return nil, err
+	}
+
+	clilog.Info.Println("Connecting to : ", url)
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		clilog.Error.Println("error in client: ", err)
+		return nil, err
+	}
+
+	if auth {
+		req, err = setAuthHeader(req)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	resp, err = client.Do(req)
+
+	if err != nil {
+		clilog.Error.Println("error connecting: ", err)
+		return nil, err
+	} else if resp.StatusCode > 299 {
+		clilog.Error.Printf("error in response, status %d: %s", resp.StatusCode, resp.Body)
+		return nil, errors.New("error in response")
+	}
+
+	if resp == nil {
+		clilog.Error.Println("error in response: Response was null")
+		return nil, fmt.Errorf("error in response: Response was null")
+	}
+	return resp, err
+}
+
 //DownloadResource method is used to download resources, proxy bundles, sharedflows
 func DownloadResource(url string, name string, resType string) error {
 	var filename string
@@ -156,40 +193,13 @@ func DownloadResource(url string, name string, resType string) error {
 	}
 	defer out.Close()
 
-	client, err := getHttpClient()
+	resp, err := DownloadFile(url, true)
 	if err != nil {
 		return err
-	}
-
-	clilog.Info.Println("Connecting to : ", url)
-	req, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		clilog.Error.Println("error in client: ", err)
-		return err
-	}
-
-	req, err = setAuthHeader(req)
-	if err != nil {
-		return err
-	}
-
-	resp, err := client.Do(req)
-
-	if err != nil {
-		clilog.Error.Println("error connecting: ", err)
-		return err
-	} else if resp.StatusCode > 299 {
-		clilog.Error.Println("error in response: ", resp.Body)
-		return errors.New("error in response")
 	}
 
 	if resp != nil {
 		defer resp.Body.Close()
-	}
-
-	if resp == nil {
-		clilog.Error.Println("error in response: Response was null")
-		return fmt.Errorf("error in response: Response was null")
 	}
 
 	_, err = io.Copy(out, resp.Body)
