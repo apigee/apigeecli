@@ -1,0 +1,42 @@
+schema {
+  query: Query
+}
+
+
+type Price {
+  currency: String
+  value: String
+}
+
+type Inventory {
+  salePrice: Price
+  sellOnGoogleQuantity: String
+  availability: Int
+  kind: String
+  price: Price
+}
+
+type Item {
+  inventory: Inventory
+  productId: String
+  storeCode: String
+}
+
+type LineItem {
+  item: Item
+  quantity: Int
+}
+
+
+type Order {
+  operationId: ID!
+  shipmentId: String
+  lineItems: [LineItem!]!
+  carrier: String
+  trackingId: String
+}
+
+type Query {
+  getOrder(operationId: ID!): Order
+  listOrders: [Order!]!
+}
