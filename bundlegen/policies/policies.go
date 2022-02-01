@@ -91,6 +91,16 @@ var quotaPolicy2 = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 </Quota>	
 `
 
+var graphQLPolicy = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<GraphQL async="false" continueOnError="false" enabled="true" name="Validate-name-Schema">
+    <Source>request</Source>
+    <OperationType>query</OperationType>
+    <MaxDepth>4</MaxDepth>
+    <MaxCount>4</MaxCount>
+    <Action>parse</Action>
+    <ResourceURL>graphql://schema.graphql</ResourceURL>
+</GraphQL>`
+
 var setTargetEndpointPolicy = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <AssignMessage async="false" continueOnError="false" enabled="true" name="Set-Target-1">
     <AssignVariable>
@@ -184,6 +194,15 @@ func AddCORSPolicy() string {
 
 func AddSetTargetEndpoint(ref string) string {
 	return strings.Replace(setTargetEndpointPolicy, "dynamic.target.url", ref, -1)
+}
+
+func AddGraphQLPolicy(name string, action string, schema string) string {
+	policyString := strings.ReplaceAll(graphQLPolicy, "schema.graphql", schema)
+	policyString = strings.ReplaceAll(policyString, "Validate-name-Schema", "Validate-"+name+"-Schema")
+	if action != "" {
+		policyString = strings.ReplaceAll(policyString, "parse", action)
+	}
+	return policyString
 }
 
 func replaceTemplateWithPolicy(name string) string {

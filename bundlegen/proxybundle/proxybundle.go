@@ -39,10 +39,9 @@ import (
 
 const rootDir = "apiproxy"
 
-func GenerateAPIProxyBundle(name string,
+func GenerateAPIProxyBundleFromOAS(name string,
 	content string,
 	fileName string,
-	resourceType string,
 	skipPolicy bool,
 	addCORS bool,
 	oasGoogleAcessTokenScopeLiteral string,
@@ -51,6 +50,7 @@ func GenerateAPIProxyBundle(name string,
 	oasTargetUrlRef string) (err error) {
 
 	var apiProxyData, proxyEndpointData, targetEndpointData string
+	const resourceType = "oas"
 
 	if err = os.Mkdir(rootDir, os.ModePerm); err != nil {
 		return err
@@ -153,6 +153,102 @@ func GenerateAPIProxyBundle(name string,
 		//add oas policy
 		if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"OpenAPI-Spec-Validation-1.xml",
 			policies.AddOpenAPIValidatePolicy(fileName)); err != nil {
+			return err
+		}
+	}
+
+	if addCORS {
+		//add cors policy
+		if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"Add-CORS.xml", policies.AddCORSPolicy()); err != nil {
+			return err
+		}
+	}
+
+	if err = archiveBundle(rootDir, name+".zip"); err != nil {
+		return err
+	}
+
+	defer os.RemoveAll(rootDir) // clean up
+	return nil
+}
+
+func GenerateAPIProxyBundleFromGQL(name string,
+	content string,
+	fileName string,
+	action string,
+	skipPolicy bool,
+	addCORS bool,
+	targetUrlRef string) (err error) {
+
+	var apiProxyData, proxyEndpointData, targetEndpointData string
+	const resourceType = "graphql"
+
+	if err = os.Mkdir(rootDir, os.ModePerm); err != nil {
+		return err
+	}
+
+	// write API Proxy file
+	if apiProxyData, err = apiproxy.GetAPIProxy(); err != nil {
+		return err
+	}
+
+	err = writeXMLData(rootDir+string(os.PathSeparator)+name+".xml", apiProxyData)
+	if err != nil {
+		return err
+	}
+
+	proxiesDirPath := rootDir + string(os.PathSeparator) + "proxies"
+	policiesDirPath := rootDir + string(os.PathSeparator) + "policies"
+	targetDirPath := rootDir + string(os.PathSeparator) + "targets"
+	resDirPath := rootDir + string(os.PathSeparator) + "resources" + string(os.PathSeparator) + resourceType //"graphql"
+
+	if err = os.Mkdir(proxiesDirPath, os.ModePerm); err != nil {
+		return err
+	}
+
+	if proxyEndpointData, err = proxies.GetProxyEndpoint(); err != nil {
+		return err
+	}
+
+	err = writeXMLData(proxiesDirPath+string(os.PathSeparator)+"default.xml", proxyEndpointData)
+	if err != nil {
+		return err
+	}
+
+	if err = os.Mkdir(targetDirPath, os.ModePerm); err != nil {
+		return err
+	}
+
+	if targetEndpointData, err = target.GetTargetEndpoint(); err != nil {
+		return err
+	}
+
+	if err = writeXMLData(targetDirPath+string(os.PathSeparator)+"default.xml", targetEndpointData); err != nil {
+		return err
+	}
+
+	if !skipPolicy {
+		if err = os.MkdirAll(resDirPath, os.ModePerm); err != nil {
+			return err
+		}
+		if err = writeXMLData(resDirPath+string(os.PathSeparator)+fileName, content); err != nil {
+			return err
+		}
+	}
+
+	if err = os.Mkdir(policiesDirPath, os.ModePerm); err != nil {
+		return err
+	}
+
+	if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"Set-Target-1.xml",
+		policies.AddSetTargetEndpoint(targetUrlRef)); err != nil {
+		return err
+	}
+
+	if !skipPolicy {
+		//add gql policy
+		if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"Validate-"+name+"-Schema.xml",
+			policies.AddGraphQLPolicy(name, action, fileName)); err != nil {
 			return err
 		}
 	}

@@ -115,6 +115,6 @@ func SetConfigurationVersion() {
 	apiProxy.ConfigurationVersion.MinorVersion = "0"
 }
 
-func AddResource(name string) {
-	apiProxy.Resources.Resource = append(apiProxy.Resources.Resource, "oas://"+name)
+func AddResource(name string, resType string) {
+	apiProxy.Resources.Resource = append(apiProxy.Resources.Resource, resType+"://"+name)
 }

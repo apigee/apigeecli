@@ -199,7 +199,7 @@ func GenerateAPIProxyDefFromOAS(name string,
 	apiproxy.AddProxyEndpoint("default")
 
 	if !skipPolicy {
-		apiproxy.AddResource(oasDocName)
+		apiproxy.AddResource(oasDocName, "oas")
 		apiproxy.AddPolicy("Validate-" + name + "-Schema")
 	}
 
@@ -282,6 +282,45 @@ func GetEndpoint(doc *openapi3.T) (u *url.URL, err error) {
 	}
 
 	return url.Parse(doc.Servers[0].URL)
+}
+
+func GenerateAPIProxyDefFromGQL(name string,
+	gqlDocName string,
+	basePath string,
+	targetUrlRef string,
+	skipPolicy bool,
+	addCORS bool) (err error) {
+
+	apiproxy.SetDisplayName(name)
+	apiproxy.SetCreatedAt()
+	apiproxy.SetLastModifiedAt()
+	apiproxy.SetConfigurationVersion()
+	apiproxy.AddTargetEndpoint("default")
+	apiproxy.AddProxyEndpoint("default")
+
+	apiproxy.SetDescription("Generated API Proxy from " + gqlDocName)
+
+	if !skipPolicy {
+		apiproxy.AddResource(gqlDocName, "graphql")
+		apiproxy.AddPolicy("Validate-" + name + "-Schema")
+	}
+
+	targets.NewTargetEndpoint("https://api.example.com", "", "", "")
+
+	proxies.NewProxyEndpoint(basePath)
+
+	if addCORS {
+		proxies.AddStepToPreFlowRequest("Add-CORS")
+		apiproxy.AddPolicy("Add-CORS")
+	}
+
+	targets.AddStepToPreFlowRequest("Set-Target-1")
+	apiproxy.AddPolicy("Set-Target-1")
+
+	if !skipPolicy {
+		proxies.AddStepToPreFlowRequest("Validate-" + name + "-Schema")
+	}
+	return err
 }
 
 func GetHTTPMethod(pathItem *openapi3.PathItem, keyPath string) (map[string]pathDetailDef, error) {
