@@ -176,6 +176,8 @@ func GenerateAPIProxyBundleFromGQL(name string,
 	content string,
 	fileName string,
 	action string,
+	location string,
+	keyName string,
 	skipPolicy bool,
 	addCORS bool,
 	targetUrlRef string) (err error) {
@@ -249,6 +251,14 @@ func GenerateAPIProxyBundleFromGQL(name string,
 		//add gql policy
 		if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"Validate-"+name+"-Schema.xml",
 			policies.AddGraphQLPolicy(name, action, fileName)); err != nil {
+			return err
+		}
+	}
+
+	if keyName != "" {
+		//add verifyapi key policy
+		if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"Verify-API-Key-"+name+".xml",
+			policies.AddVerifyApiKeyPolicy(location, name, keyName)); err != nil {
 			return err
 		}
 	}

@@ -20,6 +20,7 @@ import (
 	"net/url"
 	"path"
 	"path/filepath"
+	"strings"
 
 	"github.com/spf13/cobra"
 	"github.com/srinandan/apigeecli/apiclient"
@@ -51,11 +52,18 @@ var GqlCreateCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+
+		location, keyName, err := getKeyNameAndLocation()
+		if err != nil {
+			return err
+		}
+
 		//Generate the apiproxy struct
 		err = bundle.GenerateAPIProxyDefFromGQL(name,
 			gqlDocName,
 			basePath,
 			targetUrlRef,
+			apiKeyLocation,
 			skipPolicy,
 			addCORS)
 
@@ -68,6 +76,8 @@ var GqlCreateCmd = &cobra.Command{
 			string(content),
 			gqlDocName,
 			action,
+			location,
+			keyName,
 			skipPolicy,
 			addCORS,
 			targetUrlRef)
@@ -84,7 +94,7 @@ var GqlCreateCmd = &cobra.Command{
 	},
 }
 
-var gqlFile, gqlURI, basePath, action string
+var gqlFile, gqlURI, basePath, action, apiKeyLocation string
 
 func init() {
 	GqlCreateCmd.Flags().StringVarP(&name, "name", "n",
@@ -99,6 +109,8 @@ func init() {
 		"verify", "GraphQL policy action, must be oneOf parse, verify or parse_verify. Default is verify")
 	GqlCreateCmd.Flags().StringVarP(&targetUrlRef, "target-url-ref", "",
 		"", "Set a reference variable containing the target endpoint")
+	GqlCreateCmd.Flags().StringVarP(&targetUrlRef, "apikey-location", "",
+		"", "Set the location of the API key, ex: request.header.x-api-key")
 	GqlCreateCmd.Flags().BoolVarP(&importProxy, "import", "",
 		true, "Import API Proxy after generation from spec")
 	GqlCreateCmd.Flags().BoolVarP(&skipPolicy, "skip-policy", "",
@@ -141,4 +153,16 @@ func readSchemaURL() (string, []byte, error) {
 		return "", nil, err
 	}
 	return path.Base(u.Path), respBody, err
+}
+
+func getKeyNameAndLocation() (location string, key string, err error) {
+	if apiKeyLocation == "" {
+		return "", "", nil
+	}
+
+	apikey := strings.Split(apiKeyLocation, ".")
+	if len(apikey) != 3 {
+		return "", "", fmt.Errorf("api key location must be of the form request.header.foo or request.queryparam.bar")
+	}
+	return apikey[1], apikey[2], nil
 }

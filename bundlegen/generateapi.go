@@ -288,6 +288,7 @@ func GenerateAPIProxyDefFromGQL(name string,
 	gqlDocName string,
 	basePath string,
 	targetUrlRef string,
+	apiKeyLocation string,
 	skipPolicy bool,
 	addCORS bool) (err error) {
 
@@ -320,6 +321,11 @@ func GenerateAPIProxyDefFromGQL(name string,
 	if !skipPolicy {
 		proxies.AddStepToPreFlowRequest("Validate-" + name + "-Schema")
 	}
+
+	if apiKeyLocation != "" {
+		proxies.AddStepToPreFlowRequest("Verify-API-Key-" + name)
+	}
+
 	return err
 }
 
