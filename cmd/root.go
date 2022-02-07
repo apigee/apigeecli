@@ -32,6 +32,7 @@ import (
 	"github.com/srinandan/apigeecli/cmd/env"
 	"github.com/srinandan/apigeecli/cmd/envgroup"
 	"github.com/srinandan/apigeecli/cmd/envoy"
+	"github.com/srinandan/apigeecli/cmd/eptattachment"
 	flowhooks "github.com/srinandan/apigeecli/cmd/flowhooks"
 	"github.com/srinandan/apigeecli/cmd/iam"
 	"github.com/srinandan/apigeecli/cmd/instances"
@@ -124,6 +125,7 @@ func init() {
 	RootCmd.AddCommand(ops.Cmd)
 	RootCmd.AddCommand(preferences.Cmd)
 	RootCmd.AddCommand(overrides.Cmd)
+	RootCmd.AddCommand(eptattachment.Cmd)
 }
 
 func initConfig() {
