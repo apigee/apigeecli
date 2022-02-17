@@ -242,6 +242,7 @@ func ImportBundleAsync(entityType string, name string, bundlePath string, wg *sy
 func ImportBundle(entityType string, name string, bundlePath string) error {
 	err := ReadBundle(bundlePath)
 	if err != nil {
+		clilog.Error.Println(err)
 		return err
 	}
 
@@ -259,12 +260,6 @@ func ImportBundle(entityType string, name string, bundlePath string) error {
 	q.Set("name", name)
 	q.Set("action", "import")
 	u.RawQuery = q.Encode()
-
-	err = ReadBundle(bundlePath)
-	if err != nil {
-		clilog.Error.Println(err)
-		return err
-	}
 
 	_, err = PostHttpOctet(true, false, u.String(), bundlePath)
 	if err != nil {
