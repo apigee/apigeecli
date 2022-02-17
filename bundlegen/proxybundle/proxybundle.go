@@ -310,6 +310,7 @@ func archiveBundle(pathToZip, destinationPath string) (err error) {
 		if info.IsDir() {
 			relPath := strings.TrimPrefix(filePath, filepath.Dir(pathToZip))
 			zipEntry := strings.ReplaceAll(strings.TrimPrefix(relPath, string(os.PathSeparator))+string(os.PathSeparator), string(os.PathSeparator)+string(os.PathSeparator), string(os.PathSeparator))
+			clilog.Info.Println(zipEntry)
 			_, err = myZip.Create(zipEntry)
 			return err
 		}
@@ -318,6 +319,7 @@ func archiveBundle(pathToZip, destinationPath string) (err error) {
 		}
 		relPath := strings.TrimPrefix(filePath, filepath.Dir(pathToZip))
 		zipEntry := strings.ReplaceAll(strings.TrimPrefix(relPath, string(os.PathSeparator)), string(os.PathSeparator)+string(os.PathSeparator), string(os.PathSeparator))
+		clilog.Info.Println(zipEntry)
 		zipFile, err := myZip.Create(zipEntry)
 		if err != nil {
 			return err
