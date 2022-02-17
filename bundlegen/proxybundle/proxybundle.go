@@ -300,6 +300,8 @@ func archiveBundle(pathToZip, destinationPath string) (err error) {
 
 	var destinationFile *os.File
 
+	pathSep := `/` //For archives/zip the path separator is always /
+
 	destinationFile, err = os.Create(destinationPath)
 	if err != nil {
 		return err
@@ -308,18 +310,16 @@ func archiveBundle(pathToZip, destinationPath string) (err error) {
 	myZip := zip.NewWriter(destinationFile)
 	err = filepath.Walk(pathToZip, func(filePath string, info os.FileInfo, err error) error {
 		if info.IsDir() {
-			relPath := strings.TrimPrefix(filePath, filepath.Dir(pathToZip))
-			zipEntry := strings.ReplaceAll(strings.TrimPrefix(relPath, string(os.PathSeparator))+string(os.PathSeparator), string(os.PathSeparator)+string(os.PathSeparator), string(os.PathSeparator))
-			clilog.Info.Println(zipEntry)
+			relPath := filepath.ToSlash(strings.TrimPrefix(filePath, filepath.Dir(pathToZip)))
+			zipEntry := strings.TrimPrefix(relPath, pathSep) + pathSep
 			_, err = myZip.Create(zipEntry)
 			return err
 		}
 		if err != nil {
 			return err
 		}
-		relPath := strings.TrimPrefix(filePath, filepath.Dir(pathToZip))
-		zipEntry := strings.ReplaceAll(strings.TrimPrefix(relPath, string(os.PathSeparator)), string(os.PathSeparator)+string(os.PathSeparator), string(os.PathSeparator))
-		clilog.Info.Println(zipEntry)
+		relPath := filepath.ToSlash(strings.TrimPrefix(filePath, filepath.Dir(pathToZip)))
+		zipEntry := strings.TrimPrefix(relPath, pathSep)
 		zipFile, err := myZip.Create(zipEntry)
 		if err != nil {
 			return err
