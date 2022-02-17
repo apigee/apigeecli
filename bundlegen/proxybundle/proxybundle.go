@@ -309,14 +309,14 @@ func archiveBundle(pathToZip, destinationPath string) (err error) {
 	err = filepath.Walk(pathToZip, func(filePath string, info os.FileInfo, err error) error {
 		if info.IsDir() {
 			relPath := strings.TrimPrefix(filePath, filepath.Dir(pathToZip))
-			_, err = myZip.Create(strings.TrimPrefix(relPath, "/") + "/")
+			_, err = myZip.Create(strings.TrimPrefix(relPath, string(os.PathSeparator)) + string(os.PathSeparator))
 			return err
 		}
 		if err != nil {
 			return err
 		}
 		relPath := strings.TrimPrefix(filePath, filepath.Dir(pathToZip))
-		zipFile, err := myZip.Create(strings.TrimPrefix(relPath, "/"))
+		zipFile, err := myZip.Create(strings.TrimPrefix(relPath, string(os.PathSeparator)))
 		if err != nil {
 			return err
 		}
