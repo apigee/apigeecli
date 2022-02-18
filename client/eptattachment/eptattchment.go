@@ -23,7 +23,7 @@ import (
 )
 
 //Create
-func Create(serviceAttachment string, location string) (respBody []byte, err error) {
+func Create(name string, serviceAttachment string, location string) (respBody []byte, err error) {
 
 	endpointAttachment := []string{}
 
@@ -34,6 +34,10 @@ func Create(serviceAttachment string, location string) (respBody []byte, err err
 
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "endpointAttachments")
+
+	q := u.Query()
+	q.Set("endpointAttachmentId", name)
+	u.RawQuery = q.Encode()
 
 	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload)
 	return respBody, err

@@ -38,20 +38,23 @@ var CreateCmd = &cobra.Command{
 		if !ok {
 			return fmt.Errorf("disk encryption key must be of the format projects/{project-id}/regions/{location}/serviceAttachments/{sa-name}")
 		}
-		_, err = eptattachment.Create(name, location)
+		_, err = eptattachment.Create(name, serviceAttachment, location)
 		return
 	},
 }
 
-var location string
+var location, serviceAttachment string
 
 func init() {
 
 	CreateCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of the service endpoint")
 	CreateCmd.Flags().StringVarP(&location, "location", "l",
+		"", "Location of the service endpoint")
+	CreateCmd.Flags().StringVarP(&serviceAttachment, "service-attachment", "s",
 		"", "Service attachment url: projects/{project-id}/regions/{location}/serviceAttachments/{sa-name}")
 
 	_ = CreateCmd.MarkFlagRequired("name")
+	_ = CreateCmd.MarkFlagRequired("service-attachment")
 	_ = CreateCmd.MarkFlagRequired("location")
 }
