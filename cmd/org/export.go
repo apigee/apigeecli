@@ -197,7 +197,7 @@ func init() {
 	ExportCmd.Flags().IntVarP(&conn, "conn", "c",
 		4, "Number of connections")
 	ExportCmd.Flags().BoolVarP(&allRevisions, "all", "",
-		false, "Expose all revisions")
+		false, "Export all revisions, default=false. Exports the latest revision")
 }
 
 func createFolders() (err error) {
