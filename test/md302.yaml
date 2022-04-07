@@ -1,0 +1,100 @@
+# Copyright 2022 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+openapi: 3.0.2
+info:
+  version: 0.0.1
+  title: Masterdata microservice
+  description: |
+    Masterdata microservice
+servers: 
+  - url: https://my.example.com/md
+security:
+  - ApiKeyAuth: []  
+paths:
+  '/':
+    get:
+      summary: 'List `Masterdata` objects.'
+      description: |
+        Fetches list of masterdata of all items we carry
+      # This is an array of GET operation parameters:
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  persons:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ListOfMasterdata'
+                  nextPageToken:
+                    description: |
+                      A token which can be sent as `pageToken`
+                      to retrieve the next page.
+                    type: string
+  '/{name}':
+    get:
+      description: 'Retrieve a single Person object.'
+      parameters:
+        - name: name
+          in: path
+          description: |
+            Unique identifier of the desired person object.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Masterdata'
+        '404':
+          description: 'Item was not found'
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-KEY
+  schemas:
+    ListOfMasterdata:
+      title: List of Masterdata
+      type: array
+      items:
+        $ref: '#/components/schemas/Masterdata'
+    Masterdata:
+      title: Masterdata
+      type: object
+      properties:
+        name:
+          description: |
+            name of the item
+            Format: `persons/{personId}`
+          type: string
+          example: "md/a353-x51d"
+          pattern: 'md\/[a-z0-9-]+'
+        desc:
+          description: 'the description of the item'
+          type: string
+        imgUrl:
+          description: 'the url to the image'
+          type: string
+        id:
+          description: 'uuid of the item in question (internal only)'
+          type: string
