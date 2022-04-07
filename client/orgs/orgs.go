@@ -256,7 +256,7 @@ func Update(description string, displayName string, region string, network strin
 }
 
 //SetAddons
-func SetAddons(advancedApiOpsConfig bool, integrationConfig bool, monetizationConfig bool) (respBody []byte, err error) {
+func SetAddons(advancedApiOpsConfig bool, integrationConfig bool, monetizationConfig bool, connectorsConfig bool) (respBody []byte, err error) {
 
 	addonPayload := []string{}
 
@@ -274,6 +274,10 @@ func SetAddons(advancedApiOpsConfig bool, integrationConfig bool, monetizationCo
 
 	if monetizationConfig {
 		addonPayload = append(addonPayload, "\"monetizationConfig\":{\"enabled\":true}")
+	}
+
+	if connectorsConfig {
+		addonPayload = append(addonPayload, "\"connectorsPlatformConfig\":{\"enabled\":true}")
 	}
 
 	payload := "{\"addonsConfig\":{" + strings.Join(addonPayload, ",") + "}}"
