@@ -30,7 +30,7 @@ var UpdateCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = targetservers.Update(name, description, host, port, enable, grpc, keyStore, keyAlias, tlsenabled, clientAuthEnabled, ignoreValidationErrors)
+		_, err = targetservers.Update(name, description, host, port, enable, grpc, keyStore, keyAlias, sslinfo, tlsenabled, clientAuthEnabled, ignoreValidationErrors)
 		return
 	},
 }
@@ -49,16 +49,17 @@ func init() {
 		false, "Enable target server for gRPC")
 
 	UpdateCmd.Flags().StringVarP(&keyStore, "keyStore", "",
-		"", "Key store for the target server")
+		"", "Key store for the target server; must be used with sslinfo")
 	UpdateCmd.Flags().StringVarP(&keyAlias, "keyAlias", "",
-		"", "Key alias for the target server")
-
+		"", "Key alias for the target server; must be used with sslinfo")
+	UpdateCmd.Flags().BoolVarP(&sslinfo, "sslinfo", "",
+		false, "Enable SSL Info on the target server")
 	UpdateCmd.Flags().BoolVarP(&tlsenabled, "tls", "",
-		false, "Enable TLS for the target server")
+		false, "Enable TLS for the target server; must be used with sslinfo")
 	UpdateCmd.Flags().BoolVarP(&clientAuthEnabled, "clientAuth", "c",
-		false, "Enable mTLS for the target server")
+		false, "Enable mTLS for the target server; must be used with sslinfo")
 	UpdateCmd.Flags().BoolVarP(&ignoreValidationErrors, "ignoreErr", "i",
-		false, "Ignore TLS validation errors for the target server")
+		false, "Ignore TLS validation errors for the target server; must be used with sslinfo")
 
 	UpdateCmd.Flags().IntVarP(&port, "port", "p",
 		-1, "port number")

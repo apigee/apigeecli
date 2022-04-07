@@ -30,14 +30,14 @@ var CreateCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = targetservers.Create(name, description, host, port, enable, grpc, keyStore, keyAlias, tlsenabled, clientAuthEnabled, ignoreValidationErrors)
+		_, err = targetservers.Create(name, description, host, port, enable, grpc, keyStore, keyAlias, sslinfo, tlsenabled, clientAuthEnabled, ignoreValidationErrors)
 		return
 
 	},
 }
 
 var description, host, keyStore, keyAlias string
-var enable, grpc, tlsenabled, clientAuthEnabled, ignoreValidationErrors bool
+var enable, grpc, sslinfo, tlsenabled, clientAuthEnabled, ignoreValidationErrors bool
 var port int
 
 func init() {
@@ -54,16 +54,17 @@ func init() {
 		false, "Enable target server for gRPC")
 
 	CreateCmd.Flags().StringVarP(&keyStore, "keyStore", "",
-		"", "Key store for the target server")
+		"", "Key store for the target server; must be used with sslinfo")
 	CreateCmd.Flags().StringVarP(&keyAlias, "keyAlias", "",
-		"", "Key alias for the target server")
-
+		"", "Key alias for the target server; must be used with sslinfo")
+	CreateCmd.Flags().BoolVarP(&sslinfo, "sslinfo", "",
+		false, "Enable SSL Info on the target server")
 	CreateCmd.Flags().BoolVarP(&tlsenabled, "tls", "",
-		false, "Enable TLS for the target server")
+		false, "Enable TLS for the target server; must be used with sslinfo")
 	CreateCmd.Flags().BoolVarP(&clientAuthEnabled, "clientAuth", "c",
-		false, "Enable mTLS for the target server")
+		false, "Enable mTLS for the target server; must be used with sslinfo")
 	CreateCmd.Flags().BoolVarP(&ignoreValidationErrors, "ignoreErr", "i",
-		false, "Ignore TLS validation errors for the target server")
+		false, "Ignore TLS validation errors for the target server; must be used with sslinfo")
 
 	CreateCmd.Flags().IntVarP(&port, "port", "p",
 		-1, "port number")

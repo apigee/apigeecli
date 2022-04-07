@@ -54,15 +54,15 @@ type commonName struct {
 }
 
 //Create
-func Create(name string, description string, host string, port int, enable bool, grpc bool, keyStore string, keyAlias string, tlsenabled bool, clientAuthEnabled bool, ignoreValidationErrors bool) (respBody []byte, err error) {
+func Create(name string, description string, host string, port int, enable bool, grpc bool, keyStore string, keyAlias string, sslinfo bool, tlsenabled bool, clientAuthEnabled bool, ignoreValidationErrors bool) (respBody []byte, err error) {
 	targetsvr := targetserver{}
 	targetsvr.Name = name
 
-	return createOrUpdate("create", targetsvr, name, description, host, port, enable, grpc, keyStore, keyAlias, tlsenabled, clientAuthEnabled, ignoreValidationErrors)
+	return createOrUpdate("create", targetsvr, name, description, host, port, enable, grpc, keyStore, keyAlias, sslinfo, tlsenabled, clientAuthEnabled, ignoreValidationErrors)
 }
 
 //Update
-func Update(name string, description string, host string, port int, enable bool, grpc bool, keyStore string, keyAlias string, tlsenabled bool, clientAuthEnabled bool, ignoreValidationErrors bool) (respBody []byte, err error) {
+func Update(name string, description string, host string, port int, enable bool, grpc bool, keyStore string, keyAlias string, sslinfo bool, tlsenabled bool, clientAuthEnabled bool, ignoreValidationErrors bool) (respBody []byte, err error) {
 
 	var targetRespBody []byte
 	var targetsvr = targetserver{}
@@ -77,10 +77,10 @@ func Update(name string, description string, host string, port int, enable bool,
 		return nil, err
 	}
 
-	return createOrUpdate("update", targetsvr, name, description, host, port, enable, grpc, keyStore, keyAlias, tlsenabled, clientAuthEnabled, ignoreValidationErrors)
+	return createOrUpdate("update", targetsvr, name, description, host, port, enable, grpc, keyStore, keyAlias, sslinfo, tlsenabled, clientAuthEnabled, ignoreValidationErrors)
 }
 
-func createOrUpdate(action string, targetsvr targetserver, name string, description string, host string, port int, enable bool, grpc bool, keyStore string, keyAlias string, tlsenabled bool, clientAuthEnabled bool, ignoreValidationErrors bool) (respBody []byte, err error) {
+func createOrUpdate(action string, targetsvr targetserver, name string, description string, host string, port int, enable bool, grpc bool, keyStore string, keyAlias string, sslinfo bool, tlsenabled bool, clientAuthEnabled bool, ignoreValidationErrors bool) (respBody []byte, err error) {
 
 	var reqBody []byte
 	sslInfoObj := new(sslInfo)
@@ -125,7 +125,9 @@ func createOrUpdate(action string, targetsvr targetserver, name string, descript
 		sslInfoObj.Keystore = keyStore
 	}
 
-	targetsvr.SslInfo = sslInfoObj
+	if sslinfo {
+		targetsvr.SslInfo = sslInfoObj
+	}
 
 	if reqBody, err = json.Marshal(targetsvr); err != nil {
 		return nil, err
