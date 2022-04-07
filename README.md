@@ -222,6 +222,14 @@ x-google-ratelimit:
 
 See this [OAS document](./test/petstore-ext1.yaml) for examples
 
+## Generating API Proxies from GraphQL Schemas
+
+apigeecli allows the user to generate Apigee API Proxy bundles from a GraphQL schema. When generating a proxy, consider the following flags:
+
+* `--basepath`: Specify a basePath for the GraphQL proxy
+* `--skip-policy=false`: By default the GraphQL policy is added to the proxy (to validate API requests). By setting this to false, schema validation is not enabled.
+* `--target-url-ref`: Specify a target endpoint location variable. For ex: `--target-url-ref=propertyset.gql.url` implies the GraphQL target location is available in an environment scoped property set called `gql` and the key is `url`.  
+
 ___
 
 ## Available Commands
