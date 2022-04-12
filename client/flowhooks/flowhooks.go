@@ -29,7 +29,7 @@ func Attach(name string, description string, sharedflow string, continueOnErr bo
 
 	flowhook := []string{}
 
-	flowhook = append(flowhook, "\"name\":\""+name+"\"")
+	flowhook = append(flowhook, "\"flowHookPoint\":\""+name+"\"")
 
 	if description != "" {
 		flowhook = append(flowhook, "\"description\":\""+description+"\"")
