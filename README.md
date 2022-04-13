@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fsrinandan%2Fapigeecli.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fsrinandan%2Fapigeecli?ref=badge_shield)
 
-This is a tool to interact with [Apigee APIs](https://cloud.google.com/apigee/docs/reference/apis/apigee/rest) for [Apigee hybrid](https://cloud.google.com/apigee/docs/hybrid/v1.3/what-is-hybrid) and [Apigee's managed](https://cloud.google.com/apigee/docs/api-platform/get-started/overview) offering. The tool lets you manage (Create,Get, List, Update, Delete, Export and Import) Apigee entities like proxies, products etc. The tools also helps you create Service Accounts in Google IAM to operate Apigee hybrid runtime.
+This is a tool to interact with [Apigee APIs](https://cloud.google.com/apigee/docs/reference/apis/apigee/rest) for [Apigee hybrid](https://cloud.google.com/apigee/docs/hybrid/latest/what-is-hybrid) and [Apigee's managed](https://cloud.google.com/apigee/docs/api-platform/get-started/overview) offering. The tool lets you manage (Create,Get, List, Update, Delete, Export and Import) Apigee entities like proxies, products etc. The tools also helps you create Service Accounts in Google IAM to operate Apigee hybrid runtime.
 
 ## Installation
 
@@ -36,9 +36,13 @@ You need to be familiar with basic concepts and features of Apigee such as API p
 
 For more information, refer to the [Apigee API Reference](https://cloud.google.com/apigee/docs/reference/apis/apigee/rest).
 
+## Available Commands
+
+Here is a [list](./docs/apigeecli.md) of available commands
+
 ## Service Account
 
-Create a service account with appropriate persmissions. Use `apigeecli` to create service accounts (`apigeecli iam`). Read more [here](https://cloud.google.com/apigee/docs/hybrid/v1.3/sa-about)
+Create a service account with appropriate persmissions. Use `apigeecli` to create service accounts (`apigeecli iam`). Read more [here](https://cloud.google.com/apigee/docs/api-platform/system-administration/apigee-roles) about IAM roles in Apigee 
 
 ## Access Token
 
@@ -232,16 +236,9 @@ apigeecli allows the user to generate Apigee API Proxy bundles from a GraphQL sc
 
 ___
 
-## Available Commands
-
-Here is a [list](./docs/apigeecli.md) of available commands
-
-___
-
 ## Support
 
 This is not an officially supported Google product
-
 
 ## License
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fsrinandan%2Fapigeecli.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fsrinandan%2Fapigeecli?ref=badge_large)
