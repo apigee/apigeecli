@@ -93,6 +93,31 @@ func GetDeployments(sharedflows bool) (respBody []byte, err error) {
 	return respBody, err
 }
 
+func GetAllDeployments() (respBody []byte, err error) {
+
+	apiclient.SetPrintOutput(false)
+	proxiesResponse, err := GetDeployments(false)
+	if err != nil {
+		return nil, err
+	}
+
+	sharedFlowsResponse, err := GetDeployments(true)
+	if err != nil {
+		return nil, err
+	}
+
+	deployments := []string{}
+
+	deployments = append(deployments, "\"proxies\":"+string(proxiesResponse))
+	deployments = append(deployments, "\"sharedFlows\":"+string(sharedFlowsResponse))
+	payload := "{" + strings.Join(deployments, ",") + "}"
+
+	err = apiclient.PrettyPrint([]byte(payload))
+	apiclient.SetPrintOutput(true)
+
+	return []byte(payload), err
+}
+
 //GetDeployedConfig
 func GetDeployedConfig() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)

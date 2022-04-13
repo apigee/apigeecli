@@ -30,15 +30,21 @@ var GetDeployCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = environments.GetDeployments(sharedflows)
+		if all {
+			_, err = environments.GetAllDeployments()
+		} else {
+			_, err = environments.GetDeployments(sharedflows)
+		}
 		return
 	},
 }
 
-var sharedflows bool
+var sharedflows, all bool
 
 func init() {
 
 	GetDeployCmd.Flags().BoolVarP(&sharedflows, "sharedflows", "s",
 		false, "Return sharedflow deployments")
+	GetDeployCmd.Flags().BoolVarP(&all, "all", "",
+		false, "Return all deployments")
 }
