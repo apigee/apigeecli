@@ -81,8 +81,13 @@ func List() (respBody []byte, err error) {
 }
 
 //GetDeployments
-func GetDeployments() (respBody []byte, err error) {
+func GetDeployments(sharedflows bool) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
+	if sharedflows {
+		q := u.Query()
+		q.Set("sharedFlows", "true")
+		u.RawQuery = q.Encode()
+	}
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "deployments")
 	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
 	return respBody, err
