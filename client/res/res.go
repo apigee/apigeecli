@@ -74,9 +74,12 @@ func Update(name string, resPath string, resourceType string) (err error) {
 
 //List
 func List(resourceType string) (respBody []byte, err error) {
-	if !validate(resourceType) {
-		return respBody, fmt.Errorf("invalid resource type")
+	if resourceType != "" {
+		if !validate(resourceType) {
+			return respBody, fmt.Errorf("invalid resource type")
+		}
 	}
+
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "resourcefiles")
 
