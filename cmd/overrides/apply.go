@@ -46,7 +46,7 @@ var ApplyCmd = &cobra.Command{
 
 		//check if the org exists
 		if _, err = orgs.Get(); err != nil {
-			if _, err = orgs.Create(getOrgRegion(), "", "HYBRID", "", ""); err != nil {
+			if _, err = orgs.Create(getOrgRegion(), "", "HYBRID", "", "", false); err != nil {
 				return err
 			}
 			fmt.Printf("Org %s created\n", getOrg())

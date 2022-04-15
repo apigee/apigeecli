@@ -15,6 +15,8 @@
 package kvm
 
 import (
+	"fmt"
+
 	"github.com/spf13/cobra"
 	"github.com/srinandan/apigeecli/apiclient"
 	"github.com/srinandan/apigeecli/client/kvm"
@@ -23,29 +25,31 @@ import (
 //Cmd to create kvms
 var CreateCmd = &cobra.Command{
 	Use:   "create",
-	Short: "Create an environment scoped KVM Map",
-	Long:  "Create an environment scoped KVM Map",
+	Short: "Create a KV Map",
+	Long:  "Create a KV Map",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeEnv(env)
+		if env != "" {
+			apiclient.SetApigeeEnv(env)
+		}
+		if env != "" && proxyName != "" {
+			return fmt.Errorf("proxy and env flags cannot be used together")
+		}
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = kvm.Create(name, encrypt)
+		_, err = kvm.Create(proxyName, name, true)
 		return
 	},
 }
-
-var encrypt bool
 
 func init() {
 
 	CreateCmd.Flags().StringVarP(&env, "env", "e",
 		"", "Environment name")
+	CreateCmd.Flags().StringVarP(&proxyName, "proxy", "p",
+		"", "API Proxy name")
 	CreateCmd.Flags().StringVarP(&name, "name", "n",
 		"", "KVM Map name")
-	CreateCmd.Flags().BoolVarP(&encrypt, "encrypt", "c",
-		true, "Enable cncrypted KVM")
 
-	_ = CreateCmd.MarkFlagRequired("env")
 	_ = CreateCmd.MarkFlagRequired("name")
 }

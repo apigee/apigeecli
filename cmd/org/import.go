@@ -60,6 +60,19 @@ var ImportCmd = &cobra.Command{
 			return err
 		}
 
+		if isFileExists(path.Join(folder, org+"_"+kVMFileName)) {
+			fmt.Println("Importing Org scoped KVMs...")
+			if kvmList, err = readEntityFile(path.Join(folder, org+"_"+kVMFileName)); err != nil {
+				return err
+			}
+			for _, kvmName := range kvmList {
+				//create only encrypted KVMs
+				if _, err = kvm.Create("", kvmName, true); err != nil {
+					return err
+				}
+			}
+		}
+
 		if isFileExists(path.Join(folder, productsFileName)) {
 			fmt.Println("Importing Products...")
 			if err = products.Import(conn, path.Join(folder, productsFileName)); err != nil {
@@ -124,12 +137,12 @@ var ImportCmd = &cobra.Command{
 
 			if isFileExists(path.Join(folder, kVMFileName)) {
 				fmt.Println("\tImporting KVM Names...")
-				if kvmList, err = readEntityFile(path.Join(folder, kVMFileName)); err != nil {
+				if kvmList, err = readEntityFile(path.Join(folder, environment+"_"+kVMFileName)); err != nil {
 					return err
 				}
 				for _, kvmName := range kvmList {
 					//create only encrypted KVMs
-					if _, err = kvm.Create(kvmName, true); err != nil {
+					if _, err = kvm.Create("", kvmName, true); err != nil {
 						return err
 					}
 				}

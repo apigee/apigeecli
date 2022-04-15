@@ -1,4 +1,4 @@
-// Copyright 2020 Google LLC
+// Copyright 2021 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,11 +22,11 @@ import (
 	"github.com/srinandan/apigeecli/client/kvm"
 )
 
-//Cmd to list kvms
-var ListCmd = &cobra.Command{
+//ListEntryCmd to create kvm map entry
+var ListEntryCmd = &cobra.Command{
 	Use:   "list",
-	Short: "Returns a list of KVMs",
-	Long:  "Returns a list of KVMs",
+	Short: "List KV Map entries",
+	Long:  "List KV Map entries",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		if env != "" {
 			apiclient.SetApigeeEnv(env)
@@ -37,15 +37,22 @@ var ListCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = kvm.List(proxyName)
+		_, err = kvm.ListEntries(proxyName, mapName, pageToken)
 		return
 	},
 }
 
-func init() {
+var pageToken string
 
-	ListCmd.Flags().StringVarP(&env, "env", "e",
+func init() {
+	ListEntryCmd.Flags().StringVarP(&mapName, "map", "m",
+		"", "KV Map Name")
+	ListEntryCmd.Flags().StringVarP(&env, "env", "e",
 		"", "Environment name")
-	ListCmd.Flags().StringVarP(&proxyName, "proxy", "p",
+	ListEntryCmd.Flags().StringVarP(&proxyName, "proxy", "p",
 		"", "API Proxy name")
+	ListEntryCmd.Flags().StringVarP(&pageToken, "page-token", "",
+		"", "next_page_token from the prior response to be used to fetch the next dataset")
+
+	_ = ListEntryCmd.MarkFlagRequired("map")
 }

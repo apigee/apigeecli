@@ -24,7 +24,7 @@ import (
 )
 
 //Create
-func Create(name string, encrypt bool) (respBody []byte, err error) {
+func Create(proxyName string, name string, encrypt bool) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	kvm := []string{}
 
@@ -34,23 +34,44 @@ func Create(name string, encrypt bool) (respBody []byte, err error) {
 	}
 	payload := "{" + strings.Join(kvm, ",") + "}"
 
-	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "keyvaluemaps")
+	if apiclient.GetApigeeEnv() != "" {
+		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "keyvaluemaps")
+	} else if proxyName != "" {
+		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apis", proxyName, "keyvaluemaps")
+	} else {
+		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "keyvaluemaps")
+	}
+
 	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload)
 	return respBody, err
 }
 
 //Delete
-func Delete(name string) (respBody []byte, err error) {
+func Delete(proxyName string, name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
-	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "keyvaluemaps", name)
+
+	if apiclient.GetApigeeEnv() != "" {
+		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "keyvaluemaps", name)
+	} else if proxyName != "" {
+		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apis", proxyName, "keyvaluemaps", name)
+	} else {
+		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "keyvaluemaps", name)
+	}
+
 	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "", "DELETE")
 	return respBody, err
 }
 
 //List
-func List() (respBody []byte, err error) {
+func List(proxyName string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
-	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "keyvaluemaps")
+	if apiclient.GetApigeeEnv() != "" {
+		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "keyvaluemaps")
+	} else if proxyName != "" {
+		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apis", proxyName, "keyvaluemaps")
+	} else {
+		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "keyvaluemaps")
+	}
 	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
 	return respBody, err
 }

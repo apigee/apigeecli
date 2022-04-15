@@ -18,22 +18,18 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//Cmd to manage kvms
-var Cmd = &cobra.Command{
-	Use:   "kvms",
-	Short: "Manage Key Value Maps",
-	Long:  "Manage Key Value Maps",
+//EntryCmd to manage kvm entries
+var EntryCmd = &cobra.Command{
+	Use:   "entries",
+	Short: "Manage Key Value Map Entries",
+	Long:  "Manage Key Value Map Entries",
 }
 
-var org, env, name, proxyName string
+var mapName, keyName string
 
 func init() {
-
-	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
-		"", "Apigee organization name")
-
-	Cmd.AddCommand(ListCmd)
-	Cmd.AddCommand(DelCmd)
-	Cmd.AddCommand(CreateCmd)
-	Cmd.AddCommand(EntryCmd)
+	EntryCmd.AddCommand(CreateEntryCmd)
+	EntryCmd.AddCommand(GetEntryCmd)
+	EntryCmd.AddCommand(DelEntryCmd)
+	EntryCmd.AddCommand(ListEntryCmd)
 }

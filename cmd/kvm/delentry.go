@@ -1,4 +1,4 @@
-// Copyright 2020 Google LLC
+// Copyright 2021 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,11 +22,11 @@ import (
 	"github.com/srinandan/apigeecli/client/kvm"
 )
 
-//Cmd to list kvms
-var ListCmd = &cobra.Command{
-	Use:   "list",
-	Short: "Returns a list of KVMs",
-	Long:  "Returns a list of KVMs",
+//DelEntryCmd to create kvm map entry
+var DelEntryCmd = &cobra.Command{
+	Use:   "delete",
+	Short: "Delete a KVM Map entry",
+	Long:  "Delete a KVM Map entry",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		if env != "" {
 			apiclient.SetApigeeEnv(env)
@@ -37,15 +37,21 @@ var ListCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = kvm.List(proxyName)
+		_, err = kvm.GetEntry(proxyName, mapName, keyName)
 		return
 	},
 }
 
 func init() {
-
-	ListCmd.Flags().StringVarP(&env, "env", "e",
+	DelEntryCmd.Flags().StringVarP(&mapName, "map", "m",
+		"", "KV Map Name")
+	DelEntryCmd.Flags().StringVarP(&env, "env", "e",
 		"", "Environment name")
-	ListCmd.Flags().StringVarP(&proxyName, "proxy", "p",
+	DelEntryCmd.Flags().StringVarP(&proxyName, "proxy", "p",
 		"", "API Proxy name")
+	DelEntryCmd.Flags().StringVarP(&keyName, "key", "k",
+		"", "KV Map entry name")
+
+	_ = DelEntryCmd.MarkFlagRequired("key")
+	_ = DelEntryCmd.MarkFlagRequired("map")
 }
