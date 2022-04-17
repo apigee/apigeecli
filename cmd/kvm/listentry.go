@@ -37,12 +37,13 @@ var ListEntryCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = kvm.ListEntries(proxyName, mapName, pageToken)
+		_, err = kvm.ListEntries(proxyName, mapName, pageSize, pageToken)
 		return
 	},
 }
 
 var pageToken string
+var pageSize int
 
 func init() {
 	ListEntryCmd.Flags().StringVarP(&mapName, "map", "m",
@@ -53,6 +54,8 @@ func init() {
 		"", "API Proxy name")
 	ListEntryCmd.Flags().StringVarP(&pageToken, "page-token", "",
 		"", "next_page_token from the prior response to be used to fetch the next dataset")
+	ListEntryCmd.Flags().IntVarP(&pageSize, "page-size", "",
+		-1, "Number of items to return on the list")
 
 	_ = ListEntryCmd.MarkFlagRequired("map")
 }
