@@ -1,21 +1,22 @@
-## apigeecli kvms entries delete
+## apigeecli kvms entries import
 
-Delete a KVM Map entry
+Import a file containing KVM Entries
 
 ### Synopsis
 
-Delete a KVM Map entry
+Import a file containing KVM Entries
 
 ```
-apigeecli kvms entries delete [flags]
+apigeecli kvms entries import [flags]
 ```
 
 ### Options
 
 ```
+  -c, --conn int       Number of connections (default 4)
   -e, --env string     Environment name
-  -h, --help           help for delete
-  -k, --key string     KV Map entry name
+  -f, --file string    File containing App Developers
+  -h, --help           help for import
   -m, --map string     KV Map Name
   -p, --proxy string   API Proxy name
 ```
