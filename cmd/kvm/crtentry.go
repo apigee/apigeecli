@@ -22,7 +22,7 @@ import (
 	"github.com/srinandan/apigeecli/client/kvm"
 )
 
-//CreateEntryCmd to create kvm map entry
+//CreateEntryCmd to create kv map entry
 var CreateEntryCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a KV Map entry",

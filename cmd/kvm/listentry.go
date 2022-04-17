@@ -22,7 +22,7 @@ import (
 	"github.com/srinandan/apigeecli/client/kvm"
 )
 
-//ListEntryCmd to create kvm map entry
+//ListEntryCmd to list kvm map entries
 var ListEntryCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List KV Map entries",

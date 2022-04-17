@@ -16,18 +16,17 @@ package kvm
 
 import (
 	"fmt"
-	"strconv"
 
 	"github.com/spf13/cobra"
 	"github.com/srinandan/apigeecli/apiclient"
 	"github.com/srinandan/apigeecli/client/kvm"
 )
 
-//ExpEntryCmd to export map entries to files
-var ExpEntryCmd = &cobra.Command{
-	Use:   "export",
-	Short: "Export KV Map entries",
-	Long:  "Export KV Map entries",
+//ImpEntryCmd to import kvm entries from files
+var ImpEntryCmd = &cobra.Command{
+	Use:   "import",
+	Short: "Import a file containing KVM Entries",
+	Long:  "Import a file containing KVM Entries",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		if env != "" {
 			apiclient.SetApigeeEnv(env)
@@ -37,38 +36,27 @@ var ExpEntryCmd = &cobra.Command{
 		}
 		return apiclient.SetApigeeOrg(org)
 	},
-	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		var payload [][]byte
-		var fileName string
-
-		if payload, err = kvm.ExportEntries(proxyName, mapName); err != nil {
-			return
-		}
-
-		if env != "" {
-			fileName = env + "_" + mapName + "_" + "kvmfile"
-		} else if proxyName != "" {
-			fileName = proxyName + "_" + mapName + "_" + "kvmfile"
-		} else {
-			fileName = mapName + "_" + "kvmfile"
-		}
-
-		for i, _ := range payload {
-			if err = apiclient.WriteByteArrayToFile(fileName+"_"+strconv.Itoa(i)+".json", false, payload[i]); err != nil {
-				return
-			}
-		}
-		return
+	RunE: func(cmd *cobra.Command, args []string) error {
+		return kvm.ImportEntries(proxyName, mapName, conn, filePath)
 	},
 }
 
-func init() {
-	ExpEntryCmd.Flags().StringVarP(&mapName, "map", "m",
-		"", "KV Map Name")
-	ExpEntryCmd.Flags().StringVarP(&env, "env", "e",
-		"", "Environment name")
-	ExpEntryCmd.Flags().StringVarP(&proxyName, "proxy", "p",
-		"", "API Proxy name")
+var conn int
+var filePath string
 
-	_ = ExpEntryCmd.MarkFlagRequired("map")
+func init() {
+
+	ImpEntryCmd.Flags().StringVarP(&filePath, "file", "f",
+		"", "File containing App Developers")
+	ImpEntryCmd.Flags().StringVarP(&mapName, "map", "m",
+		"", "KV Map Name")
+	ImpEntryCmd.Flags().StringVarP(&env, "env", "e",
+		"", "Environment name")
+	ImpEntryCmd.Flags().StringVarP(&proxyName, "proxy", "p",
+		"", "API Proxy name")
+	ImpEntryCmd.Flags().IntVarP(&conn, "conn", "c",
+		4, "Number of connections")
+
+	_ = ImpEntryCmd.MarkFlagRequired("map")
+	_ = ImpEntryCmd.MarkFlagRequired("file")
 }

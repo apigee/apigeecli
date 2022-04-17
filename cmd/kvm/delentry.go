@@ -22,7 +22,7 @@ import (
 	"github.com/srinandan/apigeecli/client/kvm"
 )
 
-//DelEntryCmd to create kvm map entry
+//DelEntryCmd to delete kvm map entry
 var DelEntryCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete a KVM Map entry",
