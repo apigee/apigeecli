@@ -243,6 +243,10 @@ func HttpClient(print bool, params ...string) (respBody []byte, err error) {
 		return nil, err
 	}
 
+	if DryRun() {
+		return nil, nil
+	}
+
 	clilog.Info.Println("Connecting to: ", params[0])
 
 	switch paramLen := len(params); paramLen {
