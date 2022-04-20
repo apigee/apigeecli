@@ -346,6 +346,10 @@ func ImportProxies(conn int, folder string) error {
 	var entities []string
 
 	err := filepath.Walk(folder, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			clilog.Warning.Println("proxies folder not found")
+			return nil
+		}
 		if info.IsDir() {
 			return nil
 		}
