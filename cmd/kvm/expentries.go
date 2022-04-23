@@ -17,6 +17,7 @@ package kvm
 import (
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/spf13/cobra"
 	"github.com/srinandan/apigeecli/apiclient"
@@ -46,14 +47,14 @@ var ExpEntryCmd = &cobra.Command{
 		}
 
 		if env != "" {
-			fileName = env + "_" + mapName + "_" + "kvmfile"
+			fileName = strings.Join([]string{"env", env, mapName, "kvmfile"}, "_")
 		} else if proxyName != "" {
-			fileName = proxyName + "_" + mapName + "_" + "kvmfile"
+			fileName = strings.Join([]string{"proxy", proxyName, mapName, "kvmfile"}, "_")
 		} else {
-			fileName = mapName + "_" + "kvmfile"
+			fileName = strings.Join([]string{"org_", mapName, "kvmfile"}, "_")
 		}
 
-		for i, _ := range payload {
+		for i := range payload {
 			if err = apiclient.WriteByteArrayToFile(fileName+"_"+strconv.Itoa(i)+".json", false, payload[i]); err != nil {
 				return
 			}

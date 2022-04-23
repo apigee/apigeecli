@@ -20,6 +20,9 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
+	"path/filepath"
+	"regexp"
+	"strings"
 
 	"github.com/spf13/cobra"
 	"github.com/srinandan/apigeecli/apiclient"
@@ -60,6 +63,9 @@ var ImportCmd = &cobra.Command{
 			return err
 		}
 
+		fmt.Println("Check for files with KVM Entries")
+		orgKVMFileList, envKVMFileList, _, _ := listKVMFiles()
+
 		if isFileExists(path.Join(folder, org+"_"+kVMFileName)) {
 			fmt.Println("Importing Org scoped KVMs...")
 			if kvmList, err = readEntityFile(path.Join(folder, org+"_"+kVMFileName)); err != nil {
@@ -69,6 +75,9 @@ var ImportCmd = &cobra.Command{
 				//create only encrypted KVMs
 				if _, err = kvm.Create("", kvmName, true); err != nil {
 					return err
+				}
+				if orgKVMFileList[kvmName] != "" {
+					kvm.ImportEntries("", kvmName, conn, orgKVMFileList[kvmName])
 				}
 			}
 		}
@@ -107,9 +116,11 @@ var ImportCmd = &cobra.Command{
 		}
 
 		environments := []string{}
-		if err = json.Unmarshal(envRespBody, &environments); err != nil {
-			return err
 
+		if envRespBody != nil {
+			if err = json.Unmarshal(envRespBody, &environments); err != nil {
+				return err
+			}
 		}
 
 		for _, environment := range environments {
@@ -144,6 +155,9 @@ var ImportCmd = &cobra.Command{
 					//create only encrypted KVMs
 					if _, err = kvm.Create("", kvmName, true); err != nil {
 						return err
+					}
+					if envKVMFileList[kvmName] != "" {
+						kvm.ImportEntries("", kvmName, conn, envKVMFileList[kvmName])
 					}
 				}
 			}
@@ -236,4 +250,44 @@ func readEntityFileAsString(filePath string) (string, error) {
 	}
 
 	return string(byteValue[:]), nil
+}
+
+func listKVMFiles() (orgKVMFileList map[string]string, envKVMFileList map[string]string, proxyKVMFileList map[string]string, err error) {
+
+	orgKVMFileList = map[string]string{}
+	envKVMFileList = map[string]string{}
+	proxyKVMFileList = map[string]string{}
+
+	renv := regexp.MustCompile(`env_(\S*)_kvmfile_[0-9]+\.json`)
+	rorg := regexp.MustCompile(`org_(\S*)_kvmfile_[0-9]+\.json`)
+	rproxy := regexp.MustCompile(`proxy_(\S*)_kvmfile_[0-9]+\.json`)
+
+	err = filepath.Walk(folder, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if !info.IsDir() {
+			if renv.MatchString(filepath.Base(path)) {
+				envKVMFileSplit := strings.Split(path, "_")
+				if len(envKVMFileSplit) > 2 {
+					fmt.Printf("Map name %s, path %s\n", envKVMFileSplit[2], path)
+					envKVMFileList[envKVMFileSplit[2]] = path
+				}
+			} else if rproxy.MatchString(filepath.Base(path)) {
+				proxyKVMFileSplit := strings.Split(path, "_")
+				if len(proxyKVMFileSplit) > 2 {
+					fmt.Printf("Map name %s, path %s\n", proxyKVMFileSplit[2], path)
+					proxyKVMFileList[proxyKVMFileSplit[2]] = path
+				}
+			} else if rorg.MatchString(filepath.Base(path)) {
+				orgKVMFileSplit := strings.Split(path, "_")
+				if len(orgKVMFileSplit) > 1 {
+					fmt.Printf("Map name %s, path %s\n", orgKVMFileSplit[1], path)
+					orgKVMFileList[orgKVMFileSplit[1]] = path
+				}
+			}
+		}
+		return nil
+	})
+	return orgKVMFileList, envKVMFileList, proxyKVMFileList, err
 }
