@@ -22,6 +22,7 @@ import (
 	"strings"
 
 	"github.com/srinandan/apigeecli/apiclient"
+	"github.com/srinandan/apigeecli/clilog"
 )
 
 var analyticsRegions = [...]string{"asia-east1", "asia-east1", "asia-northeast1", "asia-southeast1",
@@ -56,6 +57,18 @@ type organization struct {
 	ProjectId                string        `json:"projectId,omitempty"`
 	State                    string        `json:"state,omitempty"`
 	BillingType              string        `json:"billingType,omitempty"`
+	AddOnsConfig             addonsConfig  `json:"addonsConfig,omitempty"`
+}
+
+type addonsConfig struct {
+	AdvancedApiOpsConfig     addon `json:"advancedApiOpsConfig,omitempty"`
+	IntegrationConfig        addon `json:"integrationConfig,omitempty"`
+	MonetizationConfig       addon `json:"monetizationConfig,omitempty"`
+	ConnectorsPlatformConfig addon `json:"connectorsPlatformConfig,omitempty"`
+}
+
+type addon struct {
+	Enabled bool `json:"enabled,omitempty"`
 }
 
 func validRegion(region string) bool {
@@ -258,25 +271,41 @@ func Update(description string, displayName string, region string, network strin
 //SetAddons
 func SetAddons(advancedApiOpsConfig bool, integrationConfig bool, monetizationConfig bool, connectorsConfig bool) (respBody []byte, err error) {
 
+	apiclient.SetPrintOutput(false)
+
+	orgRespBody, err := Get()
+	if err != nil {
+		clilog.Error.Println("Error fetching org details")
+		return nil, err
+	}
+
+	org := organization{}
+	err = json.Unmarshal(orgRespBody, &org)
+	if err != nil {
+		return nil, err
+	}
+
+	apiclient.SetPrintOutput(true)
+
 	addonPayload := []string{}
 
 	if !advancedApiOpsConfig && !integrationConfig && !monetizationConfig {
 		return nil, fmt.Errorf("At least one addon must be enabled")
 	}
 
-	if advancedApiOpsConfig {
+	if advancedApiOpsConfig || org.AddOnsConfig.AdvancedApiOpsConfig.Enabled {
 		addonPayload = append(addonPayload, "\"advancedApiOpsConfig\":{\"enabled\":true}")
 	}
 
-	if integrationConfig {
+	if integrationConfig || org.AddOnsConfig.IntegrationConfig.Enabled {
 		addonPayload = append(addonPayload, "\"integrationConfig\":{\"enabled\":true}")
 	}
 
-	if monetizationConfig {
+	if monetizationConfig || org.AddOnsConfig.MonetizationConfig.Enabled {
 		addonPayload = append(addonPayload, "\"monetizationConfig\":{\"enabled\":true}")
 	}
 
-	if connectorsConfig {
+	if connectorsConfig || org.AddOnsConfig.ConnectorsPlatformConfig.Enabled {
 		addonPayload = append(addonPayload, "\"connectorsPlatformConfig\":{\"enabled\":true}")
 	}
 
