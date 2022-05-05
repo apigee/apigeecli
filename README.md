@@ -1,26 +1,14 @@
 # apigeecli
 
-[![Go Report Card](https://goreportcard.com/badge/github.com/srinandan/apigeecli)](https://goreportcard.com/report/github.com/srinandan/apigeecli)
-[![GitHub release](https://img.shields.io/github/v/release/srinandan/apigeecli)](https://github.com/srinandan/apigeecli/releases)
+[![Go Report Card](https://goreportcard.com/badge/github.com/apigee/apigeecli)](https://goreportcard.com/report/github.com/apigee/apigeecli)
+[![GitHub release](https://img.shields.io/github/v/release/apigee/apigeecli)](https://github.com/apigee/apigeecli/releases)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fsrinandan%2Fapigeecli.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fsrinandan%2Fapigeecli?ref=badge_shield)
 
 This is a tool to interact with [Apigee APIs](https://cloud.google.com/apigee/docs/reference/apis/apigee/rest) for [Apigee hybrid](https://cloud.google.com/apigee/docs/hybrid/latest/what-is-hybrid) and [Apigee's managed](https://cloud.google.com/apigee/docs/api-platform/get-started/overview) offering. The tool lets you manage (Create,Get, List, Update, Delete, Export and Import) Apigee entities like proxies, products etc. The tools also helps you create Service Accounts in Google IAM to operate Apigee hybrid runtime.
 
 ## Installation
 
-### Brew
-
-To install via brew,
-
-```bash
-brew tap srinandan/homebrew-tap
-brew install apigeecli
-```
-
-### Others
-
-`apigeecli` is a binary and you can download the appropriate one for your platform from [here](https://github.com/srinandan/apigeecli/releases)
+`apigeecli` is a binary and you can download the appropriate one for your platform from [here](https://github.com/apigee/apigeecli/releases)
 
 NOTE: Supported platforms are:
 
@@ -239,6 +227,3 @@ ___
 ## Support
 
 This is not an officially supported Google product
-
-## License
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fsrinandan%2Fapigeecli.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fsrinandan%2Fapigeecli?ref=badge_large)
