@@ -75,7 +75,17 @@ checksum:
   name_template: 'checksums.txt'
 
 signs:
-  - artifacts: all  
+  - 
+    artifacts: all
+    args:
+      [
+        "-u",
+        "13950006+srinandan@users.noreply.github.com",
+        "--output",
+        "${signature}",
+        "--detach-sign",
+        "${artifact}",
+      ]
 
 release:
   draft: true
