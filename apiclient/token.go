@@ -28,9 +28,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/apigee/apigeecli/clilog"
 	"github.com/lestrrat/go-jwx/jwa"
 	"github.com/lestrrat/go-jwx/jwt"
-	"github.com/srinandan/apigeecli/clilog"
 )
 
 type serviceAccount struct {

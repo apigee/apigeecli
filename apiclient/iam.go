@@ -24,7 +24,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/srinandan/apigeecli/clilog"
+	"github.com/apigee/apigeecli/clilog"
 )
 
 //CrmURL is the endpoint for cloud resource manager

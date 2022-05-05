@@ -18,13 +18,13 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/apigee/apigeecli/apiclient"
+	"github.com/apigee/apigeecli/client/env"
+	"github.com/apigee/apigeecli/client/envgroups"
+	"github.com/apigee/apigeecli/client/orgs"
+	"github.com/apigee/apigeecli/client/sync"
+	"github.com/apigee/apigeecli/clilog"
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/apiclient"
-	"github.com/srinandan/apigeecli/client/env"
-	"github.com/srinandan/apigeecli/client/envgroups"
-	"github.com/srinandan/apigeecli/client/orgs"
-	"github.com/srinandan/apigeecli/client/sync"
-	"github.com/srinandan/apigeecli/clilog"
 )
 
 //ApplyCmd provisions control plane entities for hybrid

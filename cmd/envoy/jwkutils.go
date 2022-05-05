@@ -33,7 +33,7 @@ import (
 	"github.com/lestrrat-go/jwx/jws"
 	"github.com/lestrrat-go/jwx/jwt"
 
-	"github.com/srinandan/apigeecli/clilog"
+	"github.com/apigee/apigeecli/clilog"
 )
 
 const keyFile = "remote-service.key"

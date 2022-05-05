@@ -18,7 +18,7 @@ import (
 	"net/url"
 	"path"
 
-	"github.com/srinandan/apigeecli/apiclient"
+	"github.com/apigee/apigeecli/apiclient"
 )
 
 //ListRatePlan

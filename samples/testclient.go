@@ -17,8 +17,8 @@ package main
 import (
 	"fmt"
 
-	"github.com/srinandan/apigeecli/apiclient"
-	"github.com/srinandan/apigeecli/client/orgs"
+	"github.com/apigee/apigeecli/apiclient"
+	"github.com/apigee/apigeecli/client/orgs"
 )
 
 func main() {

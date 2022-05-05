@@ -19,9 +19,9 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/apigee/apigeecli/apiclient"
+	"github.com/apigee/apigeecli/client/apis"
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/apiclient"
-	"github.com/srinandan/apigeecli/client/apis"
 )
 
 //DepWaitCmd to deploy api

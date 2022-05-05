@@ -15,9 +15,9 @@
 package org
 
 import (
+	"github.com/apigee/apigeecli/apiclient"
+	"github.com/apigee/apigeecli/client/orgs"
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/apiclient"
-	"github.com/srinandan/apigeecli/client/orgs"
 )
 
 //IngressCmd to get org details

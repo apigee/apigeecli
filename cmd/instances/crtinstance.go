@@ -18,10 +18,10 @@ import (
 	"fmt"
 	"regexp"
 
+	"github.com/apigee/apigeecli/apiclient"
+	"github.com/apigee/apigeecli/client/instances"
+	"github.com/apigee/apigeecli/client/orgs"
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/apiclient"
-	"github.com/srinandan/apigeecli/client/instances"
-	"github.com/srinandan/apigeecli/client/orgs"
 )
 
 //Cmd to create a new instance

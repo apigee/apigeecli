@@ -20,7 +20,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/srinandan/apigeecli/apiclient"
+	"github.com/apigee/apigeecli/apiclient"
 )
 
 //Attach

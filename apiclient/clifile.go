@@ -22,7 +22,7 @@ import (
 	"path"
 	"time"
 
-	"github.com/srinandan/apigeecli/clilog"
+	"github.com/apigee/apigeecli/clilog"
 )
 
 const apigeecliFile = ".apigeecli"

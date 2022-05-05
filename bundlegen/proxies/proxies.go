@@ -18,7 +18,7 @@ import (
 	"encoding/xml"
 	"fmt"
 
-	proxytypes "github.com/srinandan/apigeecli/bundlegen/common"
+	proxytypes "github.com/apigee/apigeecli/bundlegen/common"
 )
 
 type proxyEndpointDef struct {

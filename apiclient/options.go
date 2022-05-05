@@ -18,7 +18,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/srinandan/apigeecli/clilog"
+	"github.com/apigee/apigeecli/clilog"
 )
 
 //BaseURL is the Apigee control plane endpoint

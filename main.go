@@ -17,7 +17,7 @@ package main
 import (
 	"os"
 
-	"github.com/srinandan/apigeecli/cmd"
+	"github.com/apigee/apigeecli/cmd"
 )
 
 //Version

@@ -1,4 +1,4 @@
-module github.com/srinandan/apigeecli
+module github.com/apigee/apigeecli
 
 go 1.16
 

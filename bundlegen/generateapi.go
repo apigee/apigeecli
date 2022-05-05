@@ -23,12 +23,12 @@ import (
 	"regexp"
 	"strings"
 
+	apiproxy "github.com/apigee/apigeecli/bundlegen/apiproxydef"
+	"github.com/apigee/apigeecli/bundlegen/policies"
+	"github.com/apigee/apigeecli/bundlegen/proxies"
+	targets "github.com/apigee/apigeecli/bundlegen/targets"
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/ghodss/yaml"
-	apiproxy "github.com/srinandan/apigeecli/bundlegen/apiproxydef"
-	"github.com/srinandan/apigeecli/bundlegen/policies"
-	"github.com/srinandan/apigeecli/bundlegen/proxies"
-	targets "github.com/srinandan/apigeecli/bundlegen/targets"
 )
 
 type pathDetailDef struct {

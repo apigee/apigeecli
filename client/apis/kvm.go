@@ -19,7 +19,7 @@ import (
 	"path"
 	"strconv"
 
-	"github.com/srinandan/apigeecli/apiclient"
+	"github.com/apigee/apigeecli/apiclient"
 )
 
 //CreateProxyKVM

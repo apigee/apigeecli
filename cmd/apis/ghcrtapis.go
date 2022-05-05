@@ -19,10 +19,10 @@ import (
 	"os"
 	"regexp"
 
+	"github.com/apigee/apigeecli/apiclient"
+	proxybundle "github.com/apigee/apigeecli/bundlegen/proxybundle"
+	"github.com/apigee/apigeecli/client/apis"
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/apiclient"
-	proxybundle "github.com/srinandan/apigeecli/bundlegen/proxybundle"
-	"github.com/srinandan/apigeecli/client/apis"
 )
 
 var GhCreateCmd = &cobra.Command{
@@ -61,9 +61,9 @@ func init() {
 	GhCreateCmd.Flags().StringVarP(&name, "name", "n",
 		"", "API Proxy name")
 	GhCreateCmd.Flags().StringVarP(&ghOwner, "owner", "u",
-		"", "The github organization or username. ex: In https://github.com/srinandan, srinandan is the user")
+		"", "The github organization or username. ex: In https://github.com/username, username is the github username")
 	GhCreateCmd.Flags().StringVarP(&ghRepo, "repo", "r",
-		"", "The github repo name. ex: https://github.com/srinandan/sample-apps, sample-apps is the repo")
+		"", "The github repo name. ex: https://github.com/apigee/sample-apps, sample-apps is the repo")
 	GhCreateCmd.Flags().StringVarP(&ghPath, "proxy-path", "p",
 		"", "The path in the repo to the apiproxy folder. ex: my-repo/apiproxy")
 

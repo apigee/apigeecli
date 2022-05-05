@@ -21,7 +21,7 @@ import (
 	"path"
 	"strings"
 
-	"github.com/srinandan/apigeecli/apiclient"
+	"github.com/apigee/apigeecli/apiclient"
 )
 
 //Create

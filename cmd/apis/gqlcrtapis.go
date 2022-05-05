@@ -22,12 +22,12 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/apigee/apigeecli/apiclient"
+	bundle "github.com/apigee/apigeecli/bundlegen"
+	proxybundle "github.com/apigee/apigeecli/bundlegen/proxybundle"
+	"github.com/apigee/apigeecli/client/apis"
+	"github.com/apigee/apigeecli/clilog"
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/apiclient"
-	bundle "github.com/srinandan/apigeecli/bundlegen"
-	proxybundle "github.com/srinandan/apigeecli/bundlegen/proxybundle"
-	"github.com/srinandan/apigeecli/client/apis"
-	"github.com/srinandan/apigeecli/clilog"
 )
 
 var GqlCreateCmd = &cobra.Command{

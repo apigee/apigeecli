@@ -27,13 +27,13 @@ import (
 	"regexp"
 	"strings"
 
+	genapi "github.com/apigee/apigeecli/bundlegen"
+	apiproxy "github.com/apigee/apigeecli/bundlegen/apiproxydef"
+	policies "github.com/apigee/apigeecli/bundlegen/policies"
+	proxies "github.com/apigee/apigeecli/bundlegen/proxies"
+	target "github.com/apigee/apigeecli/bundlegen/targets"
+	"github.com/apigee/apigeecli/clilog"
 	"github.com/google/go-github/github"
-	genapi "github.com/srinandan/apigeecli/bundlegen"
-	apiproxy "github.com/srinandan/apigeecli/bundlegen/apiproxydef"
-	policies "github.com/srinandan/apigeecli/bundlegen/policies"
-	proxies "github.com/srinandan/apigeecli/bundlegen/proxies"
-	target "github.com/srinandan/apigeecli/bundlegen/targets"
-	"github.com/srinandan/apigeecli/clilog"
 	"golang.org/x/oauth2"
 )
 

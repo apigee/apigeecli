@@ -27,7 +27,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/srinandan/apigeecli/clilog"
+	"github.com/apigee/apigeecli/clilog"
 )
 
 //entityPayloadList stores list of entities

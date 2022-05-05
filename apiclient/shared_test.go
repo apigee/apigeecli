@@ -17,7 +17,7 @@ package apiclient
 import (
 	"testing"
 
-	"github.com/srinandan/apigeecli/clilog"
+	"github.com/apigee/apigeecli/clilog"
 )
 
 func TestInit(t *testing.T) {

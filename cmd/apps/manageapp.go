@@ -15,9 +15,9 @@
 package apps
 
 import (
+	"github.com/apigee/apigeecli/apiclient"
+	"github.com/apigee/apigeecli/client/apps"
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/apiclient"
-	"github.com/srinandan/apigeecli/client/apps"
 )
 
 //ManageCmd to create developer keys

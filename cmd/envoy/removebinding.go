@@ -19,9 +19,9 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/apigee/apigeecli/apiclient"
+	"github.com/apigee/apigeecli/client/products"
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/apiclient"
-	"github.com/srinandan/apigeecli/client/products"
 )
 
 //RemoveCmd

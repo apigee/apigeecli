@@ -15,8 +15,8 @@
 package preferences
 
 import (
+	"github.com/apigee/apigeecli/apiclient"
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/apiclient"
 )
 
 //Cmd to get org details

@@ -17,9 +17,9 @@ package env
 import (
 	"fmt"
 
+	"github.com/apigee/apigeecli/apiclient"
+	environments "github.com/apigee/apigeecli/client/env"
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/apiclient"
-	environments "github.com/srinandan/apigeecli/client/env"
 )
 
 //Cmd to manage tracing of apis
