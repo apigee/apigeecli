@@ -12,11 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# goreleaser version 0.175.0
-# commit: 5e006eb236284c29143341e48c2f692826865d47
-# built at: 2021-08-17T12:37:19Z
+# goreleaser version 1.0.0
+# commit: 4bd0b73e95e83cfaa51b19330c4b039d1d7c0d09
+# built at: 2021-11-14T15:27:43Z
 # built by: goreleaser
-# module version: v0.175.0, checksum: h1:wMth9qMjWDoQ6VKdezQg7exRq4ew1lLVXvZDf+IU258=
+# module version: v1.0.0, checksum: h1:83h1R0Y6K4JegTI3K4/koFoAjK14lJ716f0vS6/6ABg=
 
 # .goreleaser.yml
 project_name: apigeecli
@@ -80,22 +80,3 @@ signs:
 release:
   draft: true
   prerelease: true
-# dockers:
-#   -
-#     goos: linux
-#     goarch: amd64
-#     image_templates:
-#     - "gcr.io/nandanks/apigeecli:{{ .Tag }}"
-#     dockerfile: Dockerfile
-#     skip_push: true
-#     use: buildpacks
-
-brews:
-  - tap:
-      owner: srinandan
-      name: homebrew-tap
-    skip_upload: false
-    download_strategy: CurlDownloadStrategy
-    folder: Formula    
-    url_template: "https://github.com/srinandan/apigeecli/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
-    homepage: "https://github.com/srinandan/apigeecli"
