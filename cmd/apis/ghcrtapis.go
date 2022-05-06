@@ -62,11 +62,11 @@ func init() {
 	GhCreateCmd.Flags().StringVarP(&name, "name", "n",
 		"", "API Proxy name")
 	GhCreateCmd.Flags().StringVarP(&ghOwner, "owner", "u",
-		"", "The github organization or username. ex: In https://github.com/username, username is the github username")
+		"", "The github organization or username. ex: In https://github.com/apigee, apigee is the owner name")
 	GhCreateCmd.Flags().StringVarP(&ghRepo, "repo", "r",
-		"", "The github repo name. ex: https://github.com/apigee/sample-apps, sample-apps is the repo")
+		"", "The github repo name. ex: https://github.com/apigee/api-platform-samples, api-platform-samples is the repo")
 	GhCreateCmd.Flags().StringVarP(&ghPath, "proxy-path", "p",
-		"", "The path in the repo to the apiproxy folder. ex: my-repo/apiproxy")
+		"", "The path in the repo to the apiproxy folder. ex: sample-proxies/apikey/apiproxy")
 
 	_ = GhCreateCmd.MarkFlagRequired("name")
 	_ = GhCreateCmd.MarkFlagRequired("owner")
