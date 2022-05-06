@@ -29,7 +29,12 @@ var FetCmd = &cobra.Command{
 		apiclient.SetApigeeEnv(env)
 		return apiclient.SetApigeeOrg(org)
 	},
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		if revision == -1 {
+			if revision, err = sharedflows.GetHighestSfRevision(name); err != nil {
+				return
+			}
+		}
 		return sharedflows.Fetch(name, revision)
 	},
 }
@@ -39,8 +44,7 @@ func init() {
 	FetCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Shared flow Bundle Name")
 	FetCmd.Flags().IntVarP(&revision, "rev", "v",
-		-1, "Shared flow revision")
+		-1, "Shared flow revision. If not set, the highest revision is used")
 
 	_ = FetCmd.MarkFlagRequired("name")
-	_ = FetCmd.MarkFlagRequired("rev")
 }

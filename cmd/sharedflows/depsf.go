@@ -30,6 +30,11 @@ var DepCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		if revision == -1 {
+			if revision, err = sharedflows.GetHighestSfRevision(name); err != nil {
+				return
+			}
+		}
 		_, err = sharedflows.Deploy(name, revision, overrides, serviceAccountName)
 		return
 	},
@@ -45,7 +50,7 @@ func init() {
 	DepCmd.Flags().StringVarP(&env, "env", "e",
 		"", "Apigee environment name")
 	DepCmd.Flags().IntVarP(&revision, "rev", "v",
-		-1, "Sharedflow revision")
+		-1, "Sharedflow revision. If not set, the highest revision is used")
 	DepCmd.Flags().BoolVarP(&overrides, "ovr", "r",
 		false, "Forces deployment of the new revision")
 	DepCmd.Flags().StringVarP(&serviceAccountName, "sa", "s",
