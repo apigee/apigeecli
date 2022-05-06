@@ -15,9 +15,9 @@
 package res
 
 import (
+	"github.com/apigee/apigeecli/apiclient"
+	"github.com/apigee/apigeecli/client/res"
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/apiclient"
-	"github.com/srinandan/apigeecli/client/res"
 )
 
 //Cmd to list resources

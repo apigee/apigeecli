@@ -15,9 +15,9 @@
 package env
 
 import (
+	"github.com/apigee/apigeecli/apiclient"
+	environments "github.com/apigee/apigeecli/client/env"
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/apiclient"
-	environments "github.com/srinandan/apigeecli/client/env"
 )
 
 //GetTraceOverridesCmd to manage tracing of apis

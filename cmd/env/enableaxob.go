@@ -17,9 +17,9 @@ package env
 import (
 	"strconv"
 
+	"github.com/apigee/apigeecli/apiclient"
+	"github.com/apigee/apigeecli/client/env"
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/apiclient"
-	"github.com/srinandan/apigeecli/client/env"
 )
 
 //Cmd to enable AX obfuscation

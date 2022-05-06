@@ -17,9 +17,9 @@ package datacollectors
 import (
 	"fmt"
 
+	"github.com/apigee/apigeecli/apiclient"
+	"github.com/apigee/apigeecli/client/datacollectors"
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/apiclient"
-	"github.com/srinandan/apigeecli/client/datacollectors"
 )
 
 //Cmd to create a new data collector

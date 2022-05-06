@@ -97,5 +97,5 @@ brews:
     skip_upload: false
     download_strategy: CurlDownloadStrategy
     folder: Formula    
-    url_template: "https://github.com/srinandan/apigeecli/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
-    homepage: "https://github.com/srinandan/apigeecli"
+    url_template: "https://github.com/apigee/apigeecli/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
+    homepage: "https://github.com/apigee/apigeecli"

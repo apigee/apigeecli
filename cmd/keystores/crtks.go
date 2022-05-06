@@ -15,9 +15,9 @@
 package keystores
 
 import (
+	"github.com/apigee/apigeecli/apiclient"
+	"github.com/apigee/apigeecli/client/keystores"
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/apiclient"
-	"github.com/srinandan/apigeecli/client/keystores"
 )
 
 //Cmd to create key stores

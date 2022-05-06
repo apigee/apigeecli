@@ -18,8 +18,8 @@ import (
 	"net/url"
 	"path"
 
+	"github.com/apigee/apigeecli/apiclient"
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/apiclient"
 )
 
 //TestCmd to manage tracing of apis

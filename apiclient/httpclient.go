@@ -26,7 +26,7 @@ import (
 	"net/url"
 	"os"
 
-	"github.com/srinandan/apigeecli/clilog"
+	"github.com/apigee/apigeecli/clilog"
 )
 
 //PostHttpZip method is used to send resources, proxy bundles, shared flows etc.

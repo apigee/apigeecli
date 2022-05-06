@@ -15,9 +15,9 @@
 package eptattachment
 
 import (
+	"github.com/apigee/apigeecli/apiclient"
+	"github.com/apigee/apigeecli/client/eptattachment"
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/apiclient"
-	"github.com/srinandan/apigeecli/client/eptattachment"
 )
 
 //Cmd to list endpoint attachments

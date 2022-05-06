@@ -18,10 +18,10 @@ import (
 	"fmt"
 	"io/ioutil"
 
+	"github.com/apigee/apigeecli/apiclient"
+	"github.com/apigee/apigeecli/client/products"
+	"github.com/apigee/apigeecli/clilog"
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/apiclient"
-	"github.com/srinandan/apigeecli/client/products"
-	"github.com/srinandan/apigeecli/clilog"
 )
 
 //Cmd to create a new product

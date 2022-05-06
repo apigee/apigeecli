@@ -17,7 +17,7 @@ package targets
 import (
 	"encoding/xml"
 
-	proxytypes "github.com/srinandan/apigeecli/bundlegen/common"
+	proxytypes "github.com/apigee/apigeecli/bundlegen/common"
 )
 
 type targetEndpointDef struct {

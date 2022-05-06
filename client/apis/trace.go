@@ -21,7 +21,7 @@ import (
 	"path"
 	"strconv"
 
-	"github.com/srinandan/apigeecli/apiclient"
+	"github.com/apigee/apigeecli/apiclient"
 )
 
 func getFilterStr(filter map[string]string) string {

@@ -17,7 +17,7 @@ package main
 import (
 	"log"
 
-	cmd "github.com/srinandan/apigeecli/cmd"
+	cmd "github.com/apigee/apigeecli/cmd"
 
 	"github.com/spf13/cobra/doc"
 )

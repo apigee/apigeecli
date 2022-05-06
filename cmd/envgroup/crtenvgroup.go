@@ -15,9 +15,9 @@
 package envgroup
 
 import (
+	"github.com/apigee/apigeecli/apiclient"
+	"github.com/apigee/apigeecli/client/envgroups"
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/apiclient"
-	"github.com/srinandan/apigeecli/client/envgroups"
 )
 
 //Cmd to create a new product

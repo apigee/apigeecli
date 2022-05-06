@@ -15,9 +15,9 @@
 package sharedflows
 
 import (
+	"github.com/apigee/apigeecli/apiclient"
+	"github.com/apigee/apigeecli/client/sharedflows"
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/apiclient"
-	"github.com/srinandan/apigeecli/client/sharedflows"
 )
 
 //Cmd to import shared flow

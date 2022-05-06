@@ -20,11 +20,11 @@ import (
 	"strings"
 	"time"
 
+	"github.com/apigee/apigeecli/apiclient"
+	"github.com/apigee/apigeecli/bundlegen/proxybundle"
+	"github.com/apigee/apigeecli/client/env"
+	"github.com/apigee/apigeecli/client/operations"
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/apiclient"
-	"github.com/srinandan/apigeecli/bundlegen/proxybundle"
-	"github.com/srinandan/apigeecli/client/env"
-	"github.com/srinandan/apigeecli/client/operations"
 )
 
 type op struct {

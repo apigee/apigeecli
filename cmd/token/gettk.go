@@ -17,9 +17,9 @@ package token
 import (
 	"fmt"
 
+	"github.com/apigee/apigeecli/apiclient"
+	"github.com/apigee/apigeecli/clilog"
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/apiclient"
-	"github.com/srinandan/apigeecli/clilog"
 )
 
 //GetCmd to generate a new access token

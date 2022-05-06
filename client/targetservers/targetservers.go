@@ -22,8 +22,8 @@ import (
 	"path"
 	"sync"
 
-	"github.com/srinandan/apigeecli/apiclient"
-	"github.com/srinandan/apigeecli/clilog"
+	"github.com/apigee/apigeecli/apiclient"
+	"github.com/apigee/apigeecli/clilog"
 )
 
 type targetserver struct {

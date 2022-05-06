@@ -25,9 +25,9 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/srinandan/apigeecli/apiclient"
-	"github.com/srinandan/apigeecli/client/developers"
-	"github.com/srinandan/apigeecli/clilog"
+	"github.com/apigee/apigeecli/apiclient"
+	"github.com/apigee/apigeecli/client/developers"
+	"github.com/apigee/apigeecli/clilog"
 	"github.com/thedevsaddam/gojsonq"
 )
 

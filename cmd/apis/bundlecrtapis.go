@@ -19,10 +19,10 @@ import (
 	"os"
 	"path"
 
+	"github.com/apigee/apigeecli/apiclient"
+	proxybundle "github.com/apigee/apigeecli/bundlegen/proxybundle"
+	"github.com/apigee/apigeecli/client/apis"
 	"github.com/spf13/cobra"
-	"github.com/srinandan/apigeecli/apiclient"
-	proxybundle "github.com/srinandan/apigeecli/bundlegen/proxybundle"
-	"github.com/srinandan/apigeecli/client/apis"
 )
 
 var BundleCreateCmd = &cobra.Command{
