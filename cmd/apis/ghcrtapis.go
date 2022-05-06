@@ -22,6 +22,7 @@ import (
 	"github.com/apigee/apigeecli/apiclient"
 	proxybundle "github.com/apigee/apigeecli/bundlegen/proxybundle"
 	"github.com/apigee/apigeecli/client/apis"
+	"github.com/apigee/apigeecli/clilog"
 	"github.com/spf13/cobra"
 )
 
@@ -31,9 +32,6 @@ var GhCreateCmd = &cobra.Command{
 	Short:   "Creates an API proxy from a GitHub repo",
 	Long:    "Creates an API proxy from a GitHub repo",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		if os.Getenv("GITHUB_TOKEN") == "" {
-			return fmt.Errorf("Github access token must be set with this feature")
-		}
 		//(\w+)?\/apiproxy$
 		re := regexp.MustCompile(`(\w+)?\/apiproxy$`)
 		if ok := re.Match([]byte(ghPath)); !ok {
@@ -43,6 +41,9 @@ var GhCreateCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		if os.Getenv("GITHUB_TOKEN") == "" {
+			clilog.Info.Println("Github token is not set as an env var. Running unauthenticated")
+		}
 		if err = proxybundle.GitHubImportBundle(ghOwner, ghRepo, ghPath); err != nil {
 			proxybundle.CleanUp()
 			return err

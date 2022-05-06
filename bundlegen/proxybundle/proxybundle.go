@@ -350,12 +350,18 @@ func GitHubImportBundle(owner string, repo string, repopath string) (err error) 
 	CleanUp()
 	os.RemoveAll(rootDir)
 
+	var client *github.Client
+
 	//
 	token := os.Getenv("GITHUB_TOKEN")
-	ctx := context.Background()
-	ts := oauth2.StaticTokenSource(&oauth2.Token{AccessToken: token})
-	tc := oauth2.NewClient(ctx, ts)
-	client := github.NewClient(tc)
+	if token != "" {
+		ctx := context.Background()
+		ts := oauth2.StaticTokenSource(&oauth2.Token{AccessToken: token})
+		tc := oauth2.NewClient(ctx, ts)
+		client = github.NewClient(tc)
+	} else {
+		client = github.NewClient(nil)
+	}
 
 	//1. download the proxy
 	if err := downloadProxyFromRepo(client, ctx, owner, repo, repopath); err != nil {
