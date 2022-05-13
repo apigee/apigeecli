@@ -37,7 +37,7 @@ Primary key fingerprint: 72D1 1E3A 3B1E 9FE2 2110  EC45 A714 872F 32F3 4390
 ```
 ### Install via script on Linux
 
-You can easily install the latest `apigeecli` binary to `/usr/bin` on Linux with this command (requires jq):
+You can easily install the latest `apigeecli` binary to `/usr/bin` on Linux with this command (requires `wget`, `unzip` and `jq`):
 
 ```sh
 curl -L https://raw.githubusercontent.com/apigee/apigeecli/master/install_linux.sh | bash -
