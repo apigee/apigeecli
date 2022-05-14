@@ -26,6 +26,7 @@ import (
 	"github.com/apigee/apigeecli/cmd/apis"
 	"github.com/apigee/apigeecli/cmd/apps"
 	cache "github.com/apigee/apigeecli/cmd/cache"
+	"github.com/apigee/apigeecli/cmd/completion"
 	"github.com/apigee/apigeecli/cmd/datacollectors"
 	"github.com/apigee/apigeecli/cmd/developers"
 	"github.com/apigee/apigeecli/cmd/env"
@@ -116,6 +117,7 @@ func init() {
 	RootCmd.AddCommand(keystores.Cmd)
 	RootCmd.AddCommand(keyaliases.Cmd)
 	RootCmd.AddCommand(cache.Cmd)
+	RootCmd.AddCommand(completion.Cmd)
 	RootCmd.AddCommand(references.Cmd)
 	RootCmd.AddCommand(res.Cmd)
 	RootCmd.AddCommand(projects.Cmd)
