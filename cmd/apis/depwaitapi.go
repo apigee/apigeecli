@@ -35,6 +35,11 @@ var DepWaitCmd = &cobra.Command{
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		if revision == -1 {
+			if revision, err = apis.GetHighestProxyRevision(name); err != nil {
+				return
+			}
+		}
 
 		if _, err = apis.DeployProxy(name, revision, overrides, serviceAccountName); err != nil {
 			return err
@@ -82,7 +87,7 @@ func init() {
 	DepWaitCmd.Flags().StringVarP(&env, "env", "e",
 		"", "Apigee environment name")
 	DepWaitCmd.Flags().IntVarP(&revision, "rev", "v",
-		-1, "API Proxy revision")
+		-1, "API Proxy revision. If not set, the highest revision is used.")
 	DepWaitCmd.Flags().BoolVarP(&overrides, "ovr", "r",
 		false, "Forces deployment of the new revision")
 	DepWaitCmd.Flags().StringVarP(&serviceAccountName, "sa", "s",

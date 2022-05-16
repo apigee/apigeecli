@@ -28,7 +28,12 @@ var FetCmd = &cobra.Command{
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		return apiclient.SetApigeeOrg(org)
 	},
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		if revision == -1 {
+			if revision, err = apis.GetHighestProxyRevision(name); err != nil {
+				return
+			}
+		}
 		return apis.FetchProxy(name, revision)
 	},
 }
@@ -38,8 +43,7 @@ func init() {
 	FetCmd.Flags().StringVarP(&name, "name", "n",
 		"", "API Proxy Bundle Name")
 	FetCmd.Flags().IntVarP(&revision, "rev", "v",
-		-1, "API Proxy revision")
+		-1, "API Proxy revision. If not set, the highest revision is used")
 
 	_ = FetCmd.MarkFlagRequired("name")
-	_ = FetCmd.MarkFlagRequired("rev")
 }
