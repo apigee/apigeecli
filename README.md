@@ -16,6 +16,16 @@ NOTE: Supported platforms are:
 * Windows
 * Linux
 
+
+Run this script to download & install the latest version (on Linux or Darwin)
+
+```sh
+curl -L https://raw.githubusercontent.com/apigee/apigeecli/master/downloadLatest.sh | sh -
+```
+
+NOTE: The signature is not verified and the original zip is not preserved.
+
+
 To test the signature of the binary, import the gpg public key:
 
 ```sh
@@ -24,6 +34,8 @@ gpg: key A714872F32F34390: public key "apigeecli (apigeecli) <13950006+srinandan
 gpg: Total number processed: 1
 gpg:               imported: 1
 ```
+
+Use curl or wget to download the zip and sig files. Verify using:
 
 ```sh
 gpg --verify apigeecli_<signature-file>.sig apigeecli_<original-file>.zip
