@@ -57,7 +57,11 @@ if [ "${APIGEECLI_VERSION}" = "" ] ; then
   exit 1;
 fi
 
+# Downloads the apigeecli binary archive.
+tmp=$(mktemp -d /tmp/apigeecli.XXXXXX)
 NAME="apigeecli_$APIGEECLI_VERSION"
+
+cd "$tmp" || exit
 URL="https://github.com/apigee/apigeecli/releases/download/${APIGEECLI_VERSION}/apigeecli_${APIGEECLI_VERSION}_${OSEXT}_${APIGEECLI_ARCH}.zip"
 
 download_cli() {
@@ -78,16 +82,20 @@ download_cli
 printf ""
 printf "\napigeecli %s Download Complete!\n" "$APIGEECLI_VERSION"
 printf "\n"
-printf "apigeecli has been successfully downloaded into the %s folder on your system.\n" "$NAME"
+printf "apigeecli has been successfully downloaded into the %s folder on your system.\n" "$tmp"
 printf "\n"
 
-while true; do
-    read -p "Do you want to move the apigeecli binary to /usr/bin?" yn
-    case $yn in
-        [Yy]* ) break;;
-        [Nn]* ) exit 0;;
-        * ) echo "Please enter yes or no.";;
-    esac
-done
+# setup apigeecli
+cd "$HOME" || exit
+mkdir -p "$HOME/.apigeecli/bin"
+mv "${tmp}/apigeecli_${APIGEECLI_VERSION}_${OSEXT}_${APIGEECLI_ARCH}/apigeecli" "$HOME/.apigeecli/bin"
+printf "Copied apigeecli into the $HOME/.apigeecli/bin folder.\n"
+chmod +x "$HOME/.apigeecli/bin/apigeecli"
+rm -r "${tmp}"
 
-sudo mv -f apigeecli_${APIGEECLI_VERSION}_*/apigeecli /usr/bin
+# Print message
+printf "\n"
+printf "Add the apigeecli to your path with:"
+printf "\n"
+printf "  export PATH=\$PATH:\$HOME/.apigeecli/bin \n"
+printf "\n"
