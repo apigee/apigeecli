@@ -20,26 +20,27 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//GetRatePlanCmd to list envs
-var GetRatePlanCmd = &cobra.Command{
-	Use:   "get",
-	Short: "Get a rate plan associated with an API Product",
-	Long:  "Get a rate plan associated with an API Product",
+//ExpRateplanCmd to export products
+var ExpRateplanCmd = &cobra.Command{
+	Use:   "export",
+	Short: "Export the rate plans of an API product to a file",
+	Long:  "Export the rate plans of an API product to a file",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = products.GetRatePlan(name, rateplan)
-		return
+		var exportFileName = "rateplan_" + name + ".json"
+		respBody, err := products.ExportRateplan(name)
+		if err != nil {
+			return
+		}
+		return apiclient.WriteByteArrayToFile(exportFileName, false, respBody)
 	},
 }
 
 func init() {
-	GetRatePlanCmd.Flags().StringVarP(&name, "name", "n",
-		"", "name of the API Product")
-	GetRatePlanCmd.Flags().StringVarP(&rateplan, "rateplan", "r",
+	ExpRateplanCmd.Flags().StringVarP(&name, "name", "n",
 		"", "name of the API Product")
 
-	_ = GetRatePlanCmd.MarkFlagRequired("name")
-	_ = GetRatePlanCmd.MarkFlagRequired("rateplan")
+	_ = ExpRateplanCmd.MarkFlagRequired("name")
 }

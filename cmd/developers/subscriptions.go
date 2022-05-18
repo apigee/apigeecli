@@ -18,28 +18,19 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//Cmd to manage developers
-var Cmd = &cobra.Command{
-	Use:     "developers",
-	Aliases: []string{"devs"},
-	Short:   "Manage Apigee App Developers",
-	Long:    "Manage Apigee App Developers",
+//SubCmd to manage subscriptions of developers
+var SubCmd = &cobra.Command{
+	Use:   "subscriptions",
+	Short: "Manage subscriptions for a Developer",
+	Long:  "Manage subscriptions for a Developer",
 }
 
-var org, email string
-var expand bool
+var subscription string
 
 func init() {
-
-	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
-		"", "Apigee organization name")
-
-	Cmd.AddCommand(ListCmd)
-	Cmd.AddCommand(GetCmd)
-	Cmd.AddCommand(DelCmd)
-	Cmd.AddCommand(CreateCmd)
-	Cmd.AddCommand(ImpCmd)
-	Cmd.AddCommand(ExpCmd)
-	Cmd.AddCommand(GetAppCmd)
-	Cmd.AddCommand(SubCmd)
+	SubCmd.AddCommand(CreateSubCmd)
+	SubCmd.AddCommand(ListSubCmd)
+	SubCmd.AddCommand(GetSubCmd)
+	SubCmd.AddCommand(ExpSubCmd)
+	SubCmd.AddCommand(ExportSubCmd)
 }

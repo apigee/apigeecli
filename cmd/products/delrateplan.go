@@ -20,26 +20,26 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//GetRatePlanCmd to list envs
-var GetRatePlanCmd = &cobra.Command{
-	Use:   "get",
-	Short: "Get a rate plan associated with an API Product",
-	Long:  "Get a rate plan associated with an API Product",
+//DelRatePlanCmd to list envs
+var DelRatePlanCmd = &cobra.Command{
+	Use:   "delete",
+	Short: "Delete rate plan associated with the API Product",
+	Long:  "Delete rate plan associated with the API Product",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = products.GetRatePlan(name, rateplan)
+		_, err = products.DeleteRatePlan(name, rateplan)
 		return
 	},
 }
 
 func init() {
-	GetRatePlanCmd.Flags().StringVarP(&name, "name", "n",
+	DelRatePlanCmd.Flags().StringVarP(&name, "name", "n",
 		"", "name of the API Product")
-	GetRatePlanCmd.Flags().StringVarP(&rateplan, "rateplan", "r",
+	DelRatePlanCmd.Flags().StringVarP(&rateplan, "rateplan", "r",
 		"", "name of the API Product")
 
-	_ = GetRatePlanCmd.MarkFlagRequired("name")
-	_ = GetRatePlanCmd.MarkFlagRequired("rateplan")
+	_ = DelRatePlanCmd.MarkFlagRequired("name")
+	_ = DelRatePlanCmd.MarkFlagRequired("rateplan")
 }

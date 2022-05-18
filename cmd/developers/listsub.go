@@ -15,31 +15,28 @@
 package developers
 
 import (
+	"github.com/apigee/apigeecli/apiclient"
+	"github.com/apigee/apigeecli/client/developers"
 	"github.com/spf13/cobra"
 )
 
-//Cmd to manage developers
-var Cmd = &cobra.Command{
-	Use:     "developers",
-	Aliases: []string{"devs"},
-	Short:   "Manage Apigee App Developers",
-	Long:    "Manage Apigee App Developers",
+//ListSubCmd to list developer subscriptions
+var ListSubCmd = &cobra.Command{
+	Use:   "list",
+	Short: "Returns a list of Developer subscriptions",
+	Args: func(cmd *cobra.Command, args []string) (err error) {
+		return apiclient.SetApigeeOrg(org)
+	},
+	Long: "Returns a list of Developer subscriptions",
+	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		_, err = developers.ListSubscriptions(email)
+		return
+	},
 }
 
-var org, email string
-var expand bool
-
 func init() {
+	ListSubCmd.Flags().StringVarP(&email, "email", "n",
+		"", "The developer's email")
 
-	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
-		"", "Apigee organization name")
-
-	Cmd.AddCommand(ListCmd)
-	Cmd.AddCommand(GetCmd)
-	Cmd.AddCommand(DelCmd)
-	Cmd.AddCommand(CreateCmd)
-	Cmd.AddCommand(ImpCmd)
-	Cmd.AddCommand(ExpCmd)
-	Cmd.AddCommand(GetAppCmd)
-	Cmd.AddCommand(SubCmd)
+	_ = ListSubCmd.MarkFlagRequired("email")
 }

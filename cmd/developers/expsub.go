@@ -12,34 +12,37 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package products
+package developers
 
 import (
 	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/products"
+	"github.com/apigee/apigeecli/client/developers"
 	"github.com/spf13/cobra"
 )
 
-//GetRatePlanCmd to list envs
-var GetRatePlanCmd = &cobra.Command{
-	Use:   "get",
-	Short: "Get a rate plan associated with an API Product",
-	Long:  "Get a rate plan associated with an API Product",
+//ExportSubCmd to export developer
+var ExportSubCmd = &cobra.Command{
+	Use:   "export",
+	Short: "Export Developer subscriptions to a file",
+	Long:  "Export Developer subscriptions to a file",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = products.GetRatePlan(name, rateplan)
-		return
+		var exportFileName = "subscription_" + email + ".json"
+
+		respBody, err := developers.ExportSubscriptions(email)
+		if err != nil {
+			return err
+		}
+
+		return apiclient.WriteByteArrayToFile(exportFileName, false, respBody)
 	},
 }
 
 func init() {
-	GetRatePlanCmd.Flags().StringVarP(&name, "name", "n",
-		"", "name of the API Product")
-	GetRatePlanCmd.Flags().StringVarP(&rateplan, "rateplan", "r",
-		"", "name of the API Product")
+	ExportSubCmd.Flags().StringVarP(&email, "email", "n",
+		"", "The developer's email")
 
-	_ = GetRatePlanCmd.MarkFlagRequired("name")
-	_ = GetRatePlanCmd.MarkFlagRequired("rateplan")
+	_ = ExportSubCmd.MarkFlagRequired("email")
 }

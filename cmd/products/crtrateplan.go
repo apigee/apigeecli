@@ -15,31 +15,42 @@
 package products
 
 import (
+	"io/ioutil"
+
 	"github.com/apigee/apigeecli/apiclient"
 	"github.com/apigee/apigeecli/client/products"
+	"github.com/apigee/apigeecli/clilog"
 	"github.com/spf13/cobra"
 )
 
-//GetRatePlanCmd to list envs
-var GetRatePlanCmd = &cobra.Command{
-	Use:   "get",
-	Short: "Get a rate plan associated with an API Product",
-	Long:  "Get a rate plan associated with an API Product",
+//Cmd to create a rate plane for an api product
+var CreateRateplanCmd = &cobra.Command{
+	Use:   "create",
+	Short: "Create a rate plan for an API product",
+	Long:  "Create a rate plan for an API product",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = products.GetRatePlan(name, rateplan)
+		if rateplanData, err = ioutil.ReadFile(rateplanFile); err != nil {
+			clilog.Info.Println(err)
+			return
+		}
+		_, err = products.CreateRatePlan(apiproduct, rateplanData)
 		return
 	},
 }
 
-func init() {
-	GetRatePlanCmd.Flags().StringVarP(&name, "name", "n",
-		"", "name of the API Product")
-	GetRatePlanCmd.Flags().StringVarP(&rateplan, "rateplan", "r",
-		"", "name of the API Product")
+var apiproduct, rateplanFile string
+var rateplanData []byte
 
-	_ = GetRatePlanCmd.MarkFlagRequired("name")
-	_ = GetRatePlanCmd.MarkFlagRequired("rateplan")
+func init() {
+
+	CreateRateplanCmd.Flags().StringVarP(&apiproduct, "product", "p",
+		"", "Name of the API Product")
+	CreateRateplanCmd.Flags().StringVarP(&rateplanFile, "rateplan", "",
+		"", "File containing Rate plane JSON. See samples for how to create the file")
+
+	_ = CreateRateplanCmd.MarkFlagRequired("apiproduct")
+	_ = CreateRateplanCmd.MarkFlagRequired("rateplan")
 }
