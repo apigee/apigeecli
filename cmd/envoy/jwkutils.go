@@ -262,7 +262,7 @@ func AddKey(kid string, folder string) (err error) {
 		return err
 	}
 
-	set.Keys = append(set.Keys, newKey)
+	set.AddKey(newKey)
 
 	jsonbuf, err := json.MarshalIndent(set, "", "  ")
 	if err != nil {
