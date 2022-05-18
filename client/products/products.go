@@ -376,7 +376,7 @@ func updateProduct(productSettings ProductSettings) (respBody []byte, err error)
 		if p.OperationGroup != nil {
 			//check to see the operation config type is the same
 			if OperationGroup.OperationConfigType != p.OperationGroup.OperationConfigType {
-				return nil, fmt.Errorf("updated operationConfigType must match the existing operationConfigType - ", OperationGroup.OperationConfigType)
+				return nil, fmt.Errorf("updated operationConfigType must match the existing operationConfigType - %s", OperationGroup.OperationConfigType)
 			}
 			p.OperationGroup.OperationConfigs = append(p.OperationGroup.OperationConfigs, OperationGroup.OperationConfigs...)
 		} else {
@@ -395,7 +395,7 @@ func updateProduct(productSettings ProductSettings) (respBody []byte, err error)
 		}
 		//check to see the operation config type is the same
 		if GraphqlOperationGroup.OperationConfigType != p.GraphQLOperationGroup.OperationConfigType {
-			return nil, fmt.Errorf("updated operationConfigType must match the existing operationConfigType - ", GraphqlOperationGroup.OperationConfigType)
+			return nil, fmt.Errorf("updated operationConfigType must match the existing operationConfigType - %s", GraphqlOperationGroup.OperationConfigType)
 		}
 		p.GraphQLOperationGroup.OperationConfigs = append(p.GraphQLOperationGroup.OperationConfigs, GraphqlOperationGroup.OperationConfigs...)
 	}

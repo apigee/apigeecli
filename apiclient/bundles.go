@@ -63,7 +63,7 @@ func ReadArchive(filename string) ([]byte, error) {
 
 	archiveFile, err := ioutil.ReadFile(filename)
 	if err != nil {
-		clilog.Error.Println("Error reading archive: %s", err)
+		clilog.Error.Printf("Error reading archive: %s\n", err)
 		return nil, err
 	}
 
