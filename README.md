@@ -16,7 +16,6 @@ NOTE: Supported platforms are:
 * Windows
 * Linux
 
-
 Run this script to download & install the latest version (on Linux or Darwin)
 
 ```sh

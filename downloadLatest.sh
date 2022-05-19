@@ -95,7 +95,9 @@ rm -r "${tmp}"
 
 # Print message
 printf "\n"
-printf "Add the apigeecli to your path with:"
+printf "Added the apigeecli to your path with:"
 printf "\n"
 printf "  export PATH=\$PATH:\$HOME/.apigeecli/bin \n"
 printf "\n"
+
+export PATH=$PATH:$HOME/.apigeecli/bin
