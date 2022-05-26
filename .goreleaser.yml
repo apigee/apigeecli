@@ -12,11 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# goreleaser version 1.0.0
-# commit: 4bd0b73e95e83cfaa51b19330c4b039d1d7c0d09
-# built at: 2021-11-14T15:27:43Z
+# goreleaser version 1.8.3
+# commit: 63436392db6ac0557513535fc3ee4223a44810ed
+# built at: 2022-04-20T12:43:39Z
 # built by: goreleaser
-# module version: v1.0.0, checksum: h1:83h1R0Y6K4JegTI3K4/koFoAjK14lJ716f0vS6/6ABg=
+# goos: darwin
+# goarch: amd64
+# module version: v1.8.3, checksum: h1:4vP28LV1VOL+mtEVvejCkN6KD1OU++7YNCh9dojxcO0=
 
 # .goreleaser.yml
 project_name: apigeecli
