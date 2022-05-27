@@ -57,6 +57,12 @@ if [ "${APIGEECLI_VERSION}" = "" ] ; then
   exit 1;
 fi
 
+# older versions of apigeecli used a file called .apigeecli. This changed to a folder in v1.108 
+APIGEECLI_FILE=~/.apigeecli
+if [ -f "$APIGEECLI_FILE" ]; then
+    rm ${APIGEECLI_FILE}
+fi
+
 # Downloads the apigeecli binary archive.
 tmp=$(mktemp -d /tmp/apigeecli.XXXXXX)
 NAME="apigeecli_$APIGEECLI_VERSION"
