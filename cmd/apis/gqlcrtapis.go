@@ -62,10 +62,11 @@ var GqlCreateCmd = &cobra.Command{
 		err = bundle.GenerateAPIProxyDefFromGQL(name,
 			gqlDocName,
 			basePath,
-			targetUrlRef,
 			apiKeyLocation,
 			skipPolicy,
-			addCORS)
+			addCORS,
+			targetUrlRef,
+			targetUrl)
 
 		if err != nil {
 			return err
@@ -80,7 +81,8 @@ var GqlCreateCmd = &cobra.Command{
 			keyName,
 			skipPolicy,
 			addCORS,
-			targetUrlRef)
+			targetUrlRef,
+			targetUrl)
 
 		if err != nil {
 			return err
@@ -108,8 +110,10 @@ func init() {
 	GqlCreateCmd.Flags().StringVarP(&action, "action", "",
 		"verify", "GraphQL policy action, must be oneOf parse, verify or parse_verify. Default is verify")
 	GqlCreateCmd.Flags().StringVarP(&targetUrlRef, "target-url-ref", "",
-		"", "Set a reference variable containing the target endpoint")
-	GqlCreateCmd.Flags().StringVarP(&targetUrlRef, "apikey-location", "",
+		"", "Set target.url variable from a reference variable containing the target endpoint")
+	GqlCreateCmd.Flags().StringVarP(&targetUrl, "target-url", "",
+		"", "Set a target URL for the target endpoint")
+	GqlCreateCmd.Flags().StringVarP(&apiKeyLocation, "apikey-location", "",
 		"", "Set the location of the API key, ex: request.header.x-api-key")
 	GqlCreateCmd.Flags().BoolVarP(&importProxy, "import", "",
 		true, "Import API Proxy after generation from spec")
@@ -119,7 +123,6 @@ func init() {
 		false, "Add a CORS policy")
 
 	_ = GqlCreateCmd.MarkFlagRequired("name")
-	_ = GqlCreateCmd.MarkFlagRequired("target-url-ref")
 	_ = GqlCreateCmd.MarkFlagRequired("basepath")
 }
 
