@@ -20,7 +20,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//Cmd to export developer
+//ExpCmd to export developer
 var ExpCmd = &cobra.Command{
 	Use:   "export",
 	Short: "Export Developers to a file",
