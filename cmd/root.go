@@ -23,6 +23,7 @@ import (
 	"strconv"
 
 	"github.com/apigee/apigeecli/apiclient"
+	"github.com/apigee/apigeecli/clilog"
 	"github.com/apigee/apigeecli/cmd/apis"
 	"github.com/apigee/apigeecli/cmd/apps"
 	cache "github.com/apigee/apigeecli/cmd/cache"
@@ -65,7 +66,9 @@ var RootCmd = &cobra.Command{
 		if !disableCheck {
 			if ok, _ := apiclient.TestAndUpdateLastCheck(); !ok {
 				latestVersion, _ := getLatestVersion()
-				if cmd.Version != latestVersion {
+				if cmd.Version == "" {
+					clilog.Info.Println("apigeecli wasn't built with a valid Version tag.")
+				} else if latestVersion != "" && cmd.Version != latestVersion {
 					fmt.Printf("You are using %s, the latest version %s is available for download\n", cmd.Version, latestVersion)
 				}
 			}
@@ -179,5 +182,10 @@ func getLatestVersion() (version string, err error) {
 		return "", err
 	}
 
-	return fmt.Sprintf("%s", result["tag_name"]), nil
+	if result["tag_name"] == "" {
+		clilog.Info.Println("Unable to determine latest tag, skipping this information")
+		return "", nil
+	} else {
+		return fmt.Sprintf("%s", result["tag_name"]), nil
+	}
 }
