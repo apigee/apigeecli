@@ -109,7 +109,7 @@ func init() {
 		"verify", "GraphQL policy action, must be oneOf parse, verify or parse_verify. Default is verify")
 	GqlCreateCmd.Flags().StringVarP(&targetUrlRef, "target-url-ref", "",
 		"", "Set a reference variable containing the target endpoint")
-	GqlCreateCmd.Flags().StringVarP(&targetUrlRef, "apikey-location", "",
+	GqlCreateCmd.Flags().StringVarP(&apiKeyLocation, "apikey-location", "",
 		"", "Set the location of the API key, ex: request.header.x-api-key")
 	GqlCreateCmd.Flags().BoolVarP(&importProxy, "import", "",
 		true, "Import API Proxy after generation from spec")
