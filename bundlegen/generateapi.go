@@ -176,7 +176,8 @@ func GenerateAPIProxyDefFromOAS(name string,
 	oasGoogleAcessTokenScopeLiteral string,
 	oasGoogleIdTokenAudLiteral string,
 	oasGoogleIdTokenAudRef string,
-	oasTargetUrlRef string) (err error) {
+	oasTargetUrlRef string,
+	targetUrl string) (err error) {
 
 	if doc == nil {
 		return fmt.Errorf("Open API document not loaded")
@@ -221,7 +222,15 @@ func GenerateAPIProxyDefFromOAS(name string,
 		generateSetTarget = true
 	}
 
-	targets.NewTargetEndpoint(u.Scheme+"://"+u.Hostname(), oasGoogleAcessTokenScopeLiteral, oasGoogleIdTokenAudLiteral, oasGoogleIdTokenAudRef)
+	//if target is not set, derive it from the OAS file
+	if targetUrl == "" {
+		targets.NewTargetEndpoint(u.Scheme+"://"+u.Hostname(), oasGoogleAcessTokenScopeLiteral, oasGoogleIdTokenAudLiteral, oasGoogleIdTokenAudRef)
+	} else { //an explicit target url is set
+		if _, err = url.Parse(targetUrl); err != nil {
+			return fmt.Errorf("Invalid target url: ", err)
+		}
+		targets.NewTargetEndpoint(targetUrl, oasGoogleAcessTokenScopeLiteral, oasGoogleIdTokenAudLiteral, oasGoogleIdTokenAudRef)
+	}
 
 	proxies.NewProxyEndpoint(u.Path)
 

@@ -47,7 +47,8 @@ func GenerateAPIProxyBundleFromOAS(name string,
 	oasGoogleAcessTokenScopeLiteral string,
 	oasGoogleIdTokenAudLiteral string,
 	oasGoogleIdTokenAudRef string,
-	oasTargetUrlRef string) (err error) {
+	oasTargetUrlRef string,
+	targetUrl string) (err error) {
 
 	var apiProxyData, proxyEndpointData, targetEndpointData string
 	const resourceType = "oas"
@@ -110,10 +111,12 @@ func GenerateAPIProxyBundleFromOAS(name string,
 	}
 
 	//add set target url
-	if genapi.GenerateSetTargetPolicy() {
-		if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"Set-Target-1.xml",
-			policies.AddSetTargetEndpoint(oasTargetUrlRef)); err != nil {
-			return err
+	if targetUrl == "" {
+		if genapi.GenerateSetTargetPolicy() {
+			if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"Set-Target-1.xml",
+				policies.AddSetTargetEndpoint(oasTargetUrlRef)); err != nil {
+				return err
+			}
 		}
 	}
 
