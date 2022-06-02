@@ -300,7 +300,7 @@ func GenerateAPIProxyDefFromGQL(name string,
 	skipPolicy bool,
 	addCORS bool,
 	targetUrlRef string,
-    targetUrl string) (err error) {
+	targetUrl string) (err error) {
 
 	apiproxy.SetDisplayName(name)
 	apiproxy.SetCreatedAt()
@@ -330,7 +330,7 @@ func GenerateAPIProxyDefFromGQL(name string,
 		generateSetTarget = true
 	}
 
-	//if target is not set, derive it from the OAS file
+	//if target is not set, add a default/fake endpoint
 	if targetUrl == "" {
 		targets.NewTargetEndpoint("https://api.example.com", "", "", "")
 	} else { //an explicit target url is set
