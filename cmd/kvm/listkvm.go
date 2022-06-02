@@ -15,6 +15,8 @@
 package kvm
 
 import (
+	"fmt"
+
 	"github.com/apigee/apigeecli/apiclient"
 	"github.com/apigee/apigeecli/client/kvm"
 	"github.com/spf13/cobra"
@@ -26,11 +28,16 @@ var ListCmd = &cobra.Command{
 	Short: "Returns a list of KVMs",
 	Long:  "Returns a list of KVMs",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeEnv(env)
+		if env != "" {
+			apiclient.SetApigeeEnv(env)
+		}
+		if env != "" && proxyName != "" {
+			return fmt.Errorf("proxy and env flags cannot be used together")
+		}
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = kvm.List()
+		_, err = kvm.List(proxyName)
 		return
 	},
 }
@@ -39,5 +46,6 @@ func init() {
 
 	ListCmd.Flags().StringVarP(&env, "env", "e",
 		"", "Environment name")
-	_ = ListCmd.MarkFlagRequired("env")
+	ListCmd.Flags().StringVarP(&proxyName, "proxy", "p",
+		"", "API Proxy name")
 }

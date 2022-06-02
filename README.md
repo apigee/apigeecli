@@ -257,4 +257,8 @@ ___
 
 ## Support
 
+<<<<<<< HEAD
 This is not an officially supported Google product
+=======
+This is not an officially supported Google product
+>>>>>>> master

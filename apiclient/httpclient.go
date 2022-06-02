@@ -44,6 +44,10 @@ func PostHttpZip(print bool, auth bool, method string, url string, headers map[s
 		return err
 	}
 
+	if DryRun() {
+		return nil
+	}
+
 	clilog.Info.Println("Connecting to : ", url)
 	req, err = http.NewRequest(method, url, bytes.NewBuffer(payload))
 	if err != nil {
@@ -84,6 +88,10 @@ func PostHttpOctet(print bool, update bool, url string, proxyName string) (respB
 		return nil, err
 	}
 	defer file.Close()
+
+	if DryRun() {
+		return nil, nil
+	}
 
 	var req *http.Request
 
@@ -145,6 +153,10 @@ func DownloadFile(url string, auth bool) (resp *http.Response, err error) {
 		return nil, err
 	}
 
+	if DryRun() {
+		return nil, nil
+	}
+
 	clilog.Info.Println("Connecting to : ", url)
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -186,6 +198,10 @@ func DownloadResource(url string, name string, resType string) error {
 		filename = name
 	}
 
+	if DryRun() {
+		return nil
+	}
+
 	out, err := os.Create(filename)
 	if err != nil {
 		clilog.Error.Println("error creating file: ", err)
@@ -225,6 +241,10 @@ func HttpClient(print bool, params ...string) (respBody []byte, err error) {
 	client, err := getHttpClient()
 	if err != nil {
 		return nil, err
+	}
+
+	if DryRun() {
+		return nil, nil
 	}
 
 	clilog.Info.Println("Connecting to: ", params[0])

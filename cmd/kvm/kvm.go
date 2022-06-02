@@ -25,7 +25,7 @@ var Cmd = &cobra.Command{
 	Long:  "Manage Key Value Maps",
 }
 
-var org, env, name string
+var org, env, name, proxyName string
 
 func init() {
 
@@ -35,4 +35,5 @@ func init() {
 	Cmd.AddCommand(ListCmd)
 	Cmd.AddCommand(DelCmd)
 	Cmd.AddCommand(CreateCmd)
+	Cmd.AddCommand(EntryCmd)
 }

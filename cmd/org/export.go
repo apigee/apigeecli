@@ -77,6 +77,14 @@ var ExportCmd = &cobra.Command{
 			return err
 		}
 
+		fmt.Println("\tExporting KV Map names for org %s", org)
+		if respBody, err = kvm.List(""); err != nil {
+			return err
+		}
+		if err = apiclient.WriteByteArrayToFile(org+"_"+kVMFileName, false, respBody); err != nil {
+			return err
+		}
+
 		fmt.Println("Exporting Developers...")
 		if respBody, err = developers.Export(); err != nil {
 			return err
@@ -150,8 +158,8 @@ var ExportCmd = &cobra.Command{
 				return err
 			}
 
-			fmt.Println("\tExporting KVM Map names...")
-			if respBody, err = kvm.List(); err != nil {
+			fmt.Println("\tExporting KV Map names for environment %s...", environment)
+			if respBody, err = kvm.List(""); err != nil {
 				return err
 			}
 			if err = apiclient.WriteByteArrayToFile(environment+"_"+kVMFileName, false, respBody); err != nil {

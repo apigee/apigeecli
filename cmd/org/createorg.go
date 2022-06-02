@@ -48,12 +48,13 @@ var CreateCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(projectID)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = orgs.Create(region, network, runtimeType, databaseKey, billingType)
+		_, err = orgs.Create(region, network, runtimeType, databaseKey, billingType, disablePortal)
 		return
 	},
 }
 
 var region, projectID, network, runtimeType, description, databaseKey, billingType string
+var disablePortal bool
 
 func init() {
 
@@ -71,6 +72,8 @@ func init() {
 		"HYBRID", "Runtime type: CLOUD or HYBRID")
 	CreateCmd.Flags().StringVarP(&runtimeType, "billing-type", "",
 		"", "Billing type: SUBSCRIPTION or EVALUATION")
+	CreateCmd.Flags().BoolVarP(&disablePortal, "disable-portal", "",
+		false, "Disable creation of Developer Portals")
 
 	_ = CreateCmd.MarkFlagRequired("prj")
 	_ = CreateCmd.MarkFlagRequired("reg")

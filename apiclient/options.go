@@ -197,3 +197,12 @@ func GetProxyURL() string {
 func SetProxyURL(proxyurl string) {
 	options.ProxyUrl = proxyurl
 }
+
+//DryRun
+func DryRun() bool {
+	if os.Getenv("APIGEECLI_DRYNRUN") != "" {
+		clilog.Warning.Println("Dry run mode enabled! unset APIGEECLI_DRYRUN to disable dry run")
+		return true
+	}
+	return false
+}
