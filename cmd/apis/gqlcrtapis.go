@@ -39,6 +39,9 @@ var GqlCreateCmd = &cobra.Command{
 		if gqlFile == "" && gqlURI == "" {
 			return fmt.Errorf("Either gqlfile or gqlurl must be passed")
 		}
+		if targetUrl != "" && targetUrlRef != "" {
+			return fmt.Errorf("Either target-url or target-url-ref must be passed, not both")
+		}
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
