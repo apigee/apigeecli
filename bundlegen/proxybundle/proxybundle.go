@@ -183,7 +183,8 @@ func GenerateAPIProxyBundleFromGQL(name string,
 	keyName string,
 	skipPolicy bool,
 	addCORS bool,
-	targetUrlRef string) (err error) {
+	targetUrlRef string,
+	targetUrl string) (err error) {
 
 	var apiProxyData, proxyEndpointData, targetEndpointData string
 	const resourceType = "graphql"
@@ -245,9 +246,11 @@ func GenerateAPIProxyBundleFromGQL(name string,
 		return err
 	}
 
-	if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"Set-Target-1.xml",
-		policies.AddSetTargetEndpoint(targetUrlRef)); err != nil {
-		return err
+	if targetUrlRef != "" {
+		if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"Set-Target-1.xml",
+			policies.AddSetTargetEndpoint(targetUrlRef)); err != nil {
+			return err
+		}
 	}
 
 	if !skipPolicy {

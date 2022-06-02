@@ -296,10 +296,11 @@ func GetEndpoint(doc *openapi3.T) (u *url.URL, err error) {
 func GenerateAPIProxyDefFromGQL(name string,
 	gqlDocName string,
 	basePath string,
-	targetUrlRef string,
 	apiKeyLocation string,
 	skipPolicy bool,
-	addCORS bool) (err error) {
+	addCORS bool,
+	targetUrlRef string,
+    targetUrl string) (err error) {
 
 	apiproxy.SetDisplayName(name)
 	apiproxy.SetCreatedAt()
@@ -315,8 +316,6 @@ func GenerateAPIProxyDefFromGQL(name string,
 		apiproxy.AddPolicy("Validate-" + name + "-Schema")
 	}
 
-	targets.NewTargetEndpoint("https://api.example.com", "", "", "")
-
 	proxies.NewProxyEndpoint(basePath)
 
 	if addCORS {
@@ -324,8 +323,22 @@ func GenerateAPIProxyDefFromGQL(name string,
 		apiproxy.AddPolicy("Add-CORS")
 	}
 
-	targets.AddStepToPreFlowRequest("Set-Target-1")
-	apiproxy.AddPolicy("Set-Target-1")
+	//set a dynamic target url
+	if targetUrlRef != "" {
+		targets.AddStepToPreFlowRequest("Set-Target-1")
+		apiproxy.AddPolicy("Set-Target-1")
+		generateSetTarget = true
+	}
+
+	//if target is not set, derive it from the OAS file
+	if targetUrl == "" {
+		targets.NewTargetEndpoint("https://api.example.com", "", "", "")
+	} else { //an explicit target url is set
+		if _, err = url.Parse(targetUrl); err != nil {
+			return fmt.Errorf("Invalid target url: ", err)
+		}
+		targets.NewTargetEndpoint(targetUrl, "", "", "")
+	}
 
 	if !skipPolicy {
 		proxies.AddStepToPreFlowRequest("Validate-" + name + "-Schema")
