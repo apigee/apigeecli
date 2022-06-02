@@ -48,6 +48,8 @@ type serviceAccount struct {
 
 var account = serviceAccount{}
 
+const tokenUri = "https://www.googleapis.com/oauth2/v4/token"
+
 func getPrivateKey(privateKey string) (interface{}, error) {
 	pemPrivateKey := fmt.Sprintf("%v", privateKey)
 	block, _ := pem.Decode([]byte(pemPrivateKey))
@@ -60,7 +62,7 @@ func getPrivateKey(privateKey string) (interface{}, error) {
 }
 
 func generateJWT(privateKey string) (string, error) {
-	const aud = "https://www.googleapis.com/oauth2/v4/token"
+
 	const scope = "https://www.googleapis.com/auth/cloud-platform"
 
 	privKey, err := getPrivateKey(privateKey)
@@ -72,7 +74,10 @@ func generateJWT(privateKey string) (string, error) {
 	now := time.Now()
 	token := jwt.New()
 
-	_ = token.Set(jwt.AudienceKey, aud)
+	//Google OAuth takes aud as a string, not array
+	jwt.Settings(jwt.WithFlattenAudience(true))
+
+	_ = token.Set("aud", tokenUri)
 	_ = token.Set(jwt.IssuerKey, getServiceAccountProperty("ClientEmail"))
 	_ = token.Set("scope", scope)
 	_ = token.Set(jwt.IssuedAtKey, now.Unix())
@@ -90,7 +95,6 @@ func generateJWT(privateKey string) (string, error) {
 //generateAccessToken generates a Google OAuth access token from a service account
 func generateAccessToken(privateKey string) (string, error) {
 
-	const tokenEndpoint = "https://oauth2.googleapis.com/token"
 	const grantType = "urn:ietf:params:oauth:grant-type:jwt-bearer"
 	var respBody []byte
 
@@ -112,7 +116,7 @@ func generateAccessToken(privateKey string) (string, error) {
 	form.Add("assertion", token)
 
 	client := &http.Client{}
-	req, err := http.NewRequest("POST", tokenEndpoint, strings.NewReader(form.Encode()))
+	req, err := http.NewRequest("POST", tokenUri, strings.NewReader(form.Encode()))
 	if err != nil {
 		clilog.Error.Println("error in client: ", err)
 		return "", err
@@ -137,6 +141,8 @@ func generateAccessToken(privateKey string) (string, error) {
 	}
 
 	respBody, err = ioutil.ReadAll(resp.Body)
+	clilog.Info.Printf("Response: %s\n", string(respBody))
+
 	if err != nil {
 		clilog.Error.Println("error in response: ", err)
 		return "", fmt.Errorf("error in response: ", err)
