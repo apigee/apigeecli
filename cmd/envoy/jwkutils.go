@@ -28,10 +28,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/lestrrat-go/jwx/jwa"
-	"github.com/lestrrat-go/jwx/jwk"
-	"github.com/lestrrat-go/jwx/jws"
-	"github.com/lestrrat-go/jwx/jwt"
+	"github.com/lestrrat-go/jwx/v2/jwa"
+	"github.com/lestrrat-go/jwx/v2/jwk"
+	"github.com/lestrrat-go/jwx/v2/jws"
+	"github.com/lestrrat-go/jwx/v2/jwt"
 
 	"github.com/apigee/apigeecli/clilog"
 )
@@ -137,7 +137,7 @@ func GenerateToken(folder string, expiry int) (string, error) {
 		return "", err
 	}
 
-	payload, err := jws.Sign(buf, jwa.RS256, privKey, jws.WithHeaders(hdr))
+	payload, err := jws.Sign(buf, jws.WithKey(jwa.RS256, privKey), jws.WithHeaders(hdr))
 	if err != nil {
 		clilog.Error.Println("error parsing Private Key: ", err)
 		return "", err
@@ -174,7 +174,7 @@ func Generatekeys(kid string, folder string) (err error) {
 		return err
 	}
 
-	key, err := jwk.New(&privkey.PublicKey)
+	key, err := jwk.FromRaw(&privkey.PublicKey)
 	if err != nil {
 		return err
 	}
@@ -194,7 +194,7 @@ func Generatekeys(kid string, folder string) (err error) {
 			return err
 		}
 
-		set, err := jwk.ParseBytes(jsonbuf)
+		set, err := jwk.Parse(jsonbuf)
 		if err != nil {
 			return err
 		}
@@ -230,7 +230,7 @@ func AddKey(kid string, folder string) (err error) {
 		return err
 	}
 
-	set, err := jwk.ParseBytes(data)
+	set, err := jwk.Parse(data)
 	if err != nil {
 		return err
 	}
@@ -251,7 +251,7 @@ func AddKey(kid string, folder string) (err error) {
 		return err
 	}
 
-	newKey, err := jwk.New(&privkey.PublicKey)
+	newKey, err := jwk.FromRaw(&privkey.PublicKey)
 	if err != nil {
 		return err
 	}
@@ -262,7 +262,7 @@ func AddKey(kid string, folder string) (err error) {
 		return err
 	}
 
-	set.Keys = append(set.Keys, newKey)
+	set.AddKey(newKey)
 
 	jsonbuf, err := json.MarshalIndent(set, "", "  ")
 	if err != nil {

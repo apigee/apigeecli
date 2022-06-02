@@ -12,28 +12,37 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org
+package developers
 
 import (
 	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/orgs"
+	"github.com/apigee/apigeecli/client/developers"
 	"github.com/spf13/cobra"
 )
 
-//Cmd to set mart endpoint
-var WlCmd = &cobra.Command{
-	Use:   "enable-mart-whitelist",
-	Short: "Enable IP whitelisting for MART connections",
-	Long:  "Enable IP whitelisting for MART connections",
+//ExportSubCmd to export developer
+var ExportSubCmd = &cobra.Command{
+	Use:   "export",
+	Short: "Export Developer subscriptions to a file",
+	Long:  "Export Developer subscriptions to a file",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		return orgs.SetOrgProperty("features.mart.ip.whitelist.enabled", "true")
+		var exportFileName = "subscription_" + email + ".json"
+
+		respBody, err := developers.ExportSubscriptions(email)
+		if err != nil {
+			return err
+		}
+
+		return apiclient.WriteByteArrayToFile(exportFileName, false, respBody)
 	},
 }
 
 func init() {
-	WlCmd.Flags().StringVarP(&org, "org", "o",
-		"", "Apigee organization name")
+	ExportSubCmd.Flags().StringVarP(&email, "email", "n",
+		"", "The developer's email")
+
+	_ = ExportSubCmd.MarkFlagRequired("email")
 }

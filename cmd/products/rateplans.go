@@ -18,13 +18,17 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//RatePlanCmd to manage tracing of apis
+//RatePlanCmd to manage rateplans of api products
 var RatePlanCmd = &cobra.Command{
 	Use:   "rateplans",
 	Short: "Manage rateplans for an API Product",
 	Long:  "Manage rateplans for an API Product",
 }
 
+var rateplan string
+
 func init() {
+	RatePlanCmd.AddCommand(ListRatePlanCmd)
 	RatePlanCmd.AddCommand(GetRatePlanCmd)
+	RatePlanCmd.AddCommand(DelRatePlanCmd)
 }

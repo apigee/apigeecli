@@ -29,8 +29,8 @@ import (
 	"time"
 
 	"github.com/apigee/apigeecli/clilog"
-	"github.com/lestrrat/go-jwx/jwa"
-	"github.com/lestrrat/go-jwx/jwt"
+	"github.com/lestrrat-go/jwx/v2/jwa"
+	"github.com/lestrrat-go/jwx/v2/jwt"
 )
 
 type serviceAccount struct {
@@ -78,7 +78,7 @@ func generateJWT(privateKey string) (string, error) {
 	_ = token.Set(jwt.IssuedAtKey, now.Unix())
 	_ = token.Set(jwt.ExpirationKey, now.Unix())
 
-	payload, err := token.Sign(jwa.RS256, privKey)
+	payload, err := jwt.Sign(token, jwt.WithKey(jwa.RS256, privKey))
 	if err != nil {
 		clilog.Error.Println("error parsing Private Key: ", err)
 		return "", err

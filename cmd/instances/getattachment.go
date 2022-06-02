@@ -30,7 +30,7 @@ var GetAttachCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = instances.GetAttach(name, environment)
+		_, err = instances.GetEnv(name)
 		return
 	},
 }

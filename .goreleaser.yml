@@ -12,11 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# goreleaser version 0.175.0
-# commit: 5e006eb236284c29143341e48c2f692826865d47
-# built at: 2021-08-17T12:37:19Z
+# goreleaser version 1.8.3
+# commit: 63436392db6ac0557513535fc3ee4223a44810ed
+# built at: 2022-04-20T12:43:39Z
 # built by: goreleaser
-# module version: v0.175.0, checksum: h1:wMth9qMjWDoQ6VKdezQg7exRq4ew1lLVXvZDf+IU258=
+# goos: darwin
+# goarch: amd64
+# module version: v1.8.3, checksum: h1:4vP28LV1VOL+mtEVvejCkN6KD1OU++7YNCh9dojxcO0=
 
 # .goreleaser.yml
 project_name: apigeecli
@@ -75,27 +77,18 @@ checksum:
   name_template: 'checksums.txt'
 
 signs:
-  - artifacts: all  
+  - 
+    artifacts: all
+    args:
+      [
+        "-u",
+        "13950006+srinandan@users.noreply.github.com",
+        "--output",
+        "${signature}",
+        "--detach-sign",
+        "${artifact}",
+      ]
 
 release:
   draft: true
   prerelease: true
-# dockers:
-#   -
-#     goos: linux
-#     goarch: amd64
-#     image_templates:
-#     - "gcr.io/nandanks/apigeecli:{{ .Tag }}"
-#     dockerfile: Dockerfile
-#     skip_push: true
-#     use: buildpacks
-
-brews:
-  - tap:
-      owner: srinandan
-      name: homebrew-tap
-    skip_upload: false
-    download_strategy: CurlDownloadStrategy
-    folder: Formula    
-    url_template: "https://github.com/apigee/apigeecli/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
-    homepage: "https://github.com/apigee/apigeecli"

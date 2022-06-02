@@ -427,19 +427,6 @@ func TestCreateKeyAliasSelfSigned(t *testing.T) {
 	}
 }
 
-func TestSetMartWhiteList(t *testing.T) {
-	mart := os.Getenv("MART")
-	if mart == "" {
-		t.Log("MART not set, skipping")
-	} else {
-		cmd := exec.Command(apigeecli, "orgs", "setmart", "-o", org, "-m", mart, "-w", "false", "-t", token)
-		err := cmd.Run()
-		if err != nil {
-			t.Fatal(err)
-		}
-	}
-}
-
 func TestDeleteApp(t *testing.T) {
 
 	cmd := exec.Command(apigeecli, "apps", "delete", "-o", org, "-n", name, "-t", token)

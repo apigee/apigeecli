@@ -33,6 +33,9 @@ var OasCreateCmd = &cobra.Command{
 		if oasFile == "" && oasURI == "" {
 			return fmt.Errorf("Either oasfile or oasuri must be passed")
 		}
+		if targetUrl != "" && targetUrlRef != "" {
+			return fmt.Errorf("Either target-url or target-url-ref must be passed, not both")
+		}
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
@@ -55,7 +58,8 @@ var OasCreateCmd = &cobra.Command{
 			oasGoogleAcessTokenScopeLiteral,
 			oasGoogleIdTokenAudLiteral,
 			oasGoogleIdTokenAudRef,
-			targetUrlRef)
+			targetUrlRef,
+			targetUrl)
 
 		if err != nil {
 			return err
@@ -70,7 +74,8 @@ var OasCreateCmd = &cobra.Command{
 			oasGoogleAcessTokenScopeLiteral,
 			oasGoogleIdTokenAudLiteral,
 			oasGoogleIdTokenAudRef,
-			targetUrlRef)
+			targetUrlRef,
+			targetUrl)
 
 		if err != nil {
 			return err
@@ -84,7 +89,7 @@ var OasCreateCmd = &cobra.Command{
 	},
 }
 
-var oasFile, oasURI string
+var oasFile, oasURI, targetUrl string
 var oasGoogleAcessTokenScopeLiteral, oasGoogleIdTokenAudLiteral, oasGoogleIdTokenAudRef string
 var validateSpec, formatValidation bool
 
@@ -103,6 +108,8 @@ func init() {
 		"", "Generate Google ID token token with target endpoint and set audience reference")
 	OasCreateCmd.Flags().StringVarP(&targetUrlRef, "target-url-ref", "",
 		"", "Set a reference variable containing the target endpoint")
+	OasCreateCmd.Flags().StringVarP(&targetUrl, "target-url", "",
+		"", "Set a target URL for the target endpoint")
 	OasCreateCmd.Flags().BoolVarP(&importProxy, "import", "",
 		true, "Import API Proxy after generation from spec")
 	OasCreateCmd.Flags().BoolVarP(&validateSpec, "validate", "",

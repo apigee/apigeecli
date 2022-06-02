@@ -96,5 +96,5 @@ components:
           description: 'the url to the image'
           type: string
         id:
-          description: 'uuid of the item in question (internal only)'
+          description: 'uuid of the item in question'
           type: string

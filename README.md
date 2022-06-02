@@ -16,6 +16,37 @@ NOTE: Supported platforms are:
 * Windows
 * Linux
 
+Run this script to download & install the latest version (on Linux or Darwin)
+
+```sh
+curl -L https://raw.githubusercontent.com/apigee/apigeecli/master/downloadLatest.sh | sh -
+```
+
+NOTE: The signature is not verified and the original zip is not preserved.
+
+
+To test the signature of the binary, import the gpg public key:
+
+```sh
+gpg --recv-keys --keyserver keyserver.ubuntu.com A714872F32F34390
+gpg: key A714872F32F34390: public key "apigeecli (apigeecli) <13950006+srinandan@users.noreply.github.com>" imported
+gpg: Total number processed: 1
+gpg:               imported: 1
+```
+
+Use curl or wget to download the zip and sig files. Verify using:
+
+```sh
+gpg --verify apigeecli_<signature-file>.sig apigeecli_<original-file>.zip
+gpg: Signature made Thu 05 May 2022 05:58:11 PM UTC
+gpg:                using RSA key 72D11E3A3B1E9FE22110EC45A714872F32F34390
+gpg:                issuer "13950006+srinandan@users.noreply.github.com"
+gpg: Good signature from "apigeecli (apigeecli) <13950006+srinandan@users.noreply.github.com>" [unknown]
+gpg: WARNING: This key is not certified with a trusted signature!
+gpg:          There is no indication that the signature belongs to the owner.
+Primary key fingerprint: 72D1 1E3A 3B1E 9FE2 2110  EC45 A714 872F 32F3 4390
+```
+
 ## What you need to know about apigeecli
 
 You must have an account on [Apigee](https://cloud.google.com/apigee/docs) to perform any `apigeecli` functions. These functions include: proxies, API Products, Environments, Org details etc.
@@ -226,4 +257,8 @@ ___
 
 ## Support
 
+<<<<<<< HEAD
 This is not an officially supported Google product
+=======
+This is not an officially supported Google product
+>>>>>>> master

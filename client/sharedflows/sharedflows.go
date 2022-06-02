@@ -63,6 +63,28 @@ func Get(name string, revision int) (respBody []byte, err error) {
 	return respBody, err
 }
 
+//GetHighestSfRevision
+func GetHighestSfRevision(name string) (version int, err error) {
+	apiclient.SetPrintOutput(false)
+	u, _ := url.Parse(apiclient.BaseURL)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sharedflows", name)
+	respBody, err := apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	apiclient.SetPrintOutput(true)
+	if err != nil {
+		return -1, err
+	}
+
+	sfRevisions := sharedflow{}
+	if err = json.Unmarshal(respBody, &sfRevisions); err != nil {
+		return -1, err
+	}
+	version, err = strconv.Atoi(maxRevision(sfRevisions.Revision))
+	if err != nil {
+		return -1, nil
+	}
+	return version, nil
+}
+
 //Delete
 func Delete(name string, revision int) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)

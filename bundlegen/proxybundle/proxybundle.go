@@ -47,7 +47,8 @@ func GenerateAPIProxyBundleFromOAS(name string,
 	oasGoogleAcessTokenScopeLiteral string,
 	oasGoogleIdTokenAudLiteral string,
 	oasGoogleIdTokenAudRef string,
-	oasTargetUrlRef string) (err error) {
+	oasTargetUrlRef string,
+	targetUrl string) (err error) {
 
 	var apiProxyData, proxyEndpointData, targetEndpointData string
 	const resourceType = "oas"
@@ -110,10 +111,12 @@ func GenerateAPIProxyBundleFromOAS(name string,
 	}
 
 	//add set target url
-	if genapi.GenerateSetTargetPolicy() {
-		if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"Set-Target-1.xml",
-			policies.AddSetTargetEndpoint(oasTargetUrlRef)); err != nil {
-			return err
+	if targetUrl == "" {
+		if genapi.GenerateSetTargetPolicy() {
+			if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"Set-Target-1.xml",
+				policies.AddSetTargetEndpoint(oasTargetUrlRef)); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -350,12 +353,19 @@ func GitHubImportBundle(owner string, repo string, repopath string) (err error) 
 	CleanUp()
 	os.RemoveAll(rootDir)
 
+	var client *github.Client
+
 	//
 	token := os.Getenv("GITHUB_TOKEN")
 	ctx := context.Background()
-	ts := oauth2.StaticTokenSource(&oauth2.Token{AccessToken: token})
-	tc := oauth2.NewClient(ctx, ts)
-	client := github.NewClient(tc)
+
+	if token != "" {
+		ts := oauth2.StaticTokenSource(&oauth2.Token{AccessToken: token})
+		tc := oauth2.NewClient(ctx, ts)
+		client = github.NewClient(tc)
+	} else {
+		client = github.NewClient(nil)
+	}
 
 	//1. download the proxy
 	if err := downloadProxyFromRepo(client, ctx, owner, repo, repopath); err != nil {

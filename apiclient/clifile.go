@@ -25,7 +25,8 @@ import (
 	"github.com/apigee/apigeecli/clilog"
 )
 
-const apigeecliFile = ".apigeecli"
+const apigeecliFile = "config.json"
+const apigeecliPath = ".apigeecli"
 
 var usr *user.User
 
@@ -50,7 +51,7 @@ func ReadPreferencesFile() (err error) {
 		return err
 	}
 
-	prefFile, err := ioutil.ReadFile(path.Join(usr.HomeDir, apigeecliFile))
+	prefFile, err := ioutil.ReadFile(path.Join(usr.HomeDir, apigeecliPath, apigeecliFile))
 	if err != nil {
 		clilog.Info.Println("Cached preferences was not found")
 		return err
@@ -84,11 +85,11 @@ func DeletePreferencesFile() (err error) {
 		clilog.Info.Println(err)
 		return err
 	}
-	if _, err := os.Stat(path.Join(usr.HomeDir, apigeecliFile)); os.IsNotExist(err) {
+	if _, err := os.Stat(path.Join(usr.HomeDir, apigeecliPath, apigeecliFile)); os.IsNotExist(err) {
 		clilog.Info.Println(err)
 		return err
 	}
-	return os.Remove(path.Join(usr.HomeDir, apigeecliFile))
+	return os.Remove(path.Join(usr.HomeDir, apigeecliPath, apigeecliFile))
 }
 
 func WriteToken(token string) (err error) {
@@ -105,7 +106,7 @@ func WriteToken(token string) (err error) {
 		return err
 	}
 	clilog.Info.Println("Writing ", string(data))
-	return WriteByteArrayToFile(path.Join(usr.HomeDir, apigeecliFile), false, data)
+	return WritePerferencesFile(data)
 }
 
 func GetToken() (token string) {
@@ -130,7 +131,7 @@ func SetNoCheck(nocheck bool) (err error) {
 		return err
 	}
 	clilog.Info.Println("Writing ", string(data))
-	return WriteByteArrayToFile(path.Join(usr.HomeDir, apigeecliFile), false, data)
+	return WritePerferencesFile(data)
 }
 
 func TestAndUpdateLastCheck() (updated bool, err error) {
@@ -148,7 +149,7 @@ func TestAndUpdateLastCheck() (updated bool, err error) {
 		return false, err
 	}
 	clilog.Info.Println("Writing ", string(data))
-	if err = WriteByteArrayToFile(path.Join(usr.HomeDir, apigeecliFile), false, data); err != nil {
+	if err = WritePerferencesFile(data); err != nil {
 		return false, err
 	}
 
@@ -168,7 +169,7 @@ func WriteDefaultOrg(org string) (err error) {
 		return err
 	}
 	clilog.Info.Println("Writing ", string(data))
-	return WriteByteArrayToFile(path.Join(usr.HomeDir, apigeecliFile), false, data)
+	return WritePerferencesFile(data)
 }
 
 func SetStaging(usestage bool) (err error) {
@@ -182,7 +183,7 @@ func SetStaging(usestage bool) (err error) {
 		return err
 	}
 	clilog.Info.Println("Writing ", string(data))
-	return WriteByteArrayToFile(path.Join(usr.HomeDir, apigeecliFile), false, data)
+	return WritePerferencesFile(data)
 }
 
 func GetStaging() bool {
@@ -201,7 +202,7 @@ func SetProxy(url string) (err error) {
 		return err
 	}
 	clilog.Info.Println("Writing ", string(data))
-	return WriteByteArrayToFile(path.Join(usr.HomeDir, apigeecliFile), false, data)
+	return WritePerferencesFile(data)
 }
 
 func GetPreferences() (err error) {
@@ -212,5 +213,27 @@ func GetPreferences() (err error) {
 	}
 
 	PrettyPrint(output)
+	return nil
+}
+
+//WritePreferencesFile
+func WritePerferencesFile(payload []byte) (err error) {
+	usr, err = user.Current()
+	if err != nil {
+		clilog.Warning.Println(err)
+		return err
+	}
+	_, err = os.Stat(path.Join(usr.HomeDir, apigeecliPath, apigeecliFile))
+	if err == nil {
+		return WriteByteArrayToFile(path.Join(usr.HomeDir, apigeecliPath, apigeecliFile), false, payload)
+	} else if os.IsNotExist(err) {
+		if err = os.MkdirAll(path.Join(usr.HomeDir, apigeecliPath), 0755); err != nil {
+			return err
+		}
+		return WriteByteArrayToFile(path.Join(usr.HomeDir, apigeecliPath, apigeecliFile), false, payload)
+	} else if err != nil {
+		clilog.Warning.Println(err)
+		return err
+	}
 	return nil
 }

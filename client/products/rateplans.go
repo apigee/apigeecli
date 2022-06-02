@@ -21,10 +21,44 @@ import (
 	"github.com/apigee/apigeecli/apiclient"
 )
 
+//CreateRatePlan
+func CreateRatePlan(productName string, rateplan []byte) (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.BaseURL)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts", productName, "rateplans")
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), string(rateplan))
+	return respBody, err
+}
+
+//DeleteRatePlan
+func DeleteRatePlan(productName string, rateplan string) (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.BaseURL)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts", productName, "rateplans", rateplan)
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "", "DELETE")
+	return respBody, err
+}
+
+//GetRatePlan
+func GetRatePlan(productName string, rateplan string) (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.BaseURL)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts", productName, "rateplans", rateplan)
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	return respBody, err
+}
+
 //ListRatePlan
 func ListRatePlan(productName string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts", productName, "rateplans")
 	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	return respBody, err
+}
+
+//ExportRateplan
+func ExportRateplan(productName string) (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.BaseURL)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts", productName, "rateplans")
+
+	//don't print to sysout
+	respBody, err = apiclient.HttpClient(false, u.String())
 	return respBody, err
 }
