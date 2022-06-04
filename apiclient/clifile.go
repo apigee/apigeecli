@@ -98,6 +98,11 @@ func WriteToken(token string) (err error) {
 	}
 
 	clilog.Info.Println("Cache access token: ", token)
+	if cliPref == nil {
+		clilog.Info.Printf("preferences are not set")
+		return nil
+	}
+
 	cliPref.Token = token
 
 	data, err := json.Marshal(&cliPref)
