@@ -29,7 +29,8 @@ var Cmd = &cobra.Command{
 var name, projectID, roleType string
 var generateName, wid bool
 
-var roles = []string{"mart", "analytics", "all", "logger", "connect", "cassandra", "watcher", "sync"}
+var roles = []string{"mart", "analytics", "all", "logger", "connect", "cassandra", "watcher",
+	"sync", "admin", "api-admin", "env-admin", "dev-admin", "readonly-admin"}
 
 func init() {
 	Cmd.AddCommand(CallCmd)

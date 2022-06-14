@@ -16,6 +16,7 @@ package iam
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/apigee/apigeecli/apiclient"
 	"github.com/spf13/cobra"
@@ -53,7 +54,7 @@ func init() {
 	CallCmd.Flags().BoolVarP(&generateName, "gen", "g",
 		false, "Generate account name")
 	CallCmd.Flags().StringVarP(&roleType, "role", "r",
-		"", "IAM Role Type")
+		"", "IAM Role Type, must be one of: "+strings.Join(roles, ", "))
 
 	_ = CallCmd.MarkFlagRequired("prj")
 	_ = CallCmd.MarkFlagRequired("role")
