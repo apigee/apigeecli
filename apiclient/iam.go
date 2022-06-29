@@ -94,6 +94,16 @@ func CreateIAMServiceAccount(name string, iamRole string) (err error) {
 		role = "roles/apigeeconnect.Agent"
 	case "watcher":
 		role = "roles/apigee.runtimeAgent"
+	case "admin":
+		role = "roles/apigee.admin"
+	case "readonly-admin":
+		role = "roles/apigee.readOnlyAdmin"
+	case "api-admin":
+		role = "roles/apigee.apiAdminV2"
+	case "dev-admin":
+		role = "roles/apigee.developerAdmin"
+	case "env-admin":
+		role = "roles/apigee.environmentAdmin"
 	case "all":
 		role = "not-necessary-to-add-this"
 	default:
