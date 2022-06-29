@@ -61,10 +61,11 @@ type organization struct {
 }
 
 type addonsConfig struct {
-	AdvancedApiOpsConfig     addon `json:"advancedApiOpsConfig,omitempty"`
-	IntegrationConfig        addon `json:"integrationConfig,omitempty"`
-	MonetizationConfig       addon `json:"monetizationConfig,omitempty"`
-	ConnectorsPlatformConfig addon `json:"connectorsPlatformConfig,omitempty"`
+	AdvancedApiOpsConfig      addon `json:"advancedApiOpsConfig,omitempty"`
+	IntegrationConfig         addon `json:"integrationConfig,omitempty"`
+	MonetizationConfig        addon `json:"monetizationConfig,omitempty"`
+	ConnectorsPlatformConfig  addon `json:"connectorsPlatformConfig,omitempty"`
+	AdvancedApiSecurityConfig addon `json:"apiSecurityConfig,omitempty"`
 }
 
 type addon struct {
@@ -272,7 +273,7 @@ func Update(description string, displayName string, region string, network strin
 }
 
 //SetAddons
-func SetAddons(advancedApiOpsConfig bool, integrationConfig bool, monetizationConfig bool, connectorsConfig bool) (respBody []byte, err error) {
+func SetAddons(advancedApiOpsConfig bool, integrationConfig bool, monetizationConfig bool, connectorsConfig bool, apiSecurityConfig bool) (respBody []byte, err error) {
 
 	apiclient.SetPrintOutput(false)
 
@@ -292,7 +293,7 @@ func SetAddons(advancedApiOpsConfig bool, integrationConfig bool, monetizationCo
 
 	addonPayload := []string{}
 
-	if !advancedApiOpsConfig && !integrationConfig && !monetizationConfig {
+	if !advancedApiOpsConfig && !integrationConfig && !monetizationConfig && !apiSecurityConfig {
 		return nil, fmt.Errorf("At least one addon must be enabled")
 	}
 
@@ -310,6 +311,10 @@ func SetAddons(advancedApiOpsConfig bool, integrationConfig bool, monetizationCo
 
 	if connectorsConfig || org.AddOnsConfig.ConnectorsPlatformConfig.Enabled {
 		addonPayload = append(addonPayload, "\"connectorsPlatformConfig\":{\"enabled\":true}")
+	}
+
+	if apiSecurityConfig || org.AddOnsConfig.AdvancedApiSecurityConfig.Enabled {
+		addonPayload = append(addonPayload, "\"apiSecurityConfig\":{\"enabled\":true}")
 	}
 
 	payload := "{\"addonsConfig\":{" + strings.Join(addonPayload, ",") + "}}"

@@ -29,12 +29,12 @@ var SetAddonCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = orgs.SetAddons(advancedApiOpsConfig, integrationConfig, monetizationConfig, connectorsConfig)
+		_, err = orgs.SetAddons(advancedApiOpsConfig, integrationConfig, monetizationConfig, connectorsConfig, apiSecurityConfig)
 		return
 	},
 }
 
-var advancedApiOpsConfig, integrationConfig, monetizationConfig, connectorsConfig bool
+var advancedApiOpsConfig, integrationConfig, monetizationConfig, connectorsConfig, apiSecurityConfig bool
 
 func init() {
 
@@ -48,5 +48,7 @@ func init() {
 		false, "Enable Apigee Monetization")
 	SetAddonCmd.Flags().BoolVarP(&connectorsConfig, "connectors", "",
 		false, "Enable Apigee Connectors")
+	SetAddonCmd.Flags().BoolVarP(&apiSecurityConfig, "advapisec", "",
+		false, "Enable Apigee Advanced API Security")
 
 }
