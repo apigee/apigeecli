@@ -101,10 +101,6 @@ func createOrUpdate(action string, targetsvr targetserver, name string, descript
 		targetsvr.Protocol = "GRPC"
 	}
 
-	if enable {
-		targetsvr.IsEnabled = enable
-	}
-
 	if tlsenabled {
 		sslInfoObj.Enabled = tlsenabled
 	}
@@ -128,6 +124,8 @@ func createOrUpdate(action string, targetsvr targetserver, name string, descript
 	if sslinfo {
 		targetsvr.SslInfo = sslInfoObj
 	}
+
+	targetsvr.IsEnabled = enable
 
 	if reqBody, err = json.Marshal(targetsvr); err != nil {
 		return nil, err
