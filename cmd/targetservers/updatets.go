@@ -15,6 +15,9 @@
 package targetservers
 
 import (
+	"fmt"
+	"strconv"
+
 	"github.com/apigee/apigeecli/apiclient"
 	"github.com/apigee/apigeecli/client/targetservers"
 	"github.com/spf13/cobra"
@@ -27,6 +30,16 @@ var UpdateCmd = &cobra.Command{
 	Long:  "Update a Target Server",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetApigeeEnv(env)
+		if sslinfo != "" {
+			if _, err = strconv.ParseBool(sslinfo); err != nil {
+				return fmt.Errorf("Invalid value for sslinfo. Must be set to true or false")
+			}
+		}
+		if enable != "" {
+			if _, err = strconv.ParseBool(enable); err != nil {
+				return fmt.Errorf("Invalid value for enable. Must be set to true or false")
+			}
+		}
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
@@ -43,8 +56,8 @@ func init() {
 		"", "Description for the Target Server")
 	UpdateCmd.Flags().StringVarP(&host, "host", "s",
 		"", "Host name of the target")
-	UpdateCmd.Flags().BoolVarP(&enable, "enable", "b",
-		true, "Enabling/disabling a TargetServer")
+	UpdateCmd.Flags().StringVarP(&enable, "enable", "b",
+		"", "Enabling/disabling a TargetServer")
 	UpdateCmd.Flags().BoolVarP(&grpc, "grpc", "g",
 		false, "Enable target server for gRPC")
 
@@ -52,8 +65,8 @@ func init() {
 		"", "Key store for the target server; must be used with sslinfo")
 	UpdateCmd.Flags().StringVarP(&keyAlias, "keyAlias", "",
 		"", "Key alias for the target server; must be used with sslinfo")
-	UpdateCmd.Flags().BoolVarP(&sslinfo, "sslinfo", "",
-		false, "Enable SSL Info on the target server")
+	UpdateCmd.Flags().StringVarP(&sslinfo, "sslinfo", "",
+		"", "Enable SSL Info on the target server")
 	UpdateCmd.Flags().BoolVarP(&tlsenabled, "tls", "",
 		false, "Enable TLS for the target server; must be used with sslinfo")
 	UpdateCmd.Flags().BoolVarP(&clientAuthEnabled, "clientAuth", "c",
