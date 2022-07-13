@@ -17,6 +17,7 @@ package proxies
 import (
 	"encoding/xml"
 	"fmt"
+	"strings"
 
 	proxytypes "github.com/apigee/apigeecli/bundlegen/common"
 )
@@ -69,7 +70,7 @@ func AddFlow(operationId string, keyPath string, method string, description stri
 	flow := proxytypes.FlowDef{}
 	flow.Name = operationId
 	flow.Description = description
-	flow.Condition.ConditionData = "(proxy.pathsuffix MatchesPath \"" + keyPath + "\") and (request.verb = \"" + method + "\")"
+	flow.Condition.ConditionData = "(proxy.pathsuffix MatchesPath \"" + keyPath + "\") and (request.verb = \"" + strings.ToUpper(method) + "\")"
 	proxyEndpoint.Flows.Flow = append(proxyEndpoint.Flows.Flow, flow)
 }
 
