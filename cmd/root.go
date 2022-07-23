@@ -31,7 +31,6 @@ import (
 	"github.com/apigee/apigeecli/cmd/developers"
 	"github.com/apigee/apigeecli/cmd/env"
 	"github.com/apigee/apigeecli/cmd/envgroup"
-	"github.com/apigee/apigeecli/cmd/envoy"
 	"github.com/apigee/apigeecli/cmd/eptattachment"
 	flowhooks "github.com/apigee/apigeecli/cmd/flowhooks"
 	"github.com/apigee/apigeecli/cmd/iam"
@@ -123,7 +122,6 @@ func init() {
 	RootCmd.AddCommand(res.Cmd)
 	RootCmd.AddCommand(projects.Cmd)
 	RootCmd.AddCommand(iam.Cmd)
-	RootCmd.AddCommand(envoy.Cmd)
 	RootCmd.AddCommand(instances.Cmd)
 	RootCmd.AddCommand(ops.Cmd)
 	RootCmd.AddCommand(preferences.Cmd)
