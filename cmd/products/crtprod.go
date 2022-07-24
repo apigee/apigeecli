@@ -15,12 +15,8 @@
 package products
 
 import (
-	"encoding/json"
-	"io/ioutil"
-
 	"github.com/apigee/apigeecli/apiclient"
 	"github.com/apigee/apigeecli/client/products"
-	"github.com/apigee/apigeecli/clilog"
 	"github.com/spf13/cobra"
 )
 
@@ -33,12 +29,6 @@ var CreateCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-
-		var operationGrpBytes, gqlOperationGrpBytes []byte
-		var attributes []products.Attribute
-
-		operationGrp := products.OperationGroup{}
-		gqlOperationGrp := products.GraphqlOperationGroup{}
 
 		p := products.Product{}
 
@@ -53,39 +43,17 @@ var CreateCmd = &cobra.Command{
 		p.Proxies = proxies
 		p.Scopes = scopes
 
-		if operationGroupFile != "" {
-			if operationGrpBytes, err = ioutil.ReadFile(operationGroupFile); err != nil {
-				clilog.Info.Println(err)
-				return err
-			}
-			if err = json.Unmarshal(operationGrpBytes, &operationGrp); err != nil {
-				clilog.Info.Println(err)
-				return err
-			}
-			p.OperationGroup = &operationGrp
+		p.OperationGroup, err = getOperationGroup(operationGroupFile)
+		if err != nil {
+			return err
 		}
 
-		if gqlOperationGroupFile != "" {
-			if gqlOperationGrpBytes, err = ioutil.ReadFile(gqlOperationGroupFile); err != nil {
-				clilog.Info.Println(err)
-				return err
-			}
-			if err = json.Unmarshal(gqlOperationGrpBytes, &gqlOperationGrp); err != nil {
-				clilog.Info.Println(err)
-				return err
-			}
-			p.GraphQLOperationGroup = &gqlOperationGrp
+		p.GraphQLOperationGroup, err = getGqlOperationGroup(gqlOperationGroupFile)
+		if err != nil {
+			return nil
 		}
 
-		if len(attrs) > 0 {
-			for k, v := range attrs {
-				a := products.Attribute{}
-				a.Name = k
-				a.Value = v
-				attributes = append(attributes, a)
-			}
-			p.Attributes = attributes
-		}
+		p.Attributes = getAttributes(attrs)
 
 		_, err = products.Create(p)
 
