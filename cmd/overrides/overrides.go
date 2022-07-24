@@ -26,8 +26,6 @@ var Cmd = &cobra.Command{
 	Long:    "Manage Apigee hybrid through overrides",
 }
 
-var org string
-
 func init() {
 	Cmd.AddCommand(ApplyCmd)
 	Cmd.AddCommand(DeleteCmd)

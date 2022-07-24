@@ -227,7 +227,7 @@ func GenerateAPIProxyDefFromOAS(name string,
 		targets.NewTargetEndpoint(u.Scheme+"://"+u.Hostname(), oasGoogleAcessTokenScopeLiteral, oasGoogleIdTokenAudLiteral, oasGoogleIdTokenAudRef)
 	} else { //an explicit target url is set
 		if _, err = url.Parse(targetUrl); err != nil {
-			return fmt.Errorf("Invalid target url: ", err)
+			return fmt.Errorf("Invalid target url: %v", err)
 		}
 		targets.NewTargetEndpoint(targetUrl, oasGoogleAcessTokenScopeLiteral, oasGoogleIdTokenAudLiteral, oasGoogleIdTokenAudRef)
 	}
@@ -335,7 +335,7 @@ func GenerateAPIProxyDefFromGQL(name string,
 		targets.NewTargetEndpoint("https://api.example.com", "", "", "")
 	} else { //an explicit target url is set
 		if _, err = url.Parse(targetUrl); err != nil {
-			return fmt.Errorf("Invalid target url: ", err)
+			return fmt.Errorf("Invalid target url: %v", err)
 		}
 		targets.NewTargetEndpoint(targetUrl, "", "", "")
 	}

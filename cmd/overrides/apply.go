@@ -15,7 +15,6 @@
 package overrides
 
 import (
-	"encoding/json"
 	"fmt"
 
 	"github.com/apigee/apigeecli/apiclient"
@@ -40,8 +39,9 @@ var ApplyCmd = &cobra.Command{
 		if err = readOverrides(overridesFile); err != nil {
 			return err
 		}
+
 		apiclient.SetProjectID(getOrg())
-		apiclient.SetApigeeOrg(getOrg())
+		_ = apiclient.SetApigeeOrg(getOrg())
 		apiclient.SetPrintOutput(false)
 
 		//check if the org exists
@@ -114,13 +114,4 @@ func getDomainName(index int) []string {
 	domainName := fmt.Sprintf("api.acme%d.com", index)
 	domainNames = append(domainNames, domainName)
 	return domainNames
-}
-
-func getSyncIdentityCount(response []byte) (count int, err error) {
-	syncResponse := make(map[string]interface{})
-	err = json.Unmarshal(response, &syncResponse)
-	if err != nil {
-		return 0, err
-	}
-	return len(syncResponse["identities"].([]interface{})), nil
 }

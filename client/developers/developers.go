@@ -99,6 +99,10 @@ func GetDeveloperId(email string) (developerId string, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", url.QueryEscape(email)) //since developer emails can have +
 	respBody, err := apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	if err != nil {
+		return "", err
+	}
+
 	apiclient.SetPrintOutput(true)
 	err = json.Unmarshal(respBody, &developerMap)
 	if err != nil {

@@ -55,8 +55,8 @@ type OperationCompleteState string
 
 const (
 	Success OperationCompleteState = "Success"
-	Failed                         = "Failed"
-	Both                           = "Both"
+	Failed  OperationCompleteState = "Failed"
+	Both    OperationCompleteState = "Both"
 )
 
 //Get

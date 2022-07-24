@@ -30,9 +30,8 @@ var DepWaitCmd = &cobra.Command{
 	Short: "Deploys a revision of an existing API proxy and waits for deployment status",
 	Long:  "Deploys a revision of an existing API proxy to an environment and waits for deployment status",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeOrg(org)
 		apiclient.SetApigeeEnv(env)
-		return nil
+		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		if revision == -1 {
