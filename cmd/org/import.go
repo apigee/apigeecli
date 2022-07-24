@@ -77,7 +77,9 @@ var ImportCmd = &cobra.Command{
 					return err
 				}
 				if orgKVMFileList[kvmName] != "" {
-					kvm.ImportEntries("", kvmName, conn, orgKVMFileList[kvmName])
+					if err = kvm.ImportEntries("", kvmName, conn, orgKVMFileList[kvmName]); err != nil {
+						return err
+					}
 				}
 			}
 		}
@@ -157,7 +159,9 @@ var ImportCmd = &cobra.Command{
 						return err
 					}
 					if envKVMFileList[kvmName] != "" {
-						kvm.ImportEntries("", kvmName, conn, envKVMFileList[kvmName])
+						if err = kvm.ImportEntries("", kvmName, conn, envKVMFileList[kvmName]); err != nil {
+							return err
+						}
 					}
 				}
 			}

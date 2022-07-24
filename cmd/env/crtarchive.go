@@ -62,7 +62,9 @@ var CreateArchiveCmd = &cobra.Command{
 
 		if folder != "" {
 			zipfile = name + ".zip"
-			proxybundle.GenerateArchiveBundle(folder, zipfile)
+			if err = proxybundle.GenerateArchiveBundle(folder, zipfile); err != nil {
+				return err
+			}
 		}
 
 		respBody, err := env.CreateArchive(name, zipfile)
