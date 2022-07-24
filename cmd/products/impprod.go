@@ -29,10 +29,11 @@ var ImpCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return products.Import(conn, filePath)
+		return products.Import(conn, filePath, upsert)
 	},
 }
 
+var upsert bool
 var filePath string
 
 func init() {
@@ -41,6 +42,8 @@ func init() {
 		"", "File containing API Products")
 	ImpCmd.Flags().IntVarP(&conn, "conn", "c",
 		4, "Number of connections")
+	ImpCmd.Flags().BoolVarP(&upsert, "upsert", "",
+		false, "Insert or update products")
 
 	_ = ImpCmd.MarkFlagRequired("file")
 }

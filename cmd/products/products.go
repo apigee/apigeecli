@@ -15,6 +15,11 @@
 package products
 
 import (
+	"encoding/json"
+	"io/ioutil"
+
+	"github.com/apigee/apigeecli/client/products"
+	"github.com/apigee/apigeecli/clilog"
 	"github.com/spf13/cobra"
 )
 
@@ -47,4 +52,60 @@ func init() {
 	Cmd.AddCommand(UpdateCmd)
 	Cmd.AddCommand(AttributesCmd)
 	Cmd.AddCommand(RatePlanCmd)
+}
+
+func getOperationGroup(operationGroupFile string) (*products.OperationGroup, error) {
+	var operationGrpBytes []byte
+	var err error
+
+	operationGrp := products.OperationGroup{}
+
+	if operationGroupFile != "" {
+		if operationGrpBytes, err = ioutil.ReadFile(operationGroupFile); err != nil {
+			clilog.Info.Println(err)
+			return nil, err
+		}
+		if err = json.Unmarshal(operationGrpBytes, &operationGrp); err != nil {
+			clilog.Info.Println(err)
+			return nil, err
+		}
+		return &operationGrp, nil
+	}
+	return nil, nil
+}
+
+func getGqlOperationGroup(gqlOperationGroupFile string) (*products.GraphqlOperationGroup, error) {
+	var gqlOperationGrpBytes []byte
+	var err error
+
+	gqlOperationGrp := products.GraphqlOperationGroup{}
+
+	if gqlOperationGroupFile != "" {
+		if gqlOperationGrpBytes, err = ioutil.ReadFile(gqlOperationGroupFile); err != nil {
+			clilog.Info.Println(err)
+			return nil, err
+		}
+		if err = json.Unmarshal(gqlOperationGrpBytes, &gqlOperationGrp); err != nil {
+			clilog.Info.Println(err)
+			return nil, err
+		}
+		return &gqlOperationGrp, nil
+	}
+	return nil, nil
+}
+
+func getAttributes(attrs map[string]string) []products.Attribute {
+	var attributes []products.Attribute
+
+	if len(attrs) > 0 {
+		for k, v := range attrs {
+			a := products.Attribute{}
+			a.Name = k
+			a.Value = v
+			attributes = append(attributes, a)
+		}
+		return attributes
+	}
+
+	return nil
 }

@@ -16,12 +16,10 @@ package products
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/url"
 	"os"
 	"path"
-	"reflect"
 	"strconv"
 	"sync"
 
@@ -37,18 +35,23 @@ type apiProduct struct {
 	Name string `json:"name,omitempty"`
 }
 
-const proxyOperationConfigType = "proxy"
-const remoteServiceOperationConfigType = "remoteservice"
+type Action uint8
 
-type product struct {
+const (
+	CREATE Action = iota
+	UPDATE
+	UPSERT
+)
+
+type Product struct {
 	Name                  string                 `json:"name,omitempty"`
 	DisplayName           string                 `json:"displayName,omitempty"`
 	Description           string                 `json:"description,omitempty"`
 	ApprovalType          string                 `json:"approvalType,omitempty"`
-	Attributes            []attribute            `json:"attributes,omitempty"`
+	Attributes            []Attribute            `json:"attributes,omitempty"`
 	APIResources          []string               `json:"apiResources,omitempty"`
-	OperationGroup        *operationGroup        `json:"operationGroup,omitempty"`
-	GraphQLOperationGroup *graphqlOperationGroup `json:"graphqlOperationGroup,omitempty"`
+	OperationGroup        *OperationGroup        `json:"operationGroup,omitempty"`
+	GraphQLOperationGroup *GraphqlOperationGroup `json:"graphqlOperationGroup,omitempty"`
 	Environments          []string               `json:"environments,omitempty"`
 	Proxies               []string               `json:"proxies,omitempty"`
 	Quota                 string                 `json:"quota,omitempty"`
@@ -57,250 +60,58 @@ type product struct {
 	Scopes                []string               `json:"scopes,omitempty"`
 }
 
-type operationGroup struct {
-	OperationConfigs    []operationConfig `json:"operationConfigs,omitempty"`
+type OperationGroup struct {
+	OperationConfigs    []OperationConfig `json:"operationConfigs,omitempty"`
 	OperationConfigType string            `json:"operationConfigType,omitempty"`
 }
 
-type graphqlOperationGroup struct {
-	OperationConfigs    []graphQLOperationConfig `json:"operationConfigs,omitempty"`
+type GraphqlOperationGroup struct {
+	OperationConfigs    []GraphQLOperationConfig `json:"operationConfigs,omitempty"`
 	OperationConfigType string                   `json:"operationConfigType,omitempty"`
 }
 
-type operationConfig struct {
+type OperationConfig struct {
 	APISource  string      `json:"apiSource,omitempty"`
-	Operations []operation `json:"operations,omitempty"`
-	Quota      *quota      `json:"quota,omitempty"`
-	Attributes []attribute `json:"attributes,omitempty"`
+	Operations []Operation `json:"operations,omitempty"`
+	Quota      *Quota      `json:"quota,omitempty"`
+	Attributes []Attribute `json:"attributes,omitempty"`
 }
 
-type graphQLOperationConfig struct {
+type GraphQLOperationConfig struct {
 	APISource  string             `json:"apiSource,omitempty"`
-	Operations []graphQLoperation `json:"operations,omitempty"`
-	Quota      *quota             `json:"quota,omitempty"`
-	Attributes []attribute        `json:"attributes,omitempty"`
+	Operations []GraphQLoperation `json:"operations,omitempty"`
+	Quota      *Quota             `json:"quota,omitempty"`
+	Attributes []Attribute        `json:"attributes,omitempty"`
 }
 
-type operation struct {
+type Operation struct {
 	Resource string   `json:"resource,omitempty"`
 	Methods  []string `json:"methods,omitempty"`
 }
 
-type graphQLoperation struct {
+type GraphQLoperation struct {
 	OperationTypes []string `json:"operationTypes,omitempty"`
 	Operation      string   `json:"operation,omitempty"`
 }
 
-type quota struct {
+type Quota struct {
 	Limit    string `json:"limit,omitempty"`
 	Interval string `json:"interval,omitempty"`
 	TimeUnit string `json:"timeUnit,omitempty"`
 }
 
 //attribute to used to hold custom attributes for entities
-type attribute struct {
+type Attribute struct {
 	Name  string `json:"name,omitempty"`
 	Value string `json:"value,omitempty"`
 }
 
-type ProductSettings struct {
-	Name            string
-	Description     string
-	Approval        string
-	DisplayName     string
-	Quota           string
-	QuotaInterval   string
-	QuotaUnit       string
-	Environments    []string
-	Proxies         []string
-	Scopes          []string
-	Attrs           map[string]string
-	OperationGrp    []byte
-	GqlOperationGrp []byte
-	Legacy          bool
+func Create(p Product) (respBody []byte, err error) {
+	return upsert(p, CREATE)
 }
 
-func CreateLegacy(name string, description string, approval string, displayName string, quota string, quotaInterval string, quotaUnit string, environments []string, proxies []string, scopes []string, attrs map[string]string) (respBody []byte, err error) {
-	productSettings := ProductSettings{}
-	productSettings.Name = name
-	productSettings.Description = description
-	productSettings.Approval = approval
-	productSettings.DisplayName = displayName
-	productSettings.Quota = quota
-	productSettings.QuotaInterval = quotaInterval
-	productSettings.QuotaUnit = quotaUnit
-	productSettings.Environments = environments
-	productSettings.Proxies = proxies
-	productSettings.Scopes = scopes
-	productSettings.Attrs = attrs
-	productSettings.Legacy = true
-
-	return createProduct(productSettings)
-}
-
-func CreateProxyOperationGroup(name string, description string, approval string, displayName string, quota string, quotaInterval string, quotaUnit string, environments []string, scopes []string, operationGrp []byte, gqlOperationGrp []byte, attrs map[string]string) (respBody []byte, err error) {
-	productSettings := ProductSettings{}
-	productSettings.Name = name
-	productSettings.Description = description
-	productSettings.Approval = approval
-	productSettings.DisplayName = displayName
-	productSettings.Quota = quota
-	productSettings.QuotaInterval = quotaInterval
-	productSettings.QuotaUnit = quotaUnit
-	productSettings.Environments = environments
-	productSettings.Scopes = scopes
-	productSettings.Attrs = attrs
-
-	productSettings.OperationGrp = operationGrp
-	productSettings.GqlOperationGrp = gqlOperationGrp
-
-	productSettings.Legacy = false
-
-	return createProduct(productSettings)
-}
-
-func UpdateLegacy(name string, description string, approval string, displayName string, quota string, quotaInterval string, quotaUnit string, environments []string, proxies []string, scopes []string, attrs map[string]string) (respBody []byte, err error) {
-	productSettings := ProductSettings{}
-	productSettings.Name = name
-	productSettings.Description = description
-	productSettings.Approval = approval
-	productSettings.DisplayName = displayName
-	productSettings.Quota = quota
-	productSettings.QuotaInterval = quotaInterval
-	productSettings.QuotaUnit = quotaUnit
-	productSettings.Environments = environments
-	productSettings.Proxies = proxies
-	productSettings.Scopes = scopes
-	productSettings.Attrs = attrs
-	productSettings.Legacy = true
-
-	return updateProduct(productSettings)
-}
-
-func UpdateProxyOperationGroup(name string, description string, approval string, displayName string, quota string, quotaInterval string, quotaUnit string, environments []string, scopes []string, operationGrp []byte, gqlOperationGrp []byte, attrs map[string]string) (respBody []byte, err error) {
-	productSettings := ProductSettings{}
-	productSettings.Name = name
-	productSettings.Description = description
-	productSettings.Approval = approval
-	productSettings.DisplayName = displayName
-	productSettings.Quota = quota
-	productSettings.QuotaInterval = quotaInterval
-	productSettings.QuotaUnit = quotaUnit
-	productSettings.Environments = environments
-	productSettings.Scopes = scopes
-	productSettings.Attrs = attrs
-
-	productSettings.OperationGrp = operationGrp
-	productSettings.GqlOperationGrp = gqlOperationGrp
-
-	productSettings.Legacy = false
-
-	return updateProduct(productSettings)
-}
-
-//createProduct
-func createProduct(productSettings ProductSettings) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
-	var Product = new(product)
-	var OperationGroup = new(operationGroup)
-	var GraphqlOperationGroup = new(graphqlOperationGroup)
-
-	Product.Name = productSettings.Name
-	Product.ApprovalType = productSettings.Approval
-
-	if len(productSettings.OperationGrp) > 0 {
-		err = json.Unmarshal(productSettings.OperationGrp, OperationGroup)
-		if err != nil {
-			clilog.Info.Println(err)
-			return nil, err
-		}
-		if reflect.DeepEqual(*OperationGroup, operationGroup{}) {
-			return nil, fmt.Errorf("can't unmarshal json to OperationGroup")
-		}
-		Product.OperationGroup = OperationGroup
-	}
-
-	if len(productSettings.GqlOperationGrp) > 0 {
-		err = json.Unmarshal(productSettings.GqlOperationGrp, GraphqlOperationGroup)
-		if err != nil {
-			clilog.Info.Println(err)
-			return nil, err
-		}
-		if reflect.DeepEqual(*GraphqlOperationGroup, graphqlOperationGroup{}) {
-			return nil, fmt.Errorf("can't unmarshal json to GraphqlOperationGroup")
-		}
-		Product.GraphQLOperationGroup = GraphqlOperationGroup
-	}
-
-	if productSettings.DisplayName == "" {
-		Product.DisplayName = productSettings.Name
-	} else {
-		Product.DisplayName = productSettings.DisplayName
-	}
-
-	if productSettings.Description != "" {
-		Product.Description = productSettings.Description
-	}
-
-	if len(productSettings.Environments) > 0 {
-		Product.Environments = productSettings.Environments
-	}
-
-	if len(productSettings.Proxies) > 0 {
-		if productSettings.Legacy {
-			Product.Proxies = productSettings.Proxies
-		} else if len(productSettings.OperationGrp) == 0 {
-			OperationConfigs := []operationConfig{}
-			Operations := []operation{}
-			Operation := operation{}
-			Operations = append(Operations, Operation)
-
-			for _, proxy := range productSettings.Proxies {
-				OperationConfig := operationConfig{}
-				OperationConfig.APISource = proxy
-				OperationConfig.Operations = Operations
-				OperationConfigs = append(OperationConfigs, OperationConfig)
-			}
-			OperationGroup.OperationConfigs = OperationConfigs
-			OperationGroup.OperationConfigType = proxyOperationConfigType
-			Product.OperationGroup = OperationGroup
-		}
-	}
-
-	if len(productSettings.Scopes) > 0 {
-		Product.Scopes = productSettings.Scopes
-	}
-
-	if productSettings.Quota != "" {
-		Product.Quota = productSettings.Quota
-	}
-	if productSettings.QuotaInterval != "" {
-		Product.QuotaInterval = productSettings.QuotaInterval
-	}
-
-	if productSettings.QuotaUnit != "" {
-		Product.QuotaTimeUnit = productSettings.QuotaUnit
-	}
-
-	if len(productSettings.Attrs) > 0 {
-		//create new attributes
-		for k, v := range productSettings.Attrs {
-			a := attribute{}
-			a.Name = k
-			a.Value = v
-			Product.Attributes = append(Product.Attributes, a)
-		}
-	}
-
-	payload, err := json.Marshal(Product)
-	if err != nil {
-		clilog.Info.Println(err)
-		return nil, err
-	}
-
-	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts")
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), string(payload))
-	return respBody, err
+func Update(p Product) (respBody []byte, err error) {
+	return upsert(p, UPDATE)
 }
 
 //Get
@@ -319,121 +130,24 @@ func Delete(name string) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//updateProduct
-func updateProduct(productSettings ProductSettings) (respBody []byte, err error) {
+//upsert - use Action to control if upsert is enabled
+func upsert(p Product, a Action) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
-	var OperationGroup = new(operationGroup)
-	var GraphqlOperationGroup = new(graphqlOperationGroup)
 
-	apiclient.SetPrintOutput(false)
-	respBody, err = Get(productSettings.Name)
-	if err != nil {
-		return nil, err
-	}
-	apiclient.SetPrintOutput(true)
+	var createNew bool //default false
 
-	p := product{}
-
-	err = json.Unmarshal(respBody, &p)
-	if err != nil {
-		return nil, err
-	}
-
-	if productSettings.DisplayName != "" {
-		p.DisplayName = productSettings.DisplayName
-	}
-
-	if productSettings.Description != "" {
-		p.Description = productSettings.Description
-	}
-
-	if productSettings.Quota != "" {
-		p.Quota = productSettings.Quota
-	}
-
-	if productSettings.QuotaInterval != "" {
-		p.QuotaInterval = productSettings.QuotaInterval
-	}
-
-	if productSettings.QuotaUnit != "" {
-		p.QuotaTimeUnit = productSettings.QuotaUnit
-	}
-
-	if len(productSettings.Environments) > 0 {
-		p.Environments = append(p.Environments, productSettings.Environments...)
-	}
-
-	if len(productSettings.OperationGrp) > 0 {
-		err = json.Unmarshal(productSettings.OperationGrp, OperationGroup)
+	switch a {
+	case CREATE:
+		createNew = true
+	case UPDATE:
+		createNew = false
+	case UPSERT:
+		apiclient.SetPrintOutput(false)
+		_, err = Get(p.Name)
 		if err != nil {
-			clilog.Info.Println(err)
-			return nil, err
+			createNew = true //product does not exist
 		}
-		if reflect.DeepEqual(*OperationGroup, operationGroup{}) {
-			return nil, fmt.Errorf("can't unmarshal json to OperationGroup")
-		}
-
-		if p.OperationGroup != nil {
-			//check to see the operation config type is the same
-			if OperationGroup.OperationConfigType != p.OperationGroup.OperationConfigType {
-				return nil, fmt.Errorf("updated operationConfigType must match the existing operationConfigType - %s", OperationGroup.OperationConfigType)
-			}
-			p.OperationGroup.OperationConfigs = append(p.OperationGroup.OperationConfigs, OperationGroup.OperationConfigs...)
-		} else {
-			p.OperationGroup = OperationGroup
-		}
-	}
-
-	if len(productSettings.GqlOperationGrp) > 0 {
-		err = json.Unmarshal(productSettings.GqlOperationGrp, GraphqlOperationGroup)
-		if err != nil {
-			clilog.Info.Println(err)
-			return nil, err
-		}
-		if reflect.DeepEqual(*GraphqlOperationGroup, graphqlOperationGroup{}) {
-			return nil, fmt.Errorf("can't unmarshal json to GraphqlOperationGroup")
-		}
-		//check to see the operation config type is the same
-		if GraphqlOperationGroup.OperationConfigType != p.GraphQLOperationGroup.OperationConfigType {
-			return nil, fmt.Errorf("updated operationConfigType must match the existing operationConfigType - %s", GraphqlOperationGroup.OperationConfigType)
-		}
-		p.GraphQLOperationGroup.OperationConfigs = append(p.GraphQLOperationGroup.OperationConfigs, GraphqlOperationGroup.OperationConfigs...)
-	}
-
-	if len(productSettings.Proxies) > 0 {
-		if productSettings.Legacy {
-			p.Proxies = append(p.Proxies, productSettings.Proxies...)
-		} else if len(productSettings.OperationGrp) == 0 {
-			var OperationGroup = new(operationGroup)
-			OperationConfigs := []operationConfig{}
-			Operations := []operation{}
-			Operation := operation{}
-			Operations = append(Operations, Operation)
-
-			for _, proxy := range productSettings.Proxies {
-				OperationConfig := operationConfig{}
-				OperationConfig.APISource = proxy
-				OperationConfig.Operations = Operations
-				OperationConfigs = append(OperationConfigs, OperationConfig)
-			}
-			OperationGroup.OperationConfigs = OperationConfigs
-			OperationGroup.OperationConfigType = proxyOperationConfigType
-			p.OperationGroup = OperationGroup
-		}
-	}
-
-	if len(productSettings.Scopes) > 0 {
-		p.Scopes = append(p.Scopes, productSettings.Scopes...)
-	}
-
-	if len(productSettings.Attrs) > 0 {
-		//create new attributes
-		for k, v := range productSettings.Attrs {
-			a := attribute{}
-			a.Name = k
-			a.Value = v
-			p.Attributes = append(p.Attributes, a)
-		}
+		apiclient.SetPrintOutput(true)
 	}
 
 	payload, err := json.Marshal(p)
@@ -442,8 +156,13 @@ func updateProduct(productSettings ProductSettings) (respBody []byte, err error)
 		return nil, err
 	}
 
-	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts", productSettings.Name)
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), string(payload), "PUT")
+	if createNew {
+		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts")
+		respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), string(payload))
+	} else {
+		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts", p.Name)
+		respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), string(payload), "PUT")
+	}
 
 	return respBody, err
 }
@@ -556,7 +275,7 @@ func Export(conn int) (payload [][]byte, err error) {
 }
 
 //Import
-func Import(conn int, filePath string) (err error) {
+func Import(conn int, filePath string, upsert bool) (err error) {
 	var pwg sync.WaitGroup
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts")
@@ -584,7 +303,7 @@ func Import(conn int, filePath string) (err error) {
 		pwg.Add(1)
 		end = (i * conn) + conn
 		clilog.Info.Printf("Creating batch %d of products\n", (i + 1))
-		go batchImport(u.String(), entities[start:end], &pwg)
+		go batchImport(u.String(), entities[start:end], upsert, &pwg)
 		start = end
 		pwg.Wait()
 	}
@@ -592,7 +311,7 @@ func Import(conn int, filePath string) (err error) {
 	if remaining > 0 {
 		pwg.Add(1)
 		clilog.Info.Printf("Creating remaining %d products\n", remaining)
-		go batchImport(u.String(), entities[start:numEntities], &pwg)
+		go batchImport(u.String(), entities[start:numEntities], upsert, &pwg)
 		pwg.Wait()
 	}
 
@@ -616,7 +335,7 @@ func batchExport(entities []apiProduct, entityType string, pwg *sync.WaitGroup, 
 }
 
 //batch creates a batch of products to create
-func batchImport(url string, entities []product, pwg *sync.WaitGroup) {
+func batchImport(url string, entities []Product, upsert bool, pwg *sync.WaitGroup) {
 
 	defer pwg.Done()
 	//batch workgroup
@@ -625,29 +344,33 @@ func batchImport(url string, entities []product, pwg *sync.WaitGroup) {
 	bwg.Add(len(entities))
 
 	for _, entity := range entities {
-		go createAsyncProduct(url, entity, &bwg)
+		go createAsyncProduct(url, entity, upsert, &bwg)
 	}
 	bwg.Wait()
 }
 
-func createAsyncProduct(url string, entity product, wg *sync.WaitGroup) {
+func createAsyncProduct(url string, entity Product, createOrUpdate bool, wg *sync.WaitGroup) {
 	defer wg.Done()
-	out, err := json.Marshal(entity)
-	if err != nil {
-		clilog.Error.Println(err)
-		return
+	var err error
+
+	if createOrUpdate {
+		if _, err = upsert(entity, UPSERT); err != nil {
+			clilog.Error.Println(err)
+			return
+		}
+	} else {
+		if _, err = upsert(entity, CREATE); err != nil {
+			clilog.Error.Println(err)
+			return
+		}
 	}
-	_, err = apiclient.HttpClient(apiclient.GetPrintOutput(), url, string(out))
-	if err != nil {
-		clilog.Error.Println(err)
-		return
-	}
+
 	clilog.Info.Printf("Completed entity: %s", entity.Name)
 }
 
-func readProductsFile(filePath string) ([]product, error) {
+func readProductsFile(filePath string) ([]Product, error) {
 
-	products := []product{}
+	products := []Product{}
 
 	jsonFile, err := os.Open(filePath)
 

@@ -77,14 +77,16 @@ var ImportCmd = &cobra.Command{
 					return err
 				}
 				if orgKVMFileList[kvmName] != "" {
-					kvm.ImportEntries("", kvmName, conn, orgKVMFileList[kvmName])
+					if err = kvm.ImportEntries("", kvmName, conn, orgKVMFileList[kvmName]); err != nil {
+						return err
+					}
 				}
 			}
 		}
 
 		if isFileExists(path.Join(folder, productsFileName)) {
 			fmt.Println("Importing Products...")
-			if err = products.Import(conn, path.Join(folder, productsFileName)); err != nil {
+			if err = products.Import(conn, path.Join(folder, productsFileName), false); err != nil {
 				return err
 			}
 		}
