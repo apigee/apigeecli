@@ -42,12 +42,12 @@ var YearlyCmd = &cobra.Command{
 
 		if envDetails {
 			w := tabwriter.NewWriter(os.Stdout, 26, 4, 0, ' ', 0)
-			fmt.Fprintln(w, "Environment\Month\tAPI Calls")
+			fmt.Fprintln(w, "Environment\tMonth\tAPI Calls")
 			fmt.Fprintln(w)
 			w.Flush()
 		}
 
-		if apiCalls, err = orgs.TotalAPICallsInYear(year, envDetails); err != nil {
+		if apiCalls, err = orgs.TotalAPICallsInYear(year, envDetails, conn); err != nil {
 			return
 		}
 
@@ -71,6 +71,8 @@ func init() {
 		-1, "Year")
 	YearlyCmd.Flags().BoolVarP(&envDetails, "env-details", "",
 		false, "Print details of each environment")
+	YearlyCmd.Flags().IntVarP(&conn, "conn", "c",
+		4, "Number of connections")
 
 	_ = YearlyCmd.MarkFlagRequired("year")
 }

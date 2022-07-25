@@ -47,7 +47,7 @@ var MonthlyCmd = &cobra.Command{
 			w.Flush()
 		}
 
-		if apiCalls, err = orgs.TotalAPICallsInMonth(month, year, envDetails); err != nil {
+		if apiCalls, err = orgs.TotalAPICallsInMonth(month, year, envDetails, conn); err != nil {
 			return
 		}
 
@@ -76,6 +76,8 @@ func init() {
 		-1, "Year")
 	MonthlyCmd.Flags().BoolVarP(&envDetails, "env-details", "",
 		false, "Print details of each environment")
+	MonthlyCmd.Flags().IntVarP(&conn, "conn", "c",
+		4, "Number of connections")
 
 	_ = MonthlyCmd.MarkFlagRequired("month")
 	_ = MonthlyCmd.MarkFlagRequired("year")

@@ -18,11 +18,15 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/url"
+	"os"
 	"path"
 	"strconv"
+	"sync"
+	"text/tabwriter"
 	"time"
 
 	"github.com/apigee/apigeecli/apiclient"
+	"github.com/apigee/apigeecli/clilog"
 )
 
 const proxy_dimension = "apiproxy"
@@ -45,6 +49,28 @@ type dimension struct {
 type metric struct {
 	Name   string   `json:"name,omitempty"`
 	Values []string `json:"values,omitempty"`
+}
+
+var envAPICalls int
+var mu sync.Mutex
+
+func TotalAPICallsInMonthAsync(environment string, month int, year int, envDetails bool, wg *sync.WaitGroup) {
+	defer wg.Done()
+	var total int
+	var err error
+
+	if total, err = TotalAPICallsInMonth(environment, month, year); err != nil {
+		clilog.Error.Println(err)
+		return
+	}
+	syncCount(total)
+	if envDetails {
+		w := tabwriter.NewWriter(os.Stdout, 26, 4, 0, ' ', 0)
+		fmt.Fprintf(w, "%s\t%d/%d\t%d", environment, month, year, total)
+		fmt.Fprintln(w)
+		w.Flush()
+	}
+	return
 }
 
 func TotalAPICallsInMonth(environment string, month int, year int) (total int, err error) {
@@ -85,9 +111,27 @@ func TotalAPICallsInMonth(environment string, month int, year int) (total int, e
 	return apiCalls, nil
 }
 
+//GetEnvAPICalls
+func GetEnvAPICalls() int {
+	return envAPICalls
+}
+
+func ResetEnvAPICalls() {
+	mu.Lock()
+	defer mu.Unlock()
+	envAPICalls = 0
+}
+
 // daysIn returns the number of days in a month for a given year.
 //source https://groups.google.com/g/golang-nuts/c/W-ezk71hioo
 func daysIn(m time.Month, year int) int {
 	// This is equivalent to time.daysIn(m, year).
 	return time.Date(year, m+1, 0, 0, 0, 0, 0, time.UTC).Day()
+}
+
+//syncCount synchronizes counting
+func syncCount(total int) {
+	mu.Lock()
+	defer mu.Unlock()
+	envAPICalls = envAPICalls + total
 }

@@ -17,19 +17,22 @@ package orgs
 import (
 	"encoding/json"
 	"fmt"
-	"os"
-	"text/tabwriter"
+	"sync"
 	"time"
 
 	"github.com/apigee/apigeecli/apiclient"
 	"github.com/apigee/apigeecli/client/env"
+	"github.com/apigee/apigeecli/clilog"
 )
 
-func TotalAPICallsInMonth(month int, year int, envDetails bool) (total int, err error) {
+func TotalAPICallsInMonth(month int, year int, envDetails bool, conn int) (total int, err error) {
 
+	var pwg sync.WaitGroup
 	var envListBytes []byte
 	var envList []string
-	var apiCalls int
+
+	//ensure the count is reset to zero before calculating the next set
+	defer env.ResetEnvAPICalls()
 
 	apiclient.SetPrintOutput(false)
 
@@ -41,26 +44,55 @@ func TotalAPICallsInMonth(month int, year int, envDetails bool) (total int, err 
 		return -1, err
 	}
 
-	for _, environment := range envList {
-		var calls int
-		if calls, err = env.TotalAPICallsInMonth(environment, month, year); err != nil {
-			return -1, err
-		}
-		if envDetails {
-			w := tabwriter.NewWriter(os.Stdout, 26, 4, 0, ' ', 0)
-			fmt.Fprintf(w, "%s\t%d/%d\t%d", environment, month, year, calls)
-			fmt.Fprintln(w)
-			w.Flush()
-		}
-		apiCalls = apiCalls + calls
+	numEntities := len(envList)
+	clilog.Info.Printf("Found %d environments\n", numEntities)
+	clilog.Info.Printf("Generate report with %d connections\n", conn)
+
+	numOfLoops, remaining := numEntities/conn, numEntities%conn
+
+	//ensure connections aren't greater than entities
+	if conn > numEntities {
+		conn = numEntities
+	}
+
+	start := 0
+
+	for i, end := 0, 0; i < numOfLoops; i++ {
+		pwg.Add(1)
+		end = (i * conn) + conn
+		clilog.Info.Printf("Creating reports for a batch %d of environments\n", (i + 1))
+		go batchReport(envList[start:end], month, year, envDetails, &pwg)
+		start = end
+		pwg.Wait()
+	}
+
+	if remaining > 0 {
+		pwg.Add(1)
+		clilog.Info.Printf("Creating reports for remaining %d environments\n", remaining)
+		go batchReport(envList[start:numEntities], month, year, envDetails, &pwg)
+		pwg.Wait()
 	}
 
 	apiclient.SetPrintOutput(true)
 
-	return apiCalls, nil
+	return env.GetEnvAPICalls(), nil
 }
 
-func TotalAPICallsInYear(year int, envDetails bool) (total int, err error) {
+func batchReport(envList []string, month int, year int, envDetails bool, pwg *sync.WaitGroup) {
+	defer pwg.Done()
+	//batch workgroup
+	var bwg sync.WaitGroup
+
+	bwg.Add(len(envList))
+
+	for _, environment := range envList {
+		go env.TotalAPICallsInMonthAsync(environment, month, year, envDetails, &bwg)
+	}
+
+	bwg.Wait()
+}
+
+func TotalAPICallsInYear(year int, envDetails bool, conn int) (total int, err error) {
 
 	var monthlyTotal int
 
@@ -73,15 +105,15 @@ func TotalAPICallsInYear(year int, envDetails bool) (total int, err error) {
 
 	if currentYear == year {
 		currentMonth := t.Month()
-		for i := 1; i <= int(currentMonth); i++ {
-			if monthlyTotal, err = TotalAPICallsInMonth(i, year, envDetails); err != nil {
+		for i := 1; i <= int(currentMonth); i++ { //run the loop only till the current month
+			if monthlyTotal, err = TotalAPICallsInMonth(i, year, envDetails, conn); err != nil {
 				return -1, err
 			}
 			total = total + monthlyTotal
 		}
 	} else {
-		for i := 1; i <= 12; i++ {
-			if monthlyTotal, err = TotalAPICallsInMonth(i, year, envDetails); err != nil {
+		for i := 1; i <= 12; i++ { //run the loop for each month
+			if monthlyTotal, err = TotalAPICallsInMonth(i, year, envDetails, conn); err != nil {
 				return -1, err
 			}
 			total = total + monthlyTotal
