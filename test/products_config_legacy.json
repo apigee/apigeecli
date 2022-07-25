@@ -1,0 +1,143 @@
+[
+    {
+        "name": "sample_product1",
+        "displayName": "Sample Product1",
+        "approvalType": "auto",
+        "attributes": [
+            {
+                "name": "access",
+                "value": "public"
+            }
+        ],
+        "apiResources": [
+            "/",
+            "/**"
+        ],
+        "environments": [
+            "prod1"
+        ],
+        "proxies": [
+            "helloworld"
+        ],
+        "createdAt": "1560185702014",
+        "lastModifiedAt": "1560535818257"
+    },
+    {
+        "name": "sample_product2",
+        "displayName": "Sample Product2",
+        "approvalType": "auto",
+        "attributes": [
+            {
+                "name": "access",
+                "value": "public"
+            }
+        ],
+        "apiResources": [
+            "/",
+            "/**"
+        ],
+        "environments": [
+            "prod1"
+        ],
+        "proxies": [
+            "helloworld"
+        ],
+        "createdAt": "1560185702014",
+        "lastModifiedAt": "1560535818257"
+    },
+
+    {
+        "name": "sample_product3",
+        "displayName": "Sample Product3",
+        "approvalType": "auto",
+        "attributes": [
+            {
+                "name": "access",
+                "value": "public"
+            }
+        ],
+        "apiResources": [
+            "/",
+            "/**"
+        ],
+        "environments": [
+            "prod1"
+        ],
+        "proxies": [
+            "helloworld"
+        ],
+        "createdAt": "1560185702014",
+        "lastModifiedAt": "1560535818257"
+    },
+    {
+        "name": "sample_product4",
+        "displayName": "Sample Product4",
+        "approvalType": "auto",
+        "attributes": [
+            {
+                "name": "access",
+                "value": "public"
+            }
+        ],
+        "apiResources": [
+            "/",
+            "/**"
+        ],
+        "environments": [
+            "prod1"
+        ],
+        "proxies": [
+            "helloworld"
+        ],
+        "createdAt": "1560185702014",
+        "lastModifiedAt": "1560535818257"
+    },
+    {
+        "name": "sample_product5",
+        "displayName": "Sample Product5",
+        "approvalType": "auto",
+        "attributes": [
+            {
+                "name": "access",
+                "value": "public"
+            }
+        ],
+        "apiResources": [
+            "/",
+            "/**"
+        ],
+        "environments": [
+            "prod1"
+        ],
+        "proxies": [
+            "helloworld"
+        ],
+        "createdAt": "1560185702014",
+        "lastModifiedAt": "1560535818257"
+    },
+
+    {
+        "name": "sample_product6",
+        "displayName": "Sample Product6",
+        "approvalType": "auto",
+        "attributes": [
+            {
+                "name": "access",
+                "value": "public"
+            }
+        ],
+        "apiResources": [
+            "/",
+            "/**"
+        ],
+        "environments": [
+            "prod1"
+        ],
+        "proxies": [
+            "helloworld"
+        ],
+        "createdAt": "1560185702014",
+        "lastModifiedAt": "1560535818257"
+    }    
+    
+]
