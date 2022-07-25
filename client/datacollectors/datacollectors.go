@@ -82,7 +82,7 @@ func List() (respBody []byte, err error) {
 //Import
 func Import(filePath string) (err error) {
 
-	dCollectors := dcollectors{}
+	var dCollectors dcollectors
 
 	if dCollectors, err = readDataCollectorsFile(filePath); err != nil {
 		return err
