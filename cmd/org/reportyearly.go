@@ -42,8 +42,7 @@ var YearlyCmd = &cobra.Command{
 
 		if envDetails {
 			w := tabwriter.NewWriter(os.Stdout, 26, 4, 0, ' ', 0)
-			fmt.Fprintln(w, "Environment\tMonth\tAPI Calls")
-			fmt.Fprintln(w)
+			fmt.Fprintln(w, "ENVIRONMENT\tMONTH\tAPI CALLS")
 			w.Flush()
 		}
 
@@ -56,7 +55,7 @@ var YearlyCmd = &cobra.Command{
 		}
 
 		w := tabwriter.NewWriter(os.Stdout, 26, 4, 0, ' ', 0)
-		fmt.Fprintln(w, "Organization\tYear\tAPI Calls")
+		fmt.Fprintln(w, "ORGANIZATION\tYEAR\tAPI CALLS")
 		fmt.Fprintf(w, "%s\t%d\t%d\n", apiclient.GetApigeeOrg(), year, apiCalls)
 		fmt.Fprintln(w)
 		w.Flush()
@@ -73,6 +72,8 @@ func init() {
 		false, "Print details of each environment")
 	YearlyCmd.Flags().IntVarP(&conn, "conn", "c",
 		4, "Number of connections")
+	YearlyCmd.Flags().StringVarP(&org, "org", "o",
+		"", "Apigee organization name")
 
 	_ = YearlyCmd.MarkFlagRequired("year")
 }
