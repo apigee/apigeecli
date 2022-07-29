@@ -15,6 +15,9 @@
 package targetservers
 
 import (
+	"fmt"
+	"strconv"
+
 	"github.com/apigee/apigeecli/apiclient"
 	"github.com/apigee/apigeecli/client/targetservers"
 	"github.com/spf13/cobra"
@@ -27,6 +30,11 @@ var CreateCmd = &cobra.Command{
 	Long:  "Create a Target Server",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetApigeeEnv(env)
+		if sslinfo != "" {
+			if _, err = strconv.ParseBool(sslinfo); err != nil {
+				return fmt.Errorf("Invalid value for sslinfo. Must be set to true or false")
+			}
+		}
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
@@ -36,8 +44,8 @@ var CreateCmd = &cobra.Command{
 	},
 }
 
-var description, host, keyStore, keyAlias string
-var enable, grpc, sslinfo, tlsenabled, clientAuthEnabled, ignoreValidationErrors bool
+var description, host, keyStore, keyAlias, sslinfo, enable string
+var grpc, tlsenabled, clientAuthEnabled, ignoreValidationErrors bool
 var port int
 
 func init() {
@@ -48,8 +56,8 @@ func init() {
 		"", "Description for the Target Server")
 	CreateCmd.Flags().StringVarP(&host, "host", "s",
 		"", "Host name of the target")
-	CreateCmd.Flags().BoolVarP(&enable, "enable", "b",
-		true, "Enabling/disabling a TargetServer")
+	CreateCmd.Flags().StringVarP(&enable, "enable", "b",
+		"", "Enabling/disabling a TargetServer")
 	CreateCmd.Flags().BoolVarP(&grpc, "grpc", "g",
 		false, "Enable target server for gRPC")
 
@@ -57,8 +65,8 @@ func init() {
 		"", "Key store for the target server; must be used with sslinfo")
 	CreateCmd.Flags().StringVarP(&keyAlias, "keyAlias", "",
 		"", "Key alias for the target server; must be used with sslinfo")
-	CreateCmd.Flags().BoolVarP(&sslinfo, "sslinfo", "",
-		false, "Enable SSL Info on the target server")
+	CreateCmd.Flags().StringVarP(&sslinfo, "sslinfo", "",
+		"", "Enable SSL Info on the target server")
 	CreateCmd.Flags().BoolVarP(&tlsenabled, "tls", "",
 		false, "Enable TLS for the target server; must be used with sslinfo")
 	CreateCmd.Flags().BoolVarP(&clientAuthEnabled, "clientAuth", "c",
