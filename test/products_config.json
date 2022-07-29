@@ -1,143 +1,260 @@
 [
-    {
-        "name": "sample_product1",
-        "displayName": "Sample Product1",
-        "approvalType": "auto",
-        "attributes": [
+  {
+    "name": "sample_product1",
+    "displayName": "Sample Product1",
+    "approvalType": "auto",
+    "attributes": [
+      {
+        "name": "access",
+        "value": "public"
+      }
+    ],
+    "environments": [
+      "prod1"
+    ],
+    "operationGroup": {
+      "operationConfigs": [
+        {
+          "apiSource": "httpbin",
+          "operations": [
             {
-                "name": "access",
-                "value": "public"
+              "resource": "/httpbin",
+              "methods": [
+                "POST"
+              ]
             }
-        ],
-        "apiResources": [
-            "/",
-            "/**"
-        ],
-        "environments": [
-            "test"
-        ],
-        "proxies": [
-            "helloworld"
-        ],
-        "createdAt": "1560185702014",
-        "lastModifiedAt": "1560535818257"
+          ],
+          "quota": {
+            "limit": "1",
+            "interval": "1",
+            "timeUnit": "second"
+          },
+          "attributes": [
+            {
+              "name": "key1",
+              "value": "value1"
+            }
+          ]
+        }
+      ],
+      "operationConfigType": "proxy"
     },
-    {
-        "name": "sample_product2",
-        "displayName": "Sample Product2",
-        "approvalType": "auto",
-        "attributes": [
+    "createdAt": "1560185702014",
+    "lastModifiedAt": "1560535818257"
+  },
+  {
+    "name": "sample_product2",
+    "displayName": "Sample Product2",
+    "approvalType": "auto",
+    "attributes": [
+      {
+        "name": "access",
+        "value": "public"
+      }
+    ],
+    "environments": [
+      "prod1"
+    ],
+    "operationGroup": {
+      "operationConfigs": [
+        {
+          "apiSource": "httpbin",
+          "operations": [
             {
-                "name": "access",
-                "value": "public"
+              "resource": "/httpbin",
+              "methods": [
+                "POST"
+              ]
             }
-        ],
-        "apiResources": [
-            "/",
-            "/**"
-        ],
-        "environments": [
-            "test"
-        ],
-        "proxies": [
-            "helloworld"
-        ],
-        "createdAt": "1560185702014",
-        "lastModifiedAt": "1560535818257"
+          ],
+          "quota": {
+            "limit": "1",
+            "interval": "1",
+            "timeUnit": "second"
+          },
+          "attributes": [
+            {
+              "name": "key1",
+              "value": "value1"
+            }
+          ]
+        }
+      ],
+      "operationConfigType": "proxy"
     },
-
-    {
-        "name": "sample_product3",
-        "displayName": "Sample Product3",
-        "approvalType": "auto",
-        "attributes": [
+    "createdAt": "1560185702014",
+    "lastModifiedAt": "1560535818257"
+  },
+  {
+    "name": "sample_product3",
+    "displayName": "Sample Product3",
+    "approvalType": "auto",
+    "attributes": [
+      {
+        "name": "access",
+        "value": "public"
+      }
+    ],
+    "environments": [
+      "prod1"
+    ],
+    "operationGroup": {
+      "operationConfigs": [
+        {
+          "apiSource": "httpbin",
+          "operations": [
             {
-                "name": "access",
-                "value": "public"
+              "resource": "/httpbin",
+              "methods": [
+                "POST"
+              ]
             }
-        ],
-        "apiResources": [
-            "/",
-            "/**"
-        ],
-        "environments": [
-            "test"
-        ],
-        "proxies": [
-            "helloworld"
-        ],
-        "createdAt": "1560185702014",
-        "lastModifiedAt": "1560535818257"
+          ],
+          "quota": {
+            "limit": "1",
+            "interval": "1",
+            "timeUnit": "second"
+          },
+          "attributes": [
+            {
+              "name": "key1",
+              "value": "value1"
+            }
+          ]
+        }
+      ],
+      "operationConfigType": "proxy"
     },
-    {
-        "name": "sample_product4",
-        "displayName": "Sample Product4",
-        "approvalType": "auto",
-        "attributes": [
+    "createdAt": "1560185702014",
+    "lastModifiedAt": "1560535818257"
+  },
+  {
+    "name": "sample_product4",
+    "displayName": "Sample Product4",
+    "approvalType": "auto",
+    "attributes": [
+      {
+        "name": "access",
+        "value": "public"
+      }
+    ],
+    "environments": [
+      "prod1"
+    ],
+    "operationGroup": {
+      "operationConfigs": [
+        {
+          "apiSource": "httpbin",
+          "operations": [
             {
-                "name": "access",
-                "value": "public"
+              "resource": "/httpbin",
+              "methods": [
+                "POST"
+              ]
             }
-        ],
-        "apiResources": [
-            "/",
-            "/**"
-        ],
-        "environments": [
-            "test"
-        ],
-        "proxies": [
-            "helloworld"
-        ],
-        "createdAt": "1560185702014",
-        "lastModifiedAt": "1560535818257"
+          ],
+          "quota": {
+            "limit": "1",
+            "interval": "1",
+            "timeUnit": "second"
+          },
+          "attributes": [
+            {
+              "name": "key1",
+              "value": "value1"
+            }
+          ]
+        }
+      ],
+      "operationConfigType": "proxy"
     },
-    {
-        "name": "sample_product5",
-        "displayName": "Sample Product5",
-        "approvalType": "auto",
-        "attributes": [
+    "createdAt": "1560185702014",
+    "lastModifiedAt": "1560535818257"
+  },
+  {
+    "name": "sample_product5",
+    "displayName": "Sample Product5",
+    "approvalType": "auto",
+    "attributes": [
+      {
+        "name": "access",
+        "value": "public"
+      }
+    ],
+    "environments": [
+      "prod1"
+    ],
+    "operationGroup": {
+      "operationConfigs": [
+        {
+          "apiSource": "httpbin",
+          "operations": [
             {
-                "name": "access",
-                "value": "public"
+              "resource": "/httpbin",
+              "methods": [
+                "POST"
+              ]
             }
-        ],
-        "apiResources": [
-            "/",
-            "/**"
-        ],
-        "environments": [
-            "test"
-        ],
-        "proxies": [
-            "helloworld"
-        ],
-        "createdAt": "1560185702014",
-        "lastModifiedAt": "1560535818257"
+          ],
+          "quota": {
+            "limit": "1",
+            "interval": "1",
+            "timeUnit": "second"
+          },
+          "attributes": [
+            {
+              "name": "key1",
+              "value": "value1"
+            }
+          ]
+        }
+      ],
+      "operationConfigType": "proxy"
     },
-
-    {
-        "name": "sample_product6",
-        "displayName": "Sample Product6",
-        "approvalType": "auto",
-        "attributes": [
+    "createdAt": "1560185702014",
+    "lastModifiedAt": "1560535818257"
+  },
+  {
+    "name": "sample_product6",
+    "displayName": "Sample Product6",
+    "approvalType": "auto",
+    "attributes": [
+      {
+        "name": "access",
+        "value": "public"
+      }
+    ],
+    "environments": [
+      "prod1"
+    ],
+    "operationGroup": {
+      "operationConfigs": [
+        {
+          "apiSource": "httpbin",
+          "operations": [
             {
-                "name": "access",
-                "value": "public"
+              "resource": "/httpbin",
+              "methods": [
+                "POST"
+              ]
             }
-        ],
-        "apiResources": [
-            "/",
-            "/**"
-        ],
-        "environments": [
-            "test"
-        ],
-        "proxies": [
-            "helloworld"
-        ],
-        "createdAt": "1560185702014",
-        "lastModifiedAt": "1560535818257"
-    }    
-    
+          ],
+          "quota": {
+            "limit": "1",
+            "interval": "1",
+            "timeUnit": "second"
+          },
+          "attributes": [
+            {
+              "name": "key1",
+              "value": "value1"
+            }
+          ]
+        }
+      ],
+      "operationConfigType": "proxy"
+    },
+    "createdAt": "1560185702014",
+    "lastModifiedAt": "1560535818257"
+  }
 ]

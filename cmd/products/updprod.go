@@ -15,12 +15,8 @@
 package products
 
 import (
-	"fmt"
-	"io/ioutil"
-
 	"github.com/apigee/apigeecli/apiclient"
 	"github.com/apigee/apigeecli/client/products"
-	"github.com/apigee/apigeecli/clilog"
 	"github.com/spf13/cobra"
 )
 
@@ -30,35 +26,42 @@ var UpdateCmd = &cobra.Command{
 	Short: "Update an API product",
 	Long:  "Update an API product",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		if legacy && (operationGroupFile != "" || gqlOperationGroupFile != "") {
-			return fmt.Errorf("operationGroupFile/gqlOperationGroupFile cannot be used with legacy mode")
-		}
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		if legacy {
-			_, err = products.UpdateLegacy(name, description, approval, displayName, quota, quotaInterval, quotaUnit, environments, proxies, scopes, attrs)
-		} else {
-			var operationGrp, gqlOperationGrp []byte
-			if operationGroupFile != "" {
-				operationGrp, err = ioutil.ReadFile(operationGroupFile)
-				if err != nil {
-					clilog.Info.Println(err)
-					return err
-				}
-			}
-			if gqlOperationGroupFile != "" {
-				gqlOperationGrp, err = ioutil.ReadFile(gqlOperationGroupFile)
-				if err != nil {
-					clilog.Info.Println(err)
-					return err
-				}
-			}
-			_, err = products.UpdateProxyOperationGroup(name, description, approval, displayName, quota, quotaInterval, quotaUnit, environments, scopes, operationGrp, gqlOperationGrp, attrs)
+
+		p := products.Product{}
+
+		p.Name = name
+		p.DisplayName = displayName
+		p.ApprovalType = approval
+		p.Description = description
+		p.Quota = quota
+		p.QuotaInterval = quotaInterval
+		p.QuotaTimeUnit = quotaUnit
+		p.Environments = environments
+		p.Proxies = proxies
+		p.Scopes = scopes
+
+		p.OperationGroup, err = getOperationGroup(operationGroupFile)
+		if err != nil {
+			return err
 		}
+
+		p.GraphQLOperationGroup, err = getGqlOperationGroup(gqlOperationGroupFile)
+		if err != nil {
+			return nil
+		}
+
+		p.Attributes = getAttributes(attrs)
+
+		_, err = products.Update(p)
+
 		return
 	},
 }
+
+var merge bool
 
 func init() {
 
@@ -88,8 +91,6 @@ func init() {
 		"", "File containing Operation Group JSON. See samples for how to create the file")
 	UpdateCmd.Flags().StringVarP(&gqlOperationGroupFile, "gqlopgrp", "",
 		"", "File containing GraphQL Operation Group JSON. See samples for how to create the file")
-	UpdateCmd.Flags().BoolVarP(&legacy, "legacy", "l",
-		false, "Legacy product object")
 	//TODO: apiresource -r later
 
 	_ = UpdateCmd.MarkFlagRequired("name")
