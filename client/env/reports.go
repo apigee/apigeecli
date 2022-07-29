@@ -70,7 +70,6 @@ func TotalAPICallsInMonthAsync(environment string, month int, year int, envDetai
 		fmt.Fprintln(w)
 		w.Flush()
 	}
-	return
 }
 
 func TotalAPICallsInMonth(environment string, month int, year int) (total int, err error) {

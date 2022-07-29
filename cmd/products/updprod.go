@@ -61,8 +61,6 @@ var UpdateCmd = &cobra.Command{
 	},
 }
 
-var merge bool
-
 func init() {
 
 	UpdateCmd.Flags().StringVarP(&name, "name", "n",
