@@ -212,8 +212,7 @@ func GetPreferences() (err error) {
 		return err
 	}
 
-	PrettyPrint(output)
-	return nil
+	return PrettyPrint(output)
 }
 
 //WritePreferencesFile

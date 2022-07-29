@@ -77,7 +77,7 @@ var ExportCmd = &cobra.Command{
 			return err
 		}
 
-		fmt.Println("\tExporting KV Map names for org %s", org)
+		fmt.Printf("\tExporting KV Map names for org %s\n", org)
 		if respBody, err = kvm.List(""); err != nil {
 			return err
 		}
@@ -158,7 +158,7 @@ var ExportCmd = &cobra.Command{
 				return err
 			}
 
-			fmt.Println("\tExporting KV Map names for environment %s...", environment)
+			fmt.Printf("\tExporting KV Map names for environment %s...\n", environment)
 			if respBody, err = kvm.List(""); err != nil {
 				return err
 			}

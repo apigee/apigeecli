@@ -167,7 +167,7 @@ func getArrayStr(str []string) string {
 //Import
 func Import(filePath string) (err error) {
 
-	environmentGroups := environmentgroups{}
+	var environmentGroups environmentgroups
 
 	if environmentGroups, err = readEnvGroupsFile(filePath); err != nil {
 		return err

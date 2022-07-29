@@ -145,7 +145,7 @@ func generateAccessToken(privateKey string) (string, error) {
 
 	if err != nil {
 		clilog.Error.Println("error in response: ", err)
-		return "", fmt.Errorf("error in response: ", err)
+		return "", fmt.Errorf("error in response: %v", err)
 	} else if resp.StatusCode > 399 {
 		clilog.Error.Printf("status code %d, error in response: %s\n", resp.StatusCode, string(respBody))
 		return "", fmt.Errorf("status code %d, error in response: %s\n", resp.StatusCode, string(respBody))
