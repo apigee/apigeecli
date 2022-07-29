@@ -1,4 +1,4 @@
-// Copyright 2020 Google LLC
+// Copyright 2022 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,28 +18,15 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//Cmd to manage orgs
-var Cmd = &cobra.Command{
-	Use:     "organizations",
+//ReportCmd to manage org reprots
+var ReportCmd = &cobra.Command{
+	Use:     "reports",
 	Aliases: []string{"orgs"},
-	Short:   "Manage Apigee Orgs",
-	Long:    "Manage Apigee Orgs",
+	Short:   "Report Apigee Org Usage",
+	Long:    "Report Apigee Org Usage",
 }
 
-var org string
-
 func init() {
-	Cmd.AddCommand(CreateCmd)
-	Cmd.AddCommand(ListCmd)
-	Cmd.AddCommand(GetCmd)
-	Cmd.AddCommand(MartCmd)
-	Cmd.AddCommand(AcCmd)
-	Cmd.AddCommand(PropCmd)
-	Cmd.AddCommand(ObCmd)
-	Cmd.AddCommand(IngressCmd)
-	Cmd.AddCommand(ExportCmd)
-	Cmd.AddCommand(ImportCmd)
-	Cmd.AddCommand(UpdateCmd)
-	Cmd.AddCommand(SetAddonCmd)
-	Cmd.AddCommand(ReportCmd)
+	ReportCmd.AddCommand(MonthlyCmd)
+	ReportCmd.AddCommand(YearlyCmd)
 }
