@@ -32,7 +32,7 @@ func TotalAPICallsInMonth(month int, year int, envDetails bool, conn int) (total
 	var envList []string
 
 	//ensure the count is reset to zero before calculating the next set
-	defer env.ResetEnvAPICalls()
+	defer env.ApiCalls.ResetCount()
 
 	apiclient.SetPrintOutput(false)
 
@@ -75,7 +75,7 @@ func TotalAPICallsInMonth(month int, year int, envDetails bool, conn int) (total
 
 	apiclient.SetPrintOutput(true)
 
-	return env.GetEnvAPICalls(), nil
+	return env.ApiCalls.GetCount(), nil
 }
 
 func batchReport(envList []string, month int, year int, envDetails bool, pwg *sync.WaitGroup) {
