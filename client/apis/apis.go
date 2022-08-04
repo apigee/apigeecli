@@ -201,6 +201,29 @@ func UndeployProxy(name string, revision int) (respBody []byte, err error) {
 	return respBody, err
 }
 
+//Update
+func Update(name string, labels map[string]string) (respBody []byte, err error) {
+
+	if len(labels) != 0 {
+		u, _ := url.Parse(apiclient.BaseURL)
+		q := u.Query()
+		q.Set("updateMask", "labels")
+		u.RawQuery = q.Encode()
+
+		labelsArr := []string{}
+		for key, value := range labels {
+			labelsArr = append(labelsArr, "\""+key+"\":\""+value+"\"")
+		}
+		payload := "{\"labels\":{" + strings.Join(labelsArr, ",") + "}}"
+		fmt.Println(payload)
+
+		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apis", name)
+		respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload, "PATCH")
+	}
+
+	return respBody, err
+}
+
 //CleanProxy
 func CleanProxy(name string, reportOnly bool, keepList []string) (err error) {
 
