@@ -12,13 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# goreleaser version 1.8.3
-# commit: 63436392db6ac0557513535fc3ee4223a44810ed
-# built at: 2022-04-20T12:43:39Z
-# built by: goreleaser
-# goos: darwin
-# goarch: amd64
-# module version: v1.8.3, checksum: h1:4vP28LV1VOL+mtEVvejCkN6KD1OU++7YNCh9dojxcO0=
 
 # .goreleaser.yml
 project_name: apigeecli
@@ -35,6 +28,9 @@ builds:
     goos:
       - linux
       - darwin
+    goarch:
+       - amd64
+       - arm64
     flags:
     - -trimpath
     ldflags:
@@ -51,7 +47,7 @@ builds:
       - windows
     ignore:
       - goos: windows
-        goarch: arm64      
+        goarch: arm64
     flags:
     - -trimpath
     ldflags:
@@ -92,3 +88,11 @@ signs:
 release:
   draft: true
   prerelease: true
+
+universal_binaries:
+  - 
+    replace: false
+    ids:
+      - apigeeclinix
+    hooks:  
+      post: go run ./docs/docs.go
