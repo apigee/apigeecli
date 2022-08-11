@@ -1,0 +1,25 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Generate documentation for apigeecli 
+on:
+  push:
+    branches: [ "master" ]
+    # Publish semver tags as releases.
+    tags: [ 'v*.*' ]    
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Github Action genshdoc
+      id: action-genshdoc
+      run: |
+        echo ${{ github.ref }}
+        go run docs/docs.go
+        git add --all
+        git commit -m "generate documentation" -a
+        git push origin master
