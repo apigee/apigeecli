@@ -94,5 +94,3 @@ universal_binaries:
     replace: false
     ids:
       - apigeeclinix
-    hooks:  
-      post: go run ./docs/docs.go
