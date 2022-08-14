@@ -27,6 +27,7 @@ import (
 	"github.com/apigee/apigeecli/apiclient"
 	"github.com/apigee/apigeecli/client/apis"
 	"github.com/apigee/apigeecli/client/apps"
+	"github.com/apigee/apigeecli/client/datacollectors"
 	"github.com/apigee/apigeecli/client/developers"
 	"github.com/apigee/apigeecli/client/env"
 	"github.com/apigee/apigeecli/client/envgroups"
@@ -106,6 +107,13 @@ var ImportCmd = &cobra.Command{
 		if isFileExists(path.Join(folder, envGroupsFileName)) {
 			fmt.Println("Importing Environment Group Configuration...")
 			if err = envgroups.Import(path.Join(folder, envGroupsFileName)); err != nil {
+				return err
+			}
+		}
+
+		if isFileExists(path.Join(folder, dataCollFileName)) {
+			fmt.Println("Importing Data Collectors Configuration...")
+			if err = datacollectors.Import(path.Join(folder, dataCollFileName)); err != nil {
 				return err
 			}
 		}
