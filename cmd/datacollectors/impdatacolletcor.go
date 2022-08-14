@@ -1,4 +1,4 @@
-// Copyright 2020 Google LLC
+// Copyright 2022 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,28 +15,30 @@
 package datacollectors
 
 import (
+	"github.com/apigee/apigeecli/apiclient"
+	"github.com/apigee/apigeecli/client/datacollectors"
 	"github.com/spf13/cobra"
 )
 
-//Cmd to manage datacollectors
-var Cmd = &cobra.Command{
-	Use:     "datacollectors",
-	Aliases: []string{"dc"},
-	Short:   "Manage Apigee datacollectors entities",
-	Long:    "Manage Apigee datacollectors entities",
+//ImpCmd to create a new data collector
+var ImpCmd = &cobra.Command{
+	Use:   "import",
+	Short: "Import Data Collectors",
+	Long:  "Import Data Collectors",
+	Args: func(cmd *cobra.Command, args []string) (err error) {
+		return apiclient.SetApigeeOrg(org)
+	},
+	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		return datacollectors.Import(filePath)
+	},
 }
 
-var org, name string
+var filePath string
 
 func init() {
 
-	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
-		"", "Apigee organization name")
+	ImpCmd.Flags().StringVarP(&filePath, "file", "f",
+		"", "File containing Data Collectors")
 
-	Cmd.AddCommand(CreateCmd)
-	Cmd.AddCommand(ListCmd)
-	Cmd.AddCommand(GetCmd)
-	Cmd.AddCommand(DelCmd)
-	Cmd.AddCommand(ImpCmd)
-	Cmd.AddCommand(ExpCmd)
+	_ = ImpCmd.MarkFlagRequired("file")
 }
