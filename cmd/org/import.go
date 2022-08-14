@@ -149,9 +149,9 @@ var ImportCmd = &cobra.Command{
 				}
 			}
 
-			if isFileExists(path.Join(folder, targetServerFileName)) {
+			if isFileExists(path.Join(folder, environment+"_"+targetServerFileName)) {
 				fmt.Println("\tImporting Target servers...")
-				if err = targetservers.Import(conn, path.Join(folder, targetServerFileName)); err != nil {
+				if err = targetservers.Import(conn, path.Join(folder, environment+"_"+targetServerFileName)); err != nil {
 					return err
 				}
 			}
