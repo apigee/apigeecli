@@ -15,6 +15,7 @@
 package references
 
 import (
+	"encoding/json"
 	"net/url"
 	"path"
 	"strings"
@@ -93,4 +94,29 @@ func Update(name string, description string, resourceType string, refers string)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "references", name)
 	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload, "PUT")
 	return respBody, err
+}
+
+//Export
+func Export(conn int) (payload [][]byte, err error) {
+	//TODO: batch exports
+	apiclient.SetPrintOutput(false)
+	var respBody []byte
+
+	if respBody, err = List(); err != nil {
+		return nil, err
+	}
+
+	var referencesList []string
+	if err := json.Unmarshal(respBody, &referencesList); err != nil {
+		return nil, err
+	}
+
+	for _, reference := range referencesList {
+		if respBody, err = Get(reference); err != nil {
+			return nil, err
+		}
+		payload = append(payload, respBody)
+	}
+
+	return payload, nil
 }

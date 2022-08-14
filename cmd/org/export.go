@@ -48,7 +48,7 @@ var ExportCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 
-		var productResponse, appsResponse, targetServerResponse [][]byte
+		var productResponse, appsResponse, targetServerResponse, referencesResponse [][]byte
 		var respBody []byte
 
 		runtimeType, _ := orgs.GetOrgField("runtimeType")
@@ -150,14 +150,6 @@ var ExportCmd = &cobra.Command{
 				return err
 			}
 
-			fmt.Println("\tExporting References...")
-			if respBody, err = references.List(); err != nil {
-				return err
-			}
-			if err = apiclient.WriteByteArrayToFile(environment+"_"+refFileName, false, respBody); err != nil {
-				return err
-			}
-
 			fmt.Printf("\tExporting KV Map names for environment %s...\n", environment)
 			if respBody, err = kvm.List(""); err != nil {
 				return err
@@ -187,6 +179,14 @@ var ExportCmd = &cobra.Command{
 				return err
 			}
 			if err = apiclient.WriteByteArrayToFile(environment+tracecfgFileName, false, respBody); err != nil {
+				return err
+			}
+
+			fmt.Println("\t Exporting references...")
+			if referencesResponse, err = references.Export(conn); err != nil {
+				return err
+			}
+			if err = apiclient.WriteArrayByteArrayToFile(environment+"_"+referencesFileName, false, referencesResponse); err != nil {
 				return err
 			}
 
