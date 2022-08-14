@@ -31,7 +31,10 @@ func setup() (err error) {
 	if org == "" {
 		return fmt.Errorf("APIGEE_ORG not set")
 	}
-	apiclient.SetApigeeOrg(org)
+
+	if err = apiclient.SetApigeeOrg(org); err != nil {
+		return fmt.Errorf("APIGEE_ORG not set")
+	}
 
 	token := os.Getenv("APIGEE_TOKEN")
 	if token == "" {
