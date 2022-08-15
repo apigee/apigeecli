@@ -162,7 +162,7 @@ var ExportCmd = &cobra.Command{
 			if respBody, err = keystores.List(); err != nil {
 				return err
 			}
-			if err = apiclient.WriteByteArrayToFile(environment+"_"+kVMFileName, false, respBody); err != nil {
+			if err = apiclient.WriteByteArrayToFile(environment+"_"+keyStoresFileName, false, respBody); err != nil {
 				return err
 			}
 
