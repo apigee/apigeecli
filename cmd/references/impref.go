@@ -20,30 +20,27 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//ExpCmd to export references
-var ExpCmd = &cobra.Command{
-	Use:   "export",
-	Short: "Export Environment References",
-	Long:  "Export Environment References",
+//ImpCmd to import references
+var ImpCmd = &cobra.Command{
+	Use:   "import",
+	Short: "Import Environment References",
+	Long:  "Import Environment References",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetApigeeEnv(env)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		const exportFileName = "references.json"
-		payload, err := references.Export(conn)
-		if err != nil {
-			return err
-		}
-		return apiclient.WriteArrayByteArrayToFile(exportFileName, false, payload)
+		return references.Import(conn, filePath)
 	},
 }
 
-var conn int
+var filePath string
 
 func init() {
-
-	ExpCmd.Flags().IntVarP(&conn, "conn", "c",
+	ImpCmd.Flags().StringVarP(&filePath, "file", "f",
+		"", "File containing API Products")
+	ImpCmd.Flags().IntVarP(&conn, "conn", "c",
 		4, "Number of connections")
 
+	_ = ImpCmd.MarkFlagRequired("file")
 }

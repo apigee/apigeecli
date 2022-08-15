@@ -34,6 +34,7 @@ import (
 	"github.com/apigee/apigeecli/client/keystores"
 	"github.com/apigee/apigeecli/client/kvm"
 	"github.com/apigee/apigeecli/client/products"
+	"github.com/apigee/apigeecli/client/references"
 	"github.com/apigee/apigeecli/client/sharedflows"
 	"github.com/apigee/apigeecli/client/targetservers"
 	"github.com/apigee/apigeecli/clilog"
@@ -152,6 +153,13 @@ var ImportCmd = &cobra.Command{
 			if isFileExists(path.Join(folder, environment+"_"+targetServerFileName)) {
 				fmt.Println("\tImporting Target servers...")
 				if err = targetservers.Import(conn, path.Join(folder, environment+"_"+targetServerFileName)); err != nil {
+					return err
+				}
+			}
+
+			if isFileExists(path.Join(folder, environment+"_"+referencesFileName)) {
+				fmt.Println("\tImporting References...")
+				if err = references.Import(conn, path.Join(folder, environment+"_"+referencesFileName)); err != nil {
 					return err
 				}
 			}
