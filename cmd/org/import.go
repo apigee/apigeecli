@@ -178,9 +178,9 @@ var ImportCmd = &cobra.Command{
 			}
 
 			if importDebugmask {
-				if isFileExists(path.Join(folder, environment+debugmaskFileName)) {
+				if isFileExists(path.Join(folder, environment+"_"+debugmaskFileName)) {
 					fmt.Println("\tImporting Debug Mask configuration...")
-					debugMask, _ := readEntityFileAsString(path.Join(folder, environment+debugmaskFileName))
+					debugMask, _ := readEntityFileAsString(path.Join(folder, environment+"_"+debugmaskFileName))
 					if _, err = env.SetDebug(debugMask); err != nil {
 						return err
 					}
@@ -188,9 +188,9 @@ var ImportCmd = &cobra.Command{
 			}
 
 			if importTrace {
-				if isFileExists(path.Join(folder, environment+tracecfgFileName)) {
+				if isFileExists(path.Join(folder, environment+"_"+tracecfgFileName)) {
 					fmt.Println("\tImporting Trace configuration...")
-					traceCfg, _ := readEntityFileAsString(path.Join(folder, environment+tracecfgFileName))
+					traceCfg, _ := readEntityFileAsString(path.Join(folder, environment+"_"+tracecfgFileName))
 					if _, err = env.ImportTraceConfig(traceCfg); err != nil {
 						return err
 					}

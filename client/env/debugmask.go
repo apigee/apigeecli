@@ -33,13 +33,17 @@ func GetDebug() (respBody []byte, err error) {
 //SetDebug
 func SetDebug(maskConfig string) (respBody []byte, err error) {
 	//the following steps will validate json
-	m := map[string]string{}
+	var m map[string]interface{}
 	err = json.Unmarshal([]byte(maskConfig), &m)
 	if err != nil {
 		return respBody, err
 	}
+
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "debugmask")
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), maskConfig)
+	q := u.Query()
+	q.Add("replaceRepeatedFields","true")
+	u.RawQuery = q.Encode()
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), maskConfig, "PATCH")
 	return respBody, err
 }

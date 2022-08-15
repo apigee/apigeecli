@@ -24,8 +24,8 @@ const (
 	kVMFileName          = "kvms.json"
 	keyStoresFileName    = "keystores.json"
 	syncAuthFileName     = "syncauth.json"
-	debugmaskFileName    = "_debugmask.json"
-	tracecfgFileName     = "_tracecfg.json"
+	debugmaskFileName    = "debugmask.json"
+	tracecfgFileName     = "tracecfg.json"
 	referencesFileName   = "references.json"
 
 	proxiesFolderName     = "proxies"
