@@ -138,15 +138,10 @@ var ImportCmd = &cobra.Command{
 			fmt.Println("Importing configuration for environment " + environment)
 			apiclient.SetApigeeEnv(environment)
 
-			if isFileExists(path.Join(folder, keyStoresFileName)) {
-				fmt.Println("\tImporting Key stores...")
-				if keystoreList, err = readEntityFile(path.Join(folder, keyStoresFileName)); err != nil {
+			if isFileExists(path.Join(folder, environment+"_"+keyStoresFileName)) {
+				fmt.Println("\tImporting Keystore names...")
+				if err = keystores.Import(conn, path.Join(folder, environment+"_"+keyStoresFileName)); err != nil {
 					return err
-				}
-				for _, keystore := range keystoreList {
-					if _, err = keystores.Create(keystore); err != nil {
-						return err
-					}
 				}
 			}
 
@@ -165,7 +160,7 @@ var ImportCmd = &cobra.Command{
 			}
 
 			if isFileExists(path.Join(folder, kVMFileName)) {
-				fmt.Println("\tImporting KVM Names...")
+				fmt.Println("\tImporting KVM Names only...")
 				if kvmList, err = readEntityFile(path.Join(folder, environment+"_"+kVMFileName)); err != nil {
 					return err
 				}
