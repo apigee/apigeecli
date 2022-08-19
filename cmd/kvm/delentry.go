@@ -37,7 +37,7 @@ var DelEntryCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = kvm.GetEntry(proxyName, mapName, keyName)
+		_, err = kvm.DeleteEntry(proxyName, mapName, keyName)
 		return
 	},
 }
