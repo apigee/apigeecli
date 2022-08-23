@@ -35,5 +35,6 @@ func init() {
 	Cmd.AddCommand(ListCmd)
 	Cmd.AddCommand(DelCmd)
 	Cmd.AddCommand(CreateCmd)
+	Cmd.AddCommand(ExpCmd)
 	Cmd.AddCommand(EntryCmd)
 }
