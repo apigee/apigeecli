@@ -46,6 +46,8 @@ case "${LOCAL_ARCH}" in
   aarch64*)
     APIGEECLI_ARCH=arm64
     ;;
+  arm64)
+    APIGEECLI_ARCH=x86_64    
   *)
     echo "This system's architecture, ${LOCAL_ARCH}, isn't supported"
     exit 1
