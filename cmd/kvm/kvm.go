@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//Cmd to manage kvms
+// Cmd to manage kvms
 var Cmd = &cobra.Command{
 	Use:   "kvms",
 	Short: "Manage Key Value Maps",
@@ -37,4 +37,5 @@ func init() {
 	Cmd.AddCommand(CreateCmd)
 	Cmd.AddCommand(ExpCmd)
 	Cmd.AddCommand(EntryCmd)
+	Cmd.AddCommand(ImpCmd)
 }
