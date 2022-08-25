@@ -53,7 +53,7 @@ jobs:
           args: release --rm-dist
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
-          GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint }}
+          GPG_FINGERPRINT: ${{ secrets.FINGERPRINT }}
 
       - name: Upload assets
         uses: actions/upload-artifact@v3
