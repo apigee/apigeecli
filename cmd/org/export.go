@@ -18,6 +18,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strconv"
+	"strings"
 
 	"github.com/apigee/apigeecli/apiclient"
 	"github.com/apigee/apigeecli/client/apis"
@@ -38,7 +40,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//ExportCmd to get org details
+// ExportCmd to get org details
 var ExportCmd = &cobra.Command{
 	Use:   "export",
 	Short: "Export Apigee Configuration",
@@ -49,7 +51,7 @@ var ExportCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 
 		var productResponse, appsResponse, targetServerResponse, referencesResponse [][]byte
-		var respBody []byte
+		var respBody, listKVMBytes []byte
 
 		runtimeType, _ := orgs.GetOrgField("runtimeType")
 
@@ -78,10 +80,14 @@ var ExportCmd = &cobra.Command{
 		}
 
 		fmt.Printf("\tExporting KV Map names for org %s\n", org)
-		if respBody, err = kvm.List(""); err != nil {
+		if listKVMBytes, err = kvm.List(""); err != nil {
 			return err
 		}
 		if err = apiclient.WriteByteArrayToFile(org+"_"+kVMFileName, false, respBody); err != nil {
+			return err
+		}
+
+		if err = exportKVMEntries("org", "", listKVMBytes); err != nil {
 			return err
 		}
 
@@ -151,10 +157,14 @@ var ExportCmd = &cobra.Command{
 			}
 
 			fmt.Printf("\tExporting KV Map names for environment %s...\n", environment)
-			if respBody, err = kvm.List(""); err != nil {
+			if listKVMBytes, err = kvm.List(""); err != nil {
 				return err
 			}
 			if err = apiclient.WriteByteArrayToFile(environment+"_"+kVMFileName, false, respBody); err != nil {
+				return err
+			}
+
+			if err = exportKVMEntries("env", environment, listKVMBytes); err != nil {
 				return err
 			}
 
@@ -215,5 +225,45 @@ func createFolders() (err error) {
 	if err = os.Mkdir(sharedFlowsFolderName, 0755); err != nil {
 		return err
 	}
+	return nil
+}
+
+func exportKVMEntries(scope string, env string, listKVMBytes []byte) (err error) {
+
+	var kvmEntries [][]byte
+	var listKVM []string
+	var fileName string
+
+	//hide kvm exports behind a feature flag
+	if os.Getenv("APIGEECLI_KVM_EXPORT") == "" {
+		return nil
+	}
+
+	if err = json.Unmarshal(listKVMBytes, &listKVM); err != nil {
+		return err
+	}
+
+	for _, mapName := range listKVM {
+
+		fmt.Printf("\tExporting KVM entries for %s in org %s\n", org, mapName)
+		if kvmEntries, err = kvm.ExportEntries("", mapName); err != nil {
+			return err
+		}
+
+		if scope == "org" {
+			fileName = strings.Join([]string{scope, mapName, "kvmfile"}, "_")
+		} else if scope == "env" {
+			fileName = strings.Join([]string{scope, env, mapName, "kvmfile"}, "_")
+		}
+
+		if len(kvmEntries) > 0 {
+			for i := range kvmEntries {
+				if err = apiclient.WriteByteArrayToFile(fileName+"_"+strconv.Itoa(i)+".json", false, kvmEntries[i]); err != nil {
+					return err
+				}
+			}
+		}
+	}
+
 	return nil
 }
