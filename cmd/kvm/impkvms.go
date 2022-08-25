@@ -29,8 +29,8 @@ import (
 // ImpCmd to import kvm entries from files
 var ImpCmd = &cobra.Command{
 	Use:   "import",
-	Short: "Import a file containing KVM Entries",
-	Long:  "Import a file containing KVM Entries",
+	Short: "Import KVM Entries from a folder containing KVM files",
+	Long:  "Import KVM Entries from a folder containing KVM files",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		return apiclient.SetApigeeOrg(org)
 	},
