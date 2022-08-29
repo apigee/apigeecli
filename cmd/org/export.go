@@ -170,7 +170,7 @@ var ExportCmd = &cobra.Command{
 			if respBody, err = env.GetDebug(); err != nil {
 				return err
 			}
-			if err = apiclient.WriteByteArrayToFile(environment+"_"+debugmaskFileName, false, respBody); err != nil {
+			if err = apiclient.WriteByteArrayToFile(environment+debugmaskFileName, false, respBody); err != nil {
 				return err
 			}
 
@@ -178,7 +178,7 @@ var ExportCmd = &cobra.Command{
 			if respBody, err = env.GetTraceConfig(); err != nil {
 				return err
 			}
-			if err = apiclient.WriteByteArrayToFile(environment+"_"+tracecfgFileName, false, respBody); err != nil {
+			if err = apiclient.WriteByteArrayToFile(environment+tracecfgFileName, false, respBody); err != nil {
 				return err
 			}
 
