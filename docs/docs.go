@@ -16,6 +16,8 @@ package main
 
 import (
 	"log"
+	"os"
+	"path/filepath"
 
 	cmd "github.com/apigee/apigeecli/cmd"
 
@@ -23,8 +25,20 @@ import (
 )
 
 func main() {
-	err := doc.GenMarkdownTree(cmd.RootCmd, "./docs")
-	if err != nil {
+	var err error
+	var docFiles []string
+
+	if docFiles, err = filepath.Glob("./docs/apigeecli*.md"); err != nil {
+		log.Fatal(err)
+	}
+
+	for _, docFile := range docFiles {
+		if err = os.Remove(docFile); err != nil {
+			log.Fatal(err)
+		}
+	}
+
+	if err = doc.GenMarkdownTree(cmd.RootCmd, "./docs"); err != nil {
 		log.Fatal(err)
 	}
 }

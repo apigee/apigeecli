@@ -51,8 +51,12 @@ type metric struct {
 	Values []string `json:"values,omitempty"`
 }
 
-var envAPICalls int
-var mu sync.Mutex
+type apiCalls struct {
+	count int
+	sync.Mutex
+}
+
+var ApiCalls = &apiCalls{count: 0}
 
 func TotalAPICallsInMonthAsync(environment string, month int, year int, envDetails bool, wg *sync.WaitGroup) {
 	defer wg.Done()
@@ -63,7 +67,7 @@ func TotalAPICallsInMonthAsync(environment string, month int, year int, envDetai
 		clilog.Error.Println(err)
 		return
 	}
-	syncCount(total)
+	ApiCalls.incrementCount(total)
 	if envDetails {
 		w := tabwriter.NewWriter(os.Stdout, 26, 4, 0, ' ', 0)
 		fmt.Fprintf(w, "%s\t%d/%d\t%d", environment, month, year, total)
@@ -110,15 +114,16 @@ func TotalAPICallsInMonth(environment string, month int, year int) (total int, e
 	return apiCalls, nil
 }
 
-//GetEnvAPICalls
-func GetEnvAPICalls() int {
-	return envAPICalls
+//GetCount
+func (c *apiCalls) GetCount() int {
+	return c.count
 }
 
-func ResetEnvAPICalls() {
-	mu.Lock()
-	defer mu.Unlock()
-	envAPICalls = 0
+//ResetCount
+func (c *apiCalls) ResetCount() {
+	c.Lock()
+	defer c.Unlock()
+	c.count = 0
 }
 
 // daysIn returns the number of days in a month for a given year.
@@ -128,9 +133,9 @@ func daysIn(m time.Month, year int) int {
 	return time.Date(year, m+1, 0, 0, 0, 0, 0, time.UTC).Day()
 }
 
-//syncCount synchronizes counting
-func syncCount(total int) {
-	mu.Lock()
-	defer mu.Unlock()
-	envAPICalls = envAPICalls + total
+//incrementCount synchronizes counting
+func (c *apiCalls) incrementCount(total int) {
+	c.Lock()
+	defer c.Unlock()
+	c.count = c.count + total
 }

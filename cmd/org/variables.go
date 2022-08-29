@@ -21,12 +21,12 @@ const (
 	targetServerFileName = "targetservers.json"
 	envGroupsFileName    = "envgroups.json"
 	dataCollFileName     = "datacollectors.json"
-	refFileName          = "references.json"
 	kVMFileName          = "kvms.json"
 	keyStoresFileName    = "keystores.json"
 	syncAuthFileName     = "syncauth.json"
 	debugmaskFileName    = "_debugmask.json"
 	tracecfgFileName     = "_tracecfg.json"
+	referencesFileName   = "references.json"
 
 	proxiesFolderName     = "proxies"
 	sharedFlowsFolderName = "sharedflows"

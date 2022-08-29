@@ -132,6 +132,19 @@ func Get() (respBody []byte, err error) {
 	return respBody, err
 }
 
+//Delete
+func Delete(retension string) (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.BaseURL)
+	if retension != "" {
+		q := u.Query()
+		q.Set("retention", retension)
+		u.RawQuery = q.Encode()
+	}
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg())
+	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "", "DELETE")
+	return respBody, err
+}
+
 func GetOrgField(key string) (value string, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg())

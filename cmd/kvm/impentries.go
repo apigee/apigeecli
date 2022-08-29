@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//ImpEntryCmd to import kvm entries from files
+// ImpEntryCmd to import kvm entries from files
 var ImpEntryCmd = &cobra.Command{
 	Use:   "import",
 	Short: "Import a file containing KVM Entries",
@@ -47,7 +47,7 @@ var filePath string
 func init() {
 
 	ImpEntryCmd.Flags().StringVarP(&filePath, "file", "f",
-		"", "File containing App Developers")
+		"", "File containing KVM entries")
 	ImpEntryCmd.Flags().StringVarP(&mapName, "map", "m",
 		"", "KV Map Name")
 	ImpEntryCmd.Flags().StringVarP(&env, "env", "e",

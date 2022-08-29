@@ -42,4 +42,6 @@ func init() {
 	Cmd.AddCommand(ExpCmd)
 	Cmd.AddCommand(GetAppCmd)
 	Cmd.AddCommand(SubCmd)
+	Cmd.AddCommand(AdjustCmd)
+	Cmd.AddCommand(CreditCmd)
 }

@@ -15,21 +15,21 @@
 package kvm
 
 import (
+	"encoding/json"
 	"fmt"
 	"strconv"
 	"strings"
 
 	"github.com/apigee/apigeecli/apiclient"
 	"github.com/apigee/apigeecli/client/kvm"
-	"github.com/apigee/apigeecli/clilog"
 	"github.com/spf13/cobra"
 )
 
-//ExpEntryCmd to export map entries to files
-var ExpEntryCmd = &cobra.Command{
+//ExpCmd to export map entries to files
+var ExpCmd = &cobra.Command{
 	Use:   "export",
-	Short: "Export KV Map entries",
-	Long:  "Export KV Map entries",
+	Short: "Export all KV Map entries for all KV Maps",
+	Long:  "Export all KV Map entries for all KV Maps in a given scope",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		if env != "" {
 			apiclient.SetApigeeEnv(env)
@@ -43,36 +43,45 @@ var ExpEntryCmd = &cobra.Command{
 		var payload [][]byte
 		var fileName string
 
-		clilog.Warning.Println("Running this command against a large number of KVMs or entries can exhaust the API quota")
-
-		if payload, err = kvm.ExportEntries(proxyName, mapName); err != nil {
-			return
+		apiclient.SetPrintOutput(false)
+		listKVMBytes, err := kvm.List(proxyName)
+		if err != nil {
+			return err
 		}
 
-		if env != "" {
-			fileName = strings.Join([]string{"env", env, mapName, "kvmfile"}, "_")
-		} else if proxyName != "" {
-			fileName = strings.Join([]string{"proxy", proxyName, mapName, "kvmfile"}, "_")
-		} else {
-			fileName = strings.Join([]string{"org", mapName, "kvmfile"}, "_")
+		var listKVM []string
+		if err = json.Unmarshal(listKVMBytes, &listKVM); err != nil {
+			return err
 		}
 
-		for i := range payload {
-			if err = apiclient.WriteByteArrayToFile(fileName+"_"+strconv.Itoa(i)+".json", false, payload[i]); err != nil {
+		for _, mapName := range listKVM {
+			if payload, err = kvm.ExportEntries(proxyName, mapName); err != nil {
 				return
 			}
+
+			if env != "" {
+				fileName = strings.Join([]string{"env", env, mapName, "kvmfile"}, "_")
+			} else if proxyName != "" {
+				fileName = strings.Join([]string{"proxy", proxyName, mapName, "kvmfile"}, "_")
+			} else {
+				fileName = strings.Join([]string{"org", mapName, "kvmfile"}, "_")
+			}
+
+			for i := range payload {
+				if err = apiclient.WriteByteArrayToFile(fileName+"_"+strconv.Itoa(i)+".json", false, payload[i]); err != nil {
+					return
+				}
+			}
 		}
+		apiclient.SetPrintOutput(false)
+		fmt.Println("KVMs exports successfully")
 		return
 	},
 }
 
 func init() {
-	ExpEntryCmd.Flags().StringVarP(&mapName, "map", "m",
-		"", "KV Map Name")
-	ExpEntryCmd.Flags().StringVarP(&env, "env", "e",
+	ExpCmd.Flags().StringVarP(&env, "env", "e",
 		"", "Environment name")
-	ExpEntryCmd.Flags().StringVarP(&proxyName, "proxy", "p",
+	ExpCmd.Flags().StringVarP(&proxyName, "proxy", "p",
 		"", "API Proxy name")
-
-	_ = ExpEntryCmd.MarkFlagRequired("map")
 }

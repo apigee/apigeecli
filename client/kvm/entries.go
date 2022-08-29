@@ -37,7 +37,7 @@ type keyvalueentries struct {
 	NextPageToken   string          `json:"nextPageToken,omitempty"`
 }
 
-//CreateEntry
+// CreateEntry
 func CreateEntry(proxyName string, mapName string, keyName string, value string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	if apiclient.GetApigeeEnv() != "" {
@@ -52,7 +52,7 @@ func CreateEntry(proxyName string, mapName string, keyName string, value string)
 	return respBody, err
 }
 
-//DeleteEntry
+// DeleteEntry
 func DeleteEntry(proxyName string, mapName string, keyName string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	if apiclient.GetApigeeEnv() != "" {
@@ -66,7 +66,7 @@ func DeleteEntry(proxyName string, mapName string, keyName string) (respBody []b
 	return respBody, err
 }
 
-//GetEntry
+// GetEntry
 func GetEntry(proxyName string, mapName string, keyName string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	if apiclient.GetApigeeEnv() != "" {
@@ -80,7 +80,7 @@ func GetEntry(proxyName string, mapName string, keyName string) (respBody []byte
 	return respBody, err
 }
 
-//ListEntries
+// ListEntries
 func ListEntries(proxyName string, mapName string, pageSize int, pageToken string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 
@@ -106,7 +106,7 @@ func ListEntries(proxyName string, mapName string, pageSize int, pageToken strin
 	return respBody, err
 }
 
-//ExportEntries
+// ExportEntries
 func ExportEntries(proxyName string, mapName string) (payload [][]byte, err error) {
 	var respBody []byte
 	count := 1
@@ -141,7 +141,7 @@ func ExportEntries(proxyName string, mapName string) (payload [][]byte, err erro
 	return payload, nil
 }
 
-//ImportEntries
+// ImportEntries
 func ImportEntries(proxyName string, mapName string, conn int, filePath string) (err error) {
 
 	var pwg sync.WaitGroup

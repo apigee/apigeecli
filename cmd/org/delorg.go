@@ -1,4 +1,4 @@
-// Copyright 2020 Google LLC
+// Copyright 2022 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,30 +12,34 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package kvm
+package org
 
 import (
+	"github.com/apigee/apigeecli/apiclient"
+	"github.com/apigee/apigeecli/client/orgs"
 	"github.com/spf13/cobra"
 )
 
-// Cmd to manage kvms
-var Cmd = &cobra.Command{
-	Use:   "kvms",
-	Short: "Manage Key Value Maps",
-	Long:  "Manage Key Value Maps",
+//DelCmd to get org details
+var DelCmd = &cobra.Command{
+	Use:   "delete",
+	Short: "Delete an Apigee Org",
+	Long:  "Delete an Apigee Org",
+	Args: func(cmd *cobra.Command, args []string) (err error) {
+		return apiclient.SetApigeeOrg(org)
+	},
+	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		_, err = orgs.Delete(retension)
+		return
+	},
 }
 
-var org, env, name, proxyName string
+var retension string
 
 func init() {
 
-	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
+	DelCmd.Flags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
-
-	Cmd.AddCommand(ListCmd)
-	Cmd.AddCommand(DelCmd)
-	Cmd.AddCommand(CreateCmd)
-	Cmd.AddCommand(ExpCmd)
-	Cmd.AddCommand(EntryCmd)
-	Cmd.AddCommand(ImpCmd)
+	DelCmd.Flags().StringVarP(&retension, "retension", "r",
+		"", "Retention period for soft-delete")
 }

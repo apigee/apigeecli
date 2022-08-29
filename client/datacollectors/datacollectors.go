@@ -88,6 +88,10 @@ func Import(filePath string) (err error) {
 		return err
 	}
 
+	if len(dCollectors.DataCollector) < 1 {
+		return nil
+	}
+
 	for _, dCollector := range dCollectors.DataCollector {
 		if _, err = Create(dCollector.Name, dCollector.Description, dCollector.Type); err != nil {
 			return err

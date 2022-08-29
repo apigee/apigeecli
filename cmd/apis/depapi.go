@@ -15,6 +15,10 @@
 package apis
 
 import (
+	"encoding/json"
+	"fmt"
+	"time"
+
 	"github.com/apigee/apigeecli/apiclient"
 	"github.com/apigee/apigeecli/client/apis"
 	"github.com/spf13/cobra"
@@ -24,7 +28,7 @@ import (
 var DepCmd = &cobra.Command{
 	Use:   "deploy",
 	Short: "Deploys a revision of an existing API proxy",
-	Long:  "Deploys a revision of an existing API proxy to an environment in an organization",
+	Long:  "Deploys a revision of an existing API proxy to an environment in an organization, optionally waits for deployment",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetApigeeEnv(env)
 		return apiclient.SetApigeeOrg(org)
@@ -36,12 +40,46 @@ var DepCmd = &cobra.Command{
 			}
 		}
 		_, err = apis.DeployProxy(name, revision, overrides, serviceAccountName)
+
+		if wait {
+			fmt.Printf("Checking deployment status in %d seconds\n", interval)
+
+			apiclient.SetPrintOutput(false)
+
+			stop := apiclient.Every(interval*time.Second, func(time.Time) bool {
+				var respBody []byte
+				respMap := make(map[string]interface{})
+				if respBody, err = apis.ListProxyRevisionDeployments(name, revision); err != nil {
+					return true
+				}
+
+				if err = json.Unmarshal(respBody, &respMap); err != nil {
+					return true
+				}
+
+				if respMap["state"] == "PROGRESSING" {
+					fmt.Printf("Proxy deployment status is: %s. Waiting %d seconds.\n", respMap["state"], interval)
+					return true
+				} else if respMap["state"] == "READY" {
+					fmt.Println("Proxy deployment completed with status: ", respMap["state"])
+					return false
+				} else {
+					fmt.Println("Proxy deployment failed with status: ", respMap["state"])
+					return false
+				}
+			})
+
+			<-stop
+		}
+
 		return
 	},
 }
 
-var overrides bool
+var overrides, wait bool
 var serviceAccountName string
+
+const interval = 10
 
 func init() {
 
@@ -53,6 +91,8 @@ func init() {
 		-1, "API Proxy revision. If not set, the highest revision is used")
 	DepCmd.Flags().BoolVarP(&overrides, "ovr", "r",
 		false, "Forces deployment of the new revision")
+	DepCmd.Flags().BoolVarP(&wait, "wait", "",
+		false, "Waits for the deployment to finish, with success or error")
 	DepCmd.Flags().StringVarP(&serviceAccountName, "sa", "s",
 		"", "The format must be {ACCOUNT_ID}@{PROJECT}.iam.gserviceaccount.com.")
 

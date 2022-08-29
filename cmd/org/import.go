@@ -27,12 +27,14 @@ import (
 	"github.com/apigee/apigeecli/apiclient"
 	"github.com/apigee/apigeecli/client/apis"
 	"github.com/apigee/apigeecli/client/apps"
+	"github.com/apigee/apigeecli/client/datacollectors"
 	"github.com/apigee/apigeecli/client/developers"
 	"github.com/apigee/apigeecli/client/env"
 	"github.com/apigee/apigeecli/client/envgroups"
 	"github.com/apigee/apigeecli/client/keystores"
 	"github.com/apigee/apigeecli/client/kvm"
 	"github.com/apigee/apigeecli/client/products"
+	"github.com/apigee/apigeecli/client/references"
 	"github.com/apigee/apigeecli/client/sharedflows"
 	"github.com/apigee/apigeecli/client/targetservers"
 	"github.com/apigee/apigeecli/clilog"
@@ -49,7 +51,7 @@ var ImportCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 
-		var keystoreList, kvmList []string
+		var kvmList []string
 
 		clilog.Warning.Println("Calls to Apigee APIs have a quota of 6000 per min. Running this tool against large list of entities can exhaust that quota and impact the usage of the platform.")
 
@@ -110,6 +112,13 @@ var ImportCmd = &cobra.Command{
 			}
 		}
 
+		if isFileExists(path.Join(folder, dataCollFileName)) {
+			fmt.Println("Importing Data Collectors Configuration...")
+			if err = datacollectors.Import(path.Join(folder, dataCollFileName)); err != nil {
+				return err
+			}
+		}
+
 		apiclient.SetPrintOutput(false)
 
 		var envRespBody []byte
@@ -129,27 +138,29 @@ var ImportCmd = &cobra.Command{
 			fmt.Println("Importing configuration for environment " + environment)
 			apiclient.SetApigeeEnv(environment)
 
-			if isFileExists(path.Join(folder, keyStoresFileName)) {
-				fmt.Println("\tImporting Key stores...")
-				if keystoreList, err = readEntityFile(path.Join(folder, keyStoresFileName)); err != nil {
+			if isFileExists(path.Join(folder, environment+"_"+keyStoresFileName)) {
+				fmt.Println("\tImporting Keystore names...")
+				if err = keystores.Import(conn, path.Join(folder, environment+"_"+keyStoresFileName)); err != nil {
 					return err
-				}
-				for _, keystore := range keystoreList {
-					if _, err = keystores.Create(keystore); err != nil {
-						return err
-					}
 				}
 			}
 
-			if isFileExists(path.Join(folder, targetServerFileName)) {
+			if isFileExists(path.Join(folder, environment+"_"+targetServerFileName)) {
 				fmt.Println("\tImporting Target servers...")
-				if err = targetservers.Import(conn, path.Join(folder, targetServerFileName)); err != nil {
+				if err = targetservers.Import(conn, path.Join(folder, environment+"_"+targetServerFileName)); err != nil {
+					return err
+				}
+			}
+
+			if isFileExists(path.Join(folder, environment+"_"+referencesFileName)) {
+				fmt.Println("\tImporting References...")
+				if err = references.Import(conn, path.Join(folder, environment+"_"+referencesFileName)); err != nil {
 					return err
 				}
 			}
 
 			if isFileExists(path.Join(folder, kVMFileName)) {
-				fmt.Println("\tImporting KVM Names...")
+				fmt.Println("\tImporting KVM Names only...")
 				if kvmList, err = readEntityFile(path.Join(folder, environment+"_"+kVMFileName)); err != nil {
 					return err
 				}
