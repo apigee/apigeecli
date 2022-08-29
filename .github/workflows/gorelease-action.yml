@@ -1,0 +1,62 @@
+# Copyright 2022 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+name: apigeecli-release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+
+  goreleaser:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: 'Install upx'
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y upx
+          export GPG_TTY=$(tty)
+      
+      - name: Set up Go
+        uses: actions/setup-go@v3
+
+      - name: Import GPG key
+        id: import_gpg
+        uses: crazy-max/ghaction-import-gpg@v5
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.PASSPHRASE }}
+
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v3
+        with:
+          distribution: goreleaser
+          version: latest
+          args: release --rm-dist
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+          GPG_FINGERPRINT: ${{ secrets.FINGERPRINT }}
+
+      - name: Upload assets
+        uses: actions/upload-artifact@v3
+        with:
+          name: apigeecli
+          path: dist/*
