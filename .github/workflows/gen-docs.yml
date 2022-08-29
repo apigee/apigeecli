@@ -26,8 +26,6 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
-        with:
-          ref: gh-pages
       - name: Push GH Pages
         run: |
           go run docs/docs.go
