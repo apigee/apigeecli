@@ -26,22 +26,22 @@ jobs:
   goreleaser:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v3
         with:
-          fetch-depth: 0
+          go-version: '>=1.18.0'
+          check-latest: true
+          
+      - name: Reviewdog Lint
+        uses: reviewdog/action-golangci-lint@v1
+        with:
+          reporter: github-check          
 
       - name: 'Install upx'
         run: |
           sudo apt-get update -y
           sudo apt-get install -y upx
           export GPG_TTY=$(tty)
-      
-      - name: Set up Go
-        uses: actions/setup-go@v3
-        with:
-          go-version: '>=1.18.0'
-          check-latest: true
 
       - name: Import GPG key
         id: import_gpg
