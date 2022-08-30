@@ -8,7 +8,9 @@ name: Docker
 on:
   push:
     # Publish semver tags as releases.
-    tags: [ 'v*.*' ]
+    tags:        
+      - v1.[0-9]+
+      - v1.[0-9]+.beta[0-9]
 
 env:
   # Use docker.io for Docker Hub if empty
