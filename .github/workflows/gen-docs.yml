@@ -21,7 +21,7 @@ on:
 
 jobs:      
   publish-gh-pages:
-    name: DevRel Workflow Checks
+    name: Publish apigeecli Documentation
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
