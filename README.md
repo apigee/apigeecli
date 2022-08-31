@@ -47,6 +47,15 @@ gpg:          There is no indication that the signature belongs to the owner.
 Primary key fingerprint: 72D1 1E3A 3B1E 9FE2 2110  EC45 A714 872F 32F3 4390
 ```
 
+### Container download
+The lastest container version for apigeecli can be downloaded via
+
+```sh
+docker pull ghcr.io/apigee/apigeecli:latest
+```
+
+See this [page](https://github.com/apigee/apigeecli/pkgs/container/apigeecli) for other versions.
+
 ## What you need to know about apigeecli
 
 You must have an account on [Apigee](https://cloud.google.com/apigee/docs) to perform any `apigeecli` functions. These functions include: proxies, API Products, Environments, Org details etc.
