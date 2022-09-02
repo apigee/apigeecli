@@ -20,7 +20,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//ImpCmd to import api bundles
+// ImpCmd to import api bundles
 var ImpCmd = &cobra.Command{
 	Use:   "import",
 	Short: "Import a folder containing API proxy bundles",
@@ -38,7 +38,7 @@ var folder string
 func init() {
 
 	ImpCmd.Flags().StringVarP(&folder, "folder", "f",
-		"", "folder containing API proxy bundles")
+		"", "folder containing one or more API proxy bundles in a zip format.")
 	ImpCmd.Flags().IntVarP(&conn, "conn", "c",
 		4, "Number of connections")
 

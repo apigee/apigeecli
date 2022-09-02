@@ -37,17 +37,12 @@ if [ "${TARGET_ARCH}" ]; then
 fi
 
 case "${LOCAL_ARCH}" in
-  x86_64)
+  x86_64|amd64|arm64)
     APIGEECLI_ARCH=x86_64
     ;;
-  armv8*)
+  armv8*|aarch64*)
     APIGEECLI_ARCH=arm64
     ;;
-  aarch64*)
-    APIGEECLI_ARCH=arm64
-    ;;
-  arm64)
-    APIGEECLI_ARCH=x86_64    
   *)
     echo "This system's architecture, ${LOCAL_ARCH}, isn't supported"
     exit 1

@@ -38,7 +38,7 @@ type proxy struct {
 	Revision []string `json:"revision,omitempty"`
 }
 
-//CreateProxy
+// CreateProxy
 func CreateProxy(name string, proxy string) (respBody []byte, err error) {
 	if proxy != "" {
 		err = apiclient.ImportBundle("apis", name, proxy)
@@ -51,7 +51,7 @@ func CreateProxy(name string, proxy string) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//DeleteProxy
+// DeleteProxy
 func DeleteProxy(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apis", name)
@@ -59,7 +59,7 @@ func DeleteProxy(name string) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//DeleteProxyRevision
+// DeleteProxyRevision
 func DeleteProxyRevision(name string, revision int) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apis", name, "revisions", strconv.Itoa(revision))
@@ -67,7 +67,7 @@ func DeleteProxyRevision(name string, revision int) (respBody []byte, err error)
 	return respBody, err
 }
 
-//DeployProxy
+// DeployProxy
 func DeployProxy(name string, revision int, overrides bool, serviceAccountName string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 
@@ -88,12 +88,12 @@ func DeployProxy(name string, revision int, overrides bool, serviceAccountName s
 	return respBody, err
 }
 
-//FetchProxy
+// FetchProxy
 func FetchProxy(name string, revision int) (err error) {
 	return apiclient.FetchBundle("apis", "", name, strconv.Itoa(revision), true)
 }
 
-//GetProxy
+// GetProxy
 func GetProxy(name string, revision int) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	if revision != -1 {
@@ -105,7 +105,7 @@ func GetProxy(name string, revision int) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//GetHighestProxyRevision
+// GetHighestProxyRevision
 func GetHighestProxyRevision(name string) (version int, err error) {
 	apiclient.SetPrintOutput(false)
 	u, _ := url.Parse(apiclient.BaseURL)
@@ -127,7 +127,7 @@ func GetHighestProxyRevision(name string) (version int, err error) {
 	return version, nil
 }
 
-//GenerateDeployChangeReport
+// GenerateDeployChangeReport
 func GenerateDeployChangeReport(name string, revision int, overrides bool) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	if apiclient.GetApigeeEnv() == "" {
@@ -148,7 +148,7 @@ func GenerateDeployChangeReport(name string, revision int, overrides bool) (resp
 	return respBody, err
 }
 
-//ListProxies
+// ListProxies
 func ListProxies(includeRevisions bool) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	if includeRevisions {
@@ -161,7 +161,7 @@ func ListProxies(includeRevisions bool) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//ListEnvDeployments
+// ListEnvDeployments
 func ListEnvDeployments() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	if apiclient.GetApigeeEnv() == "" {
@@ -172,7 +172,7 @@ func ListEnvDeployments() (respBody []byte, err error) {
 	return respBody, err
 }
 
-//ListProxyDeployments
+// ListProxyDeployments
 func ListProxyDeployments(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apis", name, "deployments")
@@ -180,7 +180,7 @@ func ListProxyDeployments(name string) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//ListProxyRevisionDeployments
+// ListProxyRevisionDeployments
 func ListProxyRevisionDeployments(name string, revision int) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	if apiclient.GetApigeeEnv() == "" {
@@ -192,7 +192,7 @@ func ListProxyRevisionDeployments(name string, revision int) (respBody []byte, e
 	return respBody, err
 }
 
-//Undeployproxy
+// Undeployproxy
 func UndeployProxy(name string, revision int) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(),
@@ -201,7 +201,7 @@ func UndeployProxy(name string, revision int) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//Update
+// Update
 func Update(name string, labels map[string]string) (respBody []byte, err error) {
 
 	if len(labels) != 0 {
@@ -224,7 +224,7 @@ func Update(name string, labels map[string]string) (respBody []byte, err error) 
 	return respBody, err
 }
 
-//CleanProxy
+// CleanProxy
 func CleanProxy(name string, reportOnly bool, keepList []string) (err error) {
 
 	type deploymentsDef struct {
@@ -328,7 +328,7 @@ func CleanProxy(name string, reportOnly bool, keepList []string) (err error) {
 	return nil
 }
 
-//ExportProxies
+// ExportProxies
 func ExportProxies(conn int, folder string, allRevisions bool) (err error) {
 	//parent workgroup
 	var pwg sync.WaitGroup
@@ -384,7 +384,7 @@ func ExportProxies(conn int, folder string, allRevisions bool) (err error) {
 	return nil
 }
 
-//ImportProxies
+// ImportProxies
 func ImportProxies(conn int, folder string) error {
 
 	var pwg sync.WaitGroup
@@ -392,8 +392,7 @@ func ImportProxies(conn int, folder string) error {
 
 	err := filepath.Walk(folder, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
-			clilog.Warning.Println("proxies folder not found")
-			return nil
+			return err
 		}
 		if info.IsDir() {
 			return nil
@@ -407,6 +406,11 @@ func ImportProxies(conn int, folder string) error {
 
 	if err != nil {
 		return err
+	}
+
+	if len(entities) == 0 {
+		clilog.Warning.Println("No proxy bundle zip files were found in the folder")
+		return nil
 	}
 
 	numEntities := len(entities)
@@ -510,7 +514,7 @@ func batchExportRevisions(entityType string, folder string, name string, revisio
 	brwg.Wait()
 }
 
-//batch creates a batch of proxies to import
+// batch creates a batch of proxies to import
 func batchImport(entities []string, pwg *sync.WaitGroup) {
 
 	defer pwg.Done()
