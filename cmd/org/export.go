@@ -79,7 +79,9 @@ var ExportCmd = &cobra.Command{
 			return err
 		}
 
-		fmt.Printf("\tExporting KV Map names for org %s\n", org)
+		apiclient.SetPrintOutput(false)
+
+		fmt.Printf("Exporting KV Map names for org %s\n", org)
 		if listKVMBytes, err = kvm.List(""); proceedOnError(err) != nil {
 			return err
 		}
@@ -107,8 +109,9 @@ var ExportCmd = &cobra.Command{
 			return err
 		}
 
-		fmt.Println("Exporting Environment Group Configuration...")
 		apiclient.SetPrintOutput(false)
+
+		fmt.Println("Exporting Environment Group Configuration...")
 		if respBody, err = envgroups.List(); proceedOnError(err) != nil {
 			return err
 		}
@@ -148,7 +151,7 @@ var ExportCmd = &cobra.Command{
 		for _, environment := range environments {
 			fmt.Println("Exporting configuration for environment " + environment)
 			apiclient.SetApigeeEnv(environment)
-			apiclient.SetPrintOutput(false)
+
 			fmt.Println("\tExporting Target servers...")
 			if targetServerResponse, err = targetservers.Export(conn); proceedOnError(err) != nil {
 				return err
@@ -168,6 +171,8 @@ var ExportCmd = &cobra.Command{
 			if err = exportKVMEntries("env", environment, listKVMBytes); proceedOnError(err) != nil {
 				return err
 			}
+
+			apiclient.SetPrintOutput(false)
 
 			fmt.Println("\tExporting Key store names...")
 			if respBody, err = keystores.List(); proceedOnError(err) != nil {
