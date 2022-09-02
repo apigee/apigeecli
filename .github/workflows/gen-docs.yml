@@ -17,7 +17,9 @@ name: apigeecli Github Pages Pipeline
 
 on:
   push:
-    branches: [ "master" ]    
+    # Publish semver tags as releases.
+    tags:        
+      - v1.[0-9]+  
 
 jobs:      
   publish-gh-pages:
