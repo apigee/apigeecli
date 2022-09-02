@@ -83,7 +83,7 @@ var ExportCmd = &cobra.Command{
 		if listKVMBytes, err = kvm.List(""); proceedOnError(err) != nil {
 			return err
 		}
-		if err = apiclient.WriteByteArrayToFile(org+"_"+kVMFileName, false, respBody); proceedOnError(err) != nil {
+		if err = apiclient.WriteByteArrayToFile(org+"_"+kVMFileName, false, listKVMBytes); proceedOnError(err) != nil {
 			return err
 		}
 
@@ -148,6 +148,7 @@ var ExportCmd = &cobra.Command{
 		for _, environment := range environments {
 			fmt.Println("Exporting configuration for environment " + environment)
 			apiclient.SetApigeeEnv(environment)
+			apiclient.SetPrintOutput(false)
 			fmt.Println("\tExporting Target servers...")
 			if targetServerResponse, err = targetservers.Export(conn); proceedOnError(err) != nil {
 				return err
@@ -160,7 +161,7 @@ var ExportCmd = &cobra.Command{
 			if listKVMBytes, err = kvm.List(""); err != nil {
 				return err
 			}
-			if err = apiclient.WriteByteArrayToFile(environment+"_"+kVMFileName, false, respBody); proceedOnError(err) != nil {
+			if err = apiclient.WriteByteArrayToFile(environment+"_"+kVMFileName, false, listKVMBytes); proceedOnError(err) != nil {
 				return err
 			}
 
