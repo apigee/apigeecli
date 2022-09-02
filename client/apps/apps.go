@@ -70,13 +70,13 @@ type importCredential struct {
 	Scopes         []string `json:"scopes,omitempty"`
 }
 
-//attribute to used to hold custom attributes for entities
+// attribute to used to hold custom attributes for entities
 type attribute struct {
 	Name  string `json:"name,omitempty"`
 	Value string `json:"value,omitempty"`
 }
 
-//Create
+// Create
 func Create(name string, email string, expires string, callback string, apiProducts []string, scopes []string, attrs map[string]string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 
@@ -115,7 +115,7 @@ func Create(name string, email string, expires string, callback string, apiProdu
 	return respBody, err
 }
 
-//Delete
+// Delete
 func Delete(name string, developerID string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", developerID, "apps", name)
@@ -123,7 +123,7 @@ func Delete(name string, developerID string) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//Get
+// Get
 func Get(appID string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apps", appID)
@@ -131,7 +131,7 @@ func Get(appID string) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//Manage
+// Manage
 func Manage(appID string, developerEmail string, action string) (respBody []byte, err error) {
 	if action != "revoke" && action != "approve" {
 		return nil, fmt.Errorf("invalid action. action must be revoke or approve")
@@ -147,7 +147,7 @@ func Manage(appID string, developerEmail string, action string) (respBody []byte
 	return respBody, err
 }
 
-//SearchApp
+// SearchApp
 func SearchApp(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	//search by name is not implemented; use list and return the appropriate app
@@ -170,7 +170,7 @@ func SearchApp(name string) (respBody []byte, err error) {
 	return outBytes, nil
 }
 
-//List
+// List
 func List(includeCred bool, expand bool, count int) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apps")
@@ -193,7 +193,7 @@ func List(includeCred bool, expand bool, count int) (respBody []byte, err error)
 	return respBody, err
 }
 
-//ListApps
+// ListApps
 func ListApps(productName string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apps")
@@ -204,7 +204,7 @@ func ListApps(productName string) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//GenerateKey
+// GenerateKey
 func GenerateKey(name string, developerID string, apiProducts []string, callback string, expires string, scopes []string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 
@@ -231,7 +231,7 @@ func GenerateKey(name string, developerID string, apiProducts []string, callback
 	return respBody, err
 }
 
-//Export
+// Export
 func Export(conn int) (payload [][]byte, err error) {
 	//parent workgroup
 	var pwg sync.WaitGroup
@@ -286,7 +286,7 @@ func Export(conn int) (payload [][]byte, err error) {
 	return payload, nil
 }
 
-//Import
+// Import
 func Import(conn int, filePath string, developersFilePath string) error {
 	var pwg sync.WaitGroup
 
@@ -358,7 +358,7 @@ func readAppsFile(filePath string, developersFilePath string) ([]application, de
 	return apps, devs, nil
 }
 
-//batch created a batch of apps to query
+// batch created a batch of apps to query
 func batchExport(entities []app, entityType string, pwg *sync.WaitGroup, mu *sync.Mutex) {
 
 	defer pwg.Done()
@@ -375,7 +375,7 @@ func batchExport(entities []app, entityType string, pwg *sync.WaitGroup, mu *syn
 	bwg.Wait()
 }
 
-//batch creates a batch of apps to create
+// batch creates a batch of apps to create
 func batchImport(entities []application, developerEntities developers.Appdevelopers, pwg *sync.WaitGroup) {
 
 	defer pwg.Done()
@@ -397,6 +397,10 @@ func createAsyncApp(app application, developerEntities developers.Appdevelopers,
 	//1. create the app without the credential
 	//2. create/import the credential
 	u, _ := url.Parse(apiclient.BaseURL)
+	if app.DeveloperID == nil {
+		clilog.Error.Println("developer id was not found")
+		return
+	}
 	//store the developer and the credential
 	developerEmail, developerID, err := getNewDeveloperId(*app.DeveloperID, developerEntities) //*app.DeveloperID
 	if err != nil {
@@ -506,11 +510,14 @@ func getArrayStr(str []string) string {
 }
 
 func getNewDeveloperId(oldDeveloperId string, developerEntities developers.Appdevelopers) (developerEmail string, newDeveloperId string, err error) {
+	if oldDeveloperId == "" {
+		return "", "", fmt.Errorf("developer id is null")
+	}
 	for _, developer := range developerEntities.Developer {
 		if oldDeveloperId == developer.DeveloperId {
 			newDeveloperId, err = developers.GetDeveloperId(developer.EMail)
 			return developer.EMail, newDeveloperId, err
 		}
 	}
-	return "", "", fmt.Errorf("Developer not imported into Apigee")
+	return "", "", fmt.Errorf("developer not imported into Apigee")
 }
