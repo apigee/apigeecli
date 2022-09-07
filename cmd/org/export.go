@@ -83,7 +83,7 @@ var ExportCmd = &cobra.Command{
 		if listKVMBytes, err = kvm.List(""); proceedOnError(err) != nil {
 			return err
 		}
-		if err = apiclient.WriteByteArrayToFile(org+"_"+kVMFileName, false, listKVMBytes); proceedOnError(err) != nil {
+		if err = apiclient.WriteByteArrayToFile("org_"+org+"_"+kVMFileName, false, listKVMBytes); proceedOnError(err) != nil {
 			return err
 		}
 
@@ -161,7 +161,7 @@ var ExportCmd = &cobra.Command{
 			if listKVMBytes, err = kvm.List(""); err != nil {
 				return err
 			}
-			if err = apiclient.WriteByteArrayToFile(environment+"_"+kVMFileName, false, listKVMBytes); proceedOnError(err) != nil {
+			if err = apiclient.WriteByteArrayToFile("env_"+environment+"_"+kVMFileName, false, listKVMBytes); proceedOnError(err) != nil {
 				return err
 			}
 
