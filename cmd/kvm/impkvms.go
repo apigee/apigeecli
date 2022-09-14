@@ -39,6 +39,8 @@ var ImpCmd = &cobra.Command{
 
 		var kvmList []string
 
+		apiclient.SetPrintOutput(false)
+
 		orgKVMFileList, envKVMFileList, proxyKVMFileList, err := utils.ListKVMFiles(folder)
 		if err != nil {
 			return err
