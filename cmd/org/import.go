@@ -20,9 +20,6 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
-	"path/filepath"
-	"regexp"
-	"strings"
 
 	"github.com/apigee/apigeecli/apiclient"
 	"github.com/apigee/apigeecli/client/apis"
@@ -38,10 +35,11 @@ import (
 	"github.com/apigee/apigeecli/client/sharedflows"
 	"github.com/apigee/apigeecli/client/targetservers"
 	"github.com/apigee/apigeecli/clilog"
+	"github.com/apigee/apigeecli/cmd/utils"
 	"github.com/spf13/cobra"
 )
 
-//ImportCmd to get org details
+// ImportCmd to get org details
 var ImportCmd = &cobra.Command{
 	Use:   "import",
 	Short: "Import Apigee Configuration",
@@ -66,11 +64,11 @@ var ImportCmd = &cobra.Command{
 		}
 
 		fmt.Println("Check for files with KVM Entries")
-		orgKVMFileList, envKVMFileList, _, _ := listKVMFiles()
+		orgKVMFileList, envKVMFileList, _, _ := utils.ListKVMFiles(folder)
 
-		if isFileExists(path.Join(folder, org+"_"+kVMFileName)) {
+		if utils.FileExists(path.Join(folder, "org_"+org+"_"+kVMFileName)) {
 			fmt.Println("Importing Org scoped KVMs...")
-			if kvmList, err = readEntityFile(path.Join(folder, org+"_"+kVMFileName)); err != nil {
+			if kvmList, err = utils.ReadEntityFile(path.Join(folder, "org_"+org+"_"+kVMFileName)); err != nil {
 				return err
 			}
 			for _, kvmName := range kvmList {
@@ -86,14 +84,14 @@ var ImportCmd = &cobra.Command{
 			}
 		}
 
-		if isFileExists(path.Join(folder, productsFileName)) {
+		if utils.FileExists(path.Join(folder, productsFileName)) {
 			fmt.Println("Importing Products...")
 			if err = products.Import(conn, path.Join(folder, productsFileName), false); err != nil {
 				return err
 			}
 		}
 
-		if isFileExists(path.Join(folder, developersFileName)) {
+		if utils.FileExists(path.Join(folder, developersFileName)) {
 			fmt.Println("Importing Developers...")
 			if err = developers.Import(conn, path.Join(folder, developersFileName)); err != nil {
 				return err
@@ -105,14 +103,14 @@ var ImportCmd = &cobra.Command{
 			}
 		}
 
-		if isFileExists(path.Join(folder, envGroupsFileName)) {
+		if utils.FileExists(path.Join(folder, envGroupsFileName)) {
 			fmt.Println("Importing Environment Group Configuration...")
 			if err = envgroups.Import(path.Join(folder, envGroupsFileName)); err != nil {
 				return err
 			}
 		}
 
-		if isFileExists(path.Join(folder, dataCollFileName)) {
+		if utils.FileExists(path.Join(folder, dataCollFileName)) {
 			fmt.Println("Importing Data Collectors Configuration...")
 			if err = datacollectors.Import(path.Join(folder, dataCollFileName)); err != nil {
 				return err
@@ -138,30 +136,30 @@ var ImportCmd = &cobra.Command{
 			fmt.Println("Importing configuration for environment " + environment)
 			apiclient.SetApigeeEnv(environment)
 
-			if isFileExists(path.Join(folder, environment+"_"+keyStoresFileName)) {
+			if utils.FileExists(path.Join(folder, environment+"_"+keyStoresFileName)) {
 				fmt.Println("\tImporting Keystore names...")
 				if err = keystores.Import(conn, path.Join(folder, environment+"_"+keyStoresFileName)); err != nil {
 					return err
 				}
 			}
 
-			if isFileExists(path.Join(folder, environment+"_"+targetServerFileName)) {
+			if utils.FileExists(path.Join(folder, environment+"_"+targetServerFileName)) {
 				fmt.Println("\tImporting Target servers...")
 				if err = targetservers.Import(conn, path.Join(folder, environment+"_"+targetServerFileName)); err != nil {
 					return err
 				}
 			}
 
-			if isFileExists(path.Join(folder, environment+"_"+referencesFileName)) {
+			if utils.FileExists(path.Join(folder, environment+"_"+referencesFileName)) {
 				fmt.Println("\tImporting References...")
 				if err = references.Import(conn, path.Join(folder, environment+"_"+referencesFileName)); err != nil {
 					return err
 				}
 			}
 
-			if isFileExists(path.Join(folder, kVMFileName)) {
+			if utils.FileExists(path.Join(folder, "env_"+environment+"_"+kVMFileName)) {
 				fmt.Println("\tImporting KVM Names only...")
-				if kvmList, err = readEntityFile(path.Join(folder, environment+"_"+kVMFileName)); err != nil {
+				if kvmList, err = utils.ReadEntityFile(path.Join(folder, "env_"+environment+"_"+kVMFileName)); err != nil {
 					return err
 				}
 				for _, kvmName := range kvmList {
@@ -178,7 +176,7 @@ var ImportCmd = &cobra.Command{
 			}
 
 			if importDebugmask {
-				if isFileExists(path.Join(folder, environment+debugmaskFileName)) {
+				if utils.FileExists(path.Join(folder, environment+debugmaskFileName)) {
 					fmt.Println("\tImporting Debug Mask configuration...")
 					debugMask, _ := readEntityFileAsString(path.Join(folder, environment+debugmaskFileName))
 					if _, err = env.SetDebug(debugMask); err != nil {
@@ -188,7 +186,7 @@ var ImportCmd = &cobra.Command{
 			}
 
 			if importTrace {
-				if isFileExists(path.Join(folder, environment+tracecfgFileName)) {
+				if utils.FileExists(path.Join(folder, environment+tracecfgFileName)) {
 					fmt.Println("\tImporting Trace configuration...")
 					traceCfg, _ := readEntityFileAsString(path.Join(folder, environment+tracecfgFileName))
 					if _, err = env.ImportTraceConfig(traceCfg); err != nil {
@@ -221,36 +219,6 @@ func init() {
 	_ = ImportCmd.MarkFlagRequired("folder")
 }
 
-func isFileExists(filePath string) bool {
-	if _, err := os.Stat(filePath); os.IsNotExist(err) {
-		return false
-	}
-	return true
-}
-
-func readEntityFile(filePath string) ([]string, error) {
-
-	entities := []string{}
-
-	jsonFile, err := os.Open(filePath)
-	if err != nil {
-		return entities, err
-	}
-
-	defer jsonFile.Close()
-
-	byteValue, err := ioutil.ReadAll(jsonFile)
-	if err != nil {
-		return entities, err
-	}
-
-	if err = json.Unmarshal(byteValue, &entities); err != nil {
-		return entities, err
-	}
-
-	return entities, nil
-}
-
 func readEntityFileAsString(filePath string) (string, error) {
 	jsonFile, err := os.Open(filePath)
 	if err != nil {
@@ -265,44 +233,4 @@ func readEntityFileAsString(filePath string) (string, error) {
 	}
 
 	return string(byteValue[:]), nil
-}
-
-func listKVMFiles() (orgKVMFileList map[string]string, envKVMFileList map[string]string, proxyKVMFileList map[string]string, err error) {
-
-	orgKVMFileList = map[string]string{}
-	envKVMFileList = map[string]string{}
-	proxyKVMFileList = map[string]string{}
-
-	renv := regexp.MustCompile(`env_(\S*)_kvmfile_[0-9]+\.json`)
-	rorg := regexp.MustCompile(`org_(\S*)_kvmfile_[0-9]+\.json`)
-	rproxy := regexp.MustCompile(`proxy_(\S*)_kvmfile_[0-9]+\.json`)
-
-	err = filepath.Walk(folder, func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			return err
-		}
-		if !info.IsDir() {
-			if renv.MatchString(filepath.Base(path)) {
-				envKVMFileSplit := strings.Split(path, "_")
-				if len(envKVMFileSplit) > 2 {
-					fmt.Printf("Map name %s, path %s\n", envKVMFileSplit[2], path)
-					envKVMFileList[envKVMFileSplit[2]] = path
-				}
-			} else if rproxy.MatchString(filepath.Base(path)) {
-				proxyKVMFileSplit := strings.Split(path, "_")
-				if len(proxyKVMFileSplit) > 2 {
-					fmt.Printf("Map name %s, path %s\n", proxyKVMFileSplit[2], path)
-					proxyKVMFileList[proxyKVMFileSplit[2]] = path
-				}
-			} else if rorg.MatchString(filepath.Base(path)) {
-				orgKVMFileSplit := strings.Split(path, "_")
-				if len(orgKVMFileSplit) > 1 {
-					fmt.Printf("Map name %s, path %s\n", orgKVMFileSplit[1], path)
-					orgKVMFileList[orgKVMFileSplit[1]] = path
-				}
-			}
-		}
-		return nil
-	})
-	return orgKVMFileList, envKVMFileList, proxyKVMFileList, err
 }
