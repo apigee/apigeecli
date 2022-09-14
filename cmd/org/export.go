@@ -18,6 +18,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"path"
 	"strconv"
 	"strings"
 
@@ -55,6 +56,12 @@ var ExportCmd = &cobra.Command{
 
 		runtimeType, _ := orgs.GetOrgField("runtimeType")
 
+		if cleanPath {
+			if err = cleanExportData(); err != nil {
+				return err
+			}
+		}
+
 		if err = createFolders(); proceedOnError(err) != nil {
 			return err
 		}
@@ -87,8 +94,10 @@ var ExportCmd = &cobra.Command{
 			return err
 		}
 
-		if err = exportKVMEntries("org", "", listKVMBytes); proceedOnError(err) != nil {
-			return err
+		if exportEntries {
+			if err = exportKVMEntries("org", "", listKVMBytes); proceedOnError(err) != nil {
+				return err
+			}
 		}
 
 		fmt.Println("Exporting Developers...")
@@ -165,8 +174,10 @@ var ExportCmd = &cobra.Command{
 				return err
 			}
 
-			if err = exportKVMEntries("env", environment, listKVMBytes); proceedOnError(err) != nil {
-				return err
+			if exportEntries {
+				if err = exportKVMEntries("env", environment, listKVMBytes); proceedOnError(err) != nil {
+					return err
+				}
 			}
 
 			fmt.Println("\tExporting Key store names...")
@@ -207,7 +218,7 @@ var ExportCmd = &cobra.Command{
 	},
 }
 
-var allRevisions, continueOnErr bool
+var allRevisions, continueOnErr, cleanPath, exportEntries bool
 
 func init() {
 
@@ -215,7 +226,12 @@ func init() {
 		"", "Apigee organization name")
 	ExportCmd.Flags().IntVarP(&conn, "conn", "c",
 		4, "Number of connections")
-
+	/*ExportCmd.Flags().StringVarP(&folder, "folder", "f",
+	"", "Folder to export org data")*/
+	ExportCmd.Flags().BoolVarP(&exportEntries, "exportEntries", "",
+		true, "Export all KVM entries")
+	ExportCmd.Flags().BoolVarP(&cleanPath, "clean", "",
+		false, "clean folder or files and directories before export")
 	ExportCmd.Flags().BoolVarP(&allRevisions, "all", "",
 		false, "Export all revisions, default=false. Exports the latest revision")
 	ExportCmd.Flags().BoolVarP(&continueOnErr, "continueOnError", "",
@@ -272,4 +288,33 @@ func proceedOnError(e error) error {
 		return nil
 	}
 	return e
+}
+
+func cleanExportData() (err error) {
+	if err = os.RemoveAll(path.Join(folder, "proxies")); err != nil {
+		return err
+	}
+	if err = os.RemoveAll(path.Join(folder, "sharedflows")); err != nil {
+		return err
+	}
+	if err = os.Remove(path.Join(folder, productsFileName)); err != nil {
+		return err
+	}
+	if err = os.Remove(path.Join(folder, developersFileName)); err != nil {
+		return err
+	}
+	if err = os.Remove(path.Join(folder, appsFileName)); err != nil {
+		return err
+	}
+	if err = os.Remove(path.Join(folder, "*"+targetServerFileName)); err != nil {
+		return err
+	}
+	if err = os.Remove(path.Join(folder, "*"+envGroupsFileName)); err != nil {
+		return err
+	}
+	if err = os.Remove(path.Join(folder, "*"+dataCollFileName)); err != nil {
+		return err
+	}
+
+	return nil
 }
