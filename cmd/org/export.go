@@ -86,11 +86,13 @@ var ExportCmd = &cobra.Command{
 			return err
 		}
 
-		fmt.Printf("\tExporting KV Map names for org %s\n", org)
+		apiclient.SetPrintOutput(false)
+
+		fmt.Printf("Exporting KV Map names for org %s\n", org)
 		if listKVMBytes, err = kvm.List(""); proceedOnError(err) != nil {
 			return err
 		}
-		if err = apiclient.WriteByteArrayToFile("org_"+org+"_"+kVMFileName, false, listKVMBytes); proceedOnError(err) != nil {
+		if err = apiclient.WriteByteArrayToFile(org+"_"+kVMFileName, false, listKVMBytes); proceedOnError(err) != nil {
 			return err
 		}
 
@@ -116,8 +118,9 @@ var ExportCmd = &cobra.Command{
 			return err
 		}
 
-		fmt.Println("Exporting Environment Group Configuration...")
 		apiclient.SetPrintOutput(false)
+
+		fmt.Println("Exporting Environment Group Configuration...")
 		if respBody, err = envgroups.List(); proceedOnError(err) != nil {
 			return err
 		}
@@ -170,7 +173,7 @@ var ExportCmd = &cobra.Command{
 			if listKVMBytes, err = kvm.List(""); err != nil {
 				return err
 			}
-			if err = apiclient.WriteByteArrayToFile("env_"+environment+"_"+kVMFileName, false, listKVMBytes); proceedOnError(err) != nil {
+			if err = apiclient.WriteByteArrayToFile(environment+"_"+kVMFileName, false, listKVMBytes); proceedOnError(err) != nil {
 				return err
 			}
 
@@ -179,6 +182,8 @@ var ExportCmd = &cobra.Command{
 					return err
 				}
 			}
+
+			apiclient.SetPrintOutput(false)
 
 			fmt.Println("\tExporting Key store names...")
 			if respBody, err = keystores.List(); proceedOnError(err) != nil {
