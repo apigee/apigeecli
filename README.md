@@ -19,7 +19,7 @@ NOTE: Supported platforms are:
 Run this script to download & install the latest version (on Linux or Darwin)
 
 ```sh
-curl -L https://raw.githubusercontent.com/apigee/apigeecli/master/downloadLatest.sh | sh -
+curl -L https://raw.githubusercontent.com/apigee/apigeecli/main/downloadLatest.sh | sh -
 ```
 
 NOTE: The signature is not verified and the original zip is not preserved.
