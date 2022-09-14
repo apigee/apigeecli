@@ -20,23 +20,23 @@ import (
 )
 
 var oasPolicyTemplate = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<OASValidation continueOnError="false" enabled="true" name="OpenAPI-Spec-Validation-1">
-    <DisplayName>OpenAPI Spec Validation-1</DisplayName>
+<OASValidation continueOnError="false" enabled="true" name="OAS-Validation">
+    <DisplayName>OAS-Validation</DisplayName>
     <Properties/>
     <Source>request</Source>
     <OASResource>oas://{PolicyName}</OASResource>
 </OASValidation>`
 
 var verifyApiKeyPolicy = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<VerifyAPIKey async="false" continueOnError="false" enabled="true" name="Verify-API-Key-1">
-    <DisplayName>Verify-API-Key-1</DisplayName>
+<VerifyAPIKey async="false" continueOnError="false" enabled="true" name="Verify-API-Key">
+    <DisplayName>Verify-API-Key</DisplayName>
     <Properties/>
     <APIKey ref="request.queryparam.apikey"/>
 </VerifyAPIKey>`
 
 var oauth2Policy = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<OAuthV2 async="false" continueOnError="false" enabled="true" name="OAuth-v20-1">
-    <DisplayName>OAuth v2.0-1</DisplayName>
+<OAuthV2 async="false" continueOnError="false" enabled="true" name="OAuthv2-VerifyAccessToken">
+    <DisplayName>OAuthv2-VerifyAccessToken</DisplayName>
     <Properties/>
     <Attributes/>
     <ExternalAuthorization>false</ExternalAuthorization>
@@ -48,8 +48,8 @@ var oauth2Policy = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 </OAuthV2>`
 
 var corsPolicy = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<CORS async="false" continueOnError="false" enabled="true" name="Add-CORS">
-    <DisplayName>Add CORS</DisplayName>
+<CORS async="false" continueOnError="false" enabled="true" name="CORS-Add">
+    <DisplayName>CORS-Add</DisplayName>
     <AllowOrigins>{request.header.origin}</AllowOrigins>
     <AllowMethods>GET, PUT, POST, DELETE</AllowMethods>
     <AllowHeaders>origin, x-requested-with, accept, content-type</AllowHeaders>
@@ -61,8 +61,8 @@ var corsPolicy = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 </CORS>`
 
 var spikeArrestPolicy = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<SpikeArrest async="false" continueOnError="false" enabled="true" name="Spike-Arrest-1">    
-  <DisplayName>Spike-Arrest-1</DisplayName>
+<SpikeArrest async="false" continueOnError="false" enabled="true" name="Spike-Arrest">    
+  <DisplayName>Spike-Arrest</DisplayName>
   <Properties/>
   <Rate>1ps</Rate>
   <Identifier/>
@@ -71,8 +71,8 @@ var spikeArrestPolicy = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 `
 
 var quotaPolicy1 = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Quota async="false" continueOnError="false" enabled="true" type="calendar" name="Quota-1">
-    <DisplayName>Quota-1</DisplayName>
+<Quota async="false" continueOnError="false" enabled="true" type="calendar" name="Quota-PerIdentifier">
+    <DisplayName>Quota-PerIdentifier</DisplayName>
     <Identifier ref="quota.identifier"/>
     <Allow count="1000000000000"/>
     <Interval ref="quota.interval"/>
@@ -83,8 +83,8 @@ var quotaPolicy1 = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 `
 
 var quotaPolicy2 = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Quota async="false" continueOnError="false" enabled="true" type="calendar" name="Quota-1">
-    <DisplayName>Quota-1</DisplayName>
+<Quota async="false" continueOnError="false" enabled="true" type="calendar" name="Quota-ConfigInAPIProduct">
+    <DisplayName>Quota-ConfigInAPIProduct</DisplayName>
     <UseQuotaConfigInAPIProduct>step</UseQuotaConfigInAPIProduct>
     <Distributed>true</Distributed>
     <StartTime>2019-01-01 00:00:00</StartTime>
@@ -92,8 +92,9 @@ var quotaPolicy2 = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 `
 
 var graphQLPolicy = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<GraphQL async="false" continueOnError="false" enabled="true" name="Validate-name-Schema">
-    <Source>request</Source>
+<GraphQL async="false" continueOnError="false" enabled="true" name="GraphQL-Validate-name-Schema">
+	<DisplayName>GraphQL-Validate-name-Schema</DisplayName>
+	<Source>request</Source>
     <OperationType>query</OperationType>
     <MaxDepth>4</MaxDepth>
     <MaxCount>4</MaxCount>
@@ -102,8 +103,9 @@ var graphQLPolicy = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 </GraphQL>`
 
 var setTargetEndpointPolicy = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<AssignMessage async="false" continueOnError="false" enabled="true" name="Set-Target-1">
-    <AssignVariable>
+<AssignMessage async="false" continueOnError="false" enabled="true" name="AM-Set-Target">
+	<DisplayName>AM-Set-Target</DisplayName>
+	<AssignVariable>
         <Name>target.url</Name>
         <Ref>dynamic.target.url</Ref>
     </AssignVariable>
@@ -122,11 +124,11 @@ func AddVerifyApiKeyPolicy(location string, policyName string, keyName string) s
 		apiKeyLocation = "request.header." + keyName
 	}
 	tmp := strings.Replace(verifyApiKeyPolicy, "request.queryparam.apikey", apiKeyLocation, -1)
-	return strings.Replace(tmp, "Verify-API-Key-1", "Verify-API-Key-"+policyName, -1)
+	return strings.Replace(tmp, "Verify-API-Key", "Verify-API-Key-"+policyName, -1)
 }
 
 func AddSpikeArrestPolicy(policyName string, identifierRef string, rateRef string, rateLiteral string) string {
-	policyString := strings.ReplaceAll(spikeArrestPolicy, "Spike-Arrest-1", policyName)
+	policyString := strings.ReplaceAll(spikeArrestPolicy, "Spike-Arrest", policyName)
 	if rateLiteral != "" {
 		rate := "<Rate>" + rateLiteral + "</Rate>"
 		policyString = strings.ReplaceAll(policyString, "<Rate>1ps</Rate>", rate)
@@ -149,10 +151,10 @@ func AddQuotaPolicy(policyName string, useQuotaConfigStepName string,
 	var policyString string
 
 	if useQuotaConfigStepName != "" {
-		policyString = strings.ReplaceAll(quotaPolicy2, "Quota-1", policyName)
+		policyString = strings.ReplaceAll(quotaPolicy2, "Quota-ConfigInAPIProduct", policyName)
 		policyString = strings.ReplaceAll(policyString, "step", useQuotaConfigStepName)
 	} else {
-		policyString = strings.ReplaceAll(quotaPolicy1, "Quota-1", policyName)
+		policyString = strings.ReplaceAll(quotaPolicy1, "Quota-PerIdentifier", policyName)
 		if allowRef != "" {
 			allow := "<Allow countRef=\"" + allowRef + "\"/>"
 			policyString = strings.ReplaceAll(policyString, "<Allow count=\"1000000000000\"/>", allow)
@@ -198,7 +200,7 @@ func AddSetTargetEndpoint(ref string) string {
 
 func AddGraphQLPolicy(name string, action string, schema string) string {
 	policyString := strings.ReplaceAll(graphQLPolicy, "schema.graphql", schema)
-	policyString = strings.ReplaceAll(policyString, "Validate-name-Schema", "Validate-"+name+"-Schema")
+	policyString = strings.ReplaceAll(policyString, "GraphQL-Validate-name-Schema", "GraphQL-Validate-"+name+"-Schema")
 	if action != "" {
 		policyString = strings.ReplaceAll(policyString, "parse", action)
 	}

@@ -201,7 +201,7 @@ func GenerateAPIProxyDefFromOAS(name string,
 
 	if !skipPolicy {
 		apiproxy.AddResource(oasDocName, "oas")
-		apiproxy.AddPolicy("Validate-" + name + "-Schema")
+		apiproxy.AddPolicy("GraphQL-Validate-" + name + "-Schema")
 	}
 
 	u, err := GetEndpoint(doc)
@@ -217,8 +217,8 @@ func GenerateAPIProxyDefFromOAS(name string,
 
 	//set a dynamic target url
 	if oasTargetUrlRef != "" {
-		targets.AddStepToPreFlowRequest("Set-Target-1")
-		apiproxy.AddPolicy("Set-Target-1")
+		targets.AddStepToPreFlowRequest("AM-Set-Target")
+		apiproxy.AddPolicy("AM-Set-Target")
 		generateSetTarget = true
 	}
 
@@ -239,7 +239,7 @@ func GenerateAPIProxyDefFromOAS(name string,
 		if securityScheme.APIKeyPolicy.APIKeyPolicyEnabled {
 			proxies.AddStepToPreFlowRequest("Verify-API-Key-" + securityScheme.SchemeName)
 		} else if securityScheme.OAuthPolicy.OAuthPolicyEnabled {
-			proxies.AddStepToPreFlowRequest("OAuth-v20-1")
+			proxies.AddStepToPreFlowRequest("OAuthv2-VerifyAccessToken")
 		}
 	}
 
@@ -262,12 +262,12 @@ func GenerateAPIProxyDefFromOAS(name string,
 	}
 
 	if addCORS {
-		proxies.AddStepToPreFlowRequest("Add-CORS")
-		apiproxy.AddPolicy("Add-CORS")
+		proxies.AddStepToPreFlowRequest("CORS-Add")
+		apiproxy.AddPolicy("CORS-Add")
 	}
 
 	if !skipPolicy {
-		proxies.AddStepToPreFlowRequest("OpenAPI-Spec-Validation-1")
+		proxies.AddStepToPreFlowRequest("OAS-Validation")
 	}
 
 	if err = GenerateFlows(doc.Paths); err != nil {
@@ -278,7 +278,7 @@ func GenerateAPIProxyDefFromOAS(name string,
 		if securityScheme.APIKeyPolicy.APIKeyPolicyEnabled {
 			apiproxy.AddPolicy("Verify-API-Key-" + securityScheme.SchemeName)
 		} else if securityScheme.OAuthPolicy.OAuthPolicyEnabled {
-			apiproxy.AddPolicy("OAuth-v20-1")
+			apiproxy.AddPolicy("OAuthv2-VerifyAccessToken")
 		}
 	}
 
@@ -313,20 +313,20 @@ func GenerateAPIProxyDefFromGQL(name string,
 
 	if !skipPolicy {
 		apiproxy.AddResource(gqlDocName, "graphql")
-		apiproxy.AddPolicy("Validate-" + name + "-Schema")
+		apiproxy.AddPolicy("GraphQL-Validate-" + name + "-Schema")
 	}
 
 	proxies.NewProxyEndpoint(basePath)
 
 	if addCORS {
-		proxies.AddStepToPreFlowRequest("Add-CORS")
-		apiproxy.AddPolicy("Add-CORS")
+		proxies.AddStepToPreFlowRequest("CORS-Add")
+		apiproxy.AddPolicy("CORS-Add")
 	}
 
 	//set a dynamic target url
 	if targetUrlRef != "" {
-		targets.AddStepToPreFlowRequest("Set-Target-1")
-		apiproxy.AddPolicy("Set-Target-1")
+		targets.AddStepToPreFlowRequest("AM-Set-Target")
+		apiproxy.AddPolicy("AM-Set-Target")
 		generateSetTarget = true
 	}
 
@@ -341,7 +341,7 @@ func GenerateAPIProxyDefFromGQL(name string,
 	}
 
 	if !skipPolicy {
-		proxies.AddStepToPreFlowRequest("Validate-" + name + "-Schema")
+		proxies.AddStepToPreFlowRequest("GraphQL-Validate-" + name + "-Schema")
 	}
 
 	if apiKeyLocation != "" {
@@ -523,7 +523,7 @@ func GenerateFlows(paths openapi3.Paths) (err error) {
 		for method, pathDetail := range pathMap {
 			proxies.AddFlow(pathDetail.OperationID, replacePathWithWildCard(keyPath), method, pathDetail.Description)
 			if pathDetail.SecurityScheme.OAuthPolicy.OAuthPolicyEnabled {
-				if err = proxies.AddStepToFlowRequest("OAuth-v20-1", pathDetail.OperationID); err != nil {
+				if err = proxies.AddStepToFlowRequest("OAuthv2-VerifyAccessToken", pathDetail.OperationID); err != nil {
 					return err
 				}
 			} else if pathDetail.SecurityScheme.APIKeyPolicy.APIKeyPolicyEnabled {

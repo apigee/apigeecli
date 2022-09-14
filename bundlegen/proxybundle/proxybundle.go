@@ -113,7 +113,7 @@ func GenerateAPIProxyBundleFromOAS(name string,
 	//add set target url
 	if targetUrl == "" {
 		if genapi.GenerateSetTargetPolicy() {
-			if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"Set-Target-1.xml",
+			if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"AM-Set-Target.xml",
 				policies.AddSetTargetEndpoint(oasTargetUrlRef)); err != nil {
 				return err
 			}
@@ -131,7 +131,7 @@ func GenerateAPIProxyBundleFromOAS(name string,
 			}
 		}
 		if securityScheme.OAuthPolicy.OAuthPolicyEnabled {
-			if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"OAuth-v20-1.xml",
+			if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"OAuthv2-VerifyAccessToken.xml",
 				policies.AddOAuth2Policy(securityScheme.OAuthPolicy.Scope)); err != nil {
 				return err
 			}
@@ -154,7 +154,7 @@ func GenerateAPIProxyBundleFromOAS(name string,
 
 	if !skipPolicy {
 		//add oas policy
-		if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"OpenAPI-Spec-Validation-1.xml",
+		if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"OAS-Validation.xml",
 			policies.AddOpenAPIValidatePolicy(fileName)); err != nil {
 			return err
 		}
@@ -162,7 +162,7 @@ func GenerateAPIProxyBundleFromOAS(name string,
 
 	if addCORS {
 		//add cors policy
-		if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"Add-CORS.xml", policies.AddCORSPolicy()); err != nil {
+		if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"CORS-Add.xml", policies.AddCORSPolicy()); err != nil {
 			return err
 		}
 	}
@@ -247,7 +247,7 @@ func GenerateAPIProxyBundleFromGQL(name string,
 	}
 
 	if targetUrlRef != "" {
-		if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"Set-Target-1.xml",
+		if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"AM-Set-Target.xml",
 			policies.AddSetTargetEndpoint(targetUrlRef)); err != nil {
 			return err
 		}
@@ -255,7 +255,7 @@ func GenerateAPIProxyBundleFromGQL(name string,
 
 	if !skipPolicy {
 		//add gql policy
-		if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"Validate-"+name+"-Schema.xml",
+		if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"GraphQL-Validate-"+name+"-Schema.xml",
 			policies.AddGraphQLPolicy(name, action, fileName)); err != nil {
 			return err
 		}
@@ -271,7 +271,7 @@ func GenerateAPIProxyBundleFromGQL(name string,
 
 	if addCORS {
 		//add cors policy
-		if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"Add-CORS.xml", policies.AddCORSPolicy()); err != nil {
+		if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"CORS-Add.xml", policies.AddCORSPolicy()); err != nil {
 			return err
 		}
 	}
