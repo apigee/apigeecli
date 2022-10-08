@@ -31,39 +31,56 @@ var BundleCreateCmd = &cobra.Command{
 	Long:  "Creates an API proxy from an Zip or folder",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		if proxyZip != "" && proxyFolder != "" {
-			return fmt.Errorf("Proxy bundle (zip) and folder to an API proxy cannot be combined.")
+			return fmt.Errorf("proxy bundle (zip) and folder to an API proxy cannot be combined")
 		}
 		if proxyZip == "" && proxyFolder == "" {
-			return fmt.Errorf("Either Proxy bundle (zip) or folder must be specified, not both")
+			return fmt.Errorf("either proxy bundle (zip) or folder must be specified, not both")
+		}
+		if proxyZipFolder != "" {
+			if _, err := os.Stat(proxyZipFolder); os.IsNotExist(err) {
+				return err
+			}
 		}
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		var curDir string
+
 		if proxyZip != "" {
 			_, err = apis.CreateProxy(name, proxyZip)
 		} else if proxyFolder != "" {
-			curDir, _ := os.Getwd()
-			if err = proxybundle.GenerateArchiveBundle(proxyFolder, path.Join(curDir, name+".zip")); err != nil {
+			if proxyZipFolder == "" {
+				curDir, _ = os.Getwd()
+			} else {
+				curDir = proxyZipFolder
+			}
+
+			proxyBundlePath := path.Join(curDir, name+".zip")
+
+			if err = proxybundle.GenerateArchiveBundle(proxyFolder, proxyBundlePath); err != nil {
 				return err
 			}
-			if _, err = apis.CreateProxy(name, name+".zip"); err != nil {
+			if _, err = apis.CreateProxy(name, proxyBundlePath); err != nil {
 				return err
 			}
-			err = os.Remove(name + ".zip")
+
+			err = os.Remove(proxyBundlePath)
 		}
 		return err
 	},
 }
 
-var proxyZip, proxyFolder string
+var proxyZip, proxyFolder, proxyZipFolder string
 
 func init() {
 	BundleCreateCmd.Flags().StringVarP(&name, "name", "n",
 		"", "API Proxy name")
 	BundleCreateCmd.Flags().StringVarP(&proxyZip, "proxy-zip", "z",
-		"", "API Proxy Bundle path")
+		"", "Path to the API Proxy bundle/zip file")
 	BundleCreateCmd.Flags().StringVarP(&proxyFolder, "proxy", "p",
-		"", "API Proxy folder path")
+		"", "Path to the apiproxy folder")
+	BundleCreateCmd.Flags().StringVarP(&proxyZipFolder, "proxy-zip-folder", "f",
+		"", "Path to write the API Proxy Bundle")
 
 	_ = BundleCreateCmd.MarkFlagRequired("name")
 }
