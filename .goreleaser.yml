@@ -27,6 +27,20 @@ builds:
     binary: apigeecli
     goos:
       - linux
+    goarch:
+       - amd64
+    flags:
+    - -trimpath
+    ldflags:
+    - -s -w -a -extldflags "-static" -X main.Version={{.Tag}} -X main.Git={{.Commit}}
+    env:
+      - CGO_ENABLED=0
+    hooks:
+      post: upx "{{ .Path }}"
+  - id: apigeeclimac
+    main: ./main.go
+    binary: apigeecli
+    goos:
       - darwin
     goarch:
        - amd64
@@ -45,6 +59,8 @@ builds:
     binary: apigeecli
     goos:
       - windows
+    goarch:
+       - amd64
     ignore:
       - goos: windows
         goarch: arm64
@@ -56,18 +72,19 @@ builds:
       - CGO_ENABLED=0
 
 archives:
-  - id: apigeecli
+  - id: apigeecli_1
     format: zip
     name_template: "{{ .ProjectName }}_{{.Tag}}_{{ .Os }}_{{ .Arch }}"
     replacements:
-      darwin: Darwin
       linux: Linux
+      darwin: Darwin
       amd64: x86_64
       windows: Windows
     wrap_in_directory: true
     builds:
       - apigeeclinix
       - apigeecliwin
+      - apigeeclimac
 
 checksum:
   name_template: 'checksums.txt'
@@ -93,4 +110,4 @@ universal_binaries:
   - 
     replace: false
     ids:
-      - apigeeclinix
+      - apigeeclimac
