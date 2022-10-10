@@ -29,7 +29,7 @@ import (
 	"github.com/apigee/apigeecli/clilog"
 )
 
-//PostHttpZip method is used to send resources, proxy bundles, shared flows etc.
+// PostHttpZip method is used to send resources, proxy bundles, shared flows etc.
 func PostHttpZip(print bool, auth bool, method string, url string, headers map[string]string, zipfile string) (err error) {
 
 	var req *http.Request
@@ -80,7 +80,7 @@ func PostHttpZip(print bool, auth bool, method string, url string, headers map[s
 	return nil
 }
 
-//PostHttpOctet method is used to send resources, proxy bundles, shared flows etc.
+// PostHttpOctet method is used to send resources, proxy bundles, shared flows etc.
 func PostHttpOctet(print bool, update bool, url string, proxyName string) (respBody []byte, err error) {
 	file, err := os.Open(proxyName)
 	if err != nil {
@@ -188,7 +188,7 @@ func DownloadFile(url string, auth bool) (resp *http.Response, err error) {
 	return resp, err
 }
 
-//DownloadResource method is used to download resources, proxy bundles, sharedflows
+// DownloadResource method is used to download resources, proxy bundles, sharedflows
 func DownloadResource(url string, name string, resType string) error {
 	var filename string
 
@@ -228,7 +228,7 @@ func DownloadResource(url string, name string, resType string) error {
 	return nil
 }
 
-//HttpClient method is used to GET,POST,PUT or DELETE JSON data
+// HttpClient method is used to GET,POST,PUT or DELETE JSON data
 func HttpClient(print bool, params ...string) (respBody []byte, err error) {
 	// The first parameter instructs whether the output should be printed
 	// The second parameter is url. If only one parameter is sent, assume GET
@@ -291,15 +291,18 @@ func HttpClient(print bool, params ...string) (respBody []byte, err error) {
 	return handleResponse(print, resp)
 }
 
-//PrettyPrint method prints formatted json
+// PrettyPrint method prints formatted json
 func PrettyPrint(body []byte) error {
-	var prettyJSON bytes.Buffer
-	err := json.Indent(&prettyJSON, body, "", "\t")
-	if err != nil {
-		clilog.Error.Println("error parsing response: ", err)
-		return err
+	if !options.NoOutput {
+		var prettyJSON bytes.Buffer
+		err := json.Indent(&prettyJSON, body, "", "\t")
+		if err != nil {
+			clilog.Error.Println("error parsing response: ", err)
+			return err
+		}
+
+		fmt.Println(prettyJSON.String())
 	}
-	fmt.Println(prettyJSON.String())
 	return nil
 }
 

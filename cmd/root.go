@@ -53,7 +53,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//RootCmd to manage apigeecli
+// RootCmd to manage apigeecli
 var RootCmd = &cobra.Command{
 	Use:   "apigeecli",
 	Short: "Utility to work with Apigee APIs.",
@@ -87,7 +87,7 @@ func Execute() {
 }
 
 var accessToken, serviceAccount string
-var disableCheck bool
+var disableCheck, noOutput bool
 
 func init() {
 	cobra.OnInitialize(initConfig)
@@ -100,6 +100,9 @@ func init() {
 
 	RootCmd.PersistentFlags().BoolVarP(&disableCheck, "disable-check", "",
 		false, "Disable check for newer versions")
+
+	RootCmd.PersistentFlags().BoolVarP(&noOutput, "no-output", "",
+		false, "Disable printing API responses from the control plane")
 
 	RootCmd.AddCommand(apis.Cmd)
 	RootCmd.AddCommand(org.Cmd)
@@ -144,6 +147,7 @@ func initConfig() {
 		PrintOutput: true,
 		SkipLogInfo: skipLogInfo,
 		SkipCache:   skipCache,
+		NoOutput:    noOutput,
 	})
 }
 
