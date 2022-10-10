@@ -35,14 +35,14 @@ var GhCreateCmd = &cobra.Command{
 		//(\w+)?\/apiproxy$
 		re := regexp.MustCompile(`(\w+)?\/apiproxy$`)
 		if ok := re.Match([]byte(ghPath)); !ok {
-			return fmt.Errorf("Github path must end with /apiproxy")
+			return fmt.Errorf("github path must end with /apiproxy")
 		}
 
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		if os.Getenv("GITHUB_TOKEN") == "" {
-			clilog.Info.Println("Github token is not set as an env var. Running unauthenticated")
+			clilog.Info.Println("github token is not set as an env var. Running unauthenticated")
 		}
 		if err = proxybundle.GitHubImportBundle(ghOwner, ghRepo, ghPath); err != nil {
 			proxybundle.CleanUp()

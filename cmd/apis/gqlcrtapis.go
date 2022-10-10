@@ -37,10 +37,10 @@ var GqlCreateCmd = &cobra.Command{
 	Long:    "Creates an API proxy from a GraphQL schema",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		if gqlFile == "" && gqlURI == "" {
-			return fmt.Errorf("Either gqlfile or gqlurl must be passed")
+			return fmt.Errorf("either gqlfile or gqlurl must be passed")
 		}
 		if targetUrl != "" && targetUrlRef != "" {
-			return fmt.Errorf("Either target-url or target-url-ref must be passed, not both")
+			return fmt.Errorf("either target-url or target-url-ref must be passed, not both")
 		}
 		return apiclient.SetApigeeOrg(org)
 	},
