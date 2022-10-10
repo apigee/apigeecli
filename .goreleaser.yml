@@ -51,8 +51,8 @@ builds:
     - -s -w -a -extldflags "-static" -X main.Version={{.Tag}} -X main.Git={{.Commit}}
     env:
       - CGO_ENABLED=0 
-    hooks:
-      post: upx "{{ .Path }}"
+    # hooks: #disabling upx for mac temporarily
+    #   post: upx "{{ .Path }}"
 # Windows defender can have a false positive and think upx shrinked binaries are malware       
   - id: apigeecliwin
     main: ./main.go
