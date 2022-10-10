@@ -308,8 +308,7 @@ func archiveBundle(pathToZip, destinationPath string) (err error) {
 
 	pathSep := `/` //For archives/zip the path separator is always /
 
-	destinationFile, err = os.Create(destinationPath)
-	if err != nil {
+	if destinationFile, err = os.Create(destinationPath); err != nil {
 		return err
 	}
 
@@ -341,10 +340,13 @@ func archiveBundle(pathToZip, destinationPath string) (err error) {
 		return nil
 	})
 	if err != nil {
+		_ = destinationFile.Close()
 		return err
 	}
-	err = myZip.Close()
-	if err != nil {
+	if err = myZip.Close(); err != nil {
+		return err
+	}
+	if err = destinationFile.Close(); err != nil {
 		return err
 	}
 	return nil
@@ -436,7 +438,7 @@ func getApiProxyFolder(repoPath string) (apiProxyFolder string, apiProxyFile str
 	return apiProxyFolder, apiProxyFile
 }
 
-//downloadResource method is used to download resources, proxy bundles, sharedflows
+// downloadResource method is used to download resources, proxy bundles, sharedflows
 func downloadResource(repoPath string, url string) (err error) {
 
 	var apiproxyFolder, apiproxyFile string
