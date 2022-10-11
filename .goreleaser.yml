@@ -35,8 +35,8 @@ builds:
     - -s -w -a -extldflags "-static" -X main.Version={{.Tag}} -X main.Git={{.Commit}}
     env:
       - CGO_ENABLED=0
-    hooks:
-      post: upx "{{ .Path }}"
+    # hooks: #disabling upx for linux temporarily
+    #   post: upx "{{ .Path }}"
   - id: apigeeclimac
     main: ./main.go
     binary: apigeecli
