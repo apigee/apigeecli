@@ -30,6 +30,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Push GH Pages
         run: |
+          git pull --rebase origin main
           go run docs/docs.go
           git config --global user.name "apigeecli Publish Action"
           git config --global user.email "apigeecli-bot@noreply.apigee.com"
