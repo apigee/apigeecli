@@ -27,13 +27,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Push GH Pages
         run: |
-          git pull --rebase origin main
           go run docs/docs.go
           git config --global user.name "apigeecli Publish Action"
           git config --global user.email "apigeecli-bot@noreply.apigee.com"
           git add --all
           git commit -m "Update GH Pages - $GITHUB_SHA" || echo "No Changes in docs"
-          git push origin main
+          git push
