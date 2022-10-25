@@ -35,4 +35,4 @@ jobs:
           git config --global user.email "apigeecli-bot@noreply.apigee.com"
           git add --all
           git commit -m "Update GH Pages - $GITHUB_SHA" || echo "No Changes in docs"
-          git push
+          git push origin HEAD:main
