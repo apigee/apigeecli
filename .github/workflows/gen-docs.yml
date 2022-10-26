@@ -19,20 +19,31 @@ on:
   push:
     # Publish semver tags as releases.
     tags:        
-      - v1.[0-9]+  
+      - v[0-1].[0-9]+  
 
-jobs:      
+jobs:
   publish-gh-pages:
     name: Publish apigeecli Documentation
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
-      - name: Push GH Pages
+      - name: generate-docs
         run: |
           go run docs/docs.go
+      - name: Archive Generated Docs
+        uses: actions/upload-artifact@v3
+        with:
+          name: generated-docs
+          path: docs/
+      - name: Download Generated Docs
+        uses: actions/download-artifact@v3
+        with:
+          name: generated-docs        
+      - name: Push GH Pages
+        run: |
           git config --global user.name "apigeecli Publish Action"
-          git config --global user.email "apigeecli-bot@noreply.apigee.com"
+          git config --global user.email "apigeecli-bot@noreply.srinandans.com"
           git add --all
           git commit -m "Update GH Pages - $GITHUB_SHA" || echo "No Changes in docs"
-          git push origin HEAD:main
+          git push origin HEAD:refs/heads/main
