@@ -28,20 +28,9 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
-      - name: generate-docs
-        run: |
-          go run docs/docs.go
-      - name: Archive Generated Docs
-        uses: actions/upload-artifact@v3
-        with:
-          name: generated-docs
-          path: docs/
-      - name: Download Generated Docs
-        uses: actions/download-artifact@v3
-        with:
-          name: generated-docs        
       - name: Push GH Pages
         run: |
+          go run docs/docs.go
           git config --global user.name "apigeecli Publish Action"
           git config --global user.email "apigeecli-bot@noreply.apigee.com"
           git add --all
