@@ -1,0 +1,13 @@
+<SharedFlowBundle revision="3" name="test_flow">
+    <DisplayName>test_flow</DisplayName>
+    <Description>undefined</Description>
+    <CreatedAt>1611207547050</CreatedAt>
+    <LastModifiedAt>1667066833526</LastModifiedAt>
+    <Policies>
+        <Policy>Verify-API-Key-1</Policy>
+    </Policies>
+    <SharedFlows>
+        <SharedFlow>default</SharedFlow>
+    </SharedFlows>
+    <subType>SharedFlow</subType>
+</SharedFlowBundle>
