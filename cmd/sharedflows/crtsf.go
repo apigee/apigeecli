@@ -77,7 +77,7 @@ func init() {
 		"", "Sharedflow name")
 	CreateCmd.Flags().StringVarP(&sfZip, "sf-zip", "p",
 		"", "Path to the Sharedflow bundle/zip file")
-	CreateCmd.Flags().StringVarP(&sfFolder, "sf-zip-folder", "f",
+	CreateCmd.Flags().StringVarP(&sfFolder, "sf-folder", "f",
 		"", "Path to the Sharedflow Bundle; ex: ./test/sharedflowbundle")
 
 	_ = CreateCmd.MarkFlagRequired("name")
