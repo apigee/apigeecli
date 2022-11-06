@@ -262,6 +262,12 @@ apigeecli allows the user to generate Apigee API Proxy bundles from a GraphQL sc
 * `--skip-policy=false`: By default the GraphQL policy is added to the proxy (to validate API requests). By setting this to false, schema validation is not enabled.
 * `--target-url-ref`: Specify a target endpoint location variable. For ex: `--target-url-ref=propertyset.gql.url` implies the GraphQL target location is available in an environment scoped property set called `gql` and the key is `url`.  
 
+## Automate via Cloud Build
+
+A sample customer cloud builder has been created to demonstrate automation of deployments from Cloud Build. The custom cloud build has been created this [cloudbuild.yaml](./cloud-builder.yaml) file and [Dockerfile](./Dockerfile.builder). 
+
+This sample [cloud-build](./samples/cloudbuild.yaml) demonstrates how to automate Apigee API proxy creation and deployment for a Cloud Run application.  The sample assumes the existence of an OAS document from which a proxy definition is generated. 
+
 ___
 
 ## Support
