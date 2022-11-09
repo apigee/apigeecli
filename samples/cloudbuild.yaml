@@ -18,7 +18,7 @@
 
 steps:
 - id: 'Create and deploy an API proxy'
-  name: gcr.io/$PROJECT_ID/apigeecli-builder:latest
+  name: ghcr.io/apigee/apigeecli-builder:latest
   entrypoint: 'bash'
   args:
     - -c
