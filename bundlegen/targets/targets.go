@@ -60,6 +60,12 @@ type scopeDef struct {
 	Scope string `xml:"Scope"`
 }
 
+var integrationEndpoint = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<IntegrationEndpoint name="default">
+    <AsyncExecution>false</AsyncExecution>
+</IntegrationEndpoint>
+`
+
 var targetEndpoint targetEndpointDef
 
 func AddStepToPreFlowRequest(name string) {
@@ -101,6 +107,10 @@ func NewTargetEndpoint(endpoint string, oasGoogleAcessTokenScopeLiteral string, 
 			targetEndpoint.HTTPTargetConnection.Authentication.GoogleIDToken.Audience.Ref = setString(oasGoogleIdTokenAudRef)
 		}
 	}
+}
+
+func GetIntegrationEndpoint() string {
+	return integrationEndpoint
 }
 
 func setString(s string) *string {

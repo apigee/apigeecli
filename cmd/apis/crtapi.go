@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//CreateCmd to create api
+// CreateCmd to create api
 var CreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Creates an API proxy in an Apigee Org",
@@ -33,4 +33,5 @@ func init() {
 	CreateCmd.AddCommand(GhCreateCmd)
 	CreateCmd.AddCommand(BundleCreateCmd)
 	CreateCmd.AddCommand(GqlCreateCmd)
+	CreateCmd.AddCommand(IntegrationCmd)
 }

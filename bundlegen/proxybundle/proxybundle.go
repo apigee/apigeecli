@@ -284,6 +284,68 @@ func GenerateAPIProxyBundleFromGQL(name string,
 	return nil
 }
 
+func GenerateIntegrationAPIProxyBundle(name string, integration string, apitrigger string, skipPolicy bool) (err error) {
+
+	var apiProxyData, proxyEndpointData, integrationEndpointData string
+
+	if err = os.Mkdir(rootDir, os.ModePerm); err != nil {
+		return err
+	}
+
+	// write API Proxy file
+	if apiProxyData, err = apiproxy.GetAPIProxy(); err != nil {
+		return err
+	}
+
+	err = writeXMLData(rootDir+string(os.PathSeparator)+name+".xml", apiProxyData)
+	if err != nil {
+		return err
+	}
+
+	proxiesDirPath := rootDir + string(os.PathSeparator) + "proxies"
+	policiesDirPath := rootDir + string(os.PathSeparator) + "policies"
+	integrationDirPath := rootDir + string(os.PathSeparator) + "integration-endpoints"
+
+	if err = os.Mkdir(proxiesDirPath, os.ModePerm); err != nil {
+		return err
+	}
+
+	if proxyEndpointData, err = proxies.GetProxyEndpoint(); err != nil {
+		return err
+	}
+
+	err = writeXMLData(proxiesDirPath+string(os.PathSeparator)+"default.xml", proxyEndpointData)
+	if err != nil {
+		return err
+	}
+
+	if err = os.Mkdir(integrationDirPath, os.ModePerm); err != nil {
+		return err
+	}
+
+	integrationEndpointData = target.GetIntegrationEndpoint()
+	if err = writeXMLData(integrationDirPath+string(os.PathSeparator)+"default.xml", integrationEndpointData); err != nil {
+		return err
+	}
+
+	if err = os.Mkdir(policiesDirPath, os.ModePerm); err != nil {
+		return err
+	}
+
+	//add set integration request policy
+	if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"set-integration-request.xml",
+		policies.AddSetIntegrationRequestPolicy(integration, apitrigger)); err != nil {
+		return err
+	}
+
+	if err = archiveBundle(rootDir, name+".zip"); err != nil {
+		return err
+	}
+
+	defer os.RemoveAll(rootDir) // clean up
+	return nil
+}
+
 func writeXMLData(fileName string, data string) error {
 	fileWriter, err := os.Create(fileName)
 	if err != nil {

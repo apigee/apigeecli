@@ -35,9 +35,10 @@ type proxyEndpointDef struct {
 }
 
 type routeRuleDef struct {
-	XMLName        xml.Name `xml:"RouteRule"`
-	Name           string   `xml:"name,attr"`
-	TargetEndpoint string   `xml:"TargetEndpoint"`
+	XMLName             xml.Name `xml:"RouteRule"`
+	Name                string   `xml:"name,attr"`
+	TargetEndpoint      *string  `xml:"TargetEndpoint"`
+	IntegrationEndpoint *string  `xml:"IntegrationEndpoint"`
 }
 
 type httpProxyConnectionDef struct {
@@ -57,13 +58,19 @@ func GetProxyEndpoint() (string, error) {
 	return string(proxyBody), nil
 }
 
-func NewProxyEndpoint(basePath string) {
+func NewProxyEndpoint(basePath string, targetEndpoint bool) {
 	proxyEndpoint.Name = "default"
 	proxyEndpoint.PreFlow.Name = "PreFlow"
 	proxyEndpoint.PostFlow.Name = "PostFlow"
 	proxyEndpoint.HTTPProxyConnection.BasePath = basePath
 	proxyEndpoint.RouteRule.Name = "default"
-	proxyEndpoint.RouteRule.TargetEndpoint = "default"
+	if targetEndpoint {
+		proxyEndpoint.RouteRule.TargetEndpoint = new(string)
+		*proxyEndpoint.RouteRule.TargetEndpoint = "default"
+	} else {
+		proxyEndpoint.RouteRule.IntegrationEndpoint = new(string)
+		*proxyEndpoint.RouteRule.IntegrationEndpoint = "default"
+	}
 }
 
 func AddFlow(operationId string, keyPath string, method string, description string) {

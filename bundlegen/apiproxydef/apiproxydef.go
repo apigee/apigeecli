@@ -34,6 +34,11 @@ type targetEndpointsDef struct {
 	TargetEndpoint []string `xml:"TargetEndpoint,omitempty"`
 }
 
+type integrationEndpointsDef struct {
+	XMLName             xml.Name `xml:"IntegrationEndpoints"`
+	IntegrationEndpoint []string `xml:"IntegrationEndpoint,omitempty"`
+}
+
 type configurationVersionDef struct {
 	XMLName      xml.Name `xml:"ConfigurationVersion,omitempty"`
 	MajorVersion string   `xml:"majorVersion,attr"`
@@ -56,6 +61,7 @@ type apiProxyDef struct {
 	LastModifiedAt       string                  `xml:"LastModifiedAt,omitempty"`
 	Policies             policiesDef             `xml:"Policies,omitempty"`
 	ProxyEndpoints       proxyEndpointsDef       `xml:"ProxyEndpoints,omitempty"`
+	IntegrationEndpoints integrationEndpointsDef `xml:"IntegrationEndpoints,omitempty"`
 	Resources            resourcesDef            `xml:"Resources,omitempty"`
 	Spec                 string                  `xml:"Spec,omitempty"`
 	TargetServers        string                  `xml:"TargetServers,omitempty"`
@@ -76,6 +82,10 @@ func AddProxyEndpoint(name string) {
 
 func AddTargetEndpoint(name string) {
 	apiProxy.TargetEndpoints.TargetEndpoint = append(apiProxy.TargetEndpoints.TargetEndpoint, name)
+}
+
+func AddIntegrationEndpoint(name string) {
+	apiProxy.IntegrationEndpoints.IntegrationEndpoint = append(apiProxy.IntegrationEndpoints.IntegrationEndpoint, name)
 }
 
 func SetCreatedAt() {
