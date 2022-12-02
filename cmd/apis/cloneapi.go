@@ -226,33 +226,35 @@ func unzipBundle() (tmpDir string, err error) {
 	for _, item := range bundle.File {
 		bundlePath := filepath.Join(tmpDir, item.Name)
 
-		if item.FileInfo().IsDir() {
-			if err = os.MkdirAll(bundlePath, os.ModePerm); err != nil {
+		if !strings.Contains(item.Name, "..") {
+			if item.FileInfo().IsDir() {
+				if err = os.MkdirAll(bundlePath, os.ModePerm); err != nil {
+					return tmpDir, err
+				}
+				continue
+			}
+
+			if err = os.MkdirAll(filepath.Dir(bundlePath), os.ModePerm); err != nil {
 				return tmpDir, err
 			}
-			continue
-		}
 
-		if err = os.MkdirAll(filepath.Dir(bundlePath), os.ModePerm); err != nil {
-			return tmpDir, err
-		}
+			bundleFile, err := os.OpenFile(bundlePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
+			if err != nil {
+				return tmpDir, err
+			}
 
-		bundleFile, err := os.OpenFile(bundlePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
-		if err != nil {
-			return tmpDir, err
-		}
+			zipFile, err := item.Open()
+			if err != nil {
+				return tmpDir, err
+			}
 
-		zipFile, err := item.Open()
-		if err != nil {
-			return tmpDir, err
-		}
+			if _, err = io.Copy(bundleFile, zipFile); err != nil {
+				return tmpDir, err
+			}
 
-		if _, err = io.Copy(bundleFile, zipFile); err != nil {
-			return tmpDir, err
+			bundleFile.Close()
+			zipFile.Close()
 		}
-
-		bundleFile.Close()
-		zipFile.Close()
 	}
 
 	return tmpDir, nil
