@@ -1,0 +1,242 @@
+openapi: 3.0.0
+info:
+  description: Get Windfarm info and status
+  version: 1.0.0-oas3
+  title: Windfarm API
+  contact:
+    email: user@email.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+tags:
+  - name: Windfarm
+    description: Operations available to regular developers
+
+
+x-google-ratelimit: 
+  - name: SA-rateLimite # this is appended to the quota policy name, ex: Spike-Arrest-test1
+    rate-literal: 10ps # specify the allowed interval in the policy, use rate-ref to specify a variable
+    identifier-ref: request.header.url #optional, specify msg ctx var for the identifier
+
+
+security:
+  - api_key: []
+  
+paths:
+  /farms:
+    get:
+      tags:
+        - Windfarm
+      summary: filtered list of windfarms
+      operationId: listWindfarms
+      description: >
+        By passing in the appropriate filtering options, you can list existing
+        windfarms
+      parameters:
+        - in: query
+          name: limit
+          description: number of max windfarm elements to be return
+          required: true
+          schema:
+            type: integer
+            default: 2
+        - in: query
+          name: country
+          description: ISO country code
+          required: true
+          schema:
+            type: string
+            default: FR
+      responses:
+        '200':
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/listWindfarms'
+        '400':
+          description: bad input parameter
+  /farms/{id}:
+    get:
+      tags:
+        - Windfarm
+      summary: get Windfarm data
+      operationId: getWindfarm
+      description: >
+        By passing in the appropriate options, you can search for a wind farm
+        detailled info
+      parameters:
+        - in: path
+          name: id
+          description: pass the windfarm id string for looking up info
+          required: true
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/windfarms'
+        '400':
+          description: bad input parameter
+  /status/{id}:
+    get:
+      tags:
+        - Windfarm
+      summary: windfarm status for a given date
+      operationId: getWindfarmsStatus
+      description: >
+        By passing in the appropriate filtering options, you can list existing
+        windfarms
+      parameters:
+        - in: path
+          name: id
+          description: windfarm id
+          required: true
+          schema:
+            type: integer
+            default: 20
+        - in: query
+          name: date
+          description: Date
+          required: true
+          schema:
+            type: string
+            default: 20/05/22
+      responses:
+        '200':
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/windfarmsStatus'
+        '400':
+          description: bad input parameter
+servers:
+  - url: https://34.117.38.184.nip.io/windfarms/v1
+  
+components:
+  securitySchemes:
+    api_key:
+      type: apiKey
+      name: api_key
+      in: header
+  schemas:
+    listWindfarms:
+      type: array
+      items:
+        $ref: '#/components/schemas/windfarms'
+    windfarms:
+      type: object
+      properties:
+        ID:
+          type: integer
+          example: 20
+        Continent:
+          type: string
+          example: Europe
+        ISOcode:
+          type: string
+          example: FR
+        Country:
+          type: string
+          example: France
+        State code:
+          type: string
+          example: '#ND'
+        Area:
+          type: string
+          example: 11 (Occitanie)
+        City:
+          type: string
+          example: Roquetaillade
+        Name:
+          type: string
+          example: Roquetaillade
+        2nd name:
+          type: string
+          example: '#ND'
+        Latitude:
+          type: number
+          example: 43.001
+        Longitude:
+          type: number
+          example: 2.233
+        Altitude/Depth:
+          type: string
+          example: 595/645
+        Location accuracy:
+          type: string
+          example: 'Yes'
+        Offshore/Shore distance:
+          type: string
+          example: 'No'
+        Manufacturer:
+          type: string
+          example: Gamesa
+        Turbine:
+          type: string
+          example: G47/660
+        Hub height:
+          type: integer
+          example: 47
+        Number of turbines:
+          type: integer
+          example: 8
+        Total power:
+          type: integer
+          example: 5280
+        Developer:
+          type: string
+          example: Compagnie du Vent
+        Operator:
+          type: string
+          example: Engie
+        Owner:
+          type: string
+          example: Engie
+        Commissioning date:
+          type: string
+          example: 2001/10
+        Status:
+          type: string
+          example: Production
+    windfarmsStatus:
+      type: object
+      properties:
+        NomFerme:
+          type: string
+          example: '#ND'
+        Pays:
+          type: string
+          example: France
+        Region:
+          type: string
+          example: 11 (Occitanie)
+        Ville:
+          type: string
+          example: Roquetaillade
+        Puissance:
+          type: integer
+          example: 5280
+        Conditions:
+          type: string
+          example: Clouds
+        Vent:
+          type: integer
+          example: 0
+        Temperature:
+          type: integer
+          example: 12
+        Statut:
+          type: string
+          example: EN MARCHE
