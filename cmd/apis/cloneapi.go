@@ -224,9 +224,10 @@ func unzipBundle() (tmpDir string, err error) {
 	}
 
 	for _, item := range bundle.File {
-		bundlePath := filepath.Join(tmpDir, item.Name)
-
 		if !strings.Contains(item.Name, "..") {
+
+			bundlePath := filepath.Join(tmpDir, item.Name)
+
 			if item.FileInfo().IsDir() {
 				if err = os.MkdirAll(bundlePath, os.ModePerm); err != nil {
 					return tmpDir, err
