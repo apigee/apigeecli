@@ -1,0 +1,22 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.zip
+integrationcli
+.DS_Store
+
+# binaries
+dist/
+
+.github/
+docs/
+test/
+
+README.md
+third-party-licenses.md
+LICENSE.txt
+CONTRIBUTING.md
+downloadLatest.sh

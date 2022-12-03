@@ -1,4 +1,4 @@
-# Copyright 2020 Google LLC
+# Copyright 2022 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
 # limitations under the License.
 
 FROM golang:1.19 as builder
-
 ADD ./apiclient /go/src/apigeecli/apiclient
 ADD ./bundlegen /go/src/apigeecli/bundlegen
 ADD ./client /go/src/apigeecli/client
@@ -24,12 +23,12 @@ COPY main.go /go/src/apigeecli/main.go
 COPY go.mod go.sum /go/src/apigeecli/
 
 WORKDIR /go/src/apigeecli
-
 ENV GO111MODULE=on
 RUN go mod tidy
 RUN go mod download
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -a -ldflags='-s -w -extldflags "-static"' -o /go/bin/apigeecli /go/src/apigeecli/main.go
 
-FROM gcr.io/distroless/static-debian11
-COPY --from=builder /go/bin/apigeecli /
-CMD ["/apigeecli"]
+FROM gcr.io/cloud-builders/gcloud
+COPY --from=builder /go/bin/apigeecli /tmp
+RUN apt-get update
+RUN apt-get install -y jq
