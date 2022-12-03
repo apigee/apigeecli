@@ -110,6 +110,42 @@ var setTargetEndpointPolicy = `<?xml version="1.0" encoding="UTF-8" standalone="
     <IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
 </AssignMessage>`
 
+var setIntegrationRequestPolicy = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<SetIntegrationRequest continueOnError="false" enabled="true" name="set-integration-request">
+    <DisplayName>Set Integration Request</DisplayName>
+    <ProjectId ref="organization.name"/>
+    <IntegrationName>integration_name</IntegrationName>
+    <IntegrationRegion ref="system.region.name"/>
+    <ApiTrigger>api_trigger/replace_API_1</ApiTrigger>
+    <!--
+        <Parameters> defines the input parameters to send with the request. Parameters can be int, boolean, String, double, int array, boolean array, String array, double array, and JSON.
+  
+        Uncomment the parameters below and modify as needed.
+    -->
+    <!--
+    <Parameters>
+        <Parameter name="stringExample" type="string">stringValue</Parameter>
+        <Parameter name="doubleExample" type="double">1.0</Parameter>
+        <Parameter name="jsonExample" type="json">{}</Parameter>
+        <ParameterArray name="intArrayExample" type="integer">
+            <Value>1</Value>
+            <Value>2</Value>
+            <Value>3</Value>
+        </ParameterArray>
+        <ParameterArray name="booleanArrayExample" type="boolean">
+            <Value>true</Value>
+            <Value>false</Value>
+        </ParameterArray>
+    </Parameters>
+    -->
+</SetIntegrationRequest>`
+
+func AddSetIntegrationRequestPolicy(integration string, apitrigger string) string {
+	policyString := strings.ReplaceAll(setIntegrationRequestPolicy, "integration_name", integration)
+	policyString = strings.ReplaceAll(policyString, "replace_API_1", apitrigger)
+	return policyString
+}
+
 func AddOpenAPIValidatePolicy(name string) string {
 	return replaceTemplateWithPolicy(name)
 }

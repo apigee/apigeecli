@@ -180,7 +180,7 @@ func GenerateAPIProxyDefFromOAS(name string,
 	targetUrl string) (err error) {
 
 	if doc == nil {
-		return fmt.Errorf("Open API document not loaded")
+		return fmt.Errorf("the Open API document not loaded")
 	}
 
 	//load security schemes
@@ -227,12 +227,12 @@ func GenerateAPIProxyDefFromOAS(name string,
 		targets.NewTargetEndpoint(u.Scheme+"://"+u.Hostname(), oasGoogleAcessTokenScopeLiteral, oasGoogleIdTokenAudLiteral, oasGoogleIdTokenAudRef)
 	} else { //an explicit target url is set
 		if _, err = url.Parse(targetUrl); err != nil {
-			return fmt.Errorf("Invalid target url: %v", err)
+			return fmt.Errorf("invalid target url: %v", err)
 		}
 		targets.NewTargetEndpoint(targetUrl, oasGoogleAcessTokenScopeLiteral, oasGoogleIdTokenAudLiteral, oasGoogleIdTokenAudRef)
 	}
 
-	proxies.NewProxyEndpoint(u.Path)
+	proxies.NewProxyEndpoint(u.Path, true)
 
 	//add any preflow security schemes
 	if securityScheme := getSecurityRequirements(doc.Security); securityScheme.SchemeName != "" {
@@ -316,7 +316,7 @@ func GenerateAPIProxyDefFromGQL(name string,
 		apiproxy.AddPolicy("Validate-" + name + "-Schema")
 	}
 
-	proxies.NewProxyEndpoint(basePath)
+	proxies.NewProxyEndpoint(basePath, true)
 
 	if addCORS {
 		proxies.AddStepToPreFlowRequest("Add-CORS")
@@ -349,6 +349,26 @@ func GenerateAPIProxyDefFromGQL(name string,
 	}
 
 	return err
+}
+
+func GenerateIntegrationAPIProxy(name string,
+	integration string,
+	apitrigger string) (err error) {
+
+	apiproxy.SetDisplayName(name)
+	apiproxy.SetCreatedAt()
+	apiproxy.SetLastModifiedAt()
+	apiproxy.SetConfigurationVersion()
+	apiproxy.AddProxyEndpoint("default")
+	apiproxy.AddIntegrationEndpoint("default")
+	apiproxy.SetBasePath("/" + apitrigger)
+
+	proxies.NewProxyEndpoint("/"+apitrigger, false)
+
+	proxies.AddStepToPreFlowRequest("set-integration-request")
+	apiproxy.AddPolicy("set-integration-request")
+
+	return nil
 }
 
 func GetHTTPMethod(pathItem *openapi3.PathItem, keyPath string) (map[string]pathDetailDef, error) {
