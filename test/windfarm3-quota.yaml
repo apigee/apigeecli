@@ -13,11 +13,11 @@ tags:
     description: Operations available to regular developers
 
 
-x-google-ratelimit: 
-  - name: SA-rateLimite # this is appended to the quota policy name, ex: Spike-Arrest-test1
-    rate-literal: 10ps # specify the allowed interval in the policy, use rate-ref to specify a variable
-    identifier-ref: request.header.url #optional, specify msg ctx var for the identifier
-
+x-google-quota:
+  - name: test1 
+    # this is appended to the quota policy name, ex: Quota-test1
+    useQuotaConfigInAPIProduct: Verify-API-Key-api_key 
+    # specify the step name that contains the consumer identification.
 
 security:
   - api_key: []

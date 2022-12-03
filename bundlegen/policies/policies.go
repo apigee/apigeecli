@@ -15,6 +15,7 @@
 package policies
 
 import (
+	"fmt"
 	"regexp"
 	"strings"
 )
@@ -85,10 +86,10 @@ var quotaPolicy1 = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 var quotaPolicy2 = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Quota async="false" continueOnError="false" enabled="true" type="calendar" name="Quota-1">
     <DisplayName>Quota-1</DisplayName>
-    <UseQuotaConfigInAPIProduct>step</UseQuotaConfigInAPIProduct>
+    <UseQuotaConfigInAPIProduct stepName="step"/>
     <Distributed>true</Distributed>
     <StartTime>2019-01-01 00:00:00</StartTime>
-</Quota>	
+</Quota>
 `
 
 var graphQLPolicy = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -150,7 +151,7 @@ func AddQuotaPolicy(policyName string, useQuotaConfigStepName string,
 
 	if useQuotaConfigStepName != "" {
 		policyString = strings.ReplaceAll(quotaPolicy2, "Quota-1", policyName)
-		policyString = strings.ReplaceAll(policyString, "step", useQuotaConfigStepName)
+		policyString = strings.ReplaceAll(policyString, "stepName=\"step\"", fmt.Sprintf("stepName=\"%s\"", useQuotaConfigStepName))
 	} else {
 		policyString = strings.ReplaceAll(quotaPolicy1, "Quota-1", policyName)
 		if allowRef != "" {
