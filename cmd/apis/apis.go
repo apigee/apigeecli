@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//Cmd to manage apis
+// Cmd to manage apis
 var Cmd = &cobra.Command{
 	Use:   "apis",
 	Short: "Manage Apigee API proxies in an org",
@@ -47,4 +47,5 @@ func init() {
 	Cmd.AddCommand(CleanCmd)
 	Cmd.AddCommand(KvmCmd)
 	Cmd.AddCommand(UpdateCmd)
+	Cmd.AddCommand(CloneCmd)
 }
