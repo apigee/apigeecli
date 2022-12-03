@@ -33,10 +33,11 @@ builds:
     - -trimpath
     ldflags:
     - -s -w -a -extldflags "-static" -X main.Version={{.Tag}} -X main.Git={{.Commit}}
+    gcflags:
+    - all="-l"
     env:
       - CGO_ENABLED=0
-    # hooks: #disabling upx for linux temporarily
-    #   post: upx "{{ .Path }}"
+
   - id: apigeeclimac
     main: ./main.go
     binary: apigeecli
@@ -49,11 +50,11 @@ builds:
     - -trimpath
     ldflags:
     - -s -w -a -extldflags "-static" -X main.Version={{.Tag}} -X main.Git={{.Commit}}
+    gcflags:
+    - all="-l"
     env:
       - CGO_ENABLED=0 
-    # hooks: #disabling upx for mac temporarily
-    #   post: upx "{{ .Path }}"
-# Windows defender can have a false positive and think upx shrinked binaries are malware       
+
   - id: apigeecliwin
     main: ./main.go
     binary: apigeecli
@@ -61,13 +62,12 @@ builds:
       - windows
     goarch:
        - amd64
-    ignore:
-      - goos: windows
-        goarch: arm64
     flags:
     - -trimpath
     ldflags:
-    - -s -w -a -extldflags "-static" -X main.Version={{.Tag}} -X main.Git={{.Commit}}   
+    - -s -w -a -extldflags "-static" -X main.Version={{.Tag}} -X main.Git={{.Commit}}
+    gcflags:
+    - all="-l"
     env:
       - CGO_ENABLED=0
 
@@ -105,9 +105,3 @@ signs:
 release:
   draft: true
   prerelease: true
-
-universal_binaries:
-  - 
-    replace: false
-    ids:
-      - apigeeclimac
