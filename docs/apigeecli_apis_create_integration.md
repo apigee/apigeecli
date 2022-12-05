@@ -1,22 +1,22 @@
-## apigeecli apis create bundle
+## apigeecli apis create integration
 
-Creates an API proxy from an Zip or folder
+Creates an API proxy template for Application Integration
 
 ### Synopsis
 
-Creates an API proxy from an Zip or folder
+Creates an API proxy template for Application Integration with an API Trigger
 
 ```
-apigeecli apis create bundle [flags]
+apigeecli apis create integration [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help                  help for bundle
+  -h, --help                  help for integration
+  -i, --intergration string   Integration name
   -n, --name string           API Proxy name
-  -f, --proxy-folder string   Path to the Sharedflow Bundle; ex: ./test/apiproxy
-  -p, --proxy-zip string      Path to the Sharedflow bundle/zip file
+      --trigger string        API Trigger name; don't include 'api_trigger/'
 ```
 
 ### Options inherited from parent commands
