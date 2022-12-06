@@ -22,7 +22,7 @@ import (
 	"github.com/apigee/apigeecli/apiclient"
 )
 
-//Create
+// Create
 func Create(name string, resPath string, resourceType string) (respBody []byte, err error) {
 	if !validate(resourceType) {
 		return respBody, fmt.Errorf("invalid resource type")
@@ -35,11 +35,14 @@ func Create(name string, resPath string, resourceType string) (respBody []byte, 
 		q.Set("name", name)
 		u.RawQuery = q.Encode()
 	}
-	respBody, err = apiclient.PostHttpOctet(true, false, u.String(), resPath)
+	formParams := map[string]string{
+		"file": resPath,
+	}
+	respBody, err = apiclient.PostHttpOctet(true, false, u.String(), formParams)
 	return respBody, err
 }
 
-//Delete
+// Delete
 func Delete(name string, resourceType string) (respBody []byte, err error) {
 	if !validate(resourceType) {
 		return respBody, fmt.Errorf("invalid resource type")
@@ -50,7 +53,7 @@ func Delete(name string, resourceType string) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//Get
+// Get
 func Get(name string, resourceType string) (err error) {
 	if !validate(resourceType) {
 		return fmt.Errorf("invalid resource type")
@@ -61,18 +64,21 @@ func Get(name string, resourceType string) (err error) {
 	return
 }
 
-//Update
+// Update
 func Update(name string, resPath string, resourceType string) (err error) {
 	if !validate(resourceType) {
 		return fmt.Errorf("invalid resource type")
 	}
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "resourcefiles", resourceType, name)
-	_, err = apiclient.PostHttpOctet(true, true, u.String(), resPath)
+	formParams := map[string]string{
+		"file": resPath,
+	}
+	_, err = apiclient.PostHttpOctet(true, true, u.String(), formParams)
 	return
 }
 
-//List
+// List
 func List(resourceType string) (respBody []byte, err error) {
 	if resourceType != "" {
 		if !validate(resourceType) {
@@ -92,7 +98,7 @@ func List(resourceType string) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//validate returns true is the resource type is valid
+// validate returns true is the resource type is valid
 func validate(resType string) bool {
 	//validResourceTypes contains a list of valid resources
 	var validResourceTypes = [7]string{"js", "jsc", "properties", "java", "wsdl", "xsd", "py"}
