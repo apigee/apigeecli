@@ -80,3 +80,18 @@ func FileExists(filePath string) bool {
 	}
 	return true
 }
+
+func ReadFile(filePath string) (byteValue []byte, err error) {
+	userFile, err := os.Open(filePath)
+	if err != nil {
+		return nil, err
+	}
+
+	defer userFile.Close()
+
+	byteValue, err = ioutil.ReadAll(userFile)
+	if err != nil {
+		return nil, err
+	}
+	return byteValue, err
+}
