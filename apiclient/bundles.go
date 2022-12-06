@@ -30,10 +30,10 @@ import (
 	"github.com/apigee/apigeecli/clilog"
 )
 
-//entityPayloadList stores list of entities
+// entityPayloadList stores list of entities
 var entityPayloadList [][]byte //types.EntityPayloadList
 
-//ReadArchive confirms f the file format is zip and reads the contents are a byte[]
+// ReadArchive confirms f the file format is zip and reads the contents are a byte[]
 func ReadArchive(filename string) ([]byte, error) {
 	if !strings.HasSuffix(filename, ".zip") {
 		clilog.Error.Println("proxy bundle must be a zip file")
@@ -70,7 +70,7 @@ func ReadArchive(filename string) ([]byte, error) {
 	return archiveFile, nil
 }
 
-//ReadBundle confirms if the file format is a zip file
+// ReadBundle confirms if the file format is a zip file
 func ReadBundle(filename string) error {
 	if !strings.HasSuffix(filename, ".zip") {
 		clilog.Error.Println("proxy bundle must be a zip file")
@@ -101,7 +101,7 @@ func ReadBundle(filename string) error {
 	return nil
 }
 
-//WriteByteArrayToFile accepts []bytes and writes to a file
+// WriteByteArrayToFile accepts []bytes and writes to a file
 func WriteByteArrayToFile(exportFile string, fileAppend bool, payload []byte) error {
 	var fileFlags = os.O_CREATE | os.O_WRONLY
 
@@ -126,7 +126,7 @@ func WriteByteArrayToFile(exportFile string, fileAppend bool, payload []byte) er
 	return nil
 }
 
-//WriteArrayByteArrayToFile accepts [][]bytes and writes to a file
+// WriteArrayByteArrayToFile accepts [][]bytes and writes to a file
 func WriteArrayByteArrayToFile(exportFile string, fileAppend bool, payload [][]byte) error {
 	var fileFlags = os.O_CREATE | os.O_WRONLY
 
@@ -162,7 +162,7 @@ func WriteArrayByteArrayToFile(exportFile string, fileAppend bool, payload [][]b
 	return nil
 }
 
-//GetAsyncEntity stores results for each entity in a list
+// GetAsyncEntity stores results for each entity in a list
 func GetAsyncEntity(entityURL string, wg *sync.WaitGroup, mu *sync.Mutex) {
 	//this is a two step process - 1) get entity details 2) store in byte[][]
 	defer wg.Done()
@@ -193,7 +193,7 @@ func ClearEntityPayloadList() {
 	entityPayloadList = entityPayloadList[:0]
 }
 
-//FetchAsyncBundle can download a shared flow or a proxy bundle
+// FetchAsyncBundle can download a shared flow or a proxy bundle
 func FetchAsyncBundle(entityType string, folder string, name string, revision string, allRevisions bool, wg *sync.WaitGroup) {
 	//this method is meant to be called asynchronously
 	defer wg.Done()
@@ -201,7 +201,7 @@ func FetchAsyncBundle(entityType string, folder string, name string, revision st
 	_ = FetchBundle(entityType, folder, name, revision, allRevisions)
 }
 
-//FetchBundle can download a shared flow or proxy bundle
+// FetchBundle can download a shared flow or proxy bundle
 func FetchBundle(entityType string, folder string, name string, revision string, allRevisions bool) error {
 	var proxyName string
 
@@ -231,14 +231,14 @@ func FetchBundle(entityType string, folder string, name string, revision string,
 	return nil
 }
 
-//ImportBundleAsync imports a sharedflow or api proxy bundle meantot be called asynchronously
+// ImportBundleAsync imports a sharedflow or api proxy bundle meantot be called asynchronously
 func ImportBundleAsync(entityType string, name string, bundlePath string, wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	_ = ImportBundle(entityType, name, bundlePath)
 }
 
-//ImportBundle imports a sharedflow or api proxy bundle
+// ImportBundle imports a sharedflow or api proxy bundle
 func ImportBundle(entityType string, name string, bundlePath string) error {
 	err := ReadBundle(bundlePath)
 	if err != nil {
@@ -261,7 +261,11 @@ func ImportBundle(entityType string, name string, bundlePath string) error {
 	q.Set("action", "import")
 	u.RawQuery = q.Encode()
 
-	_, err = PostHttpOctet(true, false, u.String(), bundlePath)
+	formParams := map[string]string{
+		"proxy": bundlePath,
+	}
+
+	_, err = PostHttpOctet(true, false, u.String(), formParams)
 	if err != nil {
 		clilog.Error.Println(err)
 		return err
