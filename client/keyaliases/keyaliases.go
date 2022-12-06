@@ -23,12 +23,69 @@ import (
 	"github.com/apigee/apigeecli/apiclient"
 )
 
-//Create
-func Create(keystoreName string, name string, format string, password string, ignoreExpiry bool,
-	ignoreNewLine bool, payload string) (respBody []byte, err error) {
-	if !validate(format) {
-		return respBody, fmt.Errorf("certificate format must be one of keycertfile, pkcs12 or selfsignedcert")
+func CreateSelfSigned(keystoreName string, name string, ignoreExpiry bool, ignoreNewLine bool, payload string) (respBody []byte, err error) {
+
+	u, _ := url.Parse(apiclient.BaseURL)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(),
+		"keystores", keystoreName, "aliases")
+
+	q := u.Query()
+	q.Set("format", "selfsignedcert")
+	q.Set("alias", name)
+
+	if ignoreNewLine {
+		q.Set("ignoreNewlineValidation", "true")
 	}
+	if ignoreExpiry {
+		q.Set("ignoreExpiryValidation", "true")
+	}
+	u.RawQuery = q.Encode()
+
+	var jsonPayload map[string]interface{}
+	err = json.Unmarshal([]byte(payload), &jsonPayload)
+
+	if err != nil {
+		return respBody, err
+	}
+
+	return apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload)
+}
+
+func CreatePfx(keystoreName string, name string, ignoreExpiry bool, ignoreNewLine bool, pfxFile string, password string) (respBpdy []byte, err error) {
+
+	if pfxFile == "" {
+		return nil, fmt.Errorf("pfxFile cannot be empty")
+	}
+	if password == "" {
+		return nil, fmt.Errorf("password cannot be empty")
+	}
+
+	formParams := map[string]string{
+		"file": pfxFile,
+	}
+
+	return create(keystoreName, name, "pkcs12", password, ignoreExpiry, ignoreNewLine, formParams)
+}
+
+func CreateKeyCert(keystoreName string, name string, ignoreExpiry bool, ignoreNewLine bool,
+	certFile string, keyFile string, password string) (respBpdy []byte, err error) {
+
+	if certFile == "" {
+		return nil, fmt.Errorf("certFile cannot be empty")
+	}
+
+	formParams := map[string]string{
+		"certFile": certFile,
+	}
+	if keyFile != "" {
+		formParams["keyFile"] = keyFile
+	}
+
+	return create(keystoreName, name, "keycertfile", password, ignoreExpiry, ignoreNewLine, formParams)
+}
+
+func create(keystoreName string, name string, format string, password string, ignoreExpiry bool, ignoreNewLine bool, formParams map[string]string) (respBody []byte, err error) {
+
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(),
 		"keystores", keystoreName, "aliases")
@@ -43,35 +100,15 @@ func Create(keystoreName string, name string, format string, password string, ig
 	if ignoreExpiry {
 		q.Set("ignoreExpiryValidation", "true")
 	}
-
-	switch format {
-	case "keycertfile":
-		if password != "" {
-			q.Set("password", password)
-		}
-		u.RawQuery = q.Encode()
-		respBody, err = apiclient.PostHttpOctet(true, false, u.String(), name+".pem")
-	case "pkcs12":
-		if password != "" {
-			q.Set("password", password)
-		}
-		u.RawQuery = q.Encode()
-		respBody, err = apiclient.PostHttpOctet(true, false, u.String(), name+".pfx")
-	case "selfsignedcert":
-		var jsonPayload map[string]interface{}
-		err = json.Unmarshal([]byte(payload), &jsonPayload)
-
-		if err != nil {
-			return respBody, err
-		}
-		u.RawQuery = q.Encode()
-		respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload)
+	if password != "" {
+		q.Set("password", password)
 	}
+	u.RawQuery = q.Encode()
 
-	return respBody, err
+	return apiclient.PostHttpOctet(true, false, u.String(), formParams)
 }
 
-//CreateCSR
+// CreateCSR
 func CreateCSR(keystoreName string, name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(),
@@ -80,7 +117,7 @@ func CreateCSR(keystoreName string, name string) (respBody []byte, err error) {
 	return
 }
 
-//GetCert
+// GetCert
 func GetCert(keystoreName string, name string) (err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(),
@@ -89,7 +126,7 @@ func GetCert(keystoreName string, name string) (err error) {
 	return err
 }
 
-//Get
+// Get
 func Get(keystoreName string, name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(),
@@ -98,7 +135,7 @@ func Get(keystoreName string, name string) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//Delete
+// Delete
 func Delete(keystoreName string, name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "keystores",
@@ -107,21 +144,11 @@ func Delete(keystoreName string, name string) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//List
+// List
 func List(keystoreName string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(),
 		"keystores", keystoreName, "aliases")
 	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
 	return respBody, err
-}
-
-func validate(format string) bool {
-	var certFormats = [3]string{"keycertfile", "pkcs12", "selfsignedcert"}
-	for _, frmt := range certFormats {
-		if format == frmt {
-			return true
-		}
-	}
-	return false
 }

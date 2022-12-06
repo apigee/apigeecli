@@ -20,7 +20,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//CrtslfCmd to create self signed key aliases
+// CrtslfCmd to create self signed key aliases
 var CrtslfCmd = &cobra.Command{
 	Use:   "create-self-signed",
 	Short: "Create a Key Alias from self-seigned cert",
@@ -30,7 +30,7 @@ var CrtslfCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = keyaliases.Create(keystoreName, aliasName, "selfsignedcert", "", ignoreExpiry, ignoreNewLine, payload)
+		_, err = keyaliases.CreateSelfSigned(keystoreName, aliasName, ignoreExpiry, ignoreNewLine, payload)
 		return
 	},
 }
