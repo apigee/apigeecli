@@ -16,7 +16,7 @@ package references
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"net/url"
 	"os"
 	"path"
@@ -106,7 +106,7 @@ func Update(name string, description string, resourceType string, refers string)
 	return respBody, err
 }
 
-//Export
+// Export
 func Export(conn int) (payload [][]byte, err error) {
 	//parent workgroup
 	var pwg sync.WaitGroup
@@ -162,7 +162,7 @@ func Export(conn int) (payload [][]byte, err error) {
 	return payload, nil
 }
 
-//batch created a batch of references to query
+// batch created a batch of references to query
 func batchExport(entities []string, entityType string, pwg *sync.WaitGroup, mu *sync.Mutex) {
 
 	defer pwg.Done()
@@ -179,7 +179,7 @@ func batchExport(entities []string, entityType string, pwg *sync.WaitGroup, mu *
 	bwg.Wait()
 }
 
-//Import
+// Import
 func Import(conn int, filePath string) (err error) {
 	var pwg sync.WaitGroup
 	const entityType = "references"
@@ -225,7 +225,7 @@ func Import(conn int, filePath string) (err error) {
 	return nil
 }
 
-//batchImport creates a batch of references to create
+// batchImport creates a batch of references to create
 func batchImport(url string, entities []ref, pwg *sync.WaitGroup) {
 
 	defer pwg.Done()
@@ -266,7 +266,7 @@ func readReferencesFile(filePath string) ([]ref, error) {
 
 	defer jsonFile.Close()
 
-	byteValue, err := ioutil.ReadAll(jsonFile)
+	byteValue, err := io.ReadAll(jsonFile)
 
 	if err != nil {
 		return refList, err

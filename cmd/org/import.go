@@ -17,7 +17,7 @@ package org
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"os"
 	"path"
 
@@ -227,7 +227,7 @@ func readEntityFileAsString(filePath string) (string, error) {
 
 	defer jsonFile.Close()
 
-	byteValue, err := ioutil.ReadAll(jsonFile)
+	byteValue, err := io.ReadAll(jsonFile)
 	if err != nil {
 		return "", err
 	}

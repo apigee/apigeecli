@@ -18,7 +18,6 @@ import (
 	"archive/zip"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"path"
@@ -176,7 +175,7 @@ func setParam(filePath string, paramType string) (err error) {
 		return err
 	}
 
-	byteValue, err := ioutil.ReadAll(proxyFile)
+	byteValue, err := io.ReadAll(proxyFile)
 	if err != nil {
 		return err
 	}

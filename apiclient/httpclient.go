@@ -20,7 +20,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"mime/multipart"
 	"net/http"
 	"net/url"
@@ -36,7 +35,7 @@ func PostHttpZip(print bool, auth bool, method string, url string, headers map[s
 
 	var req *http.Request
 
-	payload, err := ioutil.ReadFile(zipfile)
+	payload, err := os.ReadFile(zipfile)
 	if err != nil {
 		return err
 	}
@@ -374,7 +373,7 @@ func handleResponse(print bool, resp *http.Response) (respBody []byte, err error
 		return nil, nil
 	}
 
-	respBody, err = ioutil.ReadAll(resp.Body)
+	respBody, err = io.ReadAll(resp.Body)
 	if err != nil {
 		clilog.Error.Println("error in response: ", err)
 		return nil, err

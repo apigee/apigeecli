@@ -17,7 +17,7 @@ package apps
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/url"
 	"os"
 	"path"
@@ -340,7 +340,7 @@ func readAppsFile(filePath string, developersFilePath string) ([]application, de
 
 	defer jsonFile.Close()
 
-	byteValue, err := ioutil.ReadAll(jsonFile)
+	byteValue, err := io.ReadAll(jsonFile)
 	if err != nil {
 		return apps, devs, err
 	}

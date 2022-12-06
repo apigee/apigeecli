@@ -19,7 +19,6 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"net/url"
 	"os"
 	"path"
@@ -61,7 +60,7 @@ func ReadArchive(filename string) ([]byte, error) {
 		return nil, err
 	}
 
-	archiveFile, err := ioutil.ReadFile(filename)
+	archiveFile, err := os.ReadFile(filename)
 	if err != nil {
 		clilog.Error.Printf("Error reading archive: %s\n", err)
 		return nil, err

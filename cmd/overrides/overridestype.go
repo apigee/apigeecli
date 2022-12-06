@@ -16,11 +16,11 @@ package overrides
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"os"
 
 	"github.com/apigee/apigeecli/clilog"
 
-	"gopkg.in/yaml.v2"
+	yaml "gopkg.in/yaml.v2"
 )
 
 type overrides struct {
@@ -51,7 +51,7 @@ type virtualhost struct {
 var hybridOverrides = overrides{}
 
 func readOverrides(filepath string) (err error) {
-	source, err := ioutil.ReadFile(filepath)
+	source, err := os.ReadFile(filepath)
 	if err != nil {
 		return err
 	}
@@ -100,7 +100,7 @@ func getSyncServiceAccounts() []string {
 
 func getIdentity(serviceAccountPath string) (string, error) {
 	serviceAccount := make(map[string]interface{})
-	saBytes, err := ioutil.ReadFile(serviceAccountPath)
+	saBytes, err := os.ReadFile(serviceAccountPath)
 	if err != nil {
 		clilog.Error.Println(err)
 		return "", err

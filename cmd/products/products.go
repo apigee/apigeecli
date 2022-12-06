@@ -16,14 +16,14 @@ package products
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"os"
 
 	"github.com/apigee/apigeecli/client/products"
 	"github.com/apigee/apigeecli/clilog"
 	"github.com/spf13/cobra"
 )
 
-//Cmd to manage products
+// Cmd to manage products
 var Cmd = &cobra.Command{
 	Use:     "products",
 	Aliases: []string{"prods"},
@@ -61,7 +61,7 @@ func getOperationGroup(operationGroupFile string) (*products.OperationGroup, err
 	operationGrp := products.OperationGroup{}
 
 	if operationGroupFile != "" {
-		if operationGrpBytes, err = ioutil.ReadFile(operationGroupFile); err != nil {
+		if operationGrpBytes, err = os.ReadFile(operationGroupFile); err != nil {
 			clilog.Info.Println(err)
 			return nil, err
 		}
@@ -81,7 +81,7 @@ func getGqlOperationGroup(gqlOperationGroupFile string) (*products.GraphqlOperat
 	gqlOperationGrp := products.GraphqlOperationGroup{}
 
 	if gqlOperationGroupFile != "" {
-		if gqlOperationGrpBytes, err = ioutil.ReadFile(gqlOperationGroupFile); err != nil {
+		if gqlOperationGrpBytes, err = os.ReadFile(gqlOperationGroupFile); err != nil {
 			clilog.Info.Println(err)
 			return nil, err
 		}

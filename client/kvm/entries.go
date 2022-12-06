@@ -16,7 +16,7 @@ package kvm
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"net/url"
 	"os"
 	"path"
@@ -231,7 +231,7 @@ func readKVMfile(filePath string) (kvmEntries keyvalueentries, err error) {
 
 	defer jsonFile.Close()
 
-	byteValue, err := ioutil.ReadAll(jsonFile)
+	byteValue, err := io.ReadAll(jsonFile)
 
 	if err != nil {
 		return kvmEntries, err

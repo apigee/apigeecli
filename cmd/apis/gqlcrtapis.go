@@ -16,8 +16,9 @@ package apis
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/url"
+	"os"
 	"path"
 	"path/filepath"
 	"strings"
@@ -130,7 +131,7 @@ func init() {
 }
 
 func readSchemaFile() (string, []byte, error) {
-	schemaFile, err := ioutil.ReadFile(gqlFile)
+	schemaFile, err := os.ReadFile(gqlFile)
 	if err != nil {
 		clilog.Error.Println("Error reading file: ", err)
 		return "", nil, err
@@ -153,7 +154,7 @@ func readSchemaURL() (string, []byte, error) {
 		defer resp.Body.Close()
 	}
 
-	respBody, err := ioutil.ReadAll(resp.Body)
+	respBody, err := io.ReadAll(resp.Body)
 	if err != nil {
 		clilog.Error.Println("error in response: ", err)
 		return "", nil, err

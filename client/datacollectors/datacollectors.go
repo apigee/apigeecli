@@ -16,7 +16,7 @@ package datacollectors
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"net/url"
 	"os"
 	"path"
@@ -37,7 +37,7 @@ type datacollector struct {
 	LastModifiedAt string `json:"lastModifiedAt,omitempty"`
 }
 
-//Create
+// Create
 func Create(name string, description string, collectorType string) (respBody []byte, err error) {
 	datacollector := []string{}
 
@@ -55,7 +55,7 @@ func Create(name string, description string, collectorType string) (respBody []b
 	return respBody, err
 }
 
-//Get
+// Get
 func Get(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "datacollectors", name)
@@ -63,7 +63,7 @@ func Get(name string) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//Delete
+// Delete
 func Delete(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "datacollectors", name)
@@ -71,7 +71,7 @@ func Delete(name string) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//List
+// List
 func List() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "datacollectors")
@@ -79,7 +79,7 @@ func List() (respBody []byte, err error) {
 	return respBody, err
 }
 
-//Import
+// Import
 func Import(filePath string) (err error) {
 
 	var dCollectors dcollectors
@@ -112,7 +112,7 @@ func readDataCollectorsFile(filePath string) (dcollectors, error) {
 
 	defer jsonFile.Close()
 
-	byteValue, err := ioutil.ReadAll(jsonFile)
+	byteValue, err := io.ReadAll(jsonFile)
 
 	if err != nil {
 		return dCollectors, err

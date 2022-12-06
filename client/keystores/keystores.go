@@ -16,7 +16,7 @@ package keystores
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"net/url"
 	"os"
 	"path"
@@ -26,7 +26,7 @@ import (
 	"github.com/apigee/apigeecli/clilog"
 )
 
-//Create
+// Create
 func Create(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "keystores")
@@ -35,7 +35,7 @@ func Create(name string) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//Get
+// Get
 func Get(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "keystores", name)
@@ -43,7 +43,7 @@ func Get(name string) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//Delete
+// Delete
 func Delete(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "keystores", name)
@@ -51,7 +51,7 @@ func Delete(name string) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//List
+// List
 func List() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "keystores")
@@ -59,7 +59,7 @@ func List() (respBody []byte, err error) {
 	return respBody, err
 }
 
-//Import
+// Import
 func Import(conn int, filePath string) (err error) {
 	var pwg sync.WaitGroup
 	const entityType = "keystores"
@@ -105,7 +105,7 @@ func Import(conn int, filePath string) (err error) {
 	return nil
 }
 
-//batchImport creates a batch of keystores to create
+// batchImport creates a batch of keystores to create
 func batchImport(url string, entities []string, pwg *sync.WaitGroup) {
 
 	defer pwg.Done()
@@ -141,7 +141,7 @@ func readKeystoresFile(filePath string) ([]string, error) {
 
 	defer jsonFile.Close()
 
-	byteValue, err := ioutil.ReadAll(jsonFile)
+	byteValue, err := io.ReadAll(jsonFile)
 
 	if err != nil {
 		return keystoresList, err

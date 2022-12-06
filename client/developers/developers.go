@@ -17,7 +17,7 @@ package developers
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/url"
 	"os"
 	"path"
@@ -29,7 +29,7 @@ import (
 	"github.com/apigee/apigeecli/clilog"
 )
 
-//Appdevelopers holds a single developer
+// Appdevelopers holds a single developer
 type Appdeveloper struct {
 	EMail       string      `json:"email,omitempty"`
 	FirstName   string      `json:"firstName,omitempty"`
@@ -39,18 +39,18 @@ type Appdeveloper struct {
 	DeveloperId string      `json:"developerId,omitempty"`
 }
 
-//Appdevelopers hold an array of developers
+// Appdevelopers hold an array of developers
 type Appdevelopers struct {
 	Developer []Appdeveloper `json:"developer,omitempty"`
 }
 
-//Attribute to used to hold custom attributes for entities
+// Attribute to used to hold custom attributes for entities
 type Attribute struct {
 	Name  string `json:"name,omitempty"`
 	Value string `json:"value,omitempty"`
 }
 
-//Create
+// Create
 func Create(email string, firstName string, lastName string, username string, attrs map[string]string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 
@@ -76,7 +76,7 @@ func Create(email string, firstName string, lastName string, username string, at
 	return respBody, err
 }
 
-//Delete
+// Delete
 func Delete(email string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", url.QueryEscape(email)) //since developer emails can have +
@@ -84,7 +84,7 @@ func Delete(email string) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//Get
+// Get
 func Get(email string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", url.QueryEscape(email)) //since developer emails can have +
@@ -92,7 +92,7 @@ func Get(email string) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//GetDeveloperId
+// GetDeveloperId
 func GetDeveloperId(email string) (developerId string, err error) {
 	apiclient.SetPrintOutput(false)
 	var developerMap map[string]interface{}
@@ -111,7 +111,7 @@ func GetDeveloperId(email string) (developerId string, err error) {
 	return fmt.Sprintf("%v", developerMap["developerId"]), nil
 }
 
-//GetApps
+// GetApps
 func GetApps(name string, expand bool) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	if expand {
@@ -126,7 +126,7 @@ func GetApps(name string, expand bool) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//List
+// List
 func List(count int, expand bool, ids string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers")
@@ -148,7 +148,7 @@ func List(count int, expand bool, ids string) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//Export
+// Export
 func Export() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers")
@@ -162,7 +162,7 @@ func Export() (respBody []byte, err error) {
 	return respBody, err
 }
 
-//Import
+// Import
 func Import(conn int, filePath string) error {
 
 	var pwg sync.WaitGroup
@@ -223,7 +223,7 @@ func createAsyncDeveloper(url string, dev Appdeveloper, wg *sync.WaitGroup) {
 	clilog.Info.Printf("Completed entity: %s", dev.EMail)
 }
 
-//batch creates a batch of developers to create
+// batch creates a batch of developers to create
 func batchImport(url string, entities []Appdeveloper, pwg *sync.WaitGroup) {
 
 	defer pwg.Done()
@@ -238,7 +238,7 @@ func batchImport(url string, entities []Appdeveloper, pwg *sync.WaitGroup) {
 	bwg.Wait()
 }
 
-//ReadDevelopersFile
+// ReadDevelopersFile
 func ReadDevelopersFile(filePath string) (Appdevelopers, error) {
 
 	devs := Appdevelopers{}
@@ -251,7 +251,7 @@ func ReadDevelopersFile(filePath string) (Appdevelopers, error) {
 
 	defer jsonFile.Close()
 
-	byteValue, err := ioutil.ReadAll(jsonFile)
+	byteValue, err := io.ReadAll(jsonFile)
 
 	if err != nil {
 		return devs, err

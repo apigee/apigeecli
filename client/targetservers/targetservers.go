@@ -16,7 +16,7 @@ package targetservers
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"net/url"
 	"os"
 	"path"
@@ -54,7 +54,7 @@ type commonName struct {
 	WildcardMatch bool   `json:"wildcardMatch,omitempty"`
 }
 
-//Create
+// Create
 func Create(name string, description string, host string, port int, enable string, grpc bool, keyStore string, keyAlias string, sslinfo string, tlsenabled bool, clientAuthEnabled bool, ignoreValidationErrors bool) (respBody []byte, err error) {
 	targetsvr := targetserver{}
 	targetsvr.Name = name
@@ -62,7 +62,7 @@ func Create(name string, description string, host string, port int, enable strin
 	return createOrUpdate("create", targetsvr, name, description, host, port, enable, grpc, keyStore, keyAlias, sslinfo, tlsenabled, clientAuthEnabled, ignoreValidationErrors)
 }
 
-//Update
+// Update
 func Update(name string, description string, host string, port int, enable string, grpc bool, keyStore string, keyAlias string, sslinfo string, tlsenabled bool, clientAuthEnabled bool, ignoreValidationErrors bool) (respBody []byte, err error) {
 
 	var targetRespBody []byte
@@ -144,7 +144,7 @@ func createOrUpdate(action string, targetsvr targetserver, name string, descript
 	return respBody, err
 }
 
-//Get
+// Get
 func Get(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "targetservers", name)
@@ -152,7 +152,7 @@ func Get(name string) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//Delete
+// Delete
 func Delete(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "targetservers", name)
@@ -160,7 +160,7 @@ func Delete(name string) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//List
+// List
 func List() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "targetservers")
@@ -168,7 +168,7 @@ func List() (respBody []byte, err error) {
 	return respBody, err
 }
 
-//Export
+// Export
 func Export(conn int) (payload [][]byte, err error) {
 
 	//parent workgroup
@@ -225,7 +225,7 @@ func Export(conn int) (payload [][]byte, err error) {
 	return payload, nil
 }
 
-//batch created a batch of targetservers to query
+// batch created a batch of targetservers to query
 func batchExport(entities []string, entityType string, pwg *sync.WaitGroup, mu *sync.Mutex) {
 
 	defer pwg.Done()
@@ -242,7 +242,7 @@ func batchExport(entities []string, entityType string, pwg *sync.WaitGroup, mu *
 	bwg.Wait()
 }
 
-//Import
+// Import
 func Import(conn int, filePath string) (err error) {
 	var pwg sync.WaitGroup
 	const entityType = "targetservers"
@@ -288,7 +288,7 @@ func Import(conn int, filePath string) (err error) {
 	return nil
 }
 
-//batch creates a batch of target servers to create
+// batch creates a batch of target servers to create
 func batchImport(url string, entities []targetserver, pwg *sync.WaitGroup) {
 
 	defer pwg.Done()
@@ -330,7 +330,7 @@ func readTargetServersFile(filePath string) ([]targetserver, error) {
 
 	defer jsonFile.Close()
 
-	byteValue, err := ioutil.ReadAll(jsonFile)
+	byteValue, err := io.ReadAll(jsonFile)
 
 	if err != nil {
 		return targetservers, err

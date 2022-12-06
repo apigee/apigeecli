@@ -15,7 +15,7 @@
 package products
 
 import (
-	"io/ioutil"
+	"os"
 
 	"github.com/apigee/apigeecli/apiclient"
 	"github.com/apigee/apigeecli/client/products"
@@ -23,7 +23,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//Cmd to create a rate plane for an api product
+// Cmd to create a rate plane for an api product
 var CreateRateplanCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a rate plan for an API product",
@@ -32,7 +32,7 @@ var CreateRateplanCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		if rateplanData, err = ioutil.ReadFile(rateplanFile); err != nil {
+		if rateplanData, err = os.ReadFile(rateplanFile); err != nil {
 			clilog.Info.Println(err)
 			return
 		}
