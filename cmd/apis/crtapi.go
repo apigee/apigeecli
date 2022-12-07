@@ -34,4 +34,5 @@ func init() {
 	CreateCmd.AddCommand(BundleCreateCmd)
 	CreateCmd.AddCommand(GqlCreateCmd)
 	CreateCmd.AddCommand(IntegrationCmd)
+	CreateCmd.AddCommand(SwaggerCreateCmd)
 }
