@@ -16,7 +16,6 @@ package apiclient
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"os"
 	"os/user"
 	"path"
@@ -51,7 +50,7 @@ func ReadPreferencesFile() (err error) {
 		return err
 	}
 
-	prefFile, err := ioutil.ReadFile(path.Join(usr.HomeDir, apigeecliPath, apigeecliFile))
+	prefFile, err := os.ReadFile(path.Join(usr.HomeDir, apigeecliPath, apigeecliFile))
 	if err != nil {
 		clilog.Info.Println("Cached preferences was not found")
 		return err
@@ -215,7 +214,7 @@ func GetPreferences() (err error) {
 	return PrettyPrint(output)
 }
 
-//WritePreferencesFile
+// WritePreferencesFile
 func WritePerferencesFile(payload []byte) (err error) {
 	usr, err = user.Current()
 	if err != nil {

@@ -16,7 +16,7 @@ package products
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"net/url"
 	"os"
 	"path"
@@ -100,7 +100,7 @@ type Quota struct {
 	TimeUnit string `json:"timeUnit,omitempty"`
 }
 
-//attribute to used to hold custom attributes for entities
+// attribute to used to hold custom attributes for entities
 type Attribute struct {
 	Name  string `json:"name,omitempty"`
 	Value string `json:"value,omitempty"`
@@ -114,7 +114,7 @@ func Update(p Product) (respBody []byte, err error) {
 	return upsert(p, UPDATE)
 }
 
-//Get
+// Get
 func Get(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts", name)
@@ -122,7 +122,7 @@ func Get(name string) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//Delete
+// Delete
 func Delete(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts", name)
@@ -130,7 +130,7 @@ func Delete(name string) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//upsert - use Action to control if upsert is enabled
+// upsert - use Action to control if upsert is enabled
 func upsert(p Product, a Action) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 
@@ -167,7 +167,7 @@ func upsert(p Product, a Action) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//UpdateAttribute
+// UpdateAttribute
 func UpdateAttribute(name string, key string, value string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts", name, "attributes", key)
@@ -176,7 +176,7 @@ func UpdateAttribute(name string, key string, value string) (respBody []byte, er
 	return respBody, err
 }
 
-//DeleteAttribute
+// DeleteAttribute
 func DeleteAttribute(name string, key string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts", name, "attributes", key)
@@ -184,7 +184,7 @@ func DeleteAttribute(name string, key string) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//GetAttribute
+// GetAttribute
 func GetAttribute(name string, key string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts", name, "attributes", key)
@@ -192,7 +192,7 @@ func GetAttribute(name string, key string) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//ListAttributes
+// ListAttributes
 func ListAttributes(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts", name, "attributes")
@@ -200,7 +200,7 @@ func ListAttributes(name string) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//List
+// List
 func List(count int, expand bool) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts")
@@ -218,7 +218,7 @@ func List(count int, expand bool) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//Export
+// Export
 func Export(conn int) (payload [][]byte, err error) {
 	//parent workgroup
 	var pwg sync.WaitGroup
@@ -274,7 +274,7 @@ func Export(conn int) (payload [][]byte, err error) {
 	return payload, nil
 }
 
-//Import
+// Import
 func Import(conn int, filePath string, upsert bool) (err error) {
 	var pwg sync.WaitGroup
 	u, _ := url.Parse(apiclient.BaseURL)
@@ -318,7 +318,7 @@ func Import(conn int, filePath string, upsert bool) (err error) {
 	return nil
 }
 
-//batch created a batch of products to query
+// batch created a batch of products to query
 func batchExport(entities []apiProduct, entityType string, pwg *sync.WaitGroup, mu *sync.Mutex) {
 	defer pwg.Done()
 	//batch workgroup
@@ -334,7 +334,7 @@ func batchExport(entities []apiProduct, entityType string, pwg *sync.WaitGroup, 
 	bwg.Wait()
 }
 
-//batch creates a batch of products to create
+// batch creates a batch of products to create
 func batchImport(url string, entities []Product, upsert bool, pwg *sync.WaitGroup) {
 
 	defer pwg.Done()
@@ -380,7 +380,7 @@ func readProductsFile(filePath string) ([]Product, error) {
 
 	defer jsonFile.Close()
 
-	byteValue, err := ioutil.ReadAll(jsonFile)
+	byteValue, err := io.ReadAll(jsonFile)
 
 	if err != nil {
 		return products, err

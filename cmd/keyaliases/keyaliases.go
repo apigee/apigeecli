@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//Cmd to manage key aliases
+// Cmd to manage key aliases
 var Cmd = &cobra.Command{
 	Use:     "keyaliases",
 	Aliases: []string{"ka"},
@@ -42,6 +42,5 @@ func init() {
 	Cmd.AddCommand(GetctCmd)
 	Cmd.AddCommand(GetCmd)
 	Cmd.AddCommand(DelCmd)
-	Cmd.AddCommand(CrtslfCmd)
 	Cmd.AddCommand(CreateCmd)
 }

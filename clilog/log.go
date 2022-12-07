@@ -15,21 +15,21 @@
 package clilog
 
 import (
-	"io/ioutil"
+	"io"
 	"log"
 	"os"
 )
 
-//log levels, default is error
+// log levels, default is error
 var (
 	Info    *log.Logger
 	Warning *log.Logger
 	Error   *log.Logger
 )
 
-//Init function initializes the logger objects
+// Init function initializes the logger objects
 func Init(skipLogInfo bool) {
-	var infoHandle = ioutil.Discard
+	var infoHandle = io.Discard
 
 	if !skipLogInfo {
 		infoHandle = os.Stdout

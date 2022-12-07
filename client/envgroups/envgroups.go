@@ -17,7 +17,7 @@ package envgroups
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/url"
 	"os"
 	"path"
@@ -38,7 +38,7 @@ type environmentgroup struct {
 	State          string   `json:"state,omitempty"`
 }
 
-//Create
+// Create
 func Create(name string, hostnames []string) (respBody []byte, err error) {
 
 	envgroup := []string{}
@@ -54,7 +54,7 @@ func Create(name string, hostnames []string) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//Get
+// Get
 func Get(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "envgroups", name)
@@ -62,7 +62,7 @@ func Get(name string) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//Delete
+// Delete
 func Delete(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "envgroups", name)
@@ -70,7 +70,7 @@ func Delete(name string) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//List
+// List
 func List() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "envgroups")
@@ -78,7 +78,7 @@ func List() (respBody []byte, err error) {
 	return respBody, err
 }
 
-//PatchHosts
+// PatchHosts
 func PatchHosts(name string, hostnames []string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "envgroups", name)
@@ -94,7 +94,7 @@ func PatchHosts(name string, hostnames []string) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//Attach
+// Attach
 func Attach(name string, environment string) (respBody []byte, err error) {
 
 	envgroup := []string{}
@@ -107,7 +107,7 @@ func Attach(name string, environment string) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//DetachEnvironment
+// DetachEnvironment
 func DetachEnvironment(name string, environment string) (respBody []byte, err error) {
 
 	type attachment struct {
@@ -142,7 +142,7 @@ func DetachEnvironment(name string, environment string) (respBody []byte, err er
 	return nil, fmt.Errorf("did not find environment %s in envgroup %s", environment, name)
 }
 
-//Detach
+// Detach
 func Detach(name string, attachment string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "envgroups", name, "attachments", attachment)
@@ -150,7 +150,7 @@ func Detach(name string, attachment string) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//ListAttach
+// ListAttach
 func ListAttach(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "envgroups", name, "attachments")
@@ -164,7 +164,7 @@ func getArrayStr(str []string) string {
 	return tmp
 }
 
-//Import
+// Import
 func Import(filePath string) (err error) {
 
 	var environmentGroups environmentgroups
@@ -193,7 +193,7 @@ func readEnvGroupsFile(filePath string) (environmentgroups, error) {
 
 	defer jsonFile.Close()
 
-	byteValue, err := ioutil.ReadAll(jsonFile)
+	byteValue, err := io.ReadAll(jsonFile)
 
 	if err != nil {
 		return environmentGroups, err

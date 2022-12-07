@@ -20,11 +20,12 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"mime/multipart"
 	"net/http"
 	"net/url"
 	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/apigee/apigeecli/clilog"
 )
@@ -34,7 +35,7 @@ func PostHttpZip(print bool, auth bool, method string, url string, headers map[s
 
 	var req *http.Request
 
-	payload, err := ioutil.ReadFile(zipfile)
+	payload, err := os.ReadFile(zipfile)
 	if err != nil {
 		return err
 	}
@@ -81,31 +82,33 @@ func PostHttpZip(print bool, auth bool, method string, url string, headers map[s
 }
 
 // PostHttpOctet method is used to send resources, proxy bundles, shared flows etc.
-func PostHttpOctet(print bool, update bool, url string, proxyName string) (respBody []byte, err error) {
-	file, err := os.Open(proxyName)
-	if err != nil {
-		clilog.Error.Printf("failed to open the file %s with error: %v", proxyName, err)
-		return nil, err
-	}
-	defer file.Close()
-
-	if DryRun() {
-		return nil, nil
-	}
-
-	var req *http.Request
+func PostHttpOctet(print bool, update bool, url string, formParams map[string]string) (respBody []byte, err error) {
 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
-	part, err := writer.CreateFormFile("proxy", proxyName)
-	if err != nil {
-		clilog.Error.Println("Error writing multi-part: ", err)
-		return nil, err
-	}
-	_, err = io.Copy(part, file)
-	if err != nil {
-		clilog.Error.Println("error copying multi-part: ", err)
-		return nil, err
+
+	for formName, formParam := range formParams {
+		file, err := os.Open(formParam)
+		if err != nil {
+			clilog.Error.Printf("failed to open the file %s with error: %v", formParam, err)
+			return nil, err
+		}
+		//get filenanme without extension
+		fileNameWithExt, _ := filepath.Abs(formParam)
+		formValue := strings.TrimSuffix(fileNameWithExt, filepath.Ext(formParam))
+		part, err := writer.CreateFormFile(formName, formValue)
+		if err != nil {
+			clilog.Error.Println("Error writing multi-part: ", err)
+			return nil, err
+		}
+
+		_, err = io.Copy(part, file)
+		if err != nil {
+			clilog.Error.Println("error copying multi-part: ", err)
+			return nil, err
+		}
+
+		file.Close()
 	}
 
 	err = writer.Close()
@@ -113,6 +116,12 @@ func PostHttpOctet(print bool, update bool, url string, proxyName string) (respB
 		clilog.Error.Println("error closing multi-part: ", err)
 		return nil, err
 	}
+
+	if DryRun() {
+		return nil, nil
+	}
+
+	var req *http.Request
 
 	client, err := getHttpClient()
 	if err != nil {
@@ -364,7 +373,7 @@ func handleResponse(print bool, resp *http.Response) (respBody []byte, err error
 		return nil, nil
 	}
 
-	respBody, err = ioutil.ReadAll(resp.Body)
+	respBody, err = io.ReadAll(resp.Body)
 	if err != nil {
 		clilog.Error.Println("error in response: ", err)
 		return nil, err

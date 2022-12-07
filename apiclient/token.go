@@ -20,9 +20,10 @@ import (
 	"encoding/pem"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
+	"os"
 	"reflect"
 	"strconv"
 	"strings"
@@ -92,7 +93,7 @@ func generateJWT(privateKey string) (string, error) {
 	return string(payload), nil
 }
 
-//generateAccessToken generates a Google OAuth access token from a service account
+// generateAccessToken generates a Google OAuth access token from a service account
 func generateAccessToken(privateKey string) (string, error) {
 
 	const grantType = "urn:ietf:params:oauth:grant-type:jwt-bearer"
@@ -140,7 +141,7 @@ func generateAccessToken(privateKey string) (string, error) {
 		return "", errors.New("error in response: Response was null")
 	}
 
-	respBody, err = ioutil.ReadAll(resp.Body)
+	respBody, err = io.ReadAll(resp.Body)
 	clilog.Info.Printf("Response: %s\n", string(respBody))
 
 	if err != nil {
@@ -164,7 +165,7 @@ func generateAccessToken(privateKey string) (string, error) {
 }
 
 func readServiceAccount(serviceAccountPath string) error {
-	content, err := ioutil.ReadFile(serviceAccountPath)
+	content, err := os.ReadFile(serviceAccountPath)
 	if err != nil {
 		return err
 	}
@@ -209,7 +210,7 @@ func checkAccessToken() bool {
 		return false
 	}
 	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		clilog.Error.Println("token info error: ", err)
 		return false
@@ -222,7 +223,7 @@ func checkAccessToken() bool {
 	return true
 }
 
-//SetAccessToken read from cache or if not found or expired will generate a new one
+// SetAccessToken read from cache or if not found or expired will generate a new one
 func SetAccessToken() error {
 	if GetApigeeToken() == "" && GetServiceAccount() == "" {
 		SetApigeeToken(GetToken()) //read from configuration

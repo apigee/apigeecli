@@ -3,7 +3,7 @@ package utils
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -62,7 +62,7 @@ func ReadEntityFile(filePath string) ([]string, error) {
 
 	defer jsonFile.Close()
 
-	byteValue, err := ioutil.ReadAll(jsonFile)
+	byteValue, err := io.ReadAll(jsonFile)
 	if err != nil {
 		return entities, err
 	}
@@ -79,4 +79,19 @@ func FileExists(filePath string) bool {
 		return false
 	}
 	return true
+}
+
+func ReadFile(filePath string) (byteValue []byte, err error) {
+	userFile, err := os.Open(filePath)
+	if err != nil {
+		return nil, err
+	}
+
+	defer userFile.Close()
+
+	byteValue, err = io.ReadAll(userFile)
+	if err != nil {
+		return nil, err
+	}
+	return byteValue, err
 }
