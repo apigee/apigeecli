@@ -42,10 +42,15 @@ var CreateCmd = &cobra.Command{
 		if pfxFile != "" && !utils.FileExists(pfxFile) {
 			return fmt.Errorf("pfxFile was not found")
 		}
+		if selfFile != "" && !utils.FileExists(selfFile) {
+			return fmt.Errorf("selfsigned JSON file was not found")
+		}
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		switch format {
+		case "selfsignedcert":
+			_, err = keyaliases.CreateSelfSigned(keystoreName, name, ignoreExpiry, ignoreNewLine, selfFile)
 		case "pem":
 			_, err = keyaliases.CreateKeyCert(keystoreName, name, ignoreExpiry, ignoreNewLine, certFile, keyFile, password)
 		case "pkcs12":
@@ -57,7 +62,7 @@ var CreateCmd = &cobra.Command{
 	},
 }
 
-var format, password, keyFile, certFile, pfxFile string
+var format, password, keyFile, certFile, pfxFile, selfFile string
 var ignoreNewLine, ignoreExpiry bool
 
 func init() {
@@ -67,7 +72,7 @@ func init() {
 	CreateCmd.Flags().StringVarP(&name, "alias", "s",
 		"", "Name of the key alias")
 	CreateCmd.Flags().StringVarP(&format, "format", "f",
-		"", "Format of the certificate; pem or pkcs12 (file extn is .pfx)")
+		"", "Format of the certificate; selfsignedcert, pem or pkcs12 (file extn is .pfx)")
 	CreateCmd.Flags().StringVarP(&password, "password", "p",
 		"", "PKCS12 password")
 	CreateCmd.Flags().BoolVarP(&ignoreExpiry, "exp", "x",
@@ -80,6 +85,8 @@ func init() {
 		"", "Path to the X509 key in PEM format")
 	CreateCmd.Flags().StringVarP(&pfxFile, "pfxFilePath", "",
 		"", "Path to the PFX file")
+	CreateCmd.Flags().StringVarP(&selfFile, "selfsignedFilePath", "",
+		"", "Path to a JSON file containing details for a self signed certificate")
 
 	_ = CreateCmd.MarkFlagRequired("alias")
 	_ = CreateCmd.MarkFlagRequired("format")
