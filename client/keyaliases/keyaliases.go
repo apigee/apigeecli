@@ -21,9 +21,28 @@ import (
 	"path"
 
 	"github.com/apigee/apigeecli/apiclient"
+	"github.com/apigee/apigeecli/cmd/utils"
 )
 
-func CreateSelfSigned(keystoreName string, name string, ignoreExpiry bool, ignoreNewLine bool, payload string) (respBody []byte, err error) {
+type certificate struct {
+	Subject                    subject   `json:"subject" binding:"required"`
+	KeySize                    *string   `json:"keySize" binding:"required"`
+	SigAlg                     *string   `json:"sigAlg,omitempty"`
+	SubjectAlternativeDNSNames *[]string `json:"subjectAlternativeDNSNames,omitempty"`
+	CertValidityInDays         *string   `json:"certValidityInDays,omitempty"`
+}
+
+type subject struct {
+	CountryCode *string `json:"countryCode,omitempty"`
+	State       *string `json:"state,omitempty"`
+	Locality    *string `json:"locality,omitempty"`
+	Org         *string `json:"org,omitempty"`
+	OrgUnit     *string `json:"orgUnit,omitempty"`
+	CommonName  *string `json:"commonName" binding:"required"`
+	Email       *string `json:"email,omitempty"`
+}
+
+func CreateSelfSigned(keystoreName string, name string, ignoreExpiry bool, ignoreNewLine bool, selfsignedFile string) (respBody []byte, err error) {
 
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(),
@@ -41,14 +60,42 @@ func CreateSelfSigned(keystoreName string, name string, ignoreExpiry bool, ignor
 	}
 	u.RawQuery = q.Encode()
 
-	var jsonPayload map[string]interface{}
-	err = json.Unmarshal([]byte(payload), &jsonPayload)
+	payload, err := utils.ReadFile(selfsignedFile)
+	if err != nil {
+		return nil, err
+	}
 
+	cert := certificate{}
+	err = json.Unmarshal([]byte(payload), &cert)
 	if err != nil {
 		return respBody, err
 	}
 
-	return apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload)
+	if cert.SigAlg == nil || *cert.SigAlg == "" {
+		cert.SigAlg = new(string)
+		*cert.SigAlg = "SHA256withRSA"
+	}
+
+	if cert.KeySize == nil || *cert.KeySize == "" {
+		cert.KeySize = new(string)
+		*cert.KeySize = "2048"
+	}
+
+	if cert.CertValidityInDays == nil || *cert.CertValidityInDays == "" {
+		cert.CertValidityInDays = new(string)
+		*cert.CertValidityInDays = "365"
+	}
+
+	if cert.Subject.CommonName == nil || *cert.Subject.CommonName == "" {
+		return nil, fmt.Errorf("commonName is a mandatory parameter")
+	}
+
+	payload, err = json.Marshal(cert)
+	if err != nil {
+		return nil, err
+	}
+
+	return apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), string(payload))
 }
 
 func CreatePfx(keystoreName string, name string, ignoreExpiry bool, ignoreNewLine bool, pfxFile string, password string) (respBpdy []byte, err error) {
