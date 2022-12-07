@@ -1,0 +1,63 @@
+swagger: '2.0'
+info:
+  title: test - testing api gateway
+  description: Sample API on API Gateway with a Cloud Run backend
+  version: 1.0.0
+schemes:
+- https
+produces:
+- application/json
+x-google-backend:
+  address: $SERVICE_URL
+paths:
+  /assets/{asset}:
+    get:
+      parameters:
+        - in: path
+          name: asset
+          type: string
+          required: true
+          description: Name of the asset.
+      summary: Assets
+      operationId: getAsset
+      responses:
+        '200':
+          description: A successful response
+          schema:
+            type: string
+  /hello:
+    get:
+      summary: Cloud Run hello world
+      operationId: hello
+      responses:
+        '200':
+          description: A successful response
+          schema:
+            type: string
+  /v1/httpbin/{something}:
+    get:
+      summary: httpbin
+      operationId: httpbin
+      parameters:
+        - in: path
+          name: something
+          type: string
+          required: true
+          description: ID some path id
+      responses:
+        '200':
+          description: A successful response
+      x-google-backend:
+        address: https://httpbin.org/anything
+        path_translation: APPEND_PATH_TO_ADDRESS
+        disable_auth: true
+      security:
+        - google_id_token: []
+securityDefinitions:
+  google_id_token:
+    authorizationUrl: "https://accounts.google.com/o/oauth2/v2/auth"
+    flow: "implicit"
+    type: "oauth2"
+    x-google-issuer: "https://accounts.google.com"
+    x-google-jwks_uri: "https://www.googleapis.com/oauth2/v3/certs"
+    x-google-audiences: "demo-aud"
