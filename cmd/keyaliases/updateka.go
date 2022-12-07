@@ -23,11 +23,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// CreateCmd to create key aliases
-var CreateCmd = &cobra.Command{
+// UpdateCmd to create key aliases
+var UpdateCmd = &cobra.Command{
 	Use:   "create",
-	Short: "Create a Key Alias from PEM, PKCS12 or generate self signed cert",
-	Long:  "Create a Key Alias from PEM, PKCS12 or generate self signed cert",
+	Short: "Create a Key Alias from PEM or PKCS12 file",
+	Long:  "Create a Key Alias from PEM or PKCS12 file",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetApigeeEnv(env)
 		if format == "pfx" && password == "" {
@@ -50,11 +50,11 @@ var CreateCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		switch format {
 		case "selfsignedcert":
-			_, err = keyaliases.CreateOrUpdateSelfSigned(keystoreName, name, false, ignoreExpiry, ignoreNewLine, selfFile)
+			_, err = keyaliases.CreateOrUpdateSelfSigned(keystoreName, name, true, ignoreExpiry, ignoreNewLine, selfFile)
 		case "pem":
-			_, err = keyaliases.CreateOrUpdateKeyCert(keystoreName, name, false, ignoreExpiry, ignoreNewLine, certFile, keyFile, password)
+			_, err = keyaliases.CreateOrUpdateKeyCert(keystoreName, name, true, ignoreExpiry, ignoreNewLine, certFile, keyFile, password)
 		case "pkcs12":
-			_, err = keyaliases.CreateOrUpdatePfx(keystoreName, name, false, ignoreExpiry, ignoreNewLine, pfxFile, password)
+			_, err = keyaliases.CreateOrUpdatePfx(keystoreName, name, true, ignoreExpiry, ignoreNewLine, pfxFile, password)
 		default:
 			return fmt.Errorf("invalid format key alias for %s", format)
 		}
@@ -62,33 +62,30 @@ var CreateCmd = &cobra.Command{
 	},
 }
 
-var format, password, keyFile, certFile, pfxFile, selfFile string
-var ignoreNewLine, ignoreExpiry bool
-
 func init() {
 
-	CreateCmd.Flags().StringVarP(&keystoreName, "key", "k",
+	UpdateCmd.Flags().StringVarP(&keystoreName, "key", "k",
 		"", "Name of the key store")
-	CreateCmd.Flags().StringVarP(&name, "alias", "s",
+	UpdateCmd.Flags().StringVarP(&name, "alias", "s",
 		"", "Name of the key alias")
-	CreateCmd.Flags().StringVarP(&format, "format", "f",
+	UpdateCmd.Flags().StringVarP(&format, "format", "f",
 		"", "Format of the certificate; selfsignedcert, pem or pkcs12 (file extn is .pfx)")
-	CreateCmd.Flags().StringVarP(&password, "password", "p",
+	UpdateCmd.Flags().StringVarP(&password, "password", "p",
 		"", "PKCS12 password")
-	CreateCmd.Flags().BoolVarP(&ignoreExpiry, "exp", "x",
+	UpdateCmd.Flags().BoolVarP(&ignoreExpiry, "exp", "x",
 		false, "Ignore expiry validation")
-	CreateCmd.Flags().BoolVarP(&ignoreNewLine, "nl", "w",
+	UpdateCmd.Flags().BoolVarP(&ignoreNewLine, "nl", "w",
 		false, "Ignore new line in cert chain")
-	CreateCmd.Flags().StringVarP(&certFile, "certFilePath", "",
+	UpdateCmd.Flags().StringVarP(&certFile, "certFilePath", "",
 		"", "Path to the X509 certificate in PEM format")
-	CreateCmd.Flags().StringVarP(&keyFile, "keyFilePath", "",
+	UpdateCmd.Flags().StringVarP(&keyFile, "keyFilePath", "",
 		"", "Path to the X509 key in PEM format")
-	CreateCmd.Flags().StringVarP(&pfxFile, "pfxFilePath", "",
+	UpdateCmd.Flags().StringVarP(&pfxFile, "pfxFilePath", "",
 		"", "Path to the PFX file")
-	CreateCmd.Flags().StringVarP(&selfFile, "selfsignedFilePath", "",
+	UpdateCmd.Flags().StringVarP(&selfFile, "selfsignedFilePath", "",
 		"", "Path to a JSON file containing details for a self signed certificate")
 
-	_ = CreateCmd.MarkFlagRequired("alias")
-	_ = CreateCmd.MarkFlagRequired("format")
-	_ = CreateCmd.MarkFlagRequired("key")
+	_ = UpdateCmd.MarkFlagRequired("alias")
+	_ = UpdateCmd.MarkFlagRequired("format")
+	_ = UpdateCmd.MarkFlagRequired("key")
 }
