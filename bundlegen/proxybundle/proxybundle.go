@@ -346,6 +346,15 @@ func GenerateIntegrationAPIProxyBundle(name string, integration string, apitrigg
 	return nil
 }
 
+func GenerateAPIProxyBundleFromSwagger(name string,
+	content string,
+	swaggerName string,
+	skipPolicy bool,
+	addCORS bool) (err error) {
+
+	return err
+}
+
 func writeXMLData(fileName string, data string) error {
 	fileWriter, err := os.Create(fileName)
 	if err != nil {

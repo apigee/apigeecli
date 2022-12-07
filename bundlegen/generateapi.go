@@ -27,6 +27,8 @@ import (
 	"github.com/apigee/apigeecli/bundlegen/policies"
 	"github.com/apigee/apigeecli/bundlegen/proxies"
 	targets "github.com/apigee/apigeecli/bundlegen/targets"
+	"github.com/apigee/apigeecli/cmd/utils"
+	"github.com/getkin/kin-openapi/openapi2"
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/ghodss/yaml"
 )
@@ -88,6 +90,7 @@ var quotaPolicyContent = map[string]string{}
 var spikeArrestPolicyContent = map[string]string{}
 
 var doc *openapi3.T
+var doc2 *openapi2.T
 
 func LoadDocumentFromFile(filePath string, validate bool, formatValidation bool) (string, []byte, error) {
 	var err error
@@ -121,6 +124,31 @@ func LoadDocumentFromFile(filePath string, validate bool, formatValidation bool)
 	} else {
 		return filepath.Base(filePath), jsonContent, err
 	}
+}
+
+func LoadSwaggerFromFile(filePath string, validate bool) (string, []byte, error) {
+	var err error
+	var jsonContent, swaggerBytes, swaggerJsonBytes []byte
+
+	if swaggerBytes, err = utils.ReadFile(filePath); err != nil {
+		return "", nil, err
+	}
+
+	//convert yaml to json
+	if filepath.Ext(filePath) == "yaml" || filepath.Ext(filePath) == "yml" {
+		if swaggerJsonBytes, err = yaml.JSONToYAML(swaggerBytes); err != nil {
+			return "", nil, err
+		}
+		swaggerBytes = swaggerJsonBytes
+	}
+
+	if err = json.Unmarshal(swaggerBytes, &doc2); err != nil {
+		return "", nil, err
+	}
+
+	jsonContent, err = doc2.MarshalJSON()
+
+	return filepath.Base(filePath), jsonContent, err
 }
 
 func LoadDocumentFromURI(uri string, validate bool, formatValidation bool) (string, []byte, error) {
@@ -367,6 +395,14 @@ func GenerateIntegrationAPIProxy(name string,
 
 	proxies.AddStepToPreFlowRequest("set-integration-request")
 	apiproxy.AddPolicy("set-integration-request")
+
+	return nil
+}
+
+func GenerateAPIProxyFromSwagger(name string,
+	oasDocName string,
+	skipPolicy bool,
+	addCORS bool) (err error) {
 
 	return nil
 }
