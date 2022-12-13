@@ -8,15 +8,7 @@ This is a tool to interact with [Apigee APIs](https://cloud.google.com/apigee/do
 
 ## Installation
 
-`apigeecli` is a binary and you can download the appropriate one for your platform from [here](https://github.com/apigee/apigeecli/releases)
-
-NOTE: Supported platforms are:
-
-* Darwin
-* Windows
-* Linux
-
-Run this script to download & install the latest version (on Linux or Darwin)
+`apigeecli` is a binary and you can download the appropriate one for your platform from [here](https://github.com/apigee/apigeecli/releases). Run this script to download & install the latest version (on Linux or Darwin)
 
 ```sh
 curl -L https://raw.githubusercontent.com/apigee/apigeecli/main/downloadLatest.sh | sh -
@@ -47,7 +39,63 @@ gpg:          There is no indication that the signature belongs to the owner.
 Primary key fingerprint: 72D1 1E3A 3B1E 9FE2 2110  EC45 A714 872F 32F3 4390
 ```
 
-### Container download
+## Getting Started
+
+### User Tokens
+The simplest way to get started with `apigeecli` is
+
+```
+token=$(gcloud auth print-access-token)
+
+apigeecli orgs list -t $token
+```
+
+### Set Preferences
+If you are using the same GCP project for Apigee, then consider setting up preferences so they don't have to be included in every command. Preferences are written to the `$HOME/.apigeecli` folder
+
+```
+project=$(gcloud config get-value project | head -n 1)
+
+apigeecli prefs set -o $project
+```
+
+Subsequent commands can be like this:
+
+```
+token=$(gcloud auth print-access-token)
+apigeecli orgs get -t $token #fetches the org details of the org set in preferences
+```
+
+### Access Token Generation
+
+`apigeecli` can use the service account directly and obtain an access token.
+
+```bash
+apigeecli token gen -a serviceaccount.json
+```
+
+Parameters
+The following parameters are supported. See Common Reference for a list of additional parameters.
+
+* `--account -a` (required) Service Account in json format
+
+Use this access token for all subsequent calls (token expires in 1 hour)
+
+### Access Token Caching
+
+`apigeecli` caches the OAuth Access token for subsequent calls (until the token expires). The access token is stored in `$HOME/.apigeecli`. This path must be readable/writeable by the `apigeecli` process.
+
+```bash
+apigeecli token cache -a serviceaccount.json
+```
+
+or
+```bash
+token=$(gcloud auth print-access-token)
+apigeecli token cache -t $token
+```
+
+## Container download
 The lastest container version for apigeecli can be downloaded via
 
 ```sh
@@ -68,84 +116,23 @@ For more information, refer to the [Apigee API Reference](https://cloud.google.c
 
 Here is a [list](./docs/apigeecli.md) of available commands
 
-## Service Account
+## Generating API Proxies
+`apigeecli` can generate API proxies from:
 
-Create a service account with appropriate persmissions. Use `apigeecli` to create service accounts (`apigeecli iam`). Read more [here](https://cloud.google.com/apigee/docs/api-platform/system-administration/apigee-roles) about IAM roles in Apigee 
+* OpenAPI Specification
+* GraphQL Schemas
+* A template for Application Integration
 
-## Access Token
+### Generating API Proxies from OpenAPI Specs
 
-`apigeecli` can use the service account directly and obtain an access token.
-
-```bash
-apigeecli token gen -a serviceaccount.json 
-```
-
-Parameters
-The following parameters are supported. See Common Reference for a list of additional parameters.
-
-* `--account -a` (required) Service Account in json format
-
-
-Use this access token for all subsequent calls (token expires in 1 hour)
-
-## Command Reference
-
-The following options are available for security
-
-Pass the access token
-
-```bash
-apigeecli <flags> -t $TOKEN
-```
-
-Pass the service account
-
-```bash
-apigeecli <flags> -a orgadmin.json
-```
-
-## Access Token Caching
-
-`apigeecli` caches the OAuth Access token for subsequent calls (until the token expires). The access token is stored in `$HOME/.apigeecli`. This path must be readable/writeable by the `apigeecli` process.
-
-```bash
-apigeecli token cache -a serviceaccount.json
-```
-
-or
-
-```bash
-apigeecli orgs get -o org-name -a serviceaccount.json
-```
-
-Subsequent commands do not need the token or service account flag
-
-## Preferences
-
-Users can set a default org via preferences and that org name will be used for all subsequent commands
-
-```bash
-apigeecli prefs set -o org-name
-
-apigeecli orgs get
-```
-
-NOTE: the second command uses the org name from perferences
-
-## Apigee Client Library
-
-apigeecli is can also be used as a golang based client library. Look at this [sample](./samples) for more details
-
-## Generating API Proxies from OpenAPI Specs
-
-apigeecli allows the user to generate Apigee API Proxy bundles from an OpenAPI spec (only 3.0.x supported). The Apigee control plane does not support custom formats (ex: uuid). If you spec contains custom formats, consider the following flags
+`apigeecli` allows the user to generate Apigee API Proxy bundles from an OpenAPI spec (only 3.0.x supported). The Apigee control plane does not support custom formats (ex: uuid). If you spec contains custom formats, consider the following flags
 
 * `--formatValidation=false`: this disables validation for custom formats.
 * `--skip-policy=false`: By default the OAS policy is added to the proxy (to validate API requests). By setting this to false, schema validation is not enabled and the control plane will not reject the bundle due to custom formats.
 
 The following actions are automatically implemented when the API Proxy bundle is generated:
 
-### Security Policies
+#### Security Policies
 
 If the spec defines securitySchemes, for ex the following snippet:
 
@@ -189,11 +176,11 @@ Or within a Flow Condition like this
 
 ```
 
-### Dynamic target endpoints
+#### Dynamic target endpoints
 
 apigeecli allows the user to dynamically set a target endpoint. These is especially useful when deploying target/backend applications to GCP's serverless platforms like Cloud Run, Cloud Functions etc. apigeecli also allows the user to enable Apigee'e [Google authentication](https://cloud.google.com/apigee/docs/api-platform/security/google-auth/overview) before connecting to the backend.
 
-#### Set a dynamic target
+##### Set a dynamic target
 
 ```sh
 apigeecli apis create -n petstore -f ./test/petstore.yaml --oas-target-url-ref=propertyset.petstore.url
@@ -201,7 +188,7 @@ apigeecli apis create -n petstore -f ./test/petstore.yaml --oas-target-url-ref=p
 
 This example dynamically sets the `target.url` message context variable. This variable is retrieved from a propertyset file. It is expected the user will separately upload an environment scoped propertyset file with this key.
 
-#### Set a dynamic target for Cloud Run
+##### Set a dynamic target for Cloud Run
 
 ```sh
 apigeecli apis create -n petstore -f ./test/petstore.yaml --oas-google-idtoken-aud-ref=propertyset.petstore.aud --oas-target-url-ref=propertyset.petstore.url
@@ -211,11 +198,11 @@ This example dynamically sets the Google Auth `audience` and the `target.url` me
 
 While this example shows the use of Google IDToken, Google Access Token is also supported. To use Google Access Token, use the `oas-google-accesstoken-scope-literal` flag instead.
 
-### Traffic Management
+#### Traffic Management
 
 apigeeli allow the user to add [SpikeArrest](https://cloud.google.com/apigee/docs/api-platform/reference/policies/spike-arrest-policy) or [Quota](https://cloud.google.com/apigee/docs/api-platform/reference/policies/quota-policy) policies. Since OpenAPI spec does not natively support the ability to specify such policies, a custom extension is used.
 
-#### Quota custom extension
+##### Quota custom extension
 
 The following configuration allows the user to specify quota parameters in the API Proxy.
 
@@ -239,36 +226,40 @@ x-google-quota:
 
 The above configurations are mutually exclusive.
 
-#### SpikeArrest custom extension
+##### SpikeArrest custom extension
 
 The following configuration allows the user to specify Spike Arrest parameters in the API Proxy.
 
 ```yaml
-x-google-ratelimit: 
+x-google-ratelimit:
   - name: test1 # this is appended to the quota policy name, ex: Spike-Arrest-test1
     rate-literal: 10ps # specify the allowed interval in the policy, use rate-ref to specify a variable
     identifier-ref: request.header.url #optional, specify msg ctx var for the identifier
 ```
 
-### Examples
+#### Examples
 
 See this [OAS document](./test/petstore-ext1.yaml) for examples
 
-## Generating API Proxies from GraphQL Schemas
+### Generating API Proxies from GraphQL Schemas
 
 apigeecli allows the user to generate Apigee API Proxy bundles from a GraphQL schema. When generating a proxy, consider the following flags:
 
 * `--basepath`: Specify a basePath for the GraphQL proxy
 * `--skip-policy=false`: By default the GraphQL policy is added to the proxy (to validate API requests). By setting this to false, schema validation is not enabled.
-* `--target-url-ref`: Specify a target endpoint location variable. For ex: `--target-url-ref=propertyset.gql.url` implies the GraphQL target location is available in an environment scoped property set called `gql` and the key is `url`.  
+* `--target-url-ref`: Specify a target endpoint location variable. For ex: `--target-url-ref=propertyset.gql.url` implies the GraphQL target location is available in an environment scoped property set called `gql` and the key is `url`
 
-## Generating an API Proxy template for Application Integration
+### Generating an API Proxy template for Application Integration
 
 apigeecli allows the user to generate an Apigee API Proxy bundle template for [Application Integration](https://cloud.google.com/application-integration/docs/overview). When generating the proxy, the following flags:
 
 * `--trigger`: Specify the API trigger name of the Integration. This is also used as the basePath. Don't include `api_trigger/`
 * `--integration`: Specify the Name of the Integration
 * `--name`: Specify the Name of the API Proxy
+
+## Apigee Client Library
+
+`apigeecli` is can also be used as a golang based client library. Look at this [sample](./samples) for more details
 
 ___
 
