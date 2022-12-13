@@ -82,6 +82,14 @@ type apiKeyPolicyDef struct {
 	APIKeyName          string
 }
 
+type backendDef struct {
+	Address         string
+	JwtAudience     string
+	DisableAuth     bool
+	PathTranslation string
+	Deadline        string
+}
+
 var generateSetTarget bool
 
 var securitySchemesList = securitySchemesListDef{}
@@ -135,8 +143,8 @@ func LoadSwaggerFromFile(filePath string, validate bool) (string, []byte, error)
 	}
 
 	//convert yaml to json
-	if filepath.Ext(filePath) == "yaml" || filepath.Ext(filePath) == "yml" {
-		if swaggerJsonBytes, err = yaml.JSONToYAML(swaggerBytes); err != nil {
+	if isFileYaml(filePath) {
+		if swaggerJsonBytes, err = yaml.YAMLToJSON(swaggerBytes); err != nil {
 			return "", nil, err
 		}
 		swaggerBytes = swaggerJsonBytes
@@ -146,7 +154,9 @@ func LoadSwaggerFromFile(filePath string, validate bool) (string, []byte, error)
 		return "", nil, err
 	}
 
-	jsonContent, err = doc2.MarshalJSON()
+	if jsonContent, err = doc2.MarshalJSON(); err != nil {
+		return "", nil, err
+	}
 
 	return filepath.Base(filePath), jsonContent, err
 }
@@ -238,7 +248,7 @@ func GenerateAPIProxyDefFromOAS(name string,
 	}
 
 	if u.Path == "" {
-		return fmt.Errorf("OpenAPI url is missing a path. Don't use https://api.example.com, instead try https://api.example.com/basePath")
+		return fmt.Errorf("the OpenAPI url is missing a path. Don't use https://api.example.com, instead try https://api.example.com/basePath")
 	}
 
 	apiproxy.SetBasePath(u.Path)
@@ -403,6 +413,19 @@ func GenerateAPIProxyFromSwagger(name string,
 	oasDocName string,
 	skipPolicy bool,
 	addCORS bool) (err error) {
+
+	//TODO: load security schemes
+
+	apiproxy.SetDisplayName(name)
+	if doc2.Info.Description != "" {
+		apiproxy.SetDescription(doc2.Info.Description)
+	}
+
+	apiproxy.SetCreatedAt()
+	apiproxy.SetLastModifiedAt()
+	apiproxy.SetConfigurationVersion()
+	apiproxy.AddTargetEndpoint("default")
+	apiproxy.AddProxyEndpoint("default")
 
 	return nil
 }
@@ -684,7 +707,6 @@ func getQuotaDefinition(i interface{}) (quotaDef, error) {
 	str := fmt.Sprintf("%s", i)
 
 	if err := json.Unmarshal([]byte(str), &jsonArrayMap); err != nil {
-		fmt.Println(err)
 		return quotaDef{}, err
 	}
 
@@ -751,7 +773,6 @@ func getSpikeArrestDefinition(i interface{}) (spikeArrestDef, error) {
 	str := fmt.Sprintf("%s", i)
 
 	if err := json.Unmarshal([]byte(str), &jsonArrayMap); err != nil {
-		fmt.Println(err)
 		return spikeArrestDef{}, err
 	}
 
@@ -846,4 +867,36 @@ func readScopes(scopes map[string]string) string {
 		scopeString = scopeName + " " + scopeString
 	}
 	return strings.TrimSpace(scopeString)
+}
+
+func getDefaultGoogleBackend() {
+	for extensionName, extensionValue := range doc2.Extensions {
+		if extensionName == "x-google-backend" {
+
+		}
+	}
+}
+
+func getBackendDefinition(i interface{}) (backendDef, error) {
+	var jsonArrayMap []map[string]interface{}
+
+	backend := backendDef{}
+	jsonMap := map[string]string{}
+	str := fmt.Sprintf("%s", i)
+
+	if err := json.Unmarshal([]byte(str), &jsonArrayMap); err != nil {
+		return backendDef{}, err
+	}
+
+	for _, m := range jsonArrayMap {
+		for k, v := range m {
+			jsonMap[k] = fmt.Sprintf("%v", v)
+		}
+	}
+
+	if jsonMap["address"] != "" {
+		backend.Address = jsonMap["address"]
+	}
+
+	return backend, nil
 }

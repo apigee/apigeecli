@@ -19,8 +19,6 @@ import (
 
 	"github.com/apigee/apigeecli/apiclient"
 	bundle "github.com/apigee/apigeecli/bundlegen"
-	proxybundle "github.com/apigee/apigeecli/bundlegen/proxybundle"
-	"github.com/apigee/apigeecli/client/apis"
 	"github.com/spf13/cobra"
 )
 
@@ -29,45 +27,22 @@ var SwaggerCreateCmd = &cobra.Command{
 	Short: "Creates an API proxy from a Swagger Spec",
 	Long:  "Creates an API proxy from a Swagger Spec for Cloud Endpoints/API Gateway",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		if oasFile == "" && oasURI == "" {
-			return fmt.Errorf("either oasfile or oasuri must be passed")
-		}
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		var content []byte
+		//var content []byte
 		var oasDocName string
-		if oasFile != "" {
-			oasDocName, content, err = bundle.LoadDocumentFromFile(oasFile, validateSpec, formatValidation)
+		if swaggerFile != "" {
+			if oasDocName, _, err = bundle.LoadSwaggerFromFile(swaggerFile, validateSpec); err != nil {
+				return err
+			}
 		}
-		if err != nil {
-			return err
-		}
-
+		fmt.Println("Passed file")
 		//Generate the apiproxy struct
 		err = bundle.GenerateAPIProxyFromSwagger(name,
 			oasDocName,
 			skipPolicy,
 			addCORS)
-
-		if err != nil {
-			return err
-		}
-
-		//Create the API proxy bundle
-		err = proxybundle.GenerateAPIProxyBundleFromSwagger(name,
-			string(content),
-			oasDocName,
-			skipPolicy,
-			addCORS)
-
-		if err != nil {
-			return err
-		}
-
-		if importProxy {
-			_, err = apis.CreateProxy(name, name+".zip")
-		}
 
 		return err
 	},
@@ -79,7 +54,7 @@ func init() {
 	SwaggerCreateCmd.Flags().StringVarP(&name, "name", "n",
 		"", "API Proxy name")
 	SwaggerCreateCmd.Flags().StringVarP(&swaggerFile, "swaggerfile", "f",
-		"", "Open API 3.0 Specification file")
+		"", "Swagger Specification file")
 	SwaggerCreateCmd.Flags().BoolVarP(&importProxy, "import", "",
 		true, "Import API Proxy after generation from spec")
 	SwaggerCreateCmd.Flags().BoolVarP(&validateSpec, "validate", "",
@@ -90,4 +65,5 @@ func init() {
 		false, "Add a CORS policy")
 
 	_ = SwaggerCreateCmd.MarkFlagRequired("name")
+	_ = SwaggerCreateCmd.MarkFlagRequired("swaggerFile")
 }
