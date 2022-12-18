@@ -138,8 +138,9 @@ apigeecli is can also be used as a golang based client library. Look at this [sa
 
 ## Generating API Proxies from OpenAPI Specs
 
-apigeecli allows the user to generate Apigee API Proxy bundles from an OpenAPI spec (only 3.0.x supported). The Apigee control plane does not support custom formats (ex: uuid). If you spec contains custom formats, consider the following flags
+apigeecli allows the user to generate Apigee API Proxy bundles from an OpenAPI spec (only 3.0.x supported). The Apigee control plane does not support custom formats (ex: uuid). If you spec contains custom formats, consider the following flags:
 
+* `--add-cors=true`: Add a CORS policy
 * `--formatValidation=false`: this disables validation for custom formats.
 * `--skip-policy=false`: By default the OAS policy is added to the proxy (to validate API requests). By setting this to false, schema validation is not enabled and the control plane will not reject the bundle due to custom formats.
 
@@ -217,6 +218,8 @@ apigeeli allow the user to add [SpikeArrest](https://cloud.google.com/apigee/doc
 
 #### Quota custom extension
 
+NOTE: This extension behaves differently when used with Swagger for Cloud Endpoints/API Gateway.
+
 The following configuration allows the user to specify quota parameters in the API Proxy.
 
 ```yaml
@@ -244,7 +247,7 @@ The above configurations are mutually exclusive.
 The following configuration allows the user to specify Spike Arrest parameters in the API Proxy.
 
 ```yaml
-x-google-ratelimit: 
+x-google-ratelimit:
   - name: test1 # this is appended to the quota policy name, ex: Spike-Arrest-test1
     rate-literal: 10ps # specify the allowed interval in the policy, use rate-ref to specify a variable
     identifier-ref: request.header.url #optional, specify msg ctx var for the identifier
@@ -260,15 +263,50 @@ apigeecli allows the user to generate Apigee API Proxy bundles from a GraphQL sc
 
 * `--basepath`: Specify a basePath for the GraphQL proxy
 * `--skip-policy=false`: By default the GraphQL policy is added to the proxy (to validate API requests). By setting this to false, schema validation is not enabled.
-* `--target-url-ref`: Specify a target endpoint location variable. For ex: `--target-url-ref=propertyset.gql.url` implies the GraphQL target location is available in an environment scoped property set called `gql` and the key is `url`.  
+* `--target-url-ref`: Specify a target endpoint location variable. For ex: `--target-url-ref=propertyset.gql.url` implies the GraphQL target location is available in an environment scoped property set called `gql` and the key is `url`.
 
 ## Generating an API Proxy template for Application Integration
 
-apigeecli allows the user to generate an Apigee API Proxy bundle template for [Application Integration](https://cloud.google.com/application-integration/docs/overview). When generating the proxy, the following flags:
+apigeecli allows the user to generate an Apigee API Proxy bundle template for [Application Integration](https://cloud.google.com/application-integration/docs/overview). When generating the proxy, consider the following flags:
 
 * `--trigger`: Specify the API trigger name of the Integration. This is also used as the basePath. Don't include `api_trigger/`
 * `--integration`: Specify the Name of the Integration
 * `--name`: Specify the Name of the API Proxy
+
+## Generating an API Proxy from Swagger Spec for API Gateway or Cloud Endpoints
+
+apigeecli allows the users to generate an Apigee API proxy bundle for [Swagger Spec for API Gateway](https://cloud.google.com/api-gateway/docs/openapi-overview). When generating the proxy, consider the following flags:
+
+* `--add-cors=true`: Add a CORS policy
+* `--swaggerFile`: Path to a Swagger spec with extensions for Cloud Endpoints or API Gateway
+
+### Limitations
+
+* The `disable_auth` property in `x-google-backend` is not supported
+* The `protocol` property in `x-google-backend` is not supported
+* The `metrics` property in `x-google-management` is not supported
+* The quota unit is ignored in `x-google-management` is ignored. See below for quota behavior
+* The extension `x-google-endpoints` is ignored. To add CORS, see above
+* If more than one security policy is set on a path, then the first one is enabled. In the following example,
+
+```
+  /hello:
+    get:
+      operationId: hello
+      security:
+        - google_id_token: []
+        - api_key: []
+```
+
+the `api_key` policy is ignored.
+
+### Enabling Quota
+
+To match the implementation of Cloud Endpoints/API Gateway, the Quota policy is added with some preset values:
+
+* The quota identifier is always to set `organizationn.name` to match the behavior of `1/min/{project}`
+* The quota algorithm is set to [calendar](https://cloud.google.com/apigee/docs/api-platform/reference/policies/quota-policy#calendar)
+* Distributed is set to `true`
 
 ___
 

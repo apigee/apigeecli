@@ -3,12 +3,15 @@ info:
   title: test - testing api gateway
   description: Sample API on API Gateway with a Cloud Run backend
   version: 1.0.0
+basePath: /v1
 schemes:
 - https
 produces:
 - application/json
 x-google-backend:
-  address: $SERVICE_URL
+  address: https://backend-hash-uc.a.run.app
+security:
+  - google_id_token: []
 paths:
   /assets/{asset}:
     get:

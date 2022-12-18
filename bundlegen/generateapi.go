@@ -27,8 +27,6 @@ import (
 	"github.com/apigee/apigeecli/bundlegen/policies"
 	"github.com/apigee/apigeecli/bundlegen/proxies"
 	targets "github.com/apigee/apigeecli/bundlegen/targets"
-	"github.com/apigee/apigeecli/cmd/utils"
-	"github.com/getkin/kin-openapi/openapi2"
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/ghodss/yaml"
 )
@@ -36,6 +34,9 @@ import (
 type pathDetailDef struct {
 	OperationID    string
 	Description    string
+	Path           string
+	Verb           string
+	AssignMessage  string
 	SecurityScheme securitySchemesDef
 	SpikeArrest    spikeArrestDef
 	Quota          quotaDef
@@ -50,15 +51,17 @@ type spikeArrestDef struct {
 }
 
 type quotaDef struct {
-	QuotaEnabled         bool
-	QuotaName            string
-	QuotaAllowRef        string
-	QuotaAllowLiteral    string
-	QuotaIntervalRef     string
-	QuotaIntervalLiteral string
-	QuotaTimeUnitRef     string
-	QuotaTimeUnitLiteral string
-	QuotaConfigStepName  string
+	QuotaEnabled          bool
+	QuotaName             string
+	QuotaAllowRef         string
+	QuotaAllowLiteral     string
+	QuotaIntervalRef      string
+	QuotaIntervalLiteral  string
+	QuotaTimeUnitRef      string
+	QuotaTimeUnitLiteral  string
+	QuotaConfigStepName   string
+	QuotaIdentifierRef    string
+	QuotaIdentiferLiteral string
 }
 
 type oAuthPolicyDef struct {
@@ -74,6 +77,7 @@ type securitySchemesDef struct {
 	SchemeName   string
 	OAuthPolicy  oAuthPolicyDef
 	APIKeyPolicy apiKeyPolicyDef
+	JWTPolicy    jwtPolicyDef
 }
 
 type apiKeyPolicyDef struct {
@@ -82,12 +86,13 @@ type apiKeyPolicyDef struct {
 	APIKeyName          string
 }
 
-type backendDef struct {
-	Address         string
-	JwtAudience     string
-	DisableAuth     bool
-	PathTranslation string
-	Deadline        string
+type jwtPolicyDef struct {
+	JWTPolicyEnabled bool
+	JwkUri           string
+	Issuer           string
+	Audience         string
+	Source           string
+	Location         map[string]string //only one location supported for now
 }
 
 var generateSetTarget bool
@@ -98,7 +103,6 @@ var quotaPolicyContent = map[string]string{}
 var spikeArrestPolicyContent = map[string]string{}
 
 var doc *openapi3.T
-var doc2 *openapi2.T
 
 func LoadDocumentFromFile(filePath string, validate bool, formatValidation bool) (string, []byte, error) {
 	var err error
@@ -132,33 +136,6 @@ func LoadDocumentFromFile(filePath string, validate bool, formatValidation bool)
 	} else {
 		return filepath.Base(filePath), jsonContent, err
 	}
-}
-
-func LoadSwaggerFromFile(filePath string, validate bool) (string, []byte, error) {
-	var err error
-	var jsonContent, swaggerBytes, swaggerJsonBytes []byte
-
-	if swaggerBytes, err = utils.ReadFile(filePath); err != nil {
-		return "", nil, err
-	}
-
-	//convert yaml to json
-	if isFileYaml(filePath) {
-		if swaggerJsonBytes, err = yaml.YAMLToJSON(swaggerBytes); err != nil {
-			return "", nil, err
-		}
-		swaggerBytes = swaggerJsonBytes
-	}
-
-	if err = json.Unmarshal(swaggerBytes, &doc2); err != nil {
-		return "", nil, err
-	}
-
-	if jsonContent, err = doc2.MarshalJSON(); err != nil {
-		return "", nil, err
-	}
-
-	return filepath.Base(filePath), jsonContent, err
 }
 
 func LoadDocumentFromURI(uri string, validate bool, formatValidation bool) (string, []byte, error) {
@@ -201,7 +178,7 @@ func LoadDocumentFromURI(uri string, validate bool, formatValidation bool) (stri
 }
 
 func isFileYaml(name string) bool {
-	if strings.Contains(name, ".yaml") || strings.Contains(name, ".yml") {
+	if filepath.Ext(name) == "yaml" || filepath.Ext(name) == "yml" {
 		return true
 	}
 	return false
@@ -234,7 +211,7 @@ func GenerateAPIProxyDefFromOAS(name string,
 	apiproxy.SetCreatedAt()
 	apiproxy.SetLastModifiedAt()
 	apiproxy.SetConfigurationVersion()
-	apiproxy.AddTargetEndpoint("default")
+	apiproxy.AddTargetEndpoint(NoAuthTargetName)
 	apiproxy.AddProxyEndpoint("default")
 
 	if !skipPolicy {
@@ -242,7 +219,7 @@ func GenerateAPIProxyDefFromOAS(name string,
 		apiproxy.AddPolicy("Validate-" + name + "-Schema")
 	}
 
-	u, err := GetEndpoint(doc)
+	u, err := getEndpoint(doc)
 	if err != nil {
 		return err
 	}
@@ -253,21 +230,21 @@ func GenerateAPIProxyDefFromOAS(name string,
 
 	apiproxy.SetBasePath(u.Path)
 
-	//set a dynamic target url
-	if oasTargetUrlRef != "" {
-		targets.AddStepToPreFlowRequest("Set-Target-1")
-		apiproxy.AddPolicy("Set-Target-1")
-		generateSetTarget = true
-	}
-
 	//if target is not set, derive it from the OAS file
 	if targetUrl == "" {
-		targets.NewTargetEndpoint(u.Scheme+"://"+u.Hostname(), oasGoogleAcessTokenScopeLiteral, oasGoogleIdTokenAudLiteral, oasGoogleIdTokenAudRef)
+		targets.NewTargetEndpoint(NoAuthTargetName, u.Scheme+"://"+u.Hostname(), oasGoogleAcessTokenScopeLiteral, oasGoogleIdTokenAudLiteral, oasGoogleIdTokenAudRef)
 	} else { //an explicit target url is set
 		if _, err = url.Parse(targetUrl); err != nil {
 			return fmt.Errorf("invalid target url: %v", err)
 		}
-		targets.NewTargetEndpoint(targetUrl, oasGoogleAcessTokenScopeLiteral, oasGoogleIdTokenAudLiteral, oasGoogleIdTokenAudRef)
+		targets.NewTargetEndpoint(NoAuthTargetName, targetUrl, oasGoogleAcessTokenScopeLiteral, oasGoogleIdTokenAudLiteral, oasGoogleIdTokenAudRef)
+	}
+
+	//set a dynamic target url
+	if oasTargetUrlRef != "" {
+		targets.AddStepToPreFlowRequest("Set-Target-1", NoAuthTargetName)
+		apiproxy.AddPolicy("Set-Target-1")
+		generateSetTarget = true
 	}
 
 	proxies.NewProxyEndpoint(u.Path, true)
@@ -308,7 +285,7 @@ func GenerateAPIProxyDefFromOAS(name string,
 		proxies.AddStepToPreFlowRequest("OpenAPI-Spec-Validation-1")
 	}
 
-	if err = GenerateFlows(doc.Paths); err != nil {
+	if err = generateFlows(doc.Paths); err != nil {
 		return err
 	}
 
@@ -323,7 +300,7 @@ func GenerateAPIProxyDefFromOAS(name string,
 	return nil
 }
 
-func GetEndpoint(doc *openapi3.T) (u *url.URL, err error) {
+func getEndpoint(doc *openapi3.T) (u *url.URL, err error) {
 	if doc.Servers == nil {
 		return nil, fmt.Errorf("at least one server must be present")
 	}
@@ -331,106 +308,7 @@ func GetEndpoint(doc *openapi3.T) (u *url.URL, err error) {
 	return url.Parse(doc.Servers[0].URL)
 }
 
-func GenerateAPIProxyDefFromGQL(name string,
-	gqlDocName string,
-	basePath string,
-	apiKeyLocation string,
-	skipPolicy bool,
-	addCORS bool,
-	targetUrlRef string,
-	targetUrl string) (err error) {
-
-	apiproxy.SetDisplayName(name)
-	apiproxy.SetCreatedAt()
-	apiproxy.SetLastModifiedAt()
-	apiproxy.SetConfigurationVersion()
-	apiproxy.AddTargetEndpoint("default")
-	apiproxy.AddProxyEndpoint("default")
-
-	apiproxy.SetDescription("Generated API Proxy from " + gqlDocName)
-
-	if !skipPolicy {
-		apiproxy.AddResource(gqlDocName, "graphql")
-		apiproxy.AddPolicy("Validate-" + name + "-Schema")
-	}
-
-	proxies.NewProxyEndpoint(basePath, true)
-
-	if addCORS {
-		proxies.AddStepToPreFlowRequest("Add-CORS")
-		apiproxy.AddPolicy("Add-CORS")
-	}
-
-	//set a dynamic target url
-	if targetUrlRef != "" {
-		targets.AddStepToPreFlowRequest("Set-Target-1")
-		apiproxy.AddPolicy("Set-Target-1")
-		generateSetTarget = true
-	}
-
-	//if target is not set, add a default/fake endpoint
-	if targetUrl == "" {
-		targets.NewTargetEndpoint("https://api.example.com", "", "", "")
-	} else { //an explicit target url is set
-		if _, err = url.Parse(targetUrl); err != nil {
-			return fmt.Errorf("Invalid target url: %v", err)
-		}
-		targets.NewTargetEndpoint(targetUrl, "", "", "")
-	}
-
-	if !skipPolicy {
-		proxies.AddStepToPreFlowRequest("Validate-" + name + "-Schema")
-	}
-
-	if apiKeyLocation != "" {
-		proxies.AddStepToPreFlowRequest("Verify-API-Key-" + name)
-	}
-
-	return err
-}
-
-func GenerateIntegrationAPIProxy(name string,
-	integration string,
-	apitrigger string) (err error) {
-
-	apiproxy.SetDisplayName(name)
-	apiproxy.SetCreatedAt()
-	apiproxy.SetLastModifiedAt()
-	apiproxy.SetConfigurationVersion()
-	apiproxy.AddProxyEndpoint("default")
-	apiproxy.AddIntegrationEndpoint("default")
-	apiproxy.SetBasePath("/" + apitrigger)
-
-	proxies.NewProxyEndpoint("/"+apitrigger, false)
-
-	proxies.AddStepToPreFlowRequest("set-integration-request")
-	apiproxy.AddPolicy("set-integration-request")
-
-	return nil
-}
-
-func GenerateAPIProxyFromSwagger(name string,
-	oasDocName string,
-	skipPolicy bool,
-	addCORS bool) (err error) {
-
-	//TODO: load security schemes
-
-	apiproxy.SetDisplayName(name)
-	if doc2.Info.Description != "" {
-		apiproxy.SetDescription(doc2.Info.Description)
-	}
-
-	apiproxy.SetCreatedAt()
-	apiproxy.SetLastModifiedAt()
-	apiproxy.SetConfigurationVersion()
-	apiproxy.AddTargetEndpoint("default")
-	apiproxy.AddProxyEndpoint("default")
-
-	return nil
-}
-
-func GetHTTPMethod(pathItem *openapi3.PathItem, keyPath string) (map[string]pathDetailDef, error) {
+func getHTTPMethod(pathItem *openapi3.PathItem, keyPath string) (map[string]pathDetailDef, error) {
 
 	var err error
 	pathMap := make(map[string]pathDetailDef)
@@ -593,9 +471,9 @@ func GetHTTPMethod(pathItem *openapi3.PathItem, keyPath string) (map[string]path
 	return pathMap, nil
 }
 
-func GenerateFlows(paths openapi3.Paths) (err error) {
+func generateFlows(paths openapi3.Paths) (err error) {
 	for keyPath := range paths {
-		pathMap, err := GetHTTPMethod(paths[keyPath], keyPath)
+		pathMap, err := getHTTPMethod(paths[keyPath], keyPath)
 		if err != nil {
 			return err
 		}
@@ -642,6 +520,10 @@ func loadSecurityType(secSchemeName string, securityScheme openapi3.SecuritySche
 	secScheme = securitySchemesDef{}
 	apiKeyPolicy := apiKeyPolicyDef{}
 	oAuthPolicy := oAuthPolicyDef{}
+	jwtPolicy := jwtPolicyDef{}
+
+	//this policy does not apply for OAS 3, used only with Endpoints/Swagger
+	jwtPolicy.JWTPolicyEnabled = false
 
 	if securityScheme.Value.Type == "oauth2" {
 		secScheme.SchemeName = secSchemeName
@@ -669,15 +551,6 @@ func loadSecurityType(secSchemeName string, securityScheme openapi3.SecuritySche
 	}
 
 	return secScheme
-}
-
-func getSecurityType(secName string) securitySchemesDef {
-	for _, securityScheme := range securitySchemesList.SecuritySchemes {
-		if securityScheme.SchemeName == secName {
-			return securityScheme
-		}
-	}
-	return securitySchemesDef{}
 }
 
 func getSecurityRequirements(securityRequirements []openapi3.SecurityRequirement) securitySchemesDef {
@@ -760,7 +633,9 @@ func getQuotaDefinition(i interface{}) (quotaDef, error) {
 		quota.QuotaIntervalRef,
 		quota.QuotaIntervalLiteral,
 		quota.QuotaTimeUnitRef,
-		quota.QuotaTimeUnitLiteral)
+		quota.QuotaTimeUnitLiteral,
+		quota.QuotaIdentifierRef,
+		quota.QuotaIdentiferLiteral)
 
 	return quota, nil
 }
@@ -867,36 +742,4 @@ func readScopes(scopes map[string]string) string {
 		scopeString = scopeName + " " + scopeString
 	}
 	return strings.TrimSpace(scopeString)
-}
-
-func getDefaultGoogleBackend() {
-	for extensionName, extensionValue := range doc2.Extensions {
-		if extensionName == "x-google-backend" {
-
-		}
-	}
-}
-
-func getBackendDefinition(i interface{}) (backendDef, error) {
-	var jsonArrayMap []map[string]interface{}
-
-	backend := backendDef{}
-	jsonMap := map[string]string{}
-	str := fmt.Sprintf("%s", i)
-
-	if err := json.Unmarshal([]byte(str), &jsonArrayMap); err != nil {
-		return backendDef{}, err
-	}
-
-	for _, m := range jsonArrayMap {
-		for k, v := range m {
-			jsonMap[k] = fmt.Sprintf("%v", v)
-		}
-	}
-
-	if jsonMap["address"] != "" {
-		backend.Address = jsonMap["address"]
-	}
-
-	return backend, nil
 }

@@ -30,9 +30,21 @@ type targetEndpointDef struct {
 	HTTPTargetConnection httpTargetConnectionDef `xml:"HTTPTargetConnection,omitempty"`
 }
 
+type property struct {
+	XMLName xml.Name `xml:"Property"`
+	Name    string   `xml:"name,attr"`
+	Value   string   `xml:",chardata"`
+}
+
+type properties struct {
+	XMLName  xml.Name   `xml:"Properties"`
+	Property []property `xml:"Property"`
+}
+
 type httpTargetConnectionDef struct {
 	Authentication *authenticationDef `xml:"Authentication"`
 	URL            string             `xml:"URL"`
+	Properties     properties         `xml:"Properties"`
 }
 
 type authenticationDef struct {
@@ -52,8 +64,9 @@ type googleIdTokenDef struct {
 }
 
 type audienceDef struct {
-	XMLName xml.Name `xml:"Audience"`
-	Ref     *string  `xml:"ref,attr"`
+	XMLName      xml.Name `xml:"Audience"`
+	Ref          *string  `xml:"ref,attr"`
+	UseTargetUrl *string  `xml:"useTargetUrl,attr"`
 }
 
 type scopeDef struct {
@@ -66,15 +79,19 @@ var integrationEndpoint = `<?xml version="1.0" encoding="UTF-8" standalone="yes"
 </IntegrationEndpoint>
 `
 
-var targetEndpoint targetEndpointDef
+var TargetEndpoints []targetEndpointDef
 
-func AddStepToPreFlowRequest(name string) {
-	step := proxytypes.StepDef{}
-	step.Name = name
-	targetEndpoint.PreFlow.Request.Step = append(targetEndpoint.PreFlow.Request.Step, &step)
+func AddStepToPreFlowRequest(name string, targetEndpointName string) {
+	for _, targetEndpoint := range TargetEndpoints {
+		if targetEndpoint.Name == targetEndpointName {
+			step := proxytypes.StepDef{}
+			step.Name = name
+			targetEndpoint.PreFlow.Request.Step = append(targetEndpoint.PreFlow.Request.Step, &step)
+		}
+	}
 }
 
-func GetTargetEndpoint() (string, error) {
+func GetTargetEndpoint(targetEndpoint targetEndpointDef) (string, error) {
 	targetBody, err := xml.MarshalIndent(targetEndpoint, "", " ")
 	if err != nil {
 		return "", nil
@@ -82,8 +99,9 @@ func GetTargetEndpoint() (string, error) {
 	return string(targetBody), nil
 }
 
-func NewTargetEndpoint(endpoint string, oasGoogleAcessTokenScopeLiteral string, oasGoogleIdTokenAudLiteral string, oasGoogleIdTokenAudRef string) {
-	targetEndpoint.Name = "default"
+func NewTargetEndpoint(name string, endpoint string, oasGoogleAcessTokenScopeLiteral string, oasGoogleIdTokenAudLiteral string, oasGoogleIdTokenAudRef string) {
+	targetEndpoint := targetEndpointDef{}
+	targetEndpoint.Name = name
 	targetEndpoint.PreFlow.Name = "PreFlow"
 	targetEndpoint.PostFlow.Name = "PostFlow"
 	targetEndpoint.HTTPTargetConnection.URL = endpoint
@@ -105,6 +123,25 @@ func NewTargetEndpoint(endpoint string, oasGoogleAcessTokenScopeLiteral string, 
 		} else if oasGoogleIdTokenAudRef != "" {
 			targetEndpoint.HTTPTargetConnection.Authentication.GoogleIDToken.Audience.Ref = new(string)
 			targetEndpoint.HTTPTargetConnection.Authentication.GoogleIDToken.Audience.Ref = setString(oasGoogleIdTokenAudRef)
+			targetEndpoint.HTTPTargetConnection.Authentication.GoogleIDToken.Audience.UseTargetUrl = new(string)
+			*targetEndpoint.HTTPTargetConnection.Authentication.GoogleIDToken.Audience.UseTargetUrl = "true"
+		}
+	} else {
+		targetEndpoint.HTTPTargetConnection.Authentication = nil
+	}
+	TargetEndpoints = append(TargetEndpoints, targetEndpoint)
+}
+
+func AddTargetEndpointProperty(endpointName string, propertyName string, propertyValue string) {
+
+	property := property{}
+	property.Name = propertyName
+	property.Value = propertyValue
+
+	for index := range TargetEndpoints {
+		if TargetEndpoints[index].Name == endpointName {
+			TargetEndpoints[index].HTTPTargetConnection.Properties.Property = append(TargetEndpoints[index].HTTPTargetConnection.Properties.Property, property)
+			return
 		}
 	}
 }

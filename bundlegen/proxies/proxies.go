@@ -1,4 +1,4 @@
-// Copyright 2020 Google LLC
+// Copyright 2022 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 package proxies
 
 import (
+	"bytes"
 	"encoding/xml"
 	"fmt"
 	"strings"
@@ -31,12 +32,14 @@ type proxyEndpointDef struct {
 	PostFlow            proxytypes.PostFlowDef `xml:"PostFlow,omitempty"`
 	Flows               proxytypes.FlowsDef    `xml:"Flows,omitempty"`
 	HTTPProxyConnection httpProxyConnectionDef `xml:"HTTPProxyConnection,omitempty"`
-	RouteRule           routeRuleDef           `xml:"RouteRule,omitempty"`
+	RouteRule           []routeRuleDef         `xml:"RouteRule,omitempty"`
 }
 
 type routeRuleDef struct {
 	XMLName             xml.Name `xml:"RouteRule"`
 	Name                string   `xml:"name,attr"`
+	Condition           *string  `xml:"Condition"`
+	Url                 *string  `xml:"URL"`
 	TargetEndpoint      *string  `xml:"TargetEndpoint"`
 	IntegrationEndpoint *string  `xml:"IntegrationEndpoint"`
 }
@@ -55,30 +58,46 @@ func GetProxyEndpoint() (string, error) {
 	if err != nil {
 		return "", nil
 	}
+	proxyBody = bytes.ReplaceAll(proxyBody, []byte("&#34;"), []byte("\""))
 	return string(proxyBody), nil
 }
 
 func NewProxyEndpoint(basePath string, targetEndpoint bool) {
+	routeRule := routeRuleDef{}
 	proxyEndpoint.Name = "default"
 	proxyEndpoint.PreFlow.Name = "PreFlow"
 	proxyEndpoint.PostFlow.Name = "PostFlow"
 	proxyEndpoint.HTTPProxyConnection.BasePath = basePath
-	proxyEndpoint.RouteRule.Name = "default"
+	routeRule.Name = "default"
 	if targetEndpoint {
-		proxyEndpoint.RouteRule.TargetEndpoint = new(string)
-		*proxyEndpoint.RouteRule.TargetEndpoint = "default"
+		routeRule.TargetEndpoint = new(string)
+		*routeRule.TargetEndpoint = "default"
 	} else {
-		proxyEndpoint.RouteRule.IntegrationEndpoint = new(string)
-		*proxyEndpoint.RouteRule.IntegrationEndpoint = "default"
+		routeRule.IntegrationEndpoint = new(string)
+		*routeRule.IntegrationEndpoint = "default"
 	}
+	proxyEndpoint.RouteRule = append(proxyEndpoint.RouteRule, routeRule)
 }
 
 func AddFlow(operationId string, keyPath string, method string, description string) {
 	flow := proxytypes.FlowDef{}
 	flow.Name = operationId
-	flow.Description = description
-	flow.Condition.ConditionData = "(proxy.pathsuffix MatchesPath \"" + keyPath + "\") and (request.verb = \"" + strings.ToUpper(method) + "\")"
+	if description != "" {
+		flow.Description = description
+	}
+	if keyPath != "" && method != "" {
+		flow.Condition.ConditionData = "(proxy.pathsuffix MatchesPath \"" + keyPath + "\") and (request.verb = \"" + strings.ToUpper(method) + "\")"
+	}
 	proxyEndpoint.Flows.Flow = append(proxyEndpoint.Flows.Flow, flow)
+}
+
+func FlowExists(name string) bool {
+	for _, flow := range proxyEndpoint.Flows.Flow {
+		if flow.Name == name {
+			return true
+		}
+	}
+	return false
 }
 
 func AddStepToPreFlowRequest(name string) {
@@ -97,4 +116,16 @@ func AddStepToFlowRequest(name string, flowName string) error {
 		}
 	}
 	return fmt.Errorf("flow name not found")
+}
+
+func AddRoute(name string, endpoint string, condition string) {
+	routeRule := routeRuleDef{}
+	routeRule.Name = name
+
+	routeRule.TargetEndpoint = new(string)
+	*routeRule.TargetEndpoint = endpoint
+
+	routeRule.Condition = new(string)
+	*routeRule.Condition = condition
+	proxyEndpoint.RouteRule = append(proxyEndpoint.RouteRule, routeRule)
 }

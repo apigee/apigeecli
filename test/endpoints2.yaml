@@ -1,0 +1,118 @@
+swagger: "2.0"
+info:
+  title: API Gateway + Cloud Run + Third party auth
+  description: Sample API on API Gateway with a Cloud Run backend authenticated with third party auth.
+  version: 1.0.0
+basePath: /v1
+schemes:
+  - https
+produces:
+  - application/json
+x-google-allow: configured
+x-google-api-name: swagger
+x-google-backend:
+  address: https://sample-backend-s3fctubhaq-uc.a.run.app
+  deadline: 10
+x-google-management:
+  quota:
+    limits:
+      - name: api_limit
+        metric: api_limit
+        unit: "1/min/{project}"
+        values:
+          STANDARD: 100
+securityDefinitions:
+  microsoft:
+    authorizationUrl: ""
+    flow: "implicit"
+    type: "oauth2"
+    x-google-issuer: "https://login.microsoftonline.com/foo/v2.0"
+    x-google-jwks_uri: "https://login.microsoftonline.com/foo/discovery/v2.0/keys?appid=bar"
+    x-google-audiences: "client-id-123"
+    x-google-jwt-locations:
+      - query: "token"
+  auth0_jwk:
+    authorizationUrl: ""
+    flow: "implicit"
+    type: "oauth2"
+    x-google-issuer: "https://acme.auth0.com/"
+    x-google-jwks_uri: "https://acme.auth0.com/.well-known/jwks.json"
+    x-google-audiences: "client-id-123"
+    x-google-jwt-locations:
+      - header: "Authorization"
+        value_prefix: "Bearer"
+  google_id_token:
+    authorizationUrl: "https://accounts.google.com/o/oauth2/v2/auth"
+    flow: "implicit"
+    type: "oauth2"
+    x-google-issuer: "https://accounts.google.com"
+    x-google-jwks_uri: "https://www.googleapis.com/oauth2/v3/certs"
+    x-google-audiences: "demo-aud"
+  api_key:
+    type: "apiKey"
+    name: "key"
+    in: "query"
+paths:
+  /v1/httpbin/{something}:
+    get:
+      summary: httpbin
+      operationId: httpbin
+      parameters:
+        - in: path
+          name: something
+          type: string
+          required: true
+          description: ID some path id
+      responses:
+        '200':
+          description: A successful response
+      x-google-backend:
+        address: https://httpbin.org/anything
+        path_translation: APPEND_PATH_TO_ADDRESS
+      security:
+        - google_id_token: []
+  /assets/{asset}:
+    get:
+      parameters:
+        - in: path
+          name: asset
+          type: string
+          required: true
+          description: Name of the asset.
+      summary: Assets
+      operationId: getAsset
+      responses:
+        "200":
+          description: A successful response
+          schema:
+            type: string
+      security:
+        - api_key: []
+  /hello:
+    get:
+      summary: Cloud Run hello world
+      operationId: hello
+      responses:
+        "200":
+          description: A successful response
+          schema:
+            type: string
+      security:
+        - microsoft: []
+      x-google-quota:
+        metricCosts:
+          api_limit: 1
+  /hi:
+    get:
+      summary: Cloud Run hello world
+      operationId: hi
+      responses:
+        "200":
+          description: A successful response
+          schema:
+            type: string
+      security:
+        - auth0_jwk: []
+      x-google-quota:
+        metricCosts:
+          api_limit: 10

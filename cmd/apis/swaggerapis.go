@@ -19,6 +19,8 @@ import (
 
 	"github.com/apigee/apigeecli/apiclient"
 	bundle "github.com/apigee/apigeecli/bundlegen"
+	proxybundle "github.com/apigee/apigeecli/bundlegen/proxybundle"
+	"github.com/apigee/apigeecli/client/apis"
 	"github.com/spf13/cobra"
 )
 
@@ -27,43 +29,63 @@ var SwaggerCreateCmd = &cobra.Command{
 	Short: "Creates an API proxy from a Swagger Spec",
 	Long:  "Creates an API proxy from a Swagger Spec for Cloud Endpoints/API Gateway",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		if swaggerFile == "" && swaggerURI == "" {
+			return fmt.Errorf("either swaggerfile or swaggeruri must be passed")
+		}
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		//var content []byte
 		var oasDocName string
-		if swaggerFile != "" {
-			if oasDocName, _, err = bundle.LoadSwaggerFromFile(swaggerFile, validateSpec); err != nil {
+
+		if swaggerURI != "" {
+			if oasDocName, _, err = bundle.LoadSwaggerFromUri(swaggerURI); err != nil {
 				return err
 			}
 		}
-		fmt.Println("Passed file")
+
+		if swaggerFile != "" {
+			if oasDocName, _, err = bundle.LoadSwaggerFromFile(swaggerFile); err != nil {
+				return err
+			}
+		}
+
 		//Generate the apiproxy struct
-		err = bundle.GenerateAPIProxyFromSwagger(name,
+		name, err = bundle.GenerateAPIProxyFromSwagger(name,
 			oasDocName,
+			basePath,
+			addCORS)
+
+		if err != nil {
+			return err
+		}
+
+		//Create the API proxy bundle
+		err = proxybundle.GenerateAPIProxyBundleFromSwagger(name,
 			skipPolicy,
 			addCORS)
+
+		if importProxy {
+			_, err = apis.CreateProxy(name, name+".zip")
+		}
 
 		return err
 	},
 }
 
-var swaggerFile string
+var swaggerFile, swaggerURI string
 
 func init() {
 	SwaggerCreateCmd.Flags().StringVarP(&name, "name", "n",
-		"", "API Proxy name")
+		"", "API Proxy name. If not specified, will look for the x-google-api-name extension")
 	SwaggerCreateCmd.Flags().StringVarP(&swaggerFile, "swaggerfile", "f",
-		"", "Swagger Specification file")
+		"", "Path to a Swagger Specification file with API Gateway or Cloud Endpoints extensions")
+	SwaggerCreateCmd.Flags().StringVarP(&swaggerURI, "swaggeruri", "u",
+		"", "URI to a Swagger Specification file with API Gateway or Cloud Endpoints extensions")
 	SwaggerCreateCmd.Flags().BoolVarP(&importProxy, "import", "",
 		true, "Import API Proxy after generation from spec")
-	SwaggerCreateCmd.Flags().BoolVarP(&validateSpec, "validate", "",
-		true, "Validate Spec before generating proxy")
-	SwaggerCreateCmd.Flags().BoolVarP(&skipPolicy, "skip-policy", "",
-		false, "Skip adding the OAS Validate policy")
 	SwaggerCreateCmd.Flags().BoolVarP(&addCORS, "add-cors", "",
 		false, "Add a CORS policy")
 
-	_ = SwaggerCreateCmd.MarkFlagRequired("name")
 	_ = SwaggerCreateCmd.MarkFlagRequired("swaggerFile")
 }
