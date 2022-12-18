@@ -42,7 +42,7 @@ type subject struct {
 	Email       *string `json:"email,omitempty"`
 }
 
-func CreateSelfSigned(keystoreName string, name string, ignoreExpiry bool, ignoreNewLine bool, selfsignedFile string) (respBody []byte, err error) {
+func CreateOrUpdateSelfSigned(keystoreName string, name string, update bool, ignoreExpiry bool, ignoreNewLine bool, selfsignedFile string) (respBody []byte, err error) {
 
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(),
@@ -95,10 +95,13 @@ func CreateSelfSigned(keystoreName string, name string, ignoreExpiry bool, ignor
 		return nil, err
 	}
 
+	if update {
+		return apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), string(payload), "PUT")
+	}
 	return apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), string(payload))
 }
 
-func CreatePfx(keystoreName string, name string, ignoreExpiry bool, ignoreNewLine bool, pfxFile string, password string) (respBpdy []byte, err error) {
+func CreateOrUpdatePfx(keystoreName string, name string, update bool, ignoreExpiry bool, ignoreNewLine bool, pfxFile string, password string) (respBpdy []byte, err error) {
 
 	if pfxFile == "" {
 		return nil, fmt.Errorf("pfxFile cannot be empty")
@@ -111,10 +114,10 @@ func CreatePfx(keystoreName string, name string, ignoreExpiry bool, ignoreNewLin
 		"file": pfxFile,
 	}
 
-	return create(keystoreName, name, "pkcs12", password, ignoreExpiry, ignoreNewLine, formParams)
+	return createOrUpdate(keystoreName, name, "pkcs12", password, update, ignoreExpiry, ignoreNewLine, formParams)
 }
 
-func CreateKeyCert(keystoreName string, name string, ignoreExpiry bool, ignoreNewLine bool,
+func CreateOrUpdateKeyCert(keystoreName string, name string, update bool, ignoreExpiry bool, ignoreNewLine bool,
 	certFile string, keyFile string, password string) (respBpdy []byte, err error) {
 
 	if certFile == "" {
@@ -128,10 +131,10 @@ func CreateKeyCert(keystoreName string, name string, ignoreExpiry bool, ignoreNe
 		formParams["keyFile"] = keyFile
 	}
 
-	return create(keystoreName, name, "keycertfile", password, ignoreExpiry, ignoreNewLine, formParams)
+	return createOrUpdate(keystoreName, name, "keycertfile", password, update, ignoreExpiry, ignoreNewLine, formParams)
 }
 
-func create(keystoreName string, name string, format string, password string, ignoreExpiry bool, ignoreNewLine bool, formParams map[string]string) (respBody []byte, err error) {
+func createOrUpdate(keystoreName string, name string, format string, password string, update bool, ignoreExpiry bool, ignoreNewLine bool, formParams map[string]string) (respBody []byte, err error) {
 
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(),
@@ -152,7 +155,7 @@ func create(keystoreName string, name string, format string, password string, ig
 	}
 	u.RawQuery = q.Encode()
 
-	return apiclient.PostHttpOctet(true, false, u.String(), formParams)
+	return apiclient.PostHttpOctet(apiclient.GetPrintOutput(), update, u.String(), formParams)
 }
 
 // CreateCSR
