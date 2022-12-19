@@ -132,6 +132,15 @@ func NewTargetEndpoint(name string, endpoint string, oasGoogleAcessTokenScopeLit
 	TargetEndpoints = append(TargetEndpoints, targetEndpoint)
 }
 
+func IsExists(endpointName string) bool {
+	for index := range TargetEndpoints {
+		if TargetEndpoints[index].Name == endpointName {
+			return true
+		}
+	}
+	return false
+}
+
 func AddTargetEndpointProperty(endpointName string, propertyName string, propertyValue string) {
 
 	property := property{}

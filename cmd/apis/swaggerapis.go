@@ -86,6 +86,4 @@ func init() {
 		true, "Import API Proxy after generation from spec")
 	SwaggerCreateCmd.Flags().BoolVarP(&addCORS, "add-cors", "",
 		false, "Add a CORS policy")
-
-	_ = SwaggerCreateCmd.MarkFlagRequired("swaggerFile")
 }

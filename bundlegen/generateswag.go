@@ -76,16 +76,21 @@ var quotaList []quotaDef
 
 func LoadSwaggerFromUri(endpoint string) (string, []byte, error) {
 	var docType string
+
 	u, err := url.Parse(endpoint)
 	if err != nil {
+		clilog.Error.Println(err)
 		return "", nil, err
 	}
+
 	name := path.Base(u.Path)
 	if docType = filepath.Ext(name); docType == "" {
 		docType = "json"
 		name = name + ".json"
 	}
+
 	if err = apiclient.DownloadResource(endpoint, name, docType, false); err != nil {
+		clilog.Error.Println(err)
 		return "", nil, err
 	}
 	defer os.Remove(name)
@@ -97,22 +102,26 @@ func LoadSwaggerFromFile(filePath string) (string, []byte, error) {
 	var jsonContent, swaggerBytes, swaggerJsonBytes []byte
 
 	if swaggerBytes, err = utils.ReadFile(filePath); err != nil {
+		clilog.Error.Println(err)
 		return "", nil, err
 	}
 
 	//convert yaml to json
 	if isFileYaml(filePath) {
 		if swaggerJsonBytes, err = yaml.YAMLToJSON(swaggerBytes); err != nil {
+			clilog.Error.Println(err)
 			return "", nil, err
 		}
 		swaggerBytes = swaggerJsonBytes
 	}
 
 	if err = json.Unmarshal(swaggerBytes, &doc2); err != nil {
+		clilog.Error.Println(err)
 		return "", nil, err
 	}
 
 	if jsonContent, err = doc2.MarshalJSON(); err != nil {
+		clilog.Error.Println(err)
 		return "", nil, err
 	}
 
@@ -125,6 +134,7 @@ func GenerateAPIProxyFromSwagger(name string,
 	addCORS bool) (string, error) {
 
 	var err error
+	var backend backendDef
 
 	//load the security definitions
 	loadSwaggerSecurityRequirements(doc2.SecurityDefinitions)
@@ -135,6 +145,7 @@ func GenerateAPIProxyFromSwagger(name string,
 	//parse google allow definition
 	allow, err := GetAllowDefinition()
 	if err != nil {
+		clilog.Error.Println(err)
 		return name, err
 	}
 
@@ -142,6 +153,7 @@ func GenerateAPIProxyFromSwagger(name string,
 		apiproxy.SetDisplayName(name)
 	} else {
 		if name, err = GetGoogleApiName(); err != nil {
+			clilog.Error.Println(err)
 			return name, err
 		}
 		apiproxy.SetDisplayName(name)
@@ -175,6 +187,7 @@ func GenerateAPIProxyFromSwagger(name string,
 	}
 
 	if err = generateSwaggerFlows(doc2.Paths); err != nil {
+		clilog.Error.Println(err)
 		return name, err
 	}
 
@@ -185,22 +198,13 @@ func GenerateAPIProxyFromSwagger(name string,
 		apiproxy.AddPolicy("Raise-Fault-Unknown-Request")
 	}
 
-	backend, err := getDefaultGoogleBackend()
-	if err != nil {
+	if backend, err = getDefaultGoogleBackend(); err != nil {
 		return name, err
 	}
 
-	if backend.JwtAudience != "" { //TODO: handle disable auth
-		apiproxy.AddTargetEndpoint(GoogleAuthTargetName)
-		targets.NewTargetEndpoint(GoogleAuthTargetName, backend.Address, "", backend.JwtAudience, "")
-		if backend.Deadline > 0 {
-			targets.AddTargetEndpointProperty(GoogleAuthTargetName, "connect.timeout.millis", fmt.Sprintf("%d", backend.Deadline*1000))
-		}
-	} else {
-		apiproxy.AddTargetEndpoint(NoAuthTargetName)
-		targets.NewTargetEndpoint(NoAuthTargetName, backend.Address, "", "", "")
-		if backend.Deadline > 0 {
-			targets.AddTargetEndpointProperty(NoAuthTargetName, "connect.timeout.millis", fmt.Sprintf("%d", backend.Deadline*1000))
+	if backend.Address != "" { //there is a default address
+		if err = addBackend(backend); err != nil {
+			return name, err
 		}
 	}
 
@@ -552,7 +556,7 @@ func getDefaultGoogleBackend() (backendDef, error) {
 			return parseBackendExtension(extensionValue)
 		}
 	}
-	return backendDef{}, fmt.Errorf("did not find any x-google-backend extensions")
+	return backendDef{}, nil
 }
 
 func GetGoogleApiName() (string, error) {
@@ -695,6 +699,9 @@ func processPathSwaggerExtensions(extensions map[string]interface{}, pathDetail 
 			}
 			pathDetail.AssignMessage = policies.AddSetTargetEndpoint("AM-"+pathDetail.OperationID, backend.Address, backend.PathTranslation)
 			setAMPolicy(pathDetail.OperationID, pathDetail.AssignMessage)
+			if err = addBackend(backend); err != nil {
+				return pathDetail, err
+			}
 		} else if extensionName == "x-google-quota" {
 			//process quota
 			quota, err := parseQuotaExtension(extensionValue)
@@ -713,4 +720,30 @@ func GetAMPolicies() map[string]string {
 
 func setAMPolicy(name string, content string) {
 	amPolicyContent[name] = content
+}
+
+func addBackend(backend backendDef) (err error) {
+	if backend.Address == "" {
+		return fmt.Errorf("address is a mandatory field in x-google-backend")
+	}
+	if backend.JwtAudience != "" { //TODO: handle disable auth
+		if !targets.IsExists(GoogleAuthTargetName) {
+			apiproxy.AddTargetEndpoint(GoogleAuthTargetName)
+			targets.NewTargetEndpoint(GoogleAuthTargetName, backend.Address, "", backend.JwtAudience, "")
+			//at the moment one cannot have different deadlines per target.
+			if backend.Deadline > 0 {
+				targets.AddTargetEndpointProperty(GoogleAuthTargetName, "connect.timeout.millis", fmt.Sprintf("%d", backend.Deadline*1000))
+			}
+		}
+	} else {
+		if !targets.IsExists(NoAuthTargetName) {
+			apiproxy.AddTargetEndpoint(NoAuthTargetName)
+			targets.NewTargetEndpoint(NoAuthTargetName, backend.Address, "", "", "")
+			//at the moment one cannot have different deadlines per target.
+			if backend.Deadline > 0 {
+				targets.AddTargetEndpointProperty(NoAuthTargetName, "connect.timeout.millis", fmt.Sprintf("%d", backend.Deadline*1000))
+			}
+		}
+	}
+	return nil
 }
