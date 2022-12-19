@@ -215,6 +215,7 @@ x-google-quota:
     interval-literal: 1 # specify the interval in the policy, use interval-ref to specify a variable
     timeunit-literal: minute # specify the timeUnit in the policy, use timeUnit-ref to specify a variable
     allow-literal: 1 # specify the allowed rate in the policy, use allow-ref to specify a variable
+    identifier-literal: request.headers.api_key # optionally, set an identifier. If not set, the proxy will count every msg. Identifiers are variables in apigee
 ```
 
 NOTE: literals cannot be combined with variables.
