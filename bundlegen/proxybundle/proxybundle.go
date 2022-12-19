@@ -55,6 +55,13 @@ func GenerateAPIProxyBundleFromOAS(name string,
 	var apiProxyData, proxyEndpointData, targetEndpointData string
 	const resourceType = "oas"
 
+	tmpDir, err := os.MkdirTemp("", "proxy")
+	if err != nil {
+		return err
+	}
+
+	rootDir = path.Join(tmpDir, rootDir)
+
 	if err = os.Mkdir(rootDir, os.ModePerm); err != nil {
 		return err
 	}
@@ -193,6 +200,13 @@ func GenerateAPIProxyBundleFromGQL(name string,
 	var apiProxyData, proxyEndpointData, targetEndpointData string
 	const resourceType = "graphql"
 
+	tmpDir, err := os.MkdirTemp("", "proxy")
+	if err != nil {
+		return err
+	}
+
+	rootDir = path.Join(tmpDir, rootDir)
+
 	if err = os.Mkdir(rootDir, os.ModePerm); err != nil {
 		return err
 	}
@@ -293,6 +307,13 @@ func GenerateAPIProxyBundleFromGQL(name string,
 func GenerateIntegrationAPIProxyBundle(name string, integration string, apitrigger string, skipPolicy bool) (err error) {
 
 	var apiProxyData, proxyEndpointData, integrationEndpointData string
+
+	tmpDir, err := os.MkdirTemp("", "proxy")
+	if err != nil {
+		return err
+	}
+
+	rootDir = path.Join(tmpDir, rootDir)
 
 	if err = os.Mkdir(rootDir, os.ModePerm); err != nil {
 		return err
