@@ -27,6 +27,7 @@ import (
 	"github.com/apigee/apigeecli/bundlegen/policies"
 	"github.com/apigee/apigeecli/bundlegen/proxies"
 	targets "github.com/apigee/apigeecli/bundlegen/targets"
+	"github.com/apigee/apigeecli/clilog"
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/ghodss/yaml"
 )
@@ -110,6 +111,7 @@ func LoadDocumentFromFile(filePath string, validate bool, formatValidation bool)
 
 	doc, err = openapi3.NewLoader().LoadFromFile(filePath)
 	if err != nil {
+		clilog.Error.Println(err)
 		return "", nil, err
 	}
 
@@ -122,11 +124,13 @@ func LoadDocumentFromFile(filePath string, validate bool, formatValidation bool)
 
 	if validate {
 		if err = doc.Validate(openapi3.NewLoader().Context); err != nil {
+			clilog.Error.Println(err)
 			return "", nil, err
 		}
 	}
 
 	if jsonContent, err = doc.MarshalJSON(); err != nil {
+		clilog.Error.Println(err)
 		return "", nil, err
 	}
 
@@ -144,6 +148,7 @@ func LoadDocumentFromURI(uri string, validate bool, formatValidation bool) (stri
 
 	u, err := url.Parse(uri)
 	if err != nil {
+		clilog.Error.Println(err)
 		return "", nil, err
 	}
 
@@ -161,11 +166,13 @@ func LoadDocumentFromURI(uri string, validate bool, formatValidation bool) (stri
 
 	if validate {
 		if err = doc.Validate(openapi3.NewLoader().Context); err != nil {
+			clilog.Error.Println(err)
 			return "", nil, err
 		}
 	}
 
 	if jsonContent, err = doc.MarshalJSON(); err != nil {
+		clilog.Error.Println(err)
 		return "", nil, err
 	}
 
