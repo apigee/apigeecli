@@ -274,7 +274,9 @@ func AddQuotaPolicy(policyName string, useQuotaConfigStepName string,
 			timeUnit := "<TimeUnit>" + timeUnitLiteral + "</TimeUnit>"
 			policyString = strings.ReplaceAll(policyString, "<TimeUnit ref=\"quota.unit\"/>", timeUnit)
 		}
-		if identifierRef != "" {
+		if identifierRef == "" && identifierLiteral == "" {
+			policyString = strings.ReplaceAll(policyString, "<Identifier ref=\"quota.identifier\"/>", "")
+		} else if identifierRef != "" {
 			identifier := "<Identifier ref=\"" + identifierRef + "\"/>"
 			policyString = strings.ReplaceAll(policyString, "<Identifier ref=\"quota.identifier\"/>", identifier)
 		} else if identifierLiteral != "" {

@@ -622,6 +622,14 @@ func getQuotaDefinition(i interface{}) (quotaDef, error) {
 		} else if jsonMap["timeunit-ref"] != "" {
 			quota.QuotaTimeUnitRef = jsonMap["timeunit-ref"]
 		}
+
+		if jsonMap["indentifier-literal"] != "" && jsonMap["indentifier-ref"] != "" {
+			return quotaDef{}, fmt.Errorf("x-google-quota extension must have either identifier-ref or identifier-literal")
+		} else if jsonMap["indentifier-literal"] != "" {
+			quota.QuotaIntervalLiteral = jsonMap["identifier-literal"]
+		} else if jsonMap["indentifier-ref"] != "" {
+			quota.QuotaIntervalRef = jsonMap["identifier-ref"]
+		}
 	}
 
 	//store policy XML contents
