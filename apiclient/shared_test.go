@@ -67,7 +67,7 @@ func TestHttpInvalidNumberOfParams(t *testing.T) {
 func TestDownloadResource(t *testing.T) {
 	//download 1000 bytes
 	clilog.Init(true)
-	err := DownloadResource("https://httpbin.org/stream-bytes/1000", "test", ".zip")
+	err := DownloadResource("https://httpbin.org/stream-bytes/1000", "test", ".zip", false)
 	if err != nil {
 		t.Fatal(err)
 	}
