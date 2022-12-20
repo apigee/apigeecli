@@ -119,9 +119,10 @@ Here is a [list](./docs/apigeecli.md) of available commands
 ## Generating API Proxies
 `apigeecli` can generate API proxies from:
 
-* OpenAPI Specification
-* GraphQL Schemas
-* A template for Application Integration
+* OpenAPI 3.0 Specification
+* GraphQL Schema
+* A template/stub for Application Integration
+* Cloud Endpoints/API Gateway OpenAPI 2.0 specification
 
 ### Generating API Proxies from OpenAPI Specs
 
@@ -260,6 +261,45 @@ apigeecli allows the user to generate an Apigee API Proxy bundle template for [A
 * `--trigger`: Specify the API trigger name of the Integration. This is also used as the basePath. Don't include `api_trigger/`
 * `--integration`: Specify the Name of the Integration
 * `--name`: Specify the Name of the API Proxy
+
+### Generating an API Proxy template from Cloud Endpoints/API Gateway
+
+apigeecli allows the user to generate an Apigee API Proxy bundle template for [Cloud Endpoints](https://cloud.google.com/endpoints) and [API Gateway](https://cloud.google.com/api-gateway). Cloud Endpoints and API Gateway use OpenAPI 2.0 (aka Swagger) with [customer extensions](https://cloud.google.com/endpoints/docs/openapi/openapi-extensions). When generating the proxy, consider the following flags:
+
+* `--add-cors=true`: Add a CORS policy
+
+#### Limitations
+
+* The `disable_auth` property in `x-google-backend` is not supported
+* The `protocol` property in `x-google-backend` is ignored. All upstream/backend is treated as http 1.1
+* The `metrics` property in `x-google-management` is not supported
+* The quota unit is ignored in `x-google-management` is ignored. See below for quota behavior
+* The extension `x-google-endpoints` is ignored. To add CORS, see above
+* If more than one security policy is set on a path, then the first one is enabled. In the following example,
+
+```
+  /hello:
+    get:
+      operationId: hello
+      security:
+        - google_id_token: []
+        - api_key: []
+```
+
+the `api_key` policy is ignored.
+
+* If more than one `x-google-jwt-locations` are specified, then the first one is used. In the following example,
+
+```
+x-google-jwt-locations:
+  # Expect header "Authorization": "MyBearerToken <TOKEN>"
+  - header: "Authorization"
+    value_prefix: "MyBearerToken "
+  # expect query parameter "jwt_query_bar=<TOKEN>"
+  - query: "jwt_query_bar"
+```
+
+query parameters are ignored. By default, if no location is specified, the JWT location is the `Authorization` header and value_prefix is `Bearer <token>`.
 
 ## Apigee Client Library
 
