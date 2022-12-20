@@ -185,7 +185,7 @@ func LoadDocumentFromURI(uri string, validate bool, formatValidation bool) (stri
 }
 
 func isFileYaml(name string) bool {
-	if filepath.Ext(name) == "yaml" || filepath.Ext(name) == "yml" {
+	if filepath.Ext(name) == ".yaml" || filepath.Ext(name) == ".yml" {
 		return true
 	}
 	return false
