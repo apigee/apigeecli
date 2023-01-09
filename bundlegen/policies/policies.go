@@ -119,6 +119,26 @@ var setTargetEndpointPolicy = `<?xml version="1.0" encoding="UTF-8" standalone="
 	<AssignTo createNew="false" transport="http" type="request"/>
 </AssignMessage>`
 
+var setAuthVariablePolicy = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<AssignMessage async="false" continueOnError="false" enabled="true" name="Set-Auth-Var">
+    <AssignVariable>
+        <Name>auth-var</Name>
+        <Value>false</Value>
+    </AssignVariable>
+    <IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
+</AssignMessage>`
+
+var copyAuthHeaderPolicy = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<AssignMessage async="false" continueOnError="false" enabled="true" name="Copy-Auth-Var">
+	<Set>
+		<Headers>
+			<Header name="X-Forwarded-Authorization">{request.header.authorization}</Header>
+		</Headers>
+	</Set>
+	<IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
+	<AssignTo createNew="false" transport="http" type="request"/>
+</AssignMessage>`
+
 var setIntegrationRequestPolicy = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <SetIntegrationRequest continueOnError="false" enabled="true" name="set-integration-request">
     <DisplayName>Set Integration Request</DisplayName>
@@ -202,6 +222,8 @@ var extractJwtHeaderPolicy = `<?xml version="1.0" encoding="UTF-8" standalone="y
  	</Header>
 	<IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
 </ExtractVariables>`
+
+var copyAuth = false
 
 func AddSetIntegrationRequestPolicy(integration string, apitrigger string) string {
 	policyString := strings.ReplaceAll(setIntegrationRequestPolicy, "integration_name", integration)
@@ -312,14 +334,14 @@ func AddSetTargetEndpoint(name string, endpoint string, path_transalation string
 	</AssignVariable>`
 
 	templateSuffixTag := `    <AssignVariable>
-	<Name>target.url</Name>
-	<Template>{target.url}{proxy.basepath}{proxy.pathsuffix}</Template>
-</AssignVariable>`
+		<Name>target.url</Name>
+		<Template>{target.url}{proxy.basepath}{proxy.pathsuffix}</Template>
+	</AssignVariable>`
 
 	targetUrl := `    <AssignVariable>
-	<Name>target.url</Name>
-	<Value>VALUE</Value>
-</AssignVariable>`
+		<Name>target.url</Name>
+		<Value>VALUE</Value>
+	</AssignVariable>`
 
 	policyString := setTargetEndpointPolicy
 	if path_transalation == "CONSTANT_ADDRESS" {
@@ -328,6 +350,7 @@ func AddSetTargetEndpoint(name string, endpoint string, path_transalation string
 		policyString = strings.Replace(policyString, "VALUE", endpoint, -1)
 	} else {
 		policyString = strings.Replace(policyString, "<ReplaceTarget/>", templateSuffixTag, -1)
+		policyString = strings.Replace(policyString, "<ReplacePathSuffix/>", "", -1)
 	}
 	return strings.Replace(policyString, "NAME", name, -1)
 }
@@ -367,6 +390,24 @@ func AddExtractJwtHeaderPolicy(name string, headerName string, prefixName string
 	policyString = strings.ReplaceAll(policyString, "header-name", headerName)
 	policyString = strings.ReplaceAll(policyString, "value_prefix", prefixName)
 	return policyString
+}
+
+// TODO: Unused at the moment
+func AddSetAuthVarPolicy(auth bool) string {
+	policyString := strings.ReplaceAll(setAuthVariablePolicy, "<Value>false</Value>", fmt.Sprintf("<Value>%t</Value>", auth))
+	return policyString
+}
+
+func AddCopyAuthHeaderPolicy() string {
+	return copyAuthHeaderPolicy
+}
+
+func EnableCopyAuthPolicy() {
+	copyAuth = true
+}
+
+func IsCopyAuthEnabled() bool {
+	return copyAuth
 }
 
 func replaceTemplateWithPolicy(name string) string {

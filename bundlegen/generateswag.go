@@ -71,13 +71,17 @@ const GoogleAuthTargetName = "google-auth"
 
 var amPolicyContent = make(map[string]string)
 
+var allowValue, apiName string
+
 var googMgmt googleManagementDef
 var quotaList []quotaDef
+var defaultBackend backendDef
 
 func LoadSwaggerFromUri(endpoint string) (string, []byte, error) {
 	var docType string
 
 	u, err := url.Parse(endpoint)
+	clilog.Info.Printf("%v\n", u)
 	if err != nil {
 		clilog.Error.Println(err)
 		return "", nil, err
@@ -88,6 +92,7 @@ func LoadSwaggerFromUri(endpoint string) (string, []byte, error) {
 		docType = "json"
 		name = name + ".json"
 	}
+	clilog.Info.Printf("docType: %s\n", docType)
 
 	if err = apiclient.DownloadResource(endpoint, name, docType, false); err != nil {
 		clilog.Error.Println(err)
@@ -125,6 +130,8 @@ func LoadSwaggerFromFile(filePath string) (string, []byte, error) {
 		return "", nil, err
 	}
 
+	clilog.Info.Printf("%s", string(jsonContent))
+
 	return filepath.Base(filePath), jsonContent, err
 }
 
@@ -134,16 +141,12 @@ func GenerateAPIProxyFromSwagger(name string,
 	addCORS bool) (string, error) {
 
 	var err error
-	var backend backendDef
 
 	//load the security definitions
 	loadSwaggerSecurityRequirements(doc2.SecurityDefinitions)
 
-	//load google management definitions
-	loadManagementDefinitions()
-
-	//parse google allow definition
-	allow, err := GetAllowDefinition()
+	//load google extensions
+	err = loadGoogleExtensions()
 	if err != nil {
 		clilog.Error.Println(err)
 		return name, err
@@ -151,12 +154,12 @@ func GenerateAPIProxyFromSwagger(name string,
 
 	if name != "" {
 		apiproxy.SetDisplayName(name)
+		//set the name for use when generating the bundle
+		apiName = name
+	} else if apiName != "" {
+		apiproxy.SetDisplayName(apiName)
 	} else {
-		if name, err = GetGoogleApiName(); err != nil {
-			clilog.Error.Println(err)
-			return name, err
-		}
-		apiproxy.SetDisplayName(name)
+		return name, fmt.Errorf("neither x-google-api-name nor name was set")
 	}
 
 	if doc2.Info.Description != "" {
@@ -192,19 +195,20 @@ func GenerateAPIProxyFromSwagger(name string,
 	}
 
 	//handle unhandled requests
-	if allow == "configured" {
+	if allowValue == "configured" {
 		proxies.AddFlow("Unknown Request", "", "", "Handle unknown requests")
 		proxies.AddStepToFlowRequest("Raise-Fault-Unknown-Request", "Unknown Request")
 		apiproxy.AddPolicy("Raise-Fault-Unknown-Request")
 	}
 
-	if backend, err = getDefaultGoogleBackend(); err != nil {
-		return name, err
-	}
-
-	if backend.Address != "" { //there is a default address
-		if err = addBackend(backend); err != nil {
+	if defaultBackend.Address != "" { //there is a default address
+		if err = addBackend(defaultBackend); err != nil {
 			return name, err
+		}
+		if defaultBackend.JwtAudience != "" {
+			proxies.AddStepToPreFlowRequest("Copy-Auth-Var")
+			apiproxy.AddPolicy("Copy-Auth-Var")
+			policies.EnableCopyAuthPolicy()
 		}
 	}
 
@@ -271,26 +275,33 @@ func loadSecurityDefinition(secDefName string, securityScheme openapi2.SecurityS
 	return secScheme
 }
 
-func loadManagementDefinitions() {
-	for extensionName, extensionValue := range doc2.Extensions {
-		if extensionName == "x-google-management" {
-			parseManagementExtension(extensionValue)
-			return
-		}
-	}
-}
+func loadGoogleExtensions() (err error) {
 
-func GetAllowDefinition() (string, error) {
 	for extensionName, extensionValue := range doc2.Extensions {
-		if extensionName == "x-google-allow" {
-			allowValue := strings.ReplaceAll(fmt.Sprintf("%s", extensionValue), "\"", "")
-			if allowValue != "configured" && allowValue != "all" {
-				return allowValue, fmt.Errorf("invalid value for x-google-allow")
+		clilog.Info.Printf("Found extension: %s", extensionName)
+		if extensionName == "x-google-management" {
+			if err := parseManagementExtension(extensionValue); err != nil {
+				return err
 			}
-			return allowValue, nil
+		} else if extensionName == "x-google-allow" {
+			allowValue := strings.ReplaceAll(fmt.Sprintf("%s", extensionValue), "\"", "")
+			clilog.Info.Printf("Allow Value: %s\n", allowValue)
+			if allowValue != "configured" && allowValue != "all" {
+				return fmt.Errorf("invalid value for x-google-allow: %s", allowValue)
+			}
+		} else if extensionName == "x-google-api-name" {
+			clilog.Info.Printf("Found API Name: %s\n", extensionValue)
+			if apiName, err = parseApiExtension(extensionValue); err != nil {
+				return err
+			}
+		} else if extensionName == "x-google-backend" {
+			if defaultBackend, err = parseBackendExtension(extensionValue, false); err != nil {
+				return err
+			}
+			clilog.Info.Printf("Found default backend: %v", defaultBackend)
 		}
 	}
-	return "", nil
+	return nil
 }
 
 func enableSecurityPolicy(name string, policyType string) {
@@ -325,6 +336,7 @@ func getSwaggerSecurityRequirements(securityRequirements openapi2.SecurityRequir
 
 func loadSwaggerSecurityRequirements(securityDefinitions map[string]*openapi2.SecurityScheme) {
 	for secDefName, secDef := range securityDefinitions {
+		clilog.Info.Printf("Loading Security Definition: %s\n", secDefName)
 		securitySchemesList.SecuritySchemes = append(securitySchemesList.SecuritySchemes, loadSecurityDefinition(secDefName, *secDef))
 	}
 }
@@ -513,12 +525,38 @@ func generateSwaggerFlows(paths map[string]*openapi2.PathItem) (err error) {
 		for method, pathDetail := range pathMap {
 			if !proxies.FlowExists(pathDetail.OperationID) {
 				proxies.AddFlow(pathDetail.OperationID, replacePathWithWildCard(pathName), method, pathDetail.Description)
+
+				if pathDetail.Backend != (backendDef{}) {
+					if pathDetail.Backend.JwtAudience != "" {
+						if !targets.IsExists(GoogleAuthTargetName) {
+							targets.NewTargetEndpoint(GoogleAuthTargetName, pathDetail.Backend.Address, "", pathDetail.Backend.JwtAudience, "")
+						}
+						if err = targets.AddFlow(GoogleAuthTargetName, pathDetail.OperationID, replacePathWithWildCard(pathName), method, pathDetail.Description); err != nil {
+							return err
+						}
+					} else {
+						if !targets.IsExists(NoAuthTargetName) {
+							targets.NewTargetEndpoint(NoAuthTargetName, pathDetail.Backend.Address, "", "", "")
+						}
+						if err = targets.AddFlow(NoAuthTargetName, pathDetail.OperationID, replacePathWithWildCard(pathName), method, pathDetail.Description); err != nil {
+							return err
+						}
+					}
+				}
 			}
 			if pathDetail.AssignMessage != "" {
-				if err = proxies.AddStepToFlowRequest("AM-"+pathDetail.OperationID, pathDetail.OperationID); err != nil {
-					return err
+				if pathDetail.Backend != (backendDef{}) {
+					if pathDetail.Backend.JwtAudience != "" {
+						if err = targets.AddStepToFlowRequest(GoogleAuthTargetName, "AM-"+pathDetail.OperationID, pathDetail.OperationID); err != nil {
+							return err
+						}
+					} else {
+						if err = targets.AddStepToFlowRequest(NoAuthTargetName, "AM-"+pathDetail.OperationID, pathDetail.OperationID); err != nil {
+							return err
+						}
+					}
+					apiproxy.AddPolicy("AM-" + pathDetail.OperationID)
 				}
-				apiproxy.AddPolicy("AM-" + pathDetail.OperationID)
 			}
 			if pathDetail.SecurityScheme.JWTPolicy.JWTPolicyEnabled {
 				//handle jwt locations
@@ -534,6 +572,13 @@ func generateSwaggerFlows(paths map[string]*openapi2.PathItem) (err error) {
 				}
 				apiproxy.AddPolicy("VerifyJWT-" + pathDetail.SecurityScheme.SchemeName)
 				enableSecurityPolicy(pathDetail.SecurityScheme.SchemeName, "jwt")
+				//copy the original authorization header to X-Forwarded-Authorization
+				// source: https://cloud.google.com/endpoints/docs/openapi/openapi-extensions#jwt_audience
+				if err = proxies.AddStepToFlowRequest("Copy-Auth-Var", pathDetail.OperationID); err != nil {
+					return err
+				}
+				apiproxy.AddPolicy("Copy-Auth-Var")
+				policies.EnableCopyAuthPolicy()
 			}
 			if pathDetail.SecurityScheme.APIKeyPolicy.APIKeyPolicyEnabled {
 				if err = proxies.AddStepToFlowRequest("Verify-API-Key-"+pathDetail.SecurityScheme.SchemeName, pathDetail.OperationID); err != nil {
@@ -550,28 +595,11 @@ func generateSwaggerFlows(paths map[string]*openapi2.PathItem) (err error) {
 	return nil
 }
 
-func getDefaultGoogleBackend() (backendDef, error) {
-	for extensionName, extensionValue := range doc2.Extensions {
-		if extensionName == "x-google-backend" {
-			return parseBackendExtension(extensionValue)
-		}
-	}
-	return backendDef{}, nil
-}
-
-func GetGoogleApiName() (string, error) {
-	for extensionName, extensionValue := range doc2.Extensions {
-		if extensionName == "x-google-api-name" {
-			return parseApiExtension(extensionValue)
-		}
-	}
-	return "", fmt.Errorf("did not find any x-google-api-name extensions")
-}
-
-func parseBackendExtension(i interface{}) (backendDef, error) {
+func parseBackendExtension(i interface{}, operation bool) (backendDef, error) {
 
 	backend := backendDef{}
 	var jsonMap map[string]interface{}
+	var disableAuth string
 
 	str := fmt.Sprintf("%s", i)
 
@@ -582,31 +610,66 @@ func parseBackendExtension(i interface{}) (backendDef, error) {
 	if jsonMap["address"] != "" {
 		tmp := fmt.Sprintf("%s", jsonMap["address"])
 		tmp = strings.Replace(tmp, "<nil>", "", -1)
-		backend.Address = tmp
+		if tmp != "" {
+			backend.Address = tmp
+		}
 	}
 
 	if jsonMap["disable_auth"] != "" {
-		backend.DisableAuth, _ = strconv.ParseBool(fmt.Sprintf("%t", jsonMap["disable_auth"]))
+		disableAuth = fmt.Sprintf("%v", jsonMap["disable_auth"])
+		disableAuth = strings.Replace(disableAuth, "<nil>", "", -1)
+		if disableAuth != "" {
+			backend.DisableAuth, _ = strconv.ParseBool(disableAuth)
+		}
+	}
+
+	//If address is not set, ESPv2 will automatically set disable_auth to true
+	if backend.Address == "" {
+		clilog.Info.Println("Address not set, disabling auth")
+		backend.DisableAuth = true
 	}
 
 	if jsonMap["jwt_audience"] != "" {
 		tmp := fmt.Sprintf("%#v", jsonMap["jwt_audience"])
 		tmp = strings.Replace(tmp, "<nil>", "", -1)
-		backend.JwtAudience = tmp
+		if tmp != "" {
+			backend.JwtAudience = tmp
+		}
+	}
+
+	if backend.JwtAudience != "" && disableAuth != "" {
+		return backend, fmt.Errorf("both jwt_audience and disable_auth cannot be set")
+	}
+
+	//If an operation uses x-google-backend but does not specify either jwt_audience
+	// or disable_auth, ESPv2 will automatically default the jwt_audience to match the address
+	clilog.Info.Printf("Operation: %t, Audience %s, disable_auth: %s\n", operation, backend.JwtAudience, disableAuth)
+	if operation && backend.JwtAudience == "" && disableAuth == "" {
+		backend.JwtAudience = backend.Address
 	}
 
 	if jsonMap["deadline"] != "" {
-		backend.Deadline, _ = strconv.Atoi(fmt.Sprintf("%.0f", jsonMap["deadline"]))
+		tmp := fmt.Sprintf("%v", jsonMap["deadline"])
+		tmp = strings.Replace(tmp, "<nil>", "", -1)
+		if tmp != "" {
+			backend.Deadline, _ = strconv.Atoi(tmp)
+		}
 	}
 
-	if jsonMap["path_transalation"] != "" && jsonMap["path_transalation"] != nil {
-		if jsonMap["path_transalation"] != "APPEND_PATH_TO_ADDRESS" && jsonMap["path_transalation"] != "CONSTANT_ADDRESS" {
-			return backend, fmt.Errorf("invalid path translation options")
+	if jsonMap["path_transalation"] != "" {
+		tmp := fmt.Sprintf("%v", jsonMap["path_transalation"])
+		tmp = strings.Replace(tmp, "<nil>", "", -1)
+		if tmp != "" && tmp != "APPEND_PATH_TO_ADDRESS" && tmp != "CONSTANT_ADDRESS" {
+			return backend, fmt.Errorf("invalid path translation options: %s", tmp)
+		} else {
+			backend.PathTranslation = tmp
 		}
-		backend.PathTranslation = fmt.Sprintf("%s", jsonMap["path_translation"])
 	} else {
 		backend.PathTranslation = "APPEND_PATH_TO_ADDRESS"
 	}
+
+	clilog.Info.Printf("Parsed Backend: %v\n", backend)
+
 	return backend, nil
 }
 
@@ -622,6 +685,8 @@ func parseManagementExtension(i interface{}) error {
 	googMgmt = googleManagementDef{}
 	str := fmt.Sprintf("%s", i)
 
+	clilog.Info.Printf("Raw x-google-management: %s\n", str)
+
 	if err := json.Unmarshal([]byte(str), &googMgmt); err != nil {
 		return err
 	}
@@ -632,6 +697,7 @@ func parseManagementExtension(i interface{}) error {
 		quota.QuotaTimeUnitLiteral = "minute"
 		quota.QuotaIntervalLiteral = "1"
 		quota.QuotaAllowLiteral = limit.Value.Standard
+		clilog.Info.Printf("Found quota definition: %v\n", quota)
 		quotaList = append(quotaList, quota)
 	}
 	return nil
@@ -688,7 +754,7 @@ func processPathSwaggerExtensions(extensions map[string]interface{}, pathDetail 
 	for extensionName, extensionValue := range extensions {
 		if extensionName == "x-google-backend" {
 			//process google-backed
-			backend, err := parseBackendExtension(extensionValue)
+			backend, err := parseBackendExtension(extensionValue, true)
 			if err != nil {
 				return pathDetail, err
 			}
@@ -702,6 +768,7 @@ func processPathSwaggerExtensions(extensions map[string]interface{}, pathDetail 
 			if err = addBackend(backend); err != nil {
 				return pathDetail, err
 			}
+			pathDetail.Backend = backend
 		} else if extensionName == "x-google-quota" {
 			//process quota
 			quota, err := parseQuotaExtension(extensionValue)
@@ -718,6 +785,14 @@ func GetAMPolicies() map[string]string {
 	return amPolicyContent
 }
 
+func GetGoogleApiName() string {
+	return apiName
+}
+
+func GetAllowDefinition() string {
+	return allowValue
+}
+
 func setAMPolicy(name string, content string) {
 	amPolicyContent[name] = content
 }
@@ -726,23 +801,31 @@ func addBackend(backend backendDef) (err error) {
 	if backend.Address == "" {
 		return fmt.Errorf("address is a mandatory field in x-google-backend")
 	}
-	if backend.JwtAudience != "" { //TODO: handle disable auth
+	//if there is a jwt_audience specified and auth is not disabled, use google auth
+	clilog.Info.Printf("JwtAudience %s and DisableAuth %t\n", backend.JwtAudience, backend.DisableAuth)
+	if backend.JwtAudience != "" && !backend.DisableAuth {
 		if !targets.IsExists(GoogleAuthTargetName) {
+			clilog.Info.Println("Adding Google Auth Target Server")
 			apiproxy.AddTargetEndpoint(GoogleAuthTargetName)
 			targets.NewTargetEndpoint(GoogleAuthTargetName, backend.Address, "", backend.JwtAudience, "")
 			//at the moment one cannot have different deadlines per target.
 			if backend.Deadline > 0 {
 				targets.AddTargetEndpointProperty(GoogleAuthTargetName, "connect.timeout.millis", fmt.Sprintf("%d", backend.Deadline*1000))
 			}
+		} else {
+			clilog.Info.Println("Google Auth Target Server already exists")
 		}
 	} else {
 		if !targets.IsExists(NoAuthTargetName) {
+			clilog.Info.Println("Adding Default Target Server")
 			apiproxy.AddTargetEndpoint(NoAuthTargetName)
 			targets.NewTargetEndpoint(NoAuthTargetName, backend.Address, "", "", "")
 			//at the moment one cannot have different deadlines per target.
 			if backend.Deadline > 0 {
 				targets.AddTargetEndpointProperty(NoAuthTargetName, "connect.timeout.millis", fmt.Sprintf("%d", backend.Deadline*1000))
 			}
+		} else {
+			clilog.Info.Println("Default Target Server already exists")
 		}
 	}
 	return nil

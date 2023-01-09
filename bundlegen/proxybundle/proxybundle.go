@@ -387,9 +387,7 @@ func GenerateAPIProxyBundleFromSwagger(name string,
 	rootDir = path.Join(tmpDir, rootDir)
 
 	if name == "" {
-		if name, err = bundlegen.GetGoogleApiName(); err != nil {
-			return err
-		}
+		name = bundlegen.GetGoogleApiName()
 	}
 
 	if err = os.Mkdir(rootDir, os.ModePerm); err != nil {
@@ -500,7 +498,7 @@ func GenerateAPIProxyBundleFromSwagger(name string,
 		}
 	}
 
-	if allow, _ := genapi.GetAllowDefinition(); allow == "configured" {
+	if allow := genapi.GetAllowDefinition(); allow == "configured" {
 		if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"Raise-Fault-Unknown-Request.xml", policies.AddRaiseFaultPolicy()); err != nil {
 			return err
 		}
@@ -509,6 +507,13 @@ func GenerateAPIProxyBundleFromSwagger(name string,
 	if addCORS {
 		//add cors policy
 		if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"Add-CORS.xml", policies.AddCORSPolicy()); err != nil {
+			return err
+		}
+	}
+
+	if policies.IsCopyAuthEnabled() {
+		//add AM policy
+		if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"Copy-Auth-Var.xml", policies.AddCopyAuthHeaderPolicy()); err != nil {
 			return err
 		}
 	}

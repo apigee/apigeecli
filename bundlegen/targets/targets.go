@@ -16,6 +16,8 @@ package targets
 
 import (
 	"encoding/xml"
+	"fmt"
+	"strings"
 
 	proxytypes "github.com/apigee/apigeecli/bundlegen/common"
 )
@@ -65,6 +67,7 @@ type googleIdTokenDef struct {
 
 type audienceDef struct {
 	XMLName      xml.Name `xml:"Audience"`
+	Value        string   `xml:",chardata"`
 	Ref          *string  `xml:"ref,attr"`
 	UseTargetUrl *string  `xml:"useTargetUrl,attr"`
 }
@@ -119,7 +122,7 @@ func NewTargetEndpoint(name string, endpoint string, oasGoogleAcessTokenScopeLit
 		targetEndpoint.HTTPTargetConnection.Authentication.GoogleIDToken.Audience = new(audienceDef)
 
 		if oasGoogleIdTokenAudLiteral != "" {
-			targetEndpoint.HTTPTargetConnection.Authentication.GoogleIDToken.Audience.XMLName.Local = oasGoogleIdTokenAudLiteral
+			targetEndpoint.HTTPTargetConnection.Authentication.GoogleIDToken.Audience.Value = oasGoogleIdTokenAudLiteral
 		} else if oasGoogleIdTokenAudRef != "" {
 			targetEndpoint.HTTPTargetConnection.Authentication.GoogleIDToken.Audience.Ref = new(string)
 			targetEndpoint.HTTPTargetConnection.Authentication.GoogleIDToken.Audience.Ref = setString(oasGoogleIdTokenAudRef)
@@ -153,6 +156,40 @@ func AddTargetEndpointProperty(endpointName string, propertyName string, propert
 			return
 		}
 	}
+}
+
+func AddStepToFlowRequest(targetEndpointName string, name string, flowName string) error {
+	for index := range TargetEndpoints {
+		if TargetEndpoints[index].Name == targetEndpointName {
+			for flowKey, flow := range TargetEndpoints[index].Flows.Flow {
+				if flow.Name == flowName {
+					step := proxytypes.StepDef{}
+					step.Name = name
+					TargetEndpoints[index].Flows.Flow[flowKey].Request.Step = append(TargetEndpoints[index].Flows.Flow[flowKey].Request.Step, &step)
+					return nil
+				}
+			}
+		}
+	}
+	return fmt.Errorf("could not add step, targetendpoint %s not found", targetEndpointName)
+}
+
+func AddFlow(targetEndpointName string, operationId string, keyPath string, method string, description string) error {
+	flow := proxytypes.FlowDef{}
+	flow.Name = operationId
+	if description != "" {
+		flow.Description = description
+	}
+	if keyPath != "" && method != "" {
+		flow.Condition.ConditionData = "(proxy.pathsuffix MatchesPath \"" + keyPath + "\") and (request.verb = \"" + strings.ToUpper(method) + "\")"
+	}
+	for index := range TargetEndpoints {
+		if TargetEndpoints[index].Name == targetEndpointName {
+			TargetEndpoints[index].Flows.Flow = append(TargetEndpoints[index].Flows.Flow, flow)
+			return nil
+		}
+	}
+	return fmt.Errorf("could not add flow, targetendpoint %s not found", targetEndpointName)
 }
 
 func GetIntegrationEndpoint() string {

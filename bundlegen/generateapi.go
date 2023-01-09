@@ -38,6 +38,7 @@ type pathDetailDef struct {
 	Path           string
 	Verb           string
 	AssignMessage  string
+	Backend        backendDef
 	SecurityScheme securitySchemesDef
 	SpikeArrest    spikeArrestDef
 	Quota          quotaDef
