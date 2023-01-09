@@ -28,6 +28,10 @@ paths:
           description: A successful response
           schema:
             type: string
+      x-google-backend:
+        address: https://backend-hash-xxx.a.run.app
+        path_translation: APPEND_PATH_TO_ADDRESS
+        disable_auth: true
   /hello:
     get:
       summary: Cloud Run hello world
@@ -37,6 +41,10 @@ paths:
           description: A successful response
           schema:
             type: string
+      x-google-backend:
+        address: https://backend-hash-xxx.a.run.app
+        jwt_audience: https://backend-hash-xxx.a.run.app
+        path_translation: APPEND_PATH_TO_ADDRESS
   /v1/httpbin/{something}:
     get:
       summary: httpbin
@@ -53,7 +61,6 @@ paths:
       x-google-backend:
         address: https://httpbin.org/anything
         path_translation: APPEND_PATH_TO_ADDRESS
-        disable_auth: true
       security:
         - google_id_token: []
 securityDefinitions:

@@ -11,7 +11,7 @@ produces:
 x-google-allow: configured
 x-google-api-name: swagger
 x-google-backend:
-  address: https://sample-backend-s3fctubhaq-uc.a.run.app
+  address: https://httpbin.org/anything
   deadline: 10
 x-google-management:
   quota:
@@ -67,10 +67,11 @@ paths:
         '200':
           description: A successful response
       x-google-backend:
-        address: https://httpbin.org/anything
+        address: https://sample-backend-s3fctubhaq-uc.a.run.app
         path_translation: APPEND_PATH_TO_ADDRESS
       security:
         - google_id_token: []
+        - api_key: []
   /assets/{asset}:
     get:
       parameters:
@@ -88,6 +89,7 @@ paths:
             type: string
       security:
         - api_key: []
+          google_id_token: []
   /hello:
     get:
       summary: Cloud Run hello world
