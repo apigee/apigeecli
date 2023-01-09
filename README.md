@@ -270,12 +270,11 @@ apigeecli allows the user to generate an Apigee API Proxy bundle template for [C
 
 #### Limitations
 
-* The `disable_auth` property in `x-google-backend` is not supported
 * The `protocol` property in `x-google-backend` is ignored. All upstream/backend is treated as http 1.1
 * The `metrics` property in `x-google-management` is not supported
 * The quota unit is ignored in `x-google-management` is ignored. See below for quota behavior
 * The extension `x-google-endpoints` is ignored. To add CORS, see above
-* If more than one security policy is set on a path, then the first one is enabled. In the following example,
+* [Mutiple security requirements](https://cloud.google.com/endpoints/docs/openapi/openapi-limitations#multiple_security_requirements): If more than one security policy, regardless of the security type, is set on a path, then the **first one** is enabled. In the following examples,
 
 ```
   /hello:
@@ -286,7 +285,18 @@ apigeecli allows the user to generate an Apigee API Proxy bundle template for [C
         - api_key: []
 ```
 
-the `api_key` policy is ignored.
+**or** in the following case,
+
+```
+  /hello:
+    get:
+      operationId: hello
+      security:
+        - google_id_token: []
+          api_key: []
+```
+
+it cannot be determined which policy is applied. It is best to avoid Swagger documents with such configurations.
 
 * If more than one `x-google-jwt-locations` are specified, then the first one is used. In the following example,
 
