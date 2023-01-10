@@ -15,6 +15,7 @@
 package instances
 
 import (
+	"encoding/json"
 	"net/url"
 	"path"
 	"strings"
@@ -22,8 +23,8 @@ import (
 	"github.com/apigee/apigeecli/apiclient"
 )
 
-//Create
-func Create(name string, location string, diskEncryptionKeyName string, ipRange string) (respBody []byte, err error) {
+// Create
+func Create(name string, location string, diskEncryptionKeyName string, ipRange string, consumerAcceptList []string) (respBody []byte, err error) {
 
 	instance := []string{}
 
@@ -38,6 +39,13 @@ func Create(name string, location string, diskEncryptionKeyName string, ipRange 
 		instance = append(instance, "\"diskEncryptionKeyName\":\""+diskEncryptionKeyName+"\"")
 	}
 
+	if len(consumerAcceptList) > 0 {
+		builder := new(strings.Builder)
+		json.NewEncoder(builder).Encode(consumerAcceptList)
+		consumerAcceptListJson := "\"consumerAcceptList\":" + builder.String()
+		instance = append(instance, consumerAcceptListJson)
+	}
+
 	payload := "{" + strings.Join(instance, ",") + "}"
 
 	u, _ := url.Parse(apiclient.BaseURL)
@@ -46,7 +54,7 @@ func Create(name string, location string, diskEncryptionKeyName string, ipRange 
 	return respBody, err
 }
 
-//Get
+// Get
 func Get(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "instances", name)
@@ -54,7 +62,7 @@ func Get(name string) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//Delete
+// Delete
 func Delete(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "instances", name)
@@ -62,10 +70,32 @@ func Delete(name string) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//List
+// List
 func List() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "instances")
 	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	return respBody, err
+}
+
+// Update
+func Update(name string, consumerAcceptList []string) (respBody []byte, err error) {
+	instance := []string{}
+
+	u, _ := url.Parse(apiclient.BaseURL)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "instances", name)
+
+	if len(consumerAcceptList) > 0 {
+		builder := new(strings.Builder)
+		json.NewEncoder(builder).Encode(consumerAcceptList)
+		consumerAcceptListJson := "\"consumerAcceptList\":" + builder.String()
+		instance = append(instance, consumerAcceptListJson)
+
+		q := u.Query()
+		q.Set("updateMask", "consumerAcceptList")
+
+		payload := "{" + strings.Join(instance, ",") + "}"
+		respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload, "PATCH")
+	}
 	return respBody, err
 }
