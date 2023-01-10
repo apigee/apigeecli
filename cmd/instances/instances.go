@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//Cmd to manage instances
+// Cmd to manage instances
 var Cmd = &cobra.Command{
 	Use:   "instances",
 	Short: "Manage Apigee runtime instances",
@@ -38,4 +38,5 @@ func init() {
 	Cmd.AddCommand(DeleteCmd)
 	Cmd.AddCommand(AttachCmd)
 	Cmd.AddCommand(NatCmd)
+	Cmd.AddCommand(UpdateCmd)
 }

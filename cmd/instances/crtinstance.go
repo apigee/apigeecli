@@ -24,7 +24,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//Cmd to create a new instance
+// Cmd to create a new instance
 var CreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create an Instance",
@@ -54,13 +54,14 @@ var CreateCmd = &cobra.Command{
 			}
 		}
 
-		_, err = instances.Create(name, location, diskEncryptionKeyName, ipRange)
+		_, err = instances.Create(name, location, diskEncryptionKeyName, ipRange, consumerAcceptList)
 
 		return
 	},
 }
 
 var diskEncryptionKeyName, ipRange, billingType string
+var consumerAcceptList []string
 
 func init() {
 
@@ -72,6 +73,8 @@ func init() {
 		"", "CloudKMS key name")
 	CreateCmd.Flags().StringVarP(&ipRange, "iprange", "",
 		"", "Peering CIDR Range; must be /22 range")
+	CreateCmd.Flags().StringArrayVarP(&consumerAcceptList, "consumer-accept-list", "c",
+		[]string{}, "Customer accept list represents the list of projects (id/number) that can connect to the service attachment")
 
 	_ = CreateCmd.MarkFlagRequired("name")
 	_ = CreateCmd.MarkFlagRequired("location")
