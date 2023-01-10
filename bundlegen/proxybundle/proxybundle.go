@@ -27,17 +27,19 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/apigee/apigeecli/bundlegen"
 	genapi "github.com/apigee/apigeecli/bundlegen"
 	apiproxy "github.com/apigee/apigeecli/bundlegen/apiproxydef"
 	policies "github.com/apigee/apigeecli/bundlegen/policies"
 	proxies "github.com/apigee/apigeecli/bundlegen/proxies"
+	"github.com/apigee/apigeecli/bundlegen/targets"
 	target "github.com/apigee/apigeecli/bundlegen/targets"
 	"github.com/apigee/apigeecli/clilog"
 	"github.com/google/go-github/github"
 	"golang.org/x/oauth2"
 )
 
-const rootDir = "apiproxy"
+var rootDir = "apiproxy"
 
 func GenerateAPIProxyBundleFromOAS(name string,
 	content string,
@@ -52,6 +54,13 @@ func GenerateAPIProxyBundleFromOAS(name string,
 
 	var apiProxyData, proxyEndpointData, targetEndpointData string
 	const resourceType = "oas"
+
+	tmpDir, err := os.MkdirTemp("", "proxy")
+	if err != nil {
+		return err
+	}
+
+	rootDir = path.Join(tmpDir, rootDir)
 
 	if err = os.Mkdir(rootDir, os.ModePerm); err != nil {
 		return err
@@ -89,12 +98,14 @@ func GenerateAPIProxyBundleFromOAS(name string,
 		return err
 	}
 
-	if targetEndpointData, err = target.GetTargetEndpoint(); err != nil {
-		return err
-	}
+	for _, targetEndpoint := range targets.TargetEndpoints {
+		if targetEndpointData, err = target.GetTargetEndpoint(targetEndpoint); err != nil {
+			return err
+		}
 
-	if err = writeXMLData(targetDirPath+string(os.PathSeparator)+"default.xml", targetEndpointData); err != nil {
-		return err
+		if err = writeXMLData(targetDirPath+string(os.PathSeparator)+targetEndpoint.Name+".xml", targetEndpointData); err != nil {
+			return err
+		}
 	}
 
 	if !skipPolicy {
@@ -114,7 +125,7 @@ func GenerateAPIProxyBundleFromOAS(name string,
 	if targetUrl == "" {
 		if genapi.GenerateSetTargetPolicy() {
 			if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"Set-Target-1.xml",
-				policies.AddSetTargetEndpoint(oasTargetUrlRef)); err != nil {
+				policies.AddSetTargetEndpointRef(oasTargetUrlRef)); err != nil {
 				return err
 			}
 		}
@@ -189,6 +200,13 @@ func GenerateAPIProxyBundleFromGQL(name string,
 	var apiProxyData, proxyEndpointData, targetEndpointData string
 	const resourceType = "graphql"
 
+	tmpDir, err := os.MkdirTemp("", "proxy")
+	if err != nil {
+		return err
+	}
+
+	rootDir = path.Join(tmpDir, rootDir)
+
 	if err = os.Mkdir(rootDir, os.ModePerm); err != nil {
 		return err
 	}
@@ -225,12 +243,14 @@ func GenerateAPIProxyBundleFromGQL(name string,
 		return err
 	}
 
-	if targetEndpointData, err = target.GetTargetEndpoint(); err != nil {
-		return err
-	}
+	for _, targetEndpoint := range targets.TargetEndpoints {
+		if targetEndpointData, err = target.GetTargetEndpoint(targetEndpoint); err != nil {
+			return err
+		}
 
-	if err = writeXMLData(targetDirPath+string(os.PathSeparator)+"default.xml", targetEndpointData); err != nil {
-		return err
+		if err = writeXMLData(targetDirPath+string(os.PathSeparator)+targetEndpoint.Name+".xml", targetEndpointData); err != nil {
+			return err
+		}
 	}
 
 	if !skipPolicy {
@@ -248,7 +268,7 @@ func GenerateAPIProxyBundleFromGQL(name string,
 
 	if targetUrlRef != "" {
 		if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"Set-Target-1.xml",
-			policies.AddSetTargetEndpoint(targetUrlRef)); err != nil {
+			policies.AddSetTargetEndpointRef(targetUrlRef)); err != nil {
 			return err
 		}
 	}
@@ -287,6 +307,13 @@ func GenerateAPIProxyBundleFromGQL(name string,
 func GenerateIntegrationAPIProxyBundle(name string, integration string, apitrigger string, skipPolicy bool) (err error) {
 
 	var apiProxyData, proxyEndpointData, integrationEndpointData string
+
+	tmpDir, err := os.MkdirTemp("", "proxy")
+	if err != nil {
+		return err
+	}
+
+	rootDir = path.Join(tmpDir, rootDir)
 
 	if err = os.Mkdir(rootDir, os.ModePerm); err != nil {
 		return err
@@ -344,6 +371,160 @@ func GenerateIntegrationAPIProxyBundle(name string, integration string, apitrigg
 
 	defer os.RemoveAll(rootDir) // clean up
 	return nil
+}
+
+func GenerateAPIProxyBundleFromSwagger(name string,
+	skipPolicy bool,
+	addCORS bool) (err error) {
+
+	var apiProxyData, proxyEndpointData, targetEndpointData string
+
+	tmpDir, err := os.MkdirTemp("", "proxy")
+	if err != nil {
+		return err
+	}
+
+	rootDir = path.Join(tmpDir, rootDir)
+
+	if name == "" {
+		name = bundlegen.GetGoogleApiName()
+	}
+
+	if err = os.Mkdir(rootDir, os.ModePerm); err != nil {
+		return err
+	}
+
+	// write API Proxy file
+	if apiProxyData, err = apiproxy.GetAPIProxy(); err != nil {
+		return err
+	}
+
+	err = writeXMLData(rootDir+string(os.PathSeparator)+name+".xml", apiProxyData)
+	if err != nil {
+		return err
+	}
+
+	proxiesDirPath := rootDir + string(os.PathSeparator) + "proxies"
+	policiesDirPath := rootDir + string(os.PathSeparator) + "policies"
+	targetDirPath := rootDir + string(os.PathSeparator) + "targets"
+
+	if err = os.Mkdir(proxiesDirPath, os.ModePerm); err != nil {
+		return err
+	}
+
+	if proxyEndpointData, err = proxies.GetProxyEndpoint(); err != nil {
+		return err
+	}
+
+	err = writeXMLData(proxiesDirPath+string(os.PathSeparator)+"default.xml", proxyEndpointData)
+	if err != nil {
+		return err
+	}
+
+	if err = os.Mkdir(targetDirPath, os.ModePerm); err != nil {
+		return err
+	}
+
+	for _, targetEndpoint := range targets.TargetEndpoints {
+		if targetEndpointData, err = target.GetTargetEndpoint(targetEndpoint); err != nil {
+			return err
+		}
+
+		if err = writeXMLData(targetDirPath+string(os.PathSeparator)+targetEndpoint.Name+".xml", targetEndpointData); err != nil {
+			return err
+		}
+	}
+
+	if err = os.Mkdir(policiesDirPath, os.ModePerm); err != nil {
+		return err
+	}
+
+	//add AM policies
+	for amPolicyName, amPolicyContent := range genapi.GetAMPolicies() {
+		if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"AM-"+amPolicyName+".xml", amPolicyContent); err != nil {
+			return err
+		}
+	}
+
+	//add security policies
+	for _, securityScheme := range genapi.GetSecuritySchemesList() {
+		if securityScheme.JWTPolicy.JWTPolicyEnabled {
+			if len(securityScheme.JWTPolicy.Location) > 0 {
+				var headerName, headerValue, queryName string
+				for locationKey, locationValue := range securityScheme.JWTPolicy.Location {
+					if locationKey == "query" {
+						queryName = locationValue
+					} else if locationKey == "header" {
+						headerName = locationValue
+					} else if locationKey == "value_prefix" {
+						headerValue = locationValue
+					}
+				}
+				if queryName != "" {
+					if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"ExtractJWT-"+securityScheme.SchemeName+".xml",
+						policies.AddExtractJwtQueryPolicy("ExtractJWT-"+securityScheme.SchemeName, queryName)); err != nil {
+						return err
+					}
+				} else {
+					if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"ExtractJWT-"+securityScheme.SchemeName+".xml",
+						policies.AddExtractJwtHeaderPolicy("ExtractJWT-"+securityScheme.SchemeName, headerName, headerValue)); err != nil {
+						return err
+					}
+				}
+			}
+			if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"VerifyJWT-"+securityScheme.SchemeName+".xml",
+				policies.AddVerifyJWTPolicy("VerifyJWT-"+securityScheme.SchemeName,
+					securityScheme.JWTPolicy.JwkUri,
+					securityScheme.JWTPolicy.Issuer,
+					securityScheme.JWTPolicy.Audience,
+					securityScheme.JWTPolicy.Source)); err != nil {
+				return err
+			}
+		}
+		if securityScheme.APIKeyPolicy.APIKeyPolicyEnabled {
+			if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"Verify-API-Key-"+securityScheme.SchemeName+".xml",
+				policies.AddVerifyApiKeyPolicy(securityScheme.APIKeyPolicy.APIKeyLocation,
+					securityScheme.SchemeName,
+					securityScheme.APIKeyPolicy.APIKeyName)); err != nil {
+				return err
+			}
+		}
+	}
+
+	//add quota policies
+	for quotaPolicyName, quotaPolicyContent := range genapi.GetQuotaPolicies() {
+		if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"Quota-"+quotaPolicyName+".xml", quotaPolicyContent); err != nil {
+			return err
+		}
+	}
+
+	if allow := genapi.GetAllowDefinition(); allow == "configured" {
+		if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"Raise-Fault-Unknown-Request.xml", policies.AddRaiseFaultPolicy()); err != nil {
+			return err
+		}
+	}
+
+	if addCORS {
+		//add cors policy
+		if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"Add-CORS.xml", policies.AddCORSPolicy()); err != nil {
+			return err
+		}
+	}
+
+	if policies.IsCopyAuthEnabled() {
+		//add AM policy
+		if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"Copy-Auth-Var.xml", policies.AddCopyAuthHeaderPolicy()); err != nil {
+			return err
+		}
+	}
+
+	if err = archiveBundle(rootDir, name+".zip"); err != nil {
+		return err
+	}
+
+	defer os.RemoveAll(rootDir) // clean up
+
+	return err
 }
 
 func writeXMLData(fileName string, data string) error {

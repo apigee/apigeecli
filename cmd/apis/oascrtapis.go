@@ -41,6 +41,7 @@ var OasCreateCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		var content []byte
 		var oasDocName string
+
 		if oasFile != "" {
 			oasDocName, content, err = bundle.LoadDocumentFromFile(oasFile, validateSpec, formatValidation)
 		} else {

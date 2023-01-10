@@ -172,7 +172,7 @@ func GetCert(keystoreName string, name string) (err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(),
 		"keystores", keystoreName, "aliases", name, "certificate")
-	err = apiclient.DownloadResource(u.String(), name+".crt", "")
+	err = apiclient.DownloadResource(u.String(), name+".crt", "", true)
 	return err
 }
 

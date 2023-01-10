@@ -119,14 +119,16 @@ Here is a [list](./docs/apigeecli.md) of available commands
 ## Generating API Proxies
 `apigeecli` can generate API proxies from:
 
-* OpenAPI Specification
-* GraphQL Schemas
-* A template for Application Integration
+* OpenAPI 3.0 Specification
+* GraphQL Schema
+* A template/stub for Application Integration
+* Cloud Endpoints/API Gateway OpenAPI 2.0 specification
 
 ### Generating API Proxies from OpenAPI Specs
 
 `apigeecli` allows the user to generate Apigee API Proxy bundles from an OpenAPI spec (only 3.0.x supported). The Apigee control plane does not support custom formats (ex: uuid). If you spec contains custom formats, consider the following flags
 
+* `--add-cors=true`: Add a CORS policy
 * `--formatValidation=false`: this disables validation for custom formats.
 * `--skip-policy=false`: By default the OAS policy is added to the proxy (to validate API requests). By setting this to false, schema validation is not enabled and the control plane will not reject the bundle due to custom formats.
 
@@ -204,6 +206,8 @@ apigeeli allow the user to add [SpikeArrest](https://cloud.google.com/apigee/doc
 
 ##### Quota custom extension
 
+NOTE: This extension behaves differently when used with Swagger for Cloud Endpoints/API Gateway.
+
 The following configuration allows the user to specify quota parameters in the API Proxy.
 
 ```yaml
@@ -212,6 +216,7 @@ x-google-quota:
     interval-literal: 1 # specify the interval in the policy, use interval-ref to specify a variable
     timeunit-literal: minute # specify the timeUnit in the policy, use timeUnit-ref to specify a variable
     allow-literal: 1 # specify the allowed rate in the policy, use allow-ref to specify a variable
+    identifier-literal: request.headers.api_key # optionally, set an identifier. If not set, the proxy will count every msg. Identifiers are variables in apigee
 ```
 
 NOTE: literals cannot be combined with variables.
@@ -251,11 +256,60 @@ apigeecli allows the user to generate Apigee API Proxy bundles from a GraphQL sc
 
 ### Generating an API Proxy template for Application Integration
 
-apigeecli allows the user to generate an Apigee API Proxy bundle template for [Application Integration](https://cloud.google.com/application-integration/docs/overview). When generating the proxy, the following flags:
+apigeecli allows the user to generate an Apigee API Proxy bundle template for [Application Integration](https://cloud.google.com/application-integration/docs/overview). When generating the proxy, consider the following flags:
 
 * `--trigger`: Specify the API trigger name of the Integration. This is also used as the basePath. Don't include `api_trigger/`
 * `--integration`: Specify the Name of the Integration
 * `--name`: Specify the Name of the API Proxy
+
+### Generating an API Proxy template from Cloud Endpoints/API Gateway
+
+apigeecli allows the user to generate an Apigee API Proxy bundle template for [Cloud Endpoints](https://cloud.google.com/endpoints) and [API Gateway](https://cloud.google.com/api-gateway). Cloud Endpoints and API Gateway use OpenAPI 2.0 (aka Swagger) with [customer extensions](https://cloud.google.com/endpoints/docs/openapi/openapi-extensions). When generating the proxy, consider the following flags:
+
+* `--add-cors=true`: Add a CORS policy
+
+#### Limitations
+
+* The `protocol` property in `x-google-backend` is ignored. All upstream/backend is treated as http 1.1
+* The `metrics` property in `x-google-management` is not supported
+* The quota unit is ignored in `x-google-management` is ignored. See below for quota behavior
+* The extension `x-google-endpoints` is ignored. To add CORS, see above
+* [Mutiple security requirements](https://cloud.google.com/endpoints/docs/openapi/openapi-limitations#multiple_security_requirements): If more than one security policy, regardless of the security type, is set on a path, then the **first one** is enabled. In the following examples,
+
+```
+  /hello:
+    get:
+      operationId: hello
+      security:
+        - google_id_token: []
+        - api_key: []
+```
+
+**or** in the following case,
+
+```
+  /hello:
+    get:
+      operationId: hello
+      security:
+        - google_id_token: []
+          api_key: []
+```
+
+it cannot be determined which policy is applied. It is best to avoid Swagger documents with such configurations.
+
+* If more than one `x-google-jwt-locations` are specified, then the first one is used. In the following example,
+
+```
+x-google-jwt-locations:
+  # Expect header "Authorization": "MyBearerToken <TOKEN>"
+  - header: "Authorization"
+    value_prefix: "MyBearerToken "
+  # expect query parameter "jwt_query_bar=<TOKEN>"
+  - query: "jwt_query_bar"
+```
+
+query parameters are ignored. By default, if no location is specified, the JWT location is the `Authorization` header and value_prefix is `Bearer <token>`.
 
 ## Apigee Client Library
 

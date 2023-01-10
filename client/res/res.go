@@ -60,7 +60,7 @@ func Get(name string, resourceType string) (err error) {
 	}
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "resourcefiles", resourceType, name)
-	err = apiclient.DownloadResource(u.String(), name, resourceType)
+	err = apiclient.DownloadResource(u.String(), name, resourceType, true)
 	return
 }
 

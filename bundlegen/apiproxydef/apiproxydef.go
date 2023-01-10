@@ -97,6 +97,11 @@ func SetLastModifiedAt() {
 }
 
 func AddPolicy(name string) {
+	for index := range apiProxy.Policies.Policy {
+		if apiProxy.Policies.Policy[index] == name {
+			return
+		}
+	}
 	apiProxy.Policies.Policy = append(apiProxy.Policies.Policy, name)
 }
 

@@ -62,7 +62,7 @@ var corsPolicy = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 </CORS>`
 
 var spikeArrestPolicy = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<SpikeArrest async="false" continueOnError="false" enabled="true" name="Spike-Arrest-1">    
+<SpikeArrest async="false" continueOnError="false" enabled="true" name="Spike-Arrest-1">
   <DisplayName>Spike-Arrest-1</DisplayName>
   <Properties/>
   <Rate>1ps</Rate>
@@ -80,7 +80,7 @@ var quotaPolicy1 = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
     <TimeUnit ref="quota.unit"/>
     <Distributed>true</Distributed>
     <StartTime>2019-01-01 00:00:00</StartTime>
-</Quota>	
+</Quota>
 `
 
 var quotaPolicy2 = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -102,13 +102,41 @@ var graphQLPolicy = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
     <ResourceURL>graphql://schema.graphql</ResourceURL>
 </GraphQL>`
 
-var setTargetEndpointPolicy = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+var setTargetEndpointRefPolicy = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <AssignMessage async="false" continueOnError="false" enabled="true" name="Set-Target-1">
     <AssignVariable>
         <Name>target.url</Name>
         <Ref>dynamic.target.url</Ref>
     </AssignVariable>
     <IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
+</AssignMessage>`
+
+var setTargetEndpointPolicy = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<AssignMessage async="false" continueOnError="false" enabled="true" name="NAME">
+	<ReplacePathSuffix/>
+	<ReplaceTarget/>
+    <IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
+	<AssignTo createNew="false" transport="http" type="request"/>
+</AssignMessage>`
+
+var setAuthVariablePolicy = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<AssignMessage async="false" continueOnError="false" enabled="true" name="Set-Auth-Var">
+    <AssignVariable>
+        <Name>auth-var</Name>
+        <Value>false</Value>
+    </AssignVariable>
+    <IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
+</AssignMessage>`
+
+var copyAuthHeaderPolicy = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<AssignMessage async="false" continueOnError="false" enabled="true" name="Copy-Auth-Var">
+	<Set>
+		<Headers>
+			<Header name="X-Forwarded-Authorization">{request.header.authorization}</Header>
+		</Headers>
+	</Set>
+	<IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
+	<AssignTo createNew="false" transport="http" type="request"/>
 </AssignMessage>`
 
 var setIntegrationRequestPolicy = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -120,7 +148,7 @@ var setIntegrationRequestPolicy = `<?xml version="1.0" encoding="UTF-8" standalo
     <ApiTrigger>api_trigger/replace_API_1</ApiTrigger>
     <!--
         <Parameters> defines the input parameters to send with the request. Parameters can be int, boolean, String, double, int array, boolean array, String array, double array, and JSON.
-  
+
         Uncomment the parameters below and modify as needed.
     -->
     <!--
@@ -140,6 +168,62 @@ var setIntegrationRequestPolicy = `<?xml version="1.0" encoding="UTF-8" standalo
     </Parameters>
     -->
 </SetIntegrationRequest>`
+
+var verifyJwtPolicy = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<VerifyJWT name="SECURITY_POLICY_NAME">
+	<DisplayName>SECURITY_POLICY_NAME</DisplayName>
+    <Algorithm>RS256</Algorithm>
+    <IgnoreUnresolvedVariables>false</IgnoreUnresolvedVariables>
+	<Source>request.header.authorization</Source>
+    <PublicKey>
+        <JWKS uri="JWT_JWKS"/>
+    </PublicKey>
+    <Issuer>JWT_ISSUER</Issuer>
+    <Audience>JWT_AUDIENCE</Audience>
+</VerifyJWT>`
+
+var rasiseFaultPolicy = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<RaiseFault async="false" continueOnError="false" enabled="true" name="Raise-Fault-Unknown-Request">
+    <DisplayName>Raise Fault-Unknown-Request</DisplayName>
+    <FaultRules/>
+    <Properties/>
+    <FaultResponse>
+        <Set>
+            <Headers/>
+            <Payload contentType="application/json" variablePrefix="@" variableSuffix="#">
+{
+    "error":"invalid_request",
+    "error_description": "invalid request"
+}
+            </Payload>
+            <StatusCode>400</StatusCode>
+            <ReasonPhrase>Bad Request</ReasonPhrase>
+        </Set>
+    </FaultResponse>
+    <IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
+</RaiseFault>`
+
+var extractJwtQueryPolicy = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ExtractVariables async="false" continueOnError="false" enabled="true" name="Extract-JWT">
+    <DisplayName>Extract-JWT</DisplayName>
+	<Source>request</Source>
+	<QueryParam name="jwt">
+		<Pattern ignoreCase="true">{tokenVar}</Pattern>
+ 	</QueryParam>
+	<IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
+</ExtractVariables>`
+
+var extractJwtHeaderPolicy = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ExtractVariables async="false" continueOnError="false" enabled="true" name="Extract-JWT">
+    <DisplayName>Extract-JWT</DisplayName>
+	<Source>request</Source>
+	<Header name="header-name">
+		<Pattern ignoreCase="true">value_prefix {tokenVar}</Pattern>
+ 	</Header>
+	<IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
+</ExtractVariables>`
+
+var copyAuth = false
 
 func AddSetIntegrationRequestPolicy(integration string, apitrigger string) string {
 	policyString := strings.ReplaceAll(setIntegrationRequestPolicy, "integration_name", integration)
@@ -182,7 +266,8 @@ func AddSpikeArrestPolicy(policyName string, identifierRef string, rateRef strin
 func AddQuotaPolicy(policyName string, useQuotaConfigStepName string,
 	allowRef string, allowLiteral string,
 	intervalRef string, intervalLiteral string,
-	timeUnitRef string, timeUnitLiteral string) string {
+	timeUnitRef string, timeUnitLiteral string,
+	identifierRef string, identifierLiteral string) string {
 	var policyString string
 
 	if useQuotaConfigStepName != "" {
@@ -211,6 +296,15 @@ func AddQuotaPolicy(policyName string, useQuotaConfigStepName string,
 			timeUnit := "<TimeUnit>" + timeUnitLiteral + "</TimeUnit>"
 			policyString = strings.ReplaceAll(policyString, "<TimeUnit ref=\"quota.unit\"/>", timeUnit)
 		}
+		if identifierRef == "" && identifierLiteral == "" {
+			policyString = strings.ReplaceAll(policyString, "<Identifier ref=\"quota.identifier\"/>", "")
+		} else if identifierRef != "" {
+			identifier := "<Identifier ref=\"" + identifierRef + "\"/>"
+			policyString = strings.ReplaceAll(policyString, "<Identifier ref=\"quota.identifier\"/>", identifier)
+		} else if identifierLiteral != "" {
+			identifier := "<Identifier>" + identifierLiteral + "</Identifier>"
+			policyString = strings.ReplaceAll(policyString, "<Identifier ref=\"quota.identifier\"/>", identifier)
+		}
 	}
 	return policyString
 }
@@ -229,8 +323,36 @@ func AddCORSPolicy() string {
 	return corsPolicy
 }
 
-func AddSetTargetEndpoint(ref string) string {
-	return strings.Replace(setTargetEndpointPolicy, "dynamic.target.url", ref, -1)
+func AddSetTargetEndpointRef(ref string) string {
+	return strings.Replace(setTargetEndpointRefPolicy, "dynamic.target.url", ref, -1)
+}
+
+func AddSetTargetEndpoint(name string, endpoint string, path_transalation string) string {
+	pathSuffixTag := `    <AssignVariable>
+		<Name>target.copy.pathsuffix</Name>
+		<Ref>false</Ref>
+	</AssignVariable>`
+
+	templateSuffixTag := `    <AssignVariable>
+		<Name>target.url</Name>
+		<Template>{target.url}{proxy.basepath}{proxy.pathsuffix}</Template>
+	</AssignVariable>`
+
+	targetUrl := `    <AssignVariable>
+		<Name>target.url</Name>
+		<Value>VALUE</Value>
+	</AssignVariable>`
+
+	policyString := setTargetEndpointPolicy
+	if path_transalation == "CONSTANT_ADDRESS" {
+		policyString = strings.Replace(policyString, "<ReplacePathSuffix/>", pathSuffixTag, -1)
+		policyString = strings.Replace(policyString, "<ReplaceTarget/>", targetUrl, -1)
+		policyString = strings.Replace(policyString, "VALUE", endpoint, -1)
+	} else {
+		policyString = strings.Replace(policyString, "<ReplaceTarget/>", templateSuffixTag, -1)
+		policyString = strings.Replace(policyString, "<ReplacePathSuffix/>", "", -1)
+	}
+	return strings.Replace(policyString, "NAME", name, -1)
 }
 
 func AddGraphQLPolicy(name string, action string, schema string) string {
@@ -240,6 +362,52 @@ func AddGraphQLPolicy(name string, action string, schema string) string {
 		policyString = strings.ReplaceAll(policyString, "parse", action)
 	}
 	return policyString
+}
+
+func AddVerifyJWTPolicy(name string, jwks string, issuer string, audience string, source string) string {
+	policyString := strings.ReplaceAll(verifyJwtPolicy, "SECURITY_POLICY_NAME", name)
+	policyString = strings.ReplaceAll(policyString, "JWT_JWKS", jwks)
+	policyString = strings.ReplaceAll(policyString, "JWT_ISSUER", issuer)
+	policyString = strings.ReplaceAll(policyString, "JWT_AUDIENCE", audience)
+	if source != "" {
+		policyString = strings.ReplaceAll(policyString, "request.header.authorization", source)
+	}
+	return policyString
+}
+
+func AddRaiseFaultPolicy() string {
+	return rasiseFaultPolicy
+}
+
+func AddExtractJwtQueryPolicy(name string, queryName string) string {
+	policyString := strings.ReplaceAll(extractJwtQueryPolicy, "Extract-JWT", name)
+	policyString = strings.ReplaceAll(policyString, "jwt", queryName)
+	return policyString
+}
+
+func AddExtractJwtHeaderPolicy(name string, headerName string, prefixName string) string {
+	policyString := strings.ReplaceAll(extractJwtHeaderPolicy, "Extract-JWT", name)
+	policyString = strings.ReplaceAll(policyString, "header-name", headerName)
+	policyString = strings.ReplaceAll(policyString, "value_prefix", prefixName)
+	return policyString
+}
+
+// TODO: Unused at the moment
+func AddSetAuthVarPolicy(auth bool) string {
+	policyString := strings.ReplaceAll(setAuthVariablePolicy, "<Value>false</Value>", fmt.Sprintf("<Value>%t</Value>", auth))
+	return policyString
+}
+
+func AddCopyAuthHeaderPolicy() string {
+	return copyAuthHeaderPolicy
+}
+
+func EnableCopyAuthPolicy() {
+	copyAuth = true
+}
+
+func IsCopyAuthEnabled() bool {
+	return copyAuth
 }
 
 func replaceTemplateWithPolicy(name string) string {

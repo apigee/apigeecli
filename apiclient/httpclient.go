@@ -198,7 +198,7 @@ func DownloadFile(url string, auth bool) (resp *http.Response, err error) {
 }
 
 // DownloadResource method is used to download resources, proxy bundles, sharedflows
-func DownloadResource(url string, name string, resType string) error {
+func DownloadResource(url string, name string, resType string, auth bool) error {
 	var filename string
 
 	if resType == ".zip" {
@@ -218,7 +218,7 @@ func DownloadResource(url string, name string, resType string) error {
 	}
 	defer out.Close()
 
-	resp, err := DownloadFile(url, true)
+	resp, err := DownloadFile(url, auth)
 	if err != nil {
 		return err
 	}

@@ -216,7 +216,7 @@ func FetchBundle(entityType string, folder string, name string, revision string,
 		proxyName = name
 	}
 
-	err := DownloadResource(u.String(), proxyName, ".zip")
+	err := DownloadResource(u.String(), proxyName, ".zip", true)
 	if err != nil {
 		clilog.Error.Fatalf("error with entity: %s", name)
 		clilog.Error.Println(err)
