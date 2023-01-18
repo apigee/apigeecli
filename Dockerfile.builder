@@ -28,7 +28,7 @@ RUN go mod tidy
 RUN go mod download
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -a -ldflags='-s -w -extldflags "-static"' -o /go/bin/apigeecli /go/src/apigeecli/main.go
 
-FROM gcr.io/cloud-builders/gcloud
+FROM google/cloud-sdk:alpine
 COPY --from=builder /go/bin/apigeecli /tmp
 RUN apt-get update
 RUN apt-get install -y jq
