@@ -15,8 +15,12 @@
 package targetservers
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
+	"io"
+	"net/http"
 	"net/url"
 	"os"
 	"path"
@@ -281,7 +285,6 @@ func Import(conn int, filePath string) (err error) {
 	return nil
 }
 
-// batch creates a batch of target servers to create
 func importServers(wg *sync.WaitGroup, jobs <-chan targetserver, errs chan<- error) {
 	defer wg.Done()
 
@@ -297,9 +300,47 @@ func importServers(wg *sync.WaitGroup, jobs <-chan targetserver, errs chan<- err
 			errs <- err
 			continue
 		}
-		_, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), string(b))
+
+		c, err := apiclient.GetHttpClient()
 		if err != nil {
 			errs <- err
+			continue
+		}
+
+		req, err := http.NewRequest(http.MethodPost, u.String(), bytes.NewReader(b))
+		if err != nil {
+			errs <- err
+			continue
+		}
+
+		req, err = apiclient.SetAuthHeader(req)
+		if err != nil {
+			errs <- err
+			continue
+		}
+
+		resp, err := c.Do(req)
+		if err != nil {
+			errs <- err
+			continue
+		}
+		b, err = io.ReadAll(resp.Body)
+		if err != nil {
+			b = []byte(err.Error())
+		}
+		if err != nil || (resp.StatusCode%100 != 2 && resp.StatusCode != http.StatusConflict) { // 409 is returned if the targetserver already exists in the same configuration.
+			errs <- fmt.Errorf("targetserver not imported: (HTTP %v) %s", resp.StatusCode, b)
+			continue
+		} else if resp.StatusCode == http.StatusConflict {
+			b = []byte{}
+		}
+
+		if len(b) > 0 && apiclient.GetPrintOutput() {
+			out := bytes.NewBuffer([]byte{})
+			if err = json.Indent(out, bytes.TrimSpace(b), "", "  "); err != nil {
+				errs <- fmt.Errorf("apigee returned invalid json: %w", err)
+			}
+			fmt.Println(out)
 		}
 		clilog.Info.Printf("Completed targetserver: %s", job.Name)
 	}
