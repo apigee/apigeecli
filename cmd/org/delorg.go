@@ -29,17 +29,17 @@ var DelCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = orgs.Delete(retension)
+		_, err = orgs.Delete(retention)
 		return
 	},
 }
 
-var retension string
+var retention string
 
 func init() {
 
 	DelCmd.Flags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
-	DelCmd.Flags().StringVarP(&retension, "retension", "r",
-		"", "Retention period for soft-delete")
+	DelCmd.Flags().StringVarP(&retention, "retension", "r",
+		"", "Retention period for soft-delete; Must be MINIMUM or DELETION_RETENTION_UNSPECIFIED")
 }
