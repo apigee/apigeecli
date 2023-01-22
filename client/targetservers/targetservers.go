@@ -15,12 +15,17 @@
 package targetservers
 
 import (
+	"bytes"
 	"encoding/json"
+	"errors"
+	"fmt"
 	"io"
+	"net/http"
 	"net/url"
 	"os"
 	"path"
 	"strconv"
+	"strings"
 	"sync"
 
 	"github.com/apigee/apigeecli/apiclient"
@@ -32,21 +37,21 @@ type targetserver struct {
 	Description string   `json:"description,omitempty"`
 	Host        string   `json:"host,omitempty"`
 	Port        int      `json:"port,omitempty"`
-	IsEnabled   *bool    `json:"isEnabled,omitempty"`
+	IsEnabled   bool     `json:"isEnabled,omitempty"`
 	Protocol    string   `json:"protocol,omitempty"`
 	SslInfo     *sslInfo `json:"sSLInfo,omitempty"`
 }
 
 type sslInfo struct {
-	Enabled                *bool       `json:"enabled,omitempty"`
-	ClientAuthEnabled      *bool       `json:"clientAuthEnabled,omitempty"`
-	Keystore               string      `json:"keyStore,omitempty"`
-	Keyalias               string      `json:"keyAlias,omitempty"`
-	Truststore             string      `json:"trustStore,omitempty"`
-	IgnoreValidationErrors *bool       `json:"ignoreValidationErrors,omitempty"`
-	Protocols              []string    `json:"protocols,omitempty"`
-	Ciphers                []string    `json:"ciphers,omitempty"`
-	CommonName             *commonName `json:"commonName,omitempty"`
+	Enabled                bool       `json:"enabled,omitempty"`
+	ClientAuthEnabled      bool       `json:"clientAuthEnabled,omitempty"`
+	Keystore               string     `json:"keyStore,omitempty"`
+	Keyalias               string     `json:"keyAlias,omitempty"`
+	Truststore             string     `json:"trustStore,omitempty"`
+	IgnoreValidationErrors bool       `json:"ignoreValidationErrors,omitempty"`
+	Protocols              []string   `json:"protocols,omitempty"`
+	Ciphers                []string   `json:"ciphers,omitempty"`
+	CommonName             commonName `json:"commonName,omitempty"`
 }
 
 type commonName struct {
@@ -56,83 +61,56 @@ type commonName struct {
 
 // Create
 func Create(name string, description string, host string, port int, enable string, grpc bool, keyStore string, keyAlias string, sslinfo string, tlsenabled bool, clientAuthEnabled bool, ignoreValidationErrors bool) (respBody []byte, err error) {
-	targetsvr := targetserver{}
-	targetsvr.Name = name
+	targetsvr := targetserver{
+		Name: name,
+	}
 
 	return createOrUpdate("create", targetsvr, name, description, host, port, enable, grpc, keyStore, keyAlias, sslinfo, tlsenabled, clientAuthEnabled, ignoreValidationErrors)
 }
 
 // Update
 func Update(name string, description string, host string, port int, enable string, grpc bool, keyStore string, keyAlias string, sslinfo string, tlsenabled bool, clientAuthEnabled bool, ignoreValidationErrors bool) (respBody []byte, err error) {
-
-	var targetRespBody []byte
-	var targetsvr = targetserver{}
-
 	apiclient.SetPrintOutput(false)
-	if targetRespBody, err = Get(name); err != nil {
+	targetRespBody, err := Get(name)
+	if err != nil {
 		return nil, err
 	}
 	apiclient.SetPrintOutput(true)
 
+	targetsvr := targetserver{}
 	if err = json.Unmarshal(targetRespBody, &targetsvr); err != nil {
 		return nil, err
 	}
-
 	return createOrUpdate("update", targetsvr, name, description, host, port, enable, grpc, keyStore, keyAlias, sslinfo, tlsenabled, clientAuthEnabled, ignoreValidationErrors)
 }
 
 func createOrUpdate(action string, targetsvr targetserver, name string, description string, host string, port int, enable string, grpc bool, keyStore string, keyAlias string, sslinfo string, tlsenabled bool, clientAuthEnabled bool, ignoreValidationErrors bool) (respBody []byte, err error) {
-
-	var reqBody []byte
-	sslInfoObj := new(sslInfo)
-
-	if description != "" {
-		targetsvr.Description = description
-	}
-
-	if host != "" {
-		targetsvr.Host = host
-	}
+	targetsvr.Description = description
+	targetsvr.Host = host
+	targetsvr.IsEnabled, _ = strconv.ParseBool(enable)
 
 	if port != -1 {
 		targetsvr.Port = port
 	}
-
 	if grpc {
 		targetsvr.Protocol = "GRPC"
 	}
-
-	if enable != "" {
-		targetsvr.IsEnabled = new(bool)
-		*targetsvr.IsEnabled, _ = strconv.ParseBool(enable)
+	if strings.ToLower(sslinfo) == "true" {
+		targetsvr.SslInfo = &sslInfo{
+			Enabled:                tlsenabled,
+			ClientAuthEnabled:      clientAuthEnabled,
+			IgnoreValidationErrors: ignoreValidationErrors,
+			Keyalias:               keyAlias,
+			Keystore:               keyStore,
+		}
 	}
 
-	if sslinfo != "" {
-		sslInfoObj.Enabled = new(bool)
-		sslInfoObj.ClientAuthEnabled = new(bool)
-		sslInfoObj.IgnoreValidationErrors = new(bool)
-
-		*sslInfoObj.Enabled = tlsenabled
-		*sslInfoObj.ClientAuthEnabled = clientAuthEnabled
-		*sslInfoObj.IgnoreValidationErrors = ignoreValidationErrors
-
-		if keyAlias != "" {
-			sslInfoObj.Keyalias = keyAlias
-		}
-
-		if keyStore != "" {
-			sslInfoObj.Keystore = keyStore
-		}
-
-		targetsvr.SslInfo = sslInfoObj
-	}
-
-	if reqBody, err = json.Marshal(targetsvr); err != nil {
+	reqBody, err := json.Marshal(targetsvr)
+	if err != nil {
 		return nil, err
 	}
 
 	u, _ := url.Parse(apiclient.BaseURL)
-
 	if action == "create" {
 		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "targetservers")
 		respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), string(reqBody))
@@ -170,177 +148,214 @@ func List() (respBody []byte, err error) {
 
 // Export
 func Export(conn int) (payload [][]byte, err error) {
-
-	//parent workgroup
-	var pwg sync.WaitGroup
-	var mu sync.Mutex
-	const entityType = "targetservers"
-
 	u, _ := url.Parse(apiclient.BaseURL)
-	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), entityType)
-	//don't print to sysout
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "targetservers")
+	// don't print to sysout
 	respBody, err := apiclient.HttpClient(false, u.String())
 	if err != nil {
-		return apiclient.GetEntityPayloadList(), err
+		return nil, err
 	}
 
 	var targetservers []string
 	err = json.Unmarshal(respBody, &targetservers)
 	if err != nil {
-		return apiclient.GetEntityPayloadList(), err
+		return nil, err
 	}
 
-	numEntities := len(targetservers)
-	clilog.Info.Printf("Found %d targetservers in the org\n", numEntities)
-	clilog.Info.Printf("Exporting targetservers with %d connections\n", conn)
+	clilog.Info.Printf("Found %d targetservers in the org\n", len(targetservers))
+	clilog.Info.Printf("Exporting targetservers with %d parallel connections\n", conn)
 
-	numOfLoops, remaining := numEntities/conn, numEntities%conn
+	jobChan := make(chan string)
+	resultChan := make(chan []byte)
+	errChan := make(chan error)
 
-	//ensure connections aren't greater than targetservers
-	if conn > numEntities {
-		conn = numEntities
+	fanOutWg := sync.WaitGroup{}
+	fanInWg := sync.WaitGroup{}
+
+	errs := []string{}
+	fanInWg.Add(1)
+	go func() {
+		defer fanInWg.Done()
+		for {
+			newErr, ok := <-errChan
+			if !ok {
+				return
+			}
+			errs = append(errs, newErr.Error())
+		}
+	}()
+
+	results := [][]byte{}
+	fanInWg.Add(1)
+	go func() {
+		defer fanInWg.Done()
+		for {
+			newResult, ok := <-resultChan
+			if !ok {
+				return
+			}
+			results = append(results, newResult)
+		}
+	}()
+
+	for i := 0; i < conn; i++ {
+		fanOutWg.Add(1)
+		go exportServers(&fanOutWg, jobChan, resultChan, errChan)
 	}
 
-	start := 0
-
-	for i, end := 0, 0; i < numOfLoops; i++ {
-		pwg.Add(1)
-		end = (i * conn) + conn
-		clilog.Info.Printf("Exporting batch %d of targetservers\n", (i + 1))
-		go batchExport(targetservers[start:end], entityType, &pwg, &mu)
-		start = end
-		pwg.Wait()
+	for _, ts := range targetservers {
+		jobChan <- ts
 	}
+	close(jobChan)
+	fanOutWg.Wait()
+	close(errChan)
+	close(resultChan)
+	fanInWg.Wait()
 
-	if remaining > 0 {
-		pwg.Add(1)
-		clilog.Info.Printf("Exporting remaining %d targetservers\n", remaining)
-		go batchExport(targetservers[start:numEntities], entityType, &pwg, &mu)
-		pwg.Wait()
+	if len(errs) > 0 {
+		return nil, errors.New(strings.Join(errs, "\n"))
 	}
-
-	payload = make([][]byte, len(apiclient.GetEntityPayloadList()))
-	copy(payload, apiclient.GetEntityPayloadList())
-	apiclient.ClearEntityPayloadList()
-	return payload, nil
+	return results, nil
 }
 
-// batch created a batch of targetservers to query
-func batchExport(entities []string, entityType string, pwg *sync.WaitGroup, mu *sync.Mutex) {
-
-	defer pwg.Done()
-	//batch workgroup
-	var bwg sync.WaitGroup
-
-	bwg.Add(len(entities))
-
-	for _, entity := range entities {
+func exportServers(wg *sync.WaitGroup, jobs <-chan string, results chan<- []byte, errs chan<- error) {
+	defer wg.Done()
+	for {
+		job, ok := <-jobs
+		if !ok {
+			return
+		}
 		u, _ := url.Parse(apiclient.BaseURL)
-		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), entityType, entity)
-		go apiclient.GetAsyncEntity(u.String(), &bwg, mu)
+		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "targetservers", job)
+		respBody, err := apiclient.HttpClient(false, u.String())
+		if err != nil {
+			errs <- err
+		} else {
+			results <- respBody
+		}
 	}
-	bwg.Wait()
 }
 
 // Import
 func Import(conn int, filePath string) (err error) {
-	var pwg sync.WaitGroup
-	const entityType = "targetservers"
-
-	u, _ := url.Parse(apiclient.BaseURL)
-	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), entityType)
-
-	entities, err := readTargetServersFile(filePath)
+	targetservers, err := readTargetServersFile(filePath)
 	if err != nil {
 		clilog.Error.Println("Error reading file: ", err)
 		return err
 	}
 
-	numEntities := len(entities)
-	clilog.Info.Printf("Found %d target servers in the file\n", numEntities)
+	clilog.Info.Printf("Found %d target servers in the file\n", len(targetservers))
 	clilog.Info.Printf("Create target servers with %d connections\n", conn)
 
-	numOfLoops, remaining := numEntities/conn, numEntities%conn
+	jobChan := make(chan targetserver)
+	errChan := make(chan error)
 
-	//ensure connections aren't greater than entities
-	if conn > numEntities {
-		conn = numEntities
+	fanOutWg := sync.WaitGroup{}
+	fanInWg := sync.WaitGroup{}
+
+	errs := []string{}
+	fanInWg.Add(1)
+	go func() {
+		defer fanInWg.Done()
+		for {
+			newErr, ok := <-errChan
+			if !ok {
+				return
+			}
+			errs = append(errs, newErr.Error())
+		}
+	}()
+
+	for i := 0; i < conn; i++ {
+		fanOutWg.Add(1)
+		go importServers(&fanOutWg, jobChan, errChan)
 	}
 
-	start := 0
-
-	for i, end := 0, 0; i < numOfLoops; i++ {
-		pwg.Add(1)
-		end = (i * conn) + conn
-		clilog.Info.Printf("Creating batch %d of target servers\n", (i + 1))
-		go batchImport(u.String(), entities[start:end], &pwg)
-		start = end
-		pwg.Wait()
+	for _, ts := range targetservers {
+		jobChan <- ts
 	}
+	close(jobChan)
+	fanOutWg.Wait()
+	close(errChan)
+	fanInWg.Wait()
 
-	if remaining > 0 {
-		pwg.Add(1)
-		clilog.Info.Printf("Creating remaining %d target servers\n", remaining)
-		go batchImport(u.String(), entities[start:numEntities], &pwg)
-		pwg.Wait()
+	if len(errs) > 0 {
+		return errors.New(strings.Join(errs, "\n"))
 	}
-
 	return nil
 }
 
-// batch creates a batch of target servers to create
-func batchImport(url string, entities []targetserver, pwg *sync.WaitGroup) {
-
-	defer pwg.Done()
-	//batch workgroup
-	var bwg sync.WaitGroup
-
-	bwg.Add(len(entities))
-
-	for _, entity := range entities {
-		go createAsyncTargetServer(url, entity, &bwg)
-	}
-	bwg.Wait()
-}
-
-func createAsyncTargetServer(url string, entity targetserver, wg *sync.WaitGroup) {
+func importServers(wg *sync.WaitGroup, jobs <-chan targetserver, errs chan<- error) {
 	defer wg.Done()
-	out, err := json.Marshal(entity)
-	if err != nil {
-		clilog.Error.Println(err)
-		return
+
+	u, _ := url.Parse(apiclient.BaseURL)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "targetservers")
+	for {
+		job, ok := <-jobs
+		if !ok {
+			return
+		}
+		b, err := json.Marshal(job)
+		if err != nil {
+			errs <- err
+			continue
+		}
+
+		c, err := apiclient.GetHttpClient()
+		if err != nil {
+			errs <- err
+			continue
+		}
+
+		req, err := http.NewRequest(http.MethodPost, u.String(), bytes.NewReader(b))
+		if err != nil {
+			errs <- err
+			continue
+		}
+
+		req, err = apiclient.SetAuthHeader(req)
+		if err != nil {
+			errs <- err
+			continue
+		}
+
+		resp, err := c.Do(req)
+		if err != nil {
+			errs <- err
+			continue
+		}
+		b, err = io.ReadAll(resp.Body)
+		if err != nil {
+			b = []byte(err.Error())
+		}
+		if err != nil || (resp.StatusCode%100 != 2 && resp.StatusCode != http.StatusConflict) { // 409 is returned if the targetserver already exists in the same configuration.
+			errs <- fmt.Errorf("targetserver not imported: (HTTP %v) %s", resp.StatusCode, b)
+			continue
+		} else if resp.StatusCode == http.StatusConflict {
+			b = []byte{}
+		}
+
+		if len(b) > 0 && apiclient.GetPrintOutput() {
+			out := bytes.NewBuffer([]byte{})
+			if err = json.Indent(out, bytes.TrimSpace(b), "", "  "); err != nil {
+				errs <- fmt.Errorf("apigee returned invalid json: %w", err)
+			}
+			fmt.Println(out)
+		}
+		clilog.Info.Printf("Completed targetserver: %s", job.Name)
 	}
-	_, err = apiclient.HttpClient(apiclient.GetPrintOutput(), url, string(out))
-	if err != nil {
-		clilog.Error.Println(err)
-		return
-	}
-	clilog.Info.Printf("Completed entity: %s", entity.Name)
 }
 
 func readTargetServersFile(filePath string) ([]targetserver, error) {
+	content, err := os.ReadFile(filePath)
+	if err != nil {
+		return nil, err
+	}
 
 	targetservers := []targetserver{}
-
-	jsonFile, err := os.Open(filePath)
-
+	err = json.Unmarshal(content, &targetservers)
 	if err != nil {
-		return targetservers, err
+		return nil, err
 	}
-
-	defer jsonFile.Close()
-
-	byteValue, err := io.ReadAll(jsonFile)
-
-	if err != nil {
-		return targetservers, err
-	}
-
-	err = json.Unmarshal(byteValue, &targetservers)
-
-	if err != nil {
-		return targetservers, err
-	}
-
 	return targetservers, nil
 }

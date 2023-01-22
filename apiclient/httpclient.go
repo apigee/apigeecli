@@ -32,7 +32,6 @@ import (
 
 // PostHttpZip method is used to send resources, proxy bundles, shared flows etc.
 func PostHttpZip(print bool, auth bool, method string, url string, headers map[string]string, zipfile string) (err error) {
-
 	var req *http.Request
 
 	payload, err := os.ReadFile(zipfile)
@@ -40,7 +39,7 @@ func PostHttpZip(print bool, auth bool, method string, url string, headers map[s
 		return err
 	}
 
-	client, err := getHttpClient()
+	client, err := GetHttpClient()
 	if err != nil {
 		return err
 	}
@@ -61,8 +60,8 @@ func PostHttpZip(print bool, auth bool, method string, url string, headers map[s
 		req.Header.Set(headerName, headerValue)
 	}
 
-	if auth { //do not pass auth header when using with archives
-		req, err = setAuthHeader(req)
+	if auth { // do not pass auth header when using with archives
+		req, err = SetAuthHeader(req)
 		if err != nil {
 			return err
 		}
@@ -83,7 +82,6 @@ func PostHttpZip(print bool, auth bool, method string, url string, headers map[s
 
 // PostHttpOctet method is used to send resources, proxy bundles, shared flows etc.
 func PostHttpOctet(print bool, update bool, url string, formParams map[string]string) (respBody []byte, err error) {
-
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
@@ -93,7 +91,7 @@ func PostHttpOctet(print bool, update bool, url string, formParams map[string]st
 			clilog.Error.Printf("failed to open the file %s with error: %v", formParam, err)
 			return nil, err
 		}
-		//get filenanme without extension
+		// get filenanme without extension
 		fileNameWithExt, _ := filepath.Abs(formParam)
 		formValue := strings.TrimSuffix(fileNameWithExt, filepath.Ext(formParam))
 		part, err := writer.CreateFormFile(formName, formValue)
@@ -123,7 +121,7 @@ func PostHttpOctet(print bool, update bool, url string, formParams map[string]st
 
 	var req *http.Request
 
-	client, err := getHttpClient()
+	client, err := GetHttpClient()
 	if err != nil {
 		return nil, err
 	}
@@ -140,14 +138,13 @@ func PostHttpOctet(print bool, update bool, url string, formParams map[string]st
 		return nil, err
 	}
 
-	req, err = setAuthHeader(req)
+	req, err = SetAuthHeader(req)
 	if err != nil {
 		return nil, err
 	}
 
 	req.Header.Set("Content-Type", writer.FormDataContentType())
 	resp, err := client.Do(req)
-
 	if err != nil {
 		clilog.Error.Println("error connecting: ", err)
 		return nil, err
@@ -157,7 +154,7 @@ func PostHttpOctet(print bool, update bool, url string, formParams map[string]st
 }
 
 func DownloadFile(url string, auth bool) (resp *http.Response, err error) {
-	client, err := getHttpClient()
+	client, err := GetHttpClient()
 	if err != nil {
 		return nil, err
 	}
@@ -174,7 +171,7 @@ func DownloadFile(url string, auth bool) (resp *http.Response, err error) {
 	}
 
 	if auth {
-		req, err = setAuthHeader(req)
+		req, err = SetAuthHeader(req)
 		if err != nil {
 			return nil, err
 		}
@@ -243,11 +240,11 @@ func HttpClient(print bool, params ...string) (respBody []byte, err error) {
 	// The second parameter is url. If only one parameter is sent, assume GET
 	// The third parameter is the payload. The two parameters are sent, assume POST
 	// THe fourth parameter is the method. If three parameters are sent, assume method in param
-	//The fifth parameter is content type
+	// The fifth parameter is content type
 	var req *http.Request
 	contentType := "application/json"
 
-	client, err := getHttpClient()
+	client, err := GetHttpClient()
 	if err != nil {
 		return nil, err
 	}
@@ -282,7 +279,7 @@ func HttpClient(print bool, params ...string) (respBody []byte, err error) {
 		return nil, err
 	}
 
-	req, err = setAuthHeader(req)
+	req, err = SetAuthHeader(req)
 	if err != nil {
 		return nil, err
 	}
@@ -291,7 +288,6 @@ func HttpClient(print bool, params ...string) (respBody []byte, err error) {
 	req.Header.Set("Content-Type", contentType)
 
 	resp, err := client.Do(req)
-
 	if err != nil {
 		clilog.Error.Println("error connecting: ", err)
 		return nil, err
@@ -333,7 +329,7 @@ func getRequest(params []string) (req *http.Request, err error) {
 	return req, err
 }
 
-func setAuthHeader(req *http.Request) (*http.Request, error) {
+func SetAuthHeader(req *http.Request) (*http.Request, error) {
 	if GetApigeeToken() == "" {
 		if err := SetAccessToken(); err != nil {
 			return nil, err
@@ -344,8 +340,7 @@ func setAuthHeader(req *http.Request) (*http.Request, error) {
 	return req, nil
 }
 
-func getHttpClient() (client *http.Client, err error) {
-
+func GetHttpClient() (client *http.Client, err error) {
 	if GetProxyURL() != "" {
 		if pUrl, err := url.Parse(GetProxyURL()); err != nil {
 			client = &http.Client{
@@ -363,7 +358,6 @@ func getHttpClient() (client *http.Client, err error) {
 }
 
 func handleResponse(print bool, resp *http.Response) (respBody []byte, err error) {
-
 	if resp != nil {
 		defer resp.Body.Close()
 	}
