@@ -240,7 +240,7 @@ func GenerateAPIProxyDefFromOAS(name string,
 
 	//if target is not set, derive it from the OAS file
 	if targetUrl == "" {
-		targets.NewTargetEndpoint(NoAuthTargetName, u.Scheme+"://"+u.Hostname(), oasGoogleAcessTokenScopeLiteral, oasGoogleIdTokenAudLiteral, oasGoogleIdTokenAudRef)
+		targets.NewTargetEndpoint(NoAuthTargetName, u.Scheme+"://"+u.Hostname()+u.Path, oasGoogleAcessTokenScopeLiteral, oasGoogleIdTokenAudLiteral, oasGoogleIdTokenAudRef)
 	} else { //an explicit target url is set
 		if _, err = url.Parse(targetUrl); err != nil {
 			return fmt.Errorf("invalid target url: %v", err)
