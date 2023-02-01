@@ -15,8 +15,12 @@
 package sharedflows
 
 import (
+	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"io"
+	"net/http"
 	"net/url"
 	"os"
 	"path"
@@ -30,7 +34,7 @@ import (
 )
 
 type sharedflows struct {
-	Proxies []sharedflow `json:"sharedFlows,omitempty"`
+	Flows []sharedflow `json:"sharedFlows,omitempty"`
 }
 
 type sharedflow struct {
@@ -38,7 +42,12 @@ type sharedflow struct {
 	Revision []string `json:"revision,omitempty"`
 }
 
-//Create
+type revision struct {
+	name string
+	rev  string
+}
+
+// Create
 func Create(name string, proxy string) (respBody []byte, err error) {
 	if proxy != "" {
 		err = apiclient.ImportBundle("sharedflows", name, proxy)
@@ -51,7 +60,7 @@ func Create(name string, proxy string) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//Get
+// Get
 func Get(name string, revision int) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	if revision != -1 {
@@ -63,7 +72,7 @@ func Get(name string, revision int) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//GetHighestSfRevision
+// GetHighestSfRevision
 func GetHighestSfRevision(name string) (version int, err error) {
 	apiclient.SetPrintOutput(false)
 	u, _ := url.Parse(apiclient.BaseURL)
@@ -85,7 +94,7 @@ func GetHighestSfRevision(name string) (version int, err error) {
 	return version, nil
 }
 
-//Delete
+// Delete
 func Delete(name string, revision int) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	if revision != -1 {
@@ -97,9 +106,8 @@ func Delete(name string, revision int) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//List
+// List
 func List(includeRevisions bool) (respBody []byte, err error) {
-
 	u, _ := url.Parse(apiclient.BaseURL)
 	if includeRevisions {
 		q := u.Query()
@@ -111,7 +119,7 @@ func List(includeRevisions bool) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//ListEnvDeployments
+// ListEnvDeployments
 func ListEnvDeployments() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 
@@ -128,7 +136,7 @@ func ListEnvDeployments() (respBody []byte, err error) {
 	return respBody, err
 }
 
-//ListDeployments
+// ListDeployments
 func ListDeployments(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sharedflows", name, "deployments")
@@ -136,7 +144,7 @@ func ListDeployments(name string) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//ListRevisionDeployments
+// ListRevisionDeployments
 func ListRevisionDeployments(name string, revision int) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	if apiclient.GetApigeeEnv() == "" {
@@ -148,7 +156,7 @@ func ListRevisionDeployments(name string, revision int) (respBody []byte, err er
 	return respBody, err
 }
 
-//Deploy
+// Deploy
 func Deploy(name string, revision int, overrides bool, serviceAccountName string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	if overrides || serviceAccountName != "" {
@@ -167,12 +175,11 @@ func Deploy(name string, revision int, overrides bool, serviceAccountName string
 	return respBody, err
 }
 
-//Clean
+// Clean
 func Clean(name string, reportOnly bool) (err error) {
-
 	type deploymentsDef struct {
 		Environment    string `json:"environment,omitempty"`
-		ApiProxy       string `json:"apiProxy,omitempty"`
+		APIProxy       string `json:"apiProxy,omitempty"`
 		Revision       string `json:"revision,omitempty"`
 		DeloyStartTime string `json:"deployStartTime,omitempty"`
 		BasePath       string `json:"basePath,omitempty"`
@@ -203,10 +210,10 @@ func Clean(name string, reportOnly bool) (err error) {
 	var sfDeploymentsBytes, sfRevisionsBytes []byte
 	var revision int
 
-	//disable printing
+	// disable printing
 	apiclient.SetPrintOutput(false)
 
-	//step 1. get a list of revisions that are deployed.
+	// step 1. get a list of revisions that are deployed.
 	if sfDeploymentsBytes, err = ListDeployments(name); err != nil {
 		return err
 	}
@@ -227,7 +234,7 @@ func Clean(name string, reportOnly bool) (err error) {
 
 	fmt.Println("Revisions [" + getRevisions(deployedRevisions) + "] deployed for Sharedflow " + name)
 
-	//step 2. get all the revisions for the sf
+	// step 2. get all the revisions for the sf
 	if sfRevisionsBytes, err = Get(name, -1); err != nil {
 		return err
 	}
@@ -236,12 +243,12 @@ func Clean(name string, reportOnly bool) (err error) {
 		return err
 	}
 
-	//enable printing
+	// enable printing
 	apiclient.SetPrintOutput(true)
 
 	for _, sfRevision := range sfRevisions.Revision {
 		if !isRevisionDeployed(deployedRevisions, sfRevision) {
-			//step 3. clean up proxy revisions that are not deployed
+			// step 3. clean up proxy revisions that are not deployed
 			if reportOnly {
 				if !reportRevisions[sfRevision] {
 					reportRevisions[sfRevision] = true
@@ -265,7 +272,7 @@ func Clean(name string, reportOnly bool) (err error) {
 	return nil
 }
 
-//Undeploy
+// Undeploy
 func Undeploy(name string, revision int) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(),
@@ -274,72 +281,134 @@ func Undeploy(name string, revision int) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//Fetch
+// Fetch
 func Fetch(name string, revision int) (err error) {
 	return apiclient.FetchBundle("sharedflows", "", name, strconv.Itoa(revision), true)
 }
 
-//Export
+// Export
 func Export(conn int, folder string, allRevisions bool) (err error) {
-	//parent workgroup
-	var pwg sync.WaitGroup
-	const entityType = "sharedflows"
-
 	u, _ := url.Parse(apiclient.BaseURL)
 	q := u.Query()
 	q.Set("includeRevisions", "true")
 	u.RawQuery = q.Encode()
-	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), entityType)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sharedflows")
 
-	//don't print to sysout
+	// don't print to sysout
 	respBody, err := apiclient.HttpClient(false, u.String())
 	if err != nil {
 		return err
 	}
 
-	var entities = sharedflows{}
-	err = json.Unmarshal(respBody, &entities)
-	if err != nil {
+	var shrdflows sharedflows
+	if err = json.Unmarshal(respBody, &shrdflows); err != nil {
 		return err
 	}
 
-	numEntities := len(entities.Proxies)
-	clilog.Info.Printf("Found %d API Proxies in the org\n", numEntities)
+	clilog.Info.Printf("Found %d API Proxies in the org\n", len(shrdflows.Flows))
 	clilog.Info.Printf("Exporting bundles with %d connections\n", conn)
 
-	numOfLoops, remaining := numEntities/conn, numEntities%conn
+	jobChan := make(chan revision)
+	errChan := make(chan error)
 
-	//ensure connections aren't greater than products
-	if conn > numEntities {
-		conn = numEntities
+	fanOutWg := sync.WaitGroup{}
+	fanInWg := sync.WaitGroup{}
+
+	errs := []string{}
+	fanInWg.Add(1)
+	go func() {
+		defer fanInWg.Done()
+		for {
+			newErr, ok := <-errChan
+			if !ok {
+				return
+			}
+			errs = append(errs, newErr.Error())
+		}
+	}()
+
+	for i := 0; i < conn; i++ {
+		fanOutWg.Add(1)
+		go exportSharedFlows(&fanOutWg, jobChan, folder, errChan)
 	}
 
-	start := 0
-
-	for i, end := 0, 0; i < numOfLoops; i++ {
-		pwg.Add(1)
-		end = (i * conn) + conn
-		clilog.Info.Printf("Exporting batch %d of proxies\n", (i + 1))
-		go batchExport(entities.Proxies[start:end], entityType, folder, allRevisions, &pwg)
-		start = end
-		pwg.Wait()
+	for _, proxy := range shrdflows.Flows {
+		for _, rev := range proxy.Revision {
+			jobChan <- revision{name: proxy.Name, rev: rev}
+		}
 	}
+	close(jobChan)
+	fanOutWg.Wait()
+	close(errChan)
+	fanInWg.Wait()
 
-	if remaining > 0 {
-		pwg.Add(1)
-		clilog.Info.Printf("Exporting remaining %d proxies\n", remaining)
-		go batchExport(entities.Proxies[start:numEntities], entityType, folder, allRevisions, &pwg)
-		pwg.Wait()
+	if len(errs) > 0 {
+		return errors.New(strings.Join(errs, "\n"))
 	}
-
 	return nil
 }
 
-//Import
-func Import(conn int, folder string) error {
-	var pwg sync.WaitGroup
-	var entities []string
+func exportSharedFlows(wg *sync.WaitGroup, jobs <-chan revision, folder string, errs chan<- error) {
+	defer wg.Done()
+	for {
+		job, ok := <-jobs
+		if !ok {
+			return
+		}
+		u, _ := url.Parse(apiclient.BaseURL)
+		q := u.Query()
+		q.Set("format", "bundle")
+		u.RawQuery = q.Encode()
+		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sharedflows", job.name, "revisions", job.rev)
 
+		fname := job.name + "_" + job.rev
+		fd, err := os.CreateTemp("", fname)
+		if err != nil {
+			errs <- err
+			continue
+		}
+
+		c, err := apiclient.GetHttpClient()
+		if err != nil {
+			errs <- err
+			continue
+		}
+		req, err := http.NewRequest(http.MethodGet, u.String(), nil)
+		if err != nil {
+			errs <- err
+			continue
+		}
+		req, err = apiclient.SetAuthHeader(req)
+		if err != nil {
+			errs <- err
+			continue
+		}
+
+		resp, err := c.Do(req)
+		if err != nil {
+			errs <- err
+			continue
+		}
+		if _, err = io.Copy(fd, resp.Body); err != nil {
+			errs <- err
+			continue
+		}
+		_ = fd.Close()
+
+		fpath := filepath.Join(folder, fname+".zip")
+		if err = os.Rename(filepath.Join(os.TempDir(), fd.Name()), fpath); err != nil {
+			errs <- err
+			continue
+		}
+		if err = os.Chmod(fpath, 0o644); err != nil {
+			errs <- err
+		}
+	}
+}
+
+// Import
+func Import(conn int, folder string) error {
+	var bundles []string
 	err := filepath.Walk(folder, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			clilog.Warning.Println("sharedflows folder not found")
@@ -351,128 +420,114 @@ func Import(conn int, folder string) error {
 		if filepath.Ext(path) != ".zip" {
 			return nil
 		}
-		entities = append(entities, path)
+		bundles = append(bundles, path)
 		return nil
 	})
-
 	if err != nil {
 		return err
 	}
 
-	numEntities := len(entities)
-	clilog.Info.Printf("Found %d proxy bundles in the folder\n", numEntities)
-	clilog.Info.Printf("Create proxies with %d connections\n", conn)
+	clilog.Info.Printf("Found %d sharedflow bundles in the folder\n", len(bundles))
+	clilog.Info.Printf("Importing sharedflows with %d parallel connections\n", conn)
 
-	numOfLoops, remaining := numEntities/conn, numEntities%conn
+	jobChan := make(chan string)
+	errChan := make(chan error)
 
-	//ensure connections aren't greater than entities
-	if conn > numEntities {
-		conn = numEntities
+	fanOutWg := sync.WaitGroup{}
+	fanInWg := sync.WaitGroup{}
+
+	errs := []string{}
+	fanInWg.Add(1)
+	go func() {
+		defer fanInWg.Done()
+		for {
+			newErr, ok := <-errChan
+			if !ok {
+				return
+			}
+			errs = append(errs, newErr.Error())
+		}
+	}()
+
+	for i := 0; i < conn; i++ {
+		fanOutWg.Add(1)
+		go importSharedFlows(&fanOutWg, jobChan, errChan)
 	}
 
-	start := 0
-
-	for i, end := 0, 0; i < numOfLoops; i++ {
-		pwg.Add(1)
-		end = (i * conn) + conn
-		clilog.Info.Printf("Creating batch %d of bundles\n", (i + 1))
-		go batchImport(entities[start:end], &pwg)
-		start = end
-		pwg.Wait()
+	for _, bundle := range bundles {
+		jobChan <- bundle
 	}
+	close(jobChan)
+	fanOutWg.Wait()
+	close(errChan)
+	fanInWg.Wait()
 
-	if remaining > 0 {
-		pwg.Add(1)
-		clilog.Info.Printf("Creating remaining %d bundles\n", remaining)
-		go batchImport(entities[start:numEntities], &pwg)
-		pwg.Wait()
+	if len(errs) > 0 {
+		return errors.New(strings.Join(errs, "\n"))
 	}
-
 	return nil
 }
 
-func batchExport(entities []sharedflow, entityType string, folder string, allRevisions bool, pwg *sync.WaitGroup) {
-	defer pwg.Done()
-	//batch workgroup
-	var bwg sync.WaitGroup
-	//proxy revision wait group
-	var prwg sync.WaitGroup
-	//number of revisions to download concurrently
-	conn := 2
-
-	numSharedFlows := len(entities)
-	bwg.Add(numSharedFlows)
-
-	for _, entity := range entities {
-		if !allRevisions {
-			//download only the last revision
-			lastRevision := maxRevision(entity.Revision)
-			clilog.Info.Printf("Downloading revision %s of sharedflow %s\n", lastRevision, entity.Name)
-			go apiclient.FetchAsyncBundle(entityType, folder, entity.Name, lastRevision, allRevisions, &bwg)
-		} else {
-			//download all revisions
-			if len(entity.Revision) == 1 {
-				lastRevision := maxRevision(entity.Revision)
-				clilog.Info.Printf("Downloading revision %s of sharedflow %s\n", lastRevision, entity.Name)
-				go apiclient.FetchAsyncBundle(entityType, folder, entity.Name, lastRevision, allRevisions, &bwg)
-			} else {
-
-				numRevisions := len(entity.Revision)
-				numOfLoops, remaining := numRevisions/conn, numRevisions%conn
-
-				start := 0
-
-				for i, end := 0, 0; i < numOfLoops; i++ {
-					prwg.Add(1)
-					end = (i * conn) + conn
-					clilog.Info.Printf("Exporting batch %d of sharedflow revisions\n", (i + 1))
-					go batchExportRevisions(entityType, folder, entity.Name, entity.Revision[start:end], &prwg)
-					start = end
-					prwg.Wait()
-				}
-
-				if remaining > 0 {
-					prwg.Add(1)
-					clilog.Info.Printf("Exporting remaining %d sharedflow revisions\n", remaining)
-					go batchExportRevisions(entityType, folder, entity.Name, entity.Revision[start:numRevisions], &prwg)
-					prwg.Wait()
-				}
-				bwg.Done()
-			}
+func importSharedFlows(wg *sync.WaitGroup, jobs <-chan string, errs chan<- error) {
+	defer wg.Done()
+	for {
+		job, ok := <-jobs
+		if !ok {
+			return
 		}
+
+		u, _ := url.Parse(apiclient.BaseURL)
+		q := u.Query()
+		q.Set("name", strings.TrimSuffix(filepath.Base(job), ".zip"))
+		q.Set("action", "import")
+		u.RawQuery = q.Encode()
+		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sharedflows")
+
+		fd, err := os.OpenFile(job, os.O_RDONLY|os.O_EXCL, 0o644)
+		if err != nil {
+			errs <- err
+			continue
+		}
+
+		c, err := apiclient.GetHttpClient()
+		if err != nil {
+			errs <- err
+			continue
+		}
+		req, err := http.NewRequest(http.MethodPost, u.String(), fd)
+		if err != nil {
+			errs <- err
+			continue
+		}
+		req, err = apiclient.SetAuthHeader(req)
+		if err != nil {
+			errs <- err
+			continue
+		}
+
+		resp, err := c.Do(req)
+		if err != nil {
+			errs <- err
+			continue
+		}
+		b, err := io.ReadAll(resp.Body)
+		if err != nil {
+			b = []byte(err.Error())
+		}
+		if err != nil || resp.StatusCode%100 != 2 {
+			errs <- fmt.Errorf("bundle not imported: (HTTP %v) %s", resp.StatusCode, b)
+			continue
+		}
+
+		if len(b) > 0 && apiclient.GetPrintOutput() {
+			out := bytes.NewBuffer([]byte{})
+			if err = json.Indent(out, bytes.TrimSpace(b), "", "  "); err != nil {
+				errs <- fmt.Errorf("apigee returned invalid json: %w", err)
+			}
+			fmt.Println(out.String())
+		}
+		clilog.Info.Printf("Completed bundle import: %s", job)
 	}
-	bwg.Wait()
-}
-
-//batchExportRevisions
-func batchExportRevisions(entityType string, folder string, name string, revisions []string, prwg *sync.WaitGroup) {
-	defer prwg.Done()
-	//batch workgroup
-	var brwg sync.WaitGroup
-
-	brwg.Add(len(revisions))
-
-	for _, revision := range revisions {
-		clilog.Info.Printf("Exporting sharedflow %s revision %s\n", name, revision)
-		go apiclient.FetchAsyncBundle(entityType, folder, name, revision, true, &brwg)
-	}
-	brwg.Wait()
-}
-
-//batch creates a batch of sharedflow to import
-func batchImport(entities []string, pwg *sync.WaitGroup) {
-
-	defer pwg.Done()
-	//batch workgroup
-	var bwg sync.WaitGroup
-
-	bwg.Add(len(entities))
-
-	for _, entity := range entities {
-		//sharedflow name is empty; same as filename
-		go apiclient.ImportBundleAsync("sharedflows", "", entity, &bwg)
-	}
-	bwg.Wait()
 }
 
 func isRevisionDeployed(revisions map[string]bool, revision string) bool {

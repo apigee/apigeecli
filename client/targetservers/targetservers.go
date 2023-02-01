@@ -340,7 +340,7 @@ func importServers(wg *sync.WaitGroup, jobs <-chan targetserver, errs chan<- err
 			if err = json.Indent(out, bytes.TrimSpace(b), "", "  "); err != nil {
 				errs <- fmt.Errorf("apigee returned invalid json: %w", err)
 			}
-			fmt.Println(out)
+			fmt.Println(out.String())
 		}
 		clilog.Info.Printf("Completed targetserver: %s", job.Name)
 	}
