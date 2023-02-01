@@ -330,7 +330,7 @@ func AddSetTargetEndpointRef(ref string) string {
 func AddSetTargetEndpoint(name string, endpoint string, path_transalation string) string {
 	pathSuffixTag := `    <AssignVariable>
 		<Name>target.copy.pathsuffix</Name>
-		<Ref>false</Ref>
+		<Value>false</Value>
 	</AssignVariable>`
 
 	templateSuffixTag := `    <AssignVariable>
