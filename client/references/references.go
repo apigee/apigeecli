@@ -15,8 +15,12 @@
 package references
 
 import (
+	"bytes"
 	"encoding/json"
+	"errors"
+	"fmt"
 	"io"
+	"net/http"
 	"net/url"
 	"os"
 	"path"
@@ -108,175 +112,253 @@ func Update(name string, description string, resourceType string, refers string)
 
 // Export
 func Export(conn int) (payload [][]byte, err error) {
-	//parent workgroup
-	var pwg sync.WaitGroup
-	var mu sync.Mutex
-	const entityType = "references"
-
 	u, _ := url.Parse(apiclient.BaseURL)
-	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), entityType)
-	//don't print to sysout
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "references")
+	// don't print to sysout
 	respBody, err := apiclient.HttpClient(false, u.String())
 	if err != nil {
-		return apiclient.GetEntityPayloadList(), err
+		return nil, err
 	}
 
-	var refList []string
-	err = json.Unmarshal(respBody, &refList)
+	var references []string
+	err = json.Unmarshal(respBody, &references)
 	if err != nil {
-		return apiclient.GetEntityPayloadList(), err
+		return nil, err
 	}
 
-	numEntities := len(refList)
-	clilog.Info.Printf("Found %d references in the org\n", numEntities)
+	clilog.Info.Printf("Found %d references in the org\n", len(references))
 	clilog.Info.Printf("Exporting references with %d connections\n", conn)
 
-	numOfLoops, remaining := numEntities/conn, numEntities%conn
+	jobChan := make(chan string)
+	resultChan := make(chan []byte)
+	errChan := make(chan error)
 
-	//ensure connections aren't greater than references
-	if conn > numEntities {
-		conn = numEntities
+	fanOutWg := sync.WaitGroup{}
+	fanInWg := sync.WaitGroup{}
+
+	errs := []string{}
+	fanInWg.Add(1)
+	go func() {
+		defer fanInWg.Done()
+		for {
+			newErr, ok := <-errChan
+			if !ok {
+				return
+			}
+			errs = append(errs, newErr.Error())
+		}
+	}()
+
+	results := [][]byte{}
+	fanInWg.Add(1)
+	go func() {
+		defer fanInWg.Done()
+		for {
+			newResult, ok := <-resultChan
+			if !ok {
+				return
+			}
+			results = append(results, newResult)
+		}
+	}()
+
+	for i := 0; i < conn; i++ {
+		fanOutWg.Add(1)
+		go exportReferences(&fanOutWg, jobChan, resultChan, errChan)
 	}
 
-	start := 0
-
-	for i, end := 0, 0; i < numOfLoops; i++ {
-		pwg.Add(1)
-		end = (i * conn) + conn
-		clilog.Info.Printf("Exporting batch %d of references\n", (i + 1))
-		go batchExport(refList[start:end], entityType, &pwg, &mu)
-		start = end
-		pwg.Wait()
+	for _, ts := range references {
+		jobChan <- ts
 	}
+	close(jobChan)
+	fanOutWg.Wait()
+	close(errChan)
+	close(resultChan)
+	fanInWg.Wait()
 
-	if remaining > 0 {
-		pwg.Add(1)
-		clilog.Info.Printf("Exporting remaining %d references\n", remaining)
-		go batchExport(refList[start:numEntities], entityType, &pwg, &mu)
-		pwg.Wait()
+	if len(errs) > 0 {
+		return nil, errors.New(strings.Join(errs, "\n"))
 	}
-
-	payload = make([][]byte, len(apiclient.GetEntityPayloadList()))
-	copy(payload, apiclient.GetEntityPayloadList())
-	apiclient.ClearEntityPayloadList()
-	return payload, nil
+	return results, nil
 }
 
-// batch created a batch of references to query
-func batchExport(entities []string, entityType string, pwg *sync.WaitGroup, mu *sync.Mutex) {
-
-	defer pwg.Done()
-	//batch workgroup
-	var bwg sync.WaitGroup
-
-	bwg.Add(len(entities))
-
-	for _, entity := range entities {
+func exportReferences(wg *sync.WaitGroup, jobs <-chan string, results chan<- []byte, errs chan<- error) {
+	defer wg.Done()
+	for {
+		job, ok := <-jobs
+		if !ok {
+			return
+		}
 		u, _ := url.Parse(apiclient.BaseURL)
-		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), entityType, entity)
-		go apiclient.GetAsyncEntity(u.String(), &bwg, mu)
+		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "targetservers", job)
+		respBody, err := apiclient.HttpClient(false, u.String())
+		if err != nil {
+			errs <- err
+		} else {
+			results <- respBody
+		}
 	}
-	bwg.Wait()
 }
 
 // Import
 func Import(conn int, filePath string) (err error) {
-	var pwg sync.WaitGroup
-	const entityType = "references"
-
-	u, _ := url.Parse(apiclient.BaseURL)
-	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), entityType)
-
-	entities, err := readReferencesFile(filePath)
+	references, err := readReferencesFile(filePath)
 	if err != nil {
 		clilog.Error.Println("Error reading file: ", err)
 		return err
 	}
 
-	numEntities := len(entities)
-	clilog.Info.Printf("Found %d references in the file\n", numEntities)
+	clilog.Info.Printf("Found %d references in the file\n", len(references))
 	clilog.Info.Printf("Create references with %d connections\n", conn)
 
-	numOfLoops, remaining := numEntities/conn, numEntities%conn
-
-	//ensure connections aren't greater than entities
-	if conn > numEntities {
-		conn = numEntities
+	u, _ := url.Parse(apiclient.BaseURL)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "references")
+	c, err := apiclient.GetHttpClient()
+	if err != nil {
+		return err
+	}
+	req, err := http.NewRequest(http.MethodGet, u.String(), nil)
+	if err != nil {
+		return err
+	}
+	req, err = apiclient.SetAuthHeader(req)
+	if err != nil {
+		return err
 	}
 
-	start := 0
-
-	for i, end := 0, 0; i < numOfLoops; i++ {
-		pwg.Add(1)
-		end = (i * conn) + conn
-		clilog.Info.Printf("Creating batch %d of references\n", (i + 1))
-		go batchImport(u.String(), entities[start:end], &pwg)
-		start = end
-		pwg.Wait()
+	resp, err := c.Do(req)
+	if err != nil {
+		return err
+	}
+	b, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return err
 	}
 
-	if remaining > 0 {
-		pwg.Add(1)
-		clilog.Info.Printf("Creating remaining %d references\n", remaining)
-		go batchImport(u.String(), entities[start:numEntities], &pwg)
-		pwg.Wait()
+	var refs []string
+	if err = json.Unmarshal(b, &refs); err != nil {
+		return err
+	}
+	knownRefs := map[string]bool{}
+	for _, name := range refs {
+		knownRefs[name] = true
 	}
 
+	jobChan := make(chan ref)
+	errChan := make(chan error)
+
+	fanOutWg := sync.WaitGroup{}
+	fanInWg := sync.WaitGroup{}
+
+	errs := []string{}
+	fanInWg.Add(1)
+	go func() {
+		defer fanInWg.Done()
+		for {
+			newErr, ok := <-errChan
+			if !ok {
+				return
+			}
+			errs = append(errs, newErr.Error())
+		}
+	}()
+
+	for i := 0; i < conn; i++ {
+		fanOutWg.Add(1)
+		go importReferences(knownRefs, &fanOutWg, jobChan, errChan)
+	}
+
+	for _, ref := range references {
+		jobChan <- ref
+	}
+	close(jobChan)
+	fanOutWg.Wait()
+	close(errChan)
+	fanInWg.Wait()
+
+	if len(errs) > 0 {
+		return errors.New(strings.Join(errs, "\n"))
+	}
 	return nil
 }
 
-// batchImport creates a batch of references to create
-func batchImport(url string, entities []ref, pwg *sync.WaitGroup) {
-
-	defer pwg.Done()
-	//batch workgroup
-	var bwg sync.WaitGroup
-
-	bwg.Add(len(entities))
-
-	for _, entity := range entities {
-		go createAsyncReference(url, entity, &bwg)
-	}
-	bwg.Wait()
-}
-
-func createAsyncReference(url string, entity ref, wg *sync.WaitGroup) {
+func importReferences(knownRefs map[string]bool, wg *sync.WaitGroup, jobs <-chan ref, errs chan<- error) {
 	defer wg.Done()
-	out, err := json.Marshal(entity)
-	if err != nil {
-		clilog.Error.Println(err)
-		return
+
+	for {
+		job, ok := <-jobs
+		if !ok {
+			return
+		}
+
+		b, err := json.Marshal(job)
+		if err != nil {
+			errs <- err
+			continue
+		}
+
+		c, err := apiclient.GetHttpClient()
+		if err != nil {
+			errs <- err
+			continue
+		}
+
+		u, _ := url.Parse(apiclient.BaseURL)
+		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "references")
+		method := http.MethodPost
+		if knownRefs[job.Name] {
+			// If the reference already exists we use an 'update' instead of a 'create' operation.
+			u.Path = path.Join(u.Path, job.Name)
+			method = http.MethodPut
+		}
+
+		req, err := http.NewRequest(method, u.String(), bytes.NewReader(b))
+		if err != nil {
+			errs <- err
+			continue
+		}
+
+		req, err = apiclient.SetAuthHeader(req)
+		if err != nil {
+			errs <- err
+			continue
+		}
+
+		resp, err := c.Do(req)
+		if err != nil {
+			errs <- err
+			continue
+		} else if resp.StatusCode%100 != 2 {
+			errs <- fmt.Errorf("failed to import reference, apigee returned HTTP %d: %s", resp.StatusCode, resp.Status)
+			continue
+		}
+
+		b, err = io.ReadAll(resp.Body)
+		if err != nil {
+			errs <- err
+			continue
+		}
+
+		if len(b) > 0 && apiclient.GetPrintOutput() {
+			out := bytes.NewBuffer([]byte{})
+			if err = json.Indent(out, bytes.TrimSpace(b), "", "  "); err != nil {
+				errs <- fmt.Errorf("apigee returned invalid json: %w", err)
+			}
+			fmt.Println(out.String())
+		}
+		clilog.Info.Printf("Completed reference: %s", job.Name)
 	}
-	_, err = apiclient.HttpClient(apiclient.GetPrintOutput(), url, string(out))
-	if err != nil {
-		clilog.Error.Println(err)
-		return
-	}
-	clilog.Info.Printf("Completed entity: %s", entity.Name)
 }
 
 func readReferencesFile(filePath string) ([]ref, error) {
-	refList := []ref{}
-
-	jsonFile, err := os.Open(filePath)
-
+	b, err := os.ReadFile(filePath)
 	if err != nil {
-		return refList, err
+		return nil, err
 	}
 
-	defer jsonFile.Close()
-
-	byteValue, err := io.ReadAll(jsonFile)
-
-	if err != nil {
-		return refList, err
+	var refList []ref
+	if err = json.Unmarshal(b, &refList); err != nil {
+		return nil, err
 	}
-
-	err = json.Unmarshal(byteValue, &refList)
-
-	if err != nil {
-		return refList, err
-	}
-
 	return refList, nil
 }

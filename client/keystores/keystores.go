@@ -16,10 +16,13 @@ package keystores
 
 import (
 	"encoding/json"
-	"io"
+	"errors"
+	"fmt"
+	"net/http"
 	"net/url"
 	"os"
 	"path"
+	"strings"
 	"sync"
 
 	"github.com/apigee/apigeecli/apiclient"
@@ -61,97 +64,100 @@ func List() (respBody []byte, err error) {
 
 // Import
 func Import(conn int, filePath string) (err error) {
-	var pwg sync.WaitGroup
-	const entityType = "keystores"
-
-	u, _ := url.Parse(apiclient.BaseURL)
-	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), entityType)
-
-	entities, err := readKeystoresFile(filePath)
+	keystores, err := readKeystoresFile(filePath)
 	if err != nil {
 		clilog.Error.Println("Error reading file: ", err)
 		return err
 	}
 
-	numEntities := len(entities)
-	clilog.Info.Printf("Found %d keystores in the file\n", numEntities)
+	clilog.Info.Printf("Found %d keystores in the file\n", len(keystores))
 	clilog.Info.Printf("Create keystores with %d connections\n", conn)
 
-	numOfLoops, remaining := numEntities/conn, numEntities%conn
+	jobChan := make(chan string)
+	errChan := make(chan error)
 
-	//ensure connections aren't greater than entities
-	if conn > numEntities {
-		conn = numEntities
+	fanOutWg := sync.WaitGroup{}
+	fanInWg := sync.WaitGroup{}
+
+	errs := []string{}
+	fanInWg.Add(1)
+	go func() {
+		defer fanInWg.Done()
+		for {
+			newErr, ok := <-errChan
+			if !ok {
+				return
+			}
+			errs = append(errs, newErr.Error())
+		}
+	}()
+
+	for i := 0; i < conn; i++ {
+		fanOutWg.Add(1)
+		go importKeystores(&fanOutWg, jobChan, errChan)
 	}
 
-	start := 0
-
-	for i, end := 0, 0; i < numOfLoops; i++ {
-		pwg.Add(1)
-		end = (i * conn) + conn
-		clilog.Info.Printf("Creating batch %d of keystores\n", (i + 1))
-		go batchImport(u.String(), entities[start:end], &pwg)
-		start = end
-		pwg.Wait()
+	for _, ks := range keystores {
+		jobChan <- ks
 	}
+	close(jobChan)
+	fanOutWg.Wait()
+	close(errChan)
+	fanInWg.Wait()
 
-	if remaining > 0 {
-		pwg.Add(1)
-		clilog.Info.Printf("Creating remaining %d keystores\n", remaining)
-		go batchImport(u.String(), entities[start:numEntities], &pwg)
-		pwg.Wait()
+	if len(errs) > 0 {
+		return errors.New(strings.Join(errs, "\n"))
 	}
-
 	return nil
 }
 
-// batchImport creates a batch of keystores to create
-func batchImport(url string, entities []string, pwg *sync.WaitGroup) {
-
-	defer pwg.Done()
-	//batch workgroup
-	var bwg sync.WaitGroup
-
-	bwg.Add(len(entities))
-
-	for _, entity := range entities {
-		go createAsyncKeystore(url, entity, &bwg)
-	}
-	bwg.Wait()
-}
-
-func createAsyncKeystore(url string, entity string, wg *sync.WaitGroup) {
+func importKeystores(wg *sync.WaitGroup, jobs <-chan string, errs chan<- error) {
 	defer wg.Done()
-	_, err := Create(entity)
-	if err != nil {
-		clilog.Error.Println(err)
-		return
+
+	for {
+		job, ok := <-jobs
+		if !ok {
+			return
+		}
+
+		u, _ := url.Parse(apiclient.BaseURL)
+		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "keystores")
+		u.RawQuery = fmt.Sprintf("name=%s", job)
+
+		c, err := apiclient.GetHttpClient()
+		if err != nil {
+			errs <- err
+			continue
+		}
+
+		req, err := http.NewRequest(http.MethodPost, u.String(), nil)
+		if err != nil {
+			errs <- err
+			continue
+		}
+
+		resp, err := c.Do(req)
+		if err != nil {
+			errs <- err
+			continue
+		} else if resp.StatusCode%100 != 2 && resp.StatusCode != http.StatusConflict {
+			// We ignore 409s as the only configurable parameter of a keystore is it's name. Hence if it already exists
+			// then it is consistent with what is being imported.
+			errs <- fmt.Errorf("apigee responded with HTTP %d: %s", resp.StatusCode, resp.Status)
+			continue
+		}
 	}
-	clilog.Info.Printf("Completed entity: %s", entity)
 }
 
 func readKeystoresFile(filePath string) ([]string, error) {
-	keystoresList := []string{}
-
-	jsonFile, err := os.Open(filePath)
-
+	b, err := os.ReadFile(filePath)
 	if err != nil {
-		return keystoresList, err
+		return nil, err
 	}
 
-	defer jsonFile.Close()
-
-	byteValue, err := io.ReadAll(jsonFile)
-
-	if err != nil {
-		return keystoresList, err
+	var keystoresList []string
+	if err = json.Unmarshal(b, &keystoresList); err != nil {
+		return nil, err
 	}
-
-	err = json.Unmarshal(byteValue, &keystoresList)
-
-	if err != nil {
-		return keystoresList, err
-	}
-
 	return keystoresList, nil
 }
