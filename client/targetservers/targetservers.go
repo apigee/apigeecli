@@ -247,6 +247,39 @@ func Import(conn int, filePath string) (err error) {
 	clilog.Info.Printf("Found %d target servers in the file\n", len(targetservers))
 	clilog.Info.Printf("Create target servers with %d connections\n", conn)
 
+	u, _ := url.Parse(apiclient.BaseURL)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "targetservers")
+	c, err := apiclient.GetHttpClient()
+	if err != nil {
+		return err
+	}
+	req, err := http.NewRequest(http.MethodGet, u.String(), nil)
+	if err != nil {
+		return err
+	}
+	req, err = apiclient.SetAuthHeader(req)
+	if err != nil {
+		return err
+	}
+
+	resp, err := c.Do(req)
+	if err != nil {
+		return err
+	}
+	b, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+
+	var svrs []string
+	if err = json.Unmarshal(b, &svrs); err != nil {
+		return err
+	}
+	knownServers := map[string]bool{}
+	for _, name := range svrs {
+		knownServers[name] = true
+	}
+
 	jobChan := make(chan targetserver)
 	errChan := make(chan error)
 
@@ -268,7 +301,7 @@ func Import(conn int, filePath string) (err error) {
 
 	for i := 0; i < conn; i++ {
 		fanOutWg.Add(1)
-		go importServers(&fanOutWg, jobChan, errChan)
+		go importServers(knownServers, &fanOutWg, jobChan, errChan)
 	}
 
 	for _, ts := range targetservers {
@@ -285,11 +318,9 @@ func Import(conn int, filePath string) (err error) {
 	return nil
 }
 
-func importServers(wg *sync.WaitGroup, jobs <-chan targetserver, errs chan<- error) {
+func importServers(knownServers map[string]bool, wg *sync.WaitGroup, jobs <-chan targetserver, errs chan<- error) {
 	defer wg.Done()
 
-	u, _ := url.Parse(apiclient.BaseURL)
-	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "targetservers")
 	for {
 		job, ok := <-jobs
 		if !ok {
@@ -307,7 +338,16 @@ func importServers(wg *sync.WaitGroup, jobs <-chan targetserver, errs chan<- err
 			continue
 		}
 
-		req, err := http.NewRequest(http.MethodPost, u.String(), bytes.NewReader(b))
+		u, _ := url.Parse(apiclient.BaseURL)
+		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "targetservers")
+		method := http.MethodPost
+		if knownServers[job.Name] {
+			// If the targetserver already exists we use an 'update' instead of a 'create' operation.
+			u.Path = path.Join(u.Path, job.Name)
+			method = http.MethodPut
+		}
+
+		req, err := http.NewRequest(method, u.String(), bytes.NewReader(b))
 		if err != nil {
 			errs <- err
 			continue
@@ -323,16 +363,14 @@ func importServers(wg *sync.WaitGroup, jobs <-chan targetserver, errs chan<- err
 		if err != nil {
 			errs <- err
 			continue
+		} else if resp.StatusCode%100 != 2 {
+			errs <- fmt.Errorf("could not import targetserver, apigee responded with HTTP %d: %s", resp.StatusCode, resp.Status)
 		}
+
 		b, err = io.ReadAll(resp.Body)
 		if err != nil {
-			b = []byte(err.Error())
-		}
-		if err != nil || (resp.StatusCode%100 != 2 && resp.StatusCode != http.StatusConflict) { // 409 is returned if the targetserver already exists in the same configuration.
-			errs <- fmt.Errorf("targetserver not imported: (HTTP %v) %s", resp.StatusCode, b)
+			errs <- err
 			continue
-		} else if resp.StatusCode == http.StatusConflict {
-			b = []byte{}
 		}
 
 		if len(b) > 0 && apiclient.GetPrintOutput() {
@@ -352,9 +390,8 @@ func readTargetServersFile(filePath string) ([]targetserver, error) {
 		return nil, err
 	}
 
-	targetservers := []targetserver{}
-	err = json.Unmarshal(content, &targetservers)
-	if err != nil {
+	var targetservers []targetserver
+	if err = json.Unmarshal(content, &targetservers); err != nil {
 		return nil, err
 	}
 	return targetservers, nil
