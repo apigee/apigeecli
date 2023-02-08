@@ -30,5 +30,4 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -a -ldflags='-s -w 
 
 FROM google/cloud-sdk:alpine
 COPY --from=builder /go/bin/apigeecli /tmp
-RUN apt-get update
-RUN apt-get install -y jq
+RUN apk --update add jq
