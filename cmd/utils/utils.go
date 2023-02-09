@@ -95,3 +95,10 @@ func ReadFile(filePath string) (byteValue []byte, err error) {
 	}
 	return byteValue, err
 }
+
+func TestFolder(folder string) bool {
+	if stat, err := os.Stat(folder); err == nil && stat.IsDir() {
+		return true
+	}
+	return false
+}

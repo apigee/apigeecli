@@ -22,6 +22,7 @@ import (
 	"github.com/apigee/apigeecli/apiclient"
 	proxybundle "github.com/apigee/apigeecli/bundlegen/proxybundle"
 	"github.com/apigee/apigeecli/client/apis"
+	"github.com/apigee/apigeecli/cmd/utils"
 	"github.com/spf13/cobra"
 )
 
@@ -48,6 +49,12 @@ var BundleCreateCmd = &cobra.Command{
 		if proxyZip != "" {
 			_, err = apis.CreateProxy(name, proxyZip)
 		} else if proxyFolder != "" {
+			if !utils.TestFolder(proxyFolder) {
+				return fmt.Errorf("supplied path is not a folder")
+			}
+			if path.Base(proxyFolder) != "apiproxy" {
+				return fmt.Errorf("--proxy-folder or -p must be a path to apiproxy folder")
+			}
 			tmpDir, err := os.MkdirTemp("", "proxy")
 			if err != nil {
 				return err
@@ -76,9 +83,9 @@ func init() {
 		"", "API Proxy name")
 
 	BundleCreateCmd.Flags().StringVarP(&proxyZip, "proxy-zip", "p",
-		"", "Path to the Sharedflow bundle/zip file")
+		"", "Path to the Proxy bundle/zip file")
 	BundleCreateCmd.Flags().StringVarP(&proxyFolder, "proxy-folder", "f",
-		"", "Path to the Sharedflow Bundle; ex: ./test/apiproxy")
+		"", "Path to the Proxy Bundle; ex: ./test/apiproxy")
 
 	_ = BundleCreateCmd.MarkFlagRequired("name")
 }

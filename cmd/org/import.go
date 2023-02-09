@@ -51,6 +51,10 @@ var ImportCmd = &cobra.Command{
 
 		var kvmList []string
 
+		if !utils.TestFolder(folder) {
+			return fmt.Errorf("supplied path is not a folder")
+		}
+
 		clilog.Warning.Println("Calls to Apigee APIs have a quota of 6000 per min. Running this tool against large list of entities can exhaust that quota and impact the usage of the platform.")
 
 		fmt.Println("Importing API Proxies...")
