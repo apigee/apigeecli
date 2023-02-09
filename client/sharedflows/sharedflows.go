@@ -20,6 +20,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"mime/multipart"
 	"net/http"
 	"net/url"
 	"os"
@@ -488,13 +489,23 @@ func importSharedFlows(wg *sync.WaitGroup, jobs <-chan string, errs chan<- error
 			errs <- err
 			continue
 		}
+		reqBody := &bytes.Buffer{}
+		w := multipart.NewWriter(reqBody)
+		part, err := w.CreateFormFile("file", filepath.Base(job))
+		if err != nil {
+			errs <- err
+			continue
+		}
+		_, _ = io.Copy(part, fd)
+		fd.Close()
+		w.Close()
 
 		c, err := apiclient.GetHttpClient()
 		if err != nil {
 			errs <- err
 			continue
 		}
-		req, err := http.NewRequest(http.MethodPost, u.String(), fd)
+		req, err := http.NewRequest(http.MethodPost, u.String(), reqBody)
 		if err != nil {
 			errs <- err
 			continue
@@ -504,6 +515,7 @@ func importSharedFlows(wg *sync.WaitGroup, jobs <-chan string, errs chan<- error
 			errs <- err
 			continue
 		}
+		req.Header.Add("Content-Type", w.FormDataContentType())
 
 		resp, err := c.Do(req)
 		if err != nil {
@@ -514,7 +526,7 @@ func importSharedFlows(wg *sync.WaitGroup, jobs <-chan string, errs chan<- error
 		if err != nil {
 			b = []byte(err.Error())
 		}
-		if err != nil || resp.StatusCode%100 != 2 {
+		if err != nil || resp.StatusCode < 200 || resp.StatusCode >= 300 {
 			errs <- fmt.Errorf("bundle not imported: (HTTP %v) %s", resp.StatusCode, b)
 			continue
 		}
