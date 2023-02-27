@@ -313,7 +313,7 @@ query parameters are ignored. By default, if no location is specified, the JWT l
 
 ## Apigee Client Library
 
-`apigeecli` is can also be used as a golang based client library. Look at this [sample](./samples) for more details
+`apigeecli` can also be used as a golang based client library. Look at this [sample](./samples) for more details
 
 ___
 
