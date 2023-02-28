@@ -1,4 +1,4 @@
-# apigeecli
+# About apigeecli
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/apigee/apigeecli)](https://goreportcard.com/report/github.com/apigee/apigeecli)
 [![GitHub release](https://img.shields.io/github/v/release/apigee/apigeecli)](https://github.com/apigee/apigeecli/releases)
@@ -180,7 +180,7 @@ Or within a Flow Condition like this
 
 #### Dynamic target endpoints
 
-apigeecli allows the user to dynamically set a target endpoint. These is especially useful when deploying target/backend applications to GCP's serverless platforms like Cloud Run, Cloud Functions etc. apigeecli also allows the user to enable Apigee'e [Google authentication](https://cloud.google.com/apigee/docs/api-platform/security/google-auth/overview) before connecting to the backend.
+`apigeecli` allows the user to dynamically set a target endpoint. These is especially useful when deploying target/backend applications to GCP's serverless platforms like Cloud Run, Cloud Functions etc. `apigeecli` also allows the user to enable Apigee'e [Google authentication](https://cloud.google.com/apigee/docs/api-platform/security/google-auth/overview) before connecting to the backend.
 
 ##### Set a dynamic target
 
@@ -248,7 +248,7 @@ See this [OAS document](./test/petstore-ext1.yaml) for examples
 
 ### Generating API Proxies from GraphQL Schemas
 
-apigeecli allows the user to generate Apigee API Proxy bundles from a GraphQL schema. When generating a proxy, consider the following flags:
+`apigeecli` allows the user to generate Apigee API Proxy bundles from a GraphQL schema. When generating a proxy, consider the following flags:
 
 * `--basepath`: Specify a basePath for the GraphQL proxy
 * `--skip-policy=false`: By default the GraphQL policy is added to the proxy (to validate API requests). By setting this to false, schema validation is not enabled.
@@ -256,15 +256,15 @@ apigeecli allows the user to generate Apigee API Proxy bundles from a GraphQL sc
 
 ### Generating an API Proxy template for Application Integration
 
-apigeecli allows the user to generate an Apigee API Proxy bundle template for [Application Integration](https://cloud.google.com/application-integration/docs/overview). When generating the proxy, consider the following flags:
+`apigeecli` allows the user to generate an Apigee API Proxy bundle template for [Application Integration](https://cloud.google.com/application-integration/docs/overview). When generating the proxy, consider the following flags:
 
 * `--trigger`: Specify the API trigger name of the Integration. This is also used as the basePath. Don't include `api_trigger/`
 * `--integration`: Specify the Name of the Integration
 * `--name`: Specify the Name of the API Proxy
 
-### Generating an API Proxy template from Cloud Endpoints/API Gateway
+### Generating an API Proxy template from Cloud Endpoints/API Gateway artifacts
 
-apigeecli allows the user to generate an Apigee API Proxy bundle template for [Cloud Endpoints](https://cloud.google.com/endpoints) and [API Gateway](https://cloud.google.com/api-gateway). Cloud Endpoints and API Gateway use OpenAPI 2.0 (aka Swagger) with [customer extensions](https://cloud.google.com/endpoints/docs/openapi/openapi-extensions). When generating the proxy, consider the following flags:
+[Cloud Endpoints](https://cloud.google.com/endpoints) and [API Gateway](https://cloud.google.com/api-gateway) use the [extensions](https://cloud.google.com/endpoints/docs/openapi/openapi-extensions) specified in an OpenAPI (FKA Swagger) document to apply policies. `apigeecli` can use those extensions to generate a similar Apigee API Proxy bundle. When generating the proxy, consider the following flags:
 
 * `--add-cors=true`: Add a CORS policy
 
