@@ -49,7 +49,7 @@ var CreateCmd = &cobra.Command{
 		if sfZip != "" {
 			_, err = sharedflows.Create(name, sfZip)
 		} else if sfFolder != "" {
-			if stat, err := os.Stat(folder); err == nil && stat.IsDir() {
+			if stat, err := os.Stat(folder); err == nil && !stat.IsDir() {
 				return fmt.Errorf("supplied path is not a folder")
 			}
 			tmpDir, err := os.MkdirTemp("", "sf")

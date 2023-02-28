@@ -48,7 +48,7 @@ var BundleCreateCmd = &cobra.Command{
 		if proxyZip != "" {
 			_, err = apis.CreateProxy(name, proxyZip)
 		} else if proxyFolder != "" {
-			if stat, err := os.Stat(folder); err == nil && stat.IsDir() {
+			if stat, err := os.Stat(folder); err == nil && !stat.IsDir() {
 				return fmt.Errorf("supplied path is not a folder")
 			}
 			if path.Base(proxyFolder) != "apiproxy" {

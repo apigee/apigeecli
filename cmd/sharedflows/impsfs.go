@@ -33,7 +33,7 @@ var ImpCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		if stat, err := os.Stat(folder); err == nil && stat.IsDir() {
+		if stat, err := os.Stat(folder); err == nil && !stat.IsDir() {
 			return fmt.Errorf("supplied path is not a folder")
 		}
 		return sharedflows.Import(conn, folder)
