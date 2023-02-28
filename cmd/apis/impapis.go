@@ -16,10 +16,10 @@ package apis
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/apigee/apigeecli/apiclient"
 	"github.com/apigee/apigeecli/client/apis"
-	"github.com/apigee/apigeecli/cmd/utils"
 	"github.com/spf13/cobra"
 )
 
@@ -32,7 +32,7 @@ var ImpCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		if !utils.TestFolder(folder) {
+		if stat, err := os.Stat(folder); err == nil && stat.IsDir() {
 			return fmt.Errorf("supplied path is not a folder")
 		}
 		return apis.ImportProxies(conn, folder)

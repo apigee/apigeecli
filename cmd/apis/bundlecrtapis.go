@@ -22,7 +22,6 @@ import (
 	"github.com/apigee/apigeecli/apiclient"
 	proxybundle "github.com/apigee/apigeecli/bundlegen/proxybundle"
 	"github.com/apigee/apigeecli/client/apis"
-	"github.com/apigee/apigeecli/cmd/utils"
 	"github.com/spf13/cobra"
 )
 
@@ -49,7 +48,7 @@ var BundleCreateCmd = &cobra.Command{
 		if proxyZip != "" {
 			_, err = apis.CreateProxy(name, proxyZip)
 		} else if proxyFolder != "" {
-			if !utils.TestFolder(proxyFolder) {
+			if stat, err := os.Stat(folder); err == nil && stat.IsDir() {
 				return fmt.Errorf("supplied path is not a folder")
 			}
 			if path.Base(proxyFolder) != "apiproxy" {

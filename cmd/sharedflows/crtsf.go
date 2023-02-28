@@ -22,7 +22,6 @@ import (
 	"github.com/apigee/apigeecli/apiclient"
 	"github.com/apigee/apigeecli/bundlegen/proxybundle"
 	"github.com/apigee/apigeecli/client/sharedflows"
-	"github.com/apigee/apigeecli/cmd/utils"
 	"github.com/spf13/cobra"
 )
 
@@ -50,7 +49,7 @@ var CreateCmd = &cobra.Command{
 		if sfZip != "" {
 			_, err = sharedflows.Create(name, sfZip)
 		} else if sfFolder != "" {
-			if !utils.TestFolder(sfFolder) {
+			if stat, err := os.Stat(folder); err == nil && stat.IsDir() {
 				return fmt.Errorf("supplied path is not a folder")
 			}
 			tmpDir, err := os.MkdirTemp("", "sf")

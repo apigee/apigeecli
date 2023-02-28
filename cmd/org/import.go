@@ -51,7 +51,7 @@ var ImportCmd = &cobra.Command{
 
 		var kvmList []string
 
-		if !utils.TestFolder(folder) {
+		if stat, err := os.Stat(folder); err == nil && stat.IsDir() {
 			return fmt.Errorf("supplied path is not a folder")
 		}
 
