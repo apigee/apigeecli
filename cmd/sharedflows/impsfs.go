@@ -15,12 +15,15 @@
 package sharedflows
 
 import (
+	"fmt"
+	"os"
+
 	"github.com/apigee/apigeecli/apiclient"
 	"github.com/apigee/apigeecli/client/sharedflows"
 	"github.com/spf13/cobra"
 )
 
-//Cmd to import shared flow
+// Cmd to import shared flow
 var ImpCmd = &cobra.Command{
 	Use:   "import",
 	Short: "Import a folder containing sharedflow bundles",
@@ -30,6 +33,9 @@ var ImpCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		if stat, err := os.Stat(folder); err == nil && !stat.IsDir() {
+			return fmt.Errorf("supplied path is not a folder")
+		}
 		return sharedflows.Import(conn, folder)
 	},
 }

@@ -48,6 +48,12 @@ var BundleCreateCmd = &cobra.Command{
 		if proxyZip != "" {
 			_, err = apis.CreateProxy(name, proxyZip)
 		} else if proxyFolder != "" {
+			if stat, err := os.Stat(folder); err == nil && !stat.IsDir() {
+				return fmt.Errorf("supplied path is not a folder")
+			}
+			if path.Base(proxyFolder) != "apiproxy" {
+				return fmt.Errorf("--proxy-folder or -p must be a path to apiproxy folder")
+			}
 			tmpDir, err := os.MkdirTemp("", "proxy")
 			if err != nil {
 				return err
@@ -76,9 +82,9 @@ func init() {
 		"", "API Proxy name")
 
 	BundleCreateCmd.Flags().StringVarP(&proxyZip, "proxy-zip", "p",
-		"", "Path to the Sharedflow bundle/zip file")
+		"", "Path to the Proxy bundle/zip file")
 	BundleCreateCmd.Flags().StringVarP(&proxyFolder, "proxy-folder", "f",
-		"", "Path to the Sharedflow Bundle; ex: ./test/apiproxy")
+		"", "Path to the Proxy Bundle; ex: ./test/apiproxy")
 
 	_ = BundleCreateCmd.MarkFlagRequired("name")
 }
