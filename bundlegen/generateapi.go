@@ -119,10 +119,6 @@ func LoadDocumentFromFile(filePath string, validate bool, formatValidation bool)
 	//add custom string definitions
 	openapi3.DefineStringFormat("uuid", openapi3.FormatOfStringForUUIDOfRFC4122)
 
-	if !formatValidation {
-		openapi3.SchemaFormatValidationDisabled = true
-	}
-
 	if validate {
 		if err = doc.Validate(openapi3.NewLoader().Context); err != nil {
 			clilog.Error.Println(err)
@@ -160,10 +156,6 @@ func LoadDocumentFromURI(uri string, validate bool, formatValidation bool) (stri
 
 	//add custom string definitions
 	openapi3.DefineStringFormat("uuid", openapi3.FormatOfStringForUUIDOfRFC4122)
-
-	if !formatValidation {
-		openapi3.SchemaFormatValidationDisabled = true
-	}
 
 	if validate {
 		if err = doc.Validate(openapi3.NewLoader().Context); err != nil {
