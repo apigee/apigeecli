@@ -20,7 +20,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//DelCmd to get env group
+// DelCmd to get env group
 var DelCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Deletes an Environment Group",
@@ -29,7 +29,7 @@ var DelCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = envgroups.Get(name)
+		_, err = envgroups.Delete(name)
 		return
 	},
 }
