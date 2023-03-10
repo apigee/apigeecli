@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"path/filepath"
 
 	"github.com/apigee/apigeecli/apiclient"
 	proxybundle "github.com/apigee/apigeecli/bundlegen/proxybundle"
@@ -51,7 +52,7 @@ var BundleCreateCmd = &cobra.Command{
 			if stat, err := os.Stat(folder); err == nil && !stat.IsDir() {
 				return fmt.Errorf("supplied path is not a folder")
 			}
-			if path.Base(proxyFolder) != "apiproxy" {
+			if filepath.Base(proxyFolder) != "apiproxy" {
 				return fmt.Errorf("--proxy-folder or -p must be a path to apiproxy folder")
 			}
 			tmpDir, err := os.MkdirTemp("", "proxy")
