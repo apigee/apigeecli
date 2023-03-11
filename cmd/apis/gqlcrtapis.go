@@ -19,7 +19,6 @@ import (
 	"io"
 	"net/url"
 	"os"
-	"path"
 	"path/filepath"
 	"strings"
 
@@ -159,7 +158,7 @@ func readSchemaURL() (string, []byte, error) {
 		clilog.Error.Println("error in response: ", err)
 		return "", nil, err
 	}
-	return path.Base(u.Path), respBody, err
+	return filepath.Base(u.Path), respBody, err
 }
 
 func getKeyNameAndLocation() (location string, key string, err error) {

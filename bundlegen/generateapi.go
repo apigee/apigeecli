@@ -18,7 +18,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/url"
-	"path"
 	"path/filepath"
 	"regexp"
 	"strings"
@@ -179,9 +178,9 @@ func LoadDocumentFromURI(uri string, validate bool, formatValidation bool) (stri
 
 	if isFileYaml(uri) {
 		yamlContent, err := yaml.JSONToYAML(jsonContent)
-		return path.Base(u.Path), yamlContent, err
+		return filepath.Base(u.Path), yamlContent, err
 	} else {
-		return path.Base(u.Path), jsonContent, err
+		return filepath.Base(u.Path), jsonContent, err
 	}
 }
 

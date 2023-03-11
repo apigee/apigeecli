@@ -19,7 +19,6 @@ import (
 	"fmt"
 	"net/url"
 	"os"
-	"path"
 	"path/filepath"
 	"regexp"
 	"strconv"
@@ -87,7 +86,7 @@ func LoadSwaggerFromUri(endpoint string) (string, []byte, error) {
 		return "", nil, err
 	}
 
-	name := path.Base(u.Path)
+	name := filepath.Base(u.Path)
 	if docType = filepath.Ext(name); docType == "" {
 		docType = "json"
 		name = name + ".json"
