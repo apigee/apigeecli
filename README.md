@@ -309,12 +309,7 @@ x-google-jwt-locations:
   - query: "jwt_query_bar"
 ```
 
-query parameters are ignored. By default, if no location is specified, the JWT location is the `Authorization` header and value_prefix is `Bearer <token>`.
-
-## Apigee Client Library
-
-`apigeecli` can also be used as a golang based client library. Look at this [sample](./samples) for more details
-
+query parameters are ignored. By default, if no location is specified, the JWT location is the `Authorization` header and value_prefix is `Bearer <token>`
 ___
 
 ## Support
