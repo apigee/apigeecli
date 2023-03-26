@@ -53,7 +53,7 @@ builds:
     gcflags:
     - all="-l"
     env:
-      - CGO_ENABLED=0 
+      - CGO_ENABLED=0
 
   - id: apigeecliwin
     main: ./main.go
@@ -81,6 +81,8 @@ archives:
       amd64: x86_64
       windows: Windows
     wrap_in_directory: true
+    files:
+      - LICENSE.txt
     builds:
       - apigeeclinix
       - apigeecliwin
@@ -90,7 +92,7 @@ checksum:
   name_template: 'checksums.txt'
 
 signs:
-  - 
+  -
     artifacts: all
     args:
       [
