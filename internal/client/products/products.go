@@ -29,11 +29,7 @@ import (
 )
 
 type apiProducts struct {
-	APIProducts []apiProduct `json:"apiProduct,omitempty"`
-}
-
-type apiProduct struct {
-	Name string `json:"name,omitempty"`
+	APIProduct []APIProduct `json:"apiProduct,omitempty"`
 }
 
 type Action uint8
@@ -44,7 +40,7 @@ const (
 	UPSERT
 )
 
-type Product struct {
+type APIProduct struct {
 	Name                  string                 `json:"name,omitempty"`
 	DisplayName           string                 `json:"displayName,omitempty"`
 	Description           string                 `json:"description,omitempty"`
@@ -62,40 +58,40 @@ type Product struct {
 }
 
 type OperationGroup struct {
-	OperationConfigs    []OperationConfig `json:"operationConfigs,omitempty"`
+	OperationConfigs    []operationConfig `json:"operationConfigs,omitempty"`
 	OperationConfigType string            `json:"operationConfigType,omitempty"`
 }
 
 type GraphqlOperationGroup struct {
-	OperationConfigs    []GraphQLOperationConfig `json:"operationConfigs,omitempty"`
+	OperationConfigs    []graphQLOperationConfig `json:"operationConfigs,omitempty"`
 	OperationConfigType string                   `json:"operationConfigType,omitempty"`
 }
 
-type OperationConfig struct {
+type operationConfig struct {
 	APISource  string      `json:"apiSource,omitempty"`
-	Operations []Operation `json:"operations,omitempty"`
-	Quota      *Quota      `json:"quota,omitempty"`
+	Operations []operation `json:"operations,omitempty"`
+	Quota      *quota      `json:"quota,omitempty"`
 	Attributes []Attribute `json:"attributes,omitempty"`
 }
 
-type GraphQLOperationConfig struct {
+type graphQLOperationConfig struct {
 	APISource  string             `json:"apiSource,omitempty"`
-	Operations []GraphQLoperation `json:"operations,omitempty"`
-	Quota      *Quota             `json:"quota,omitempty"`
+	Operations []graphQLoperation `json:"operations,omitempty"`
+	Quota      *quota             `json:"quota,omitempty"`
 	Attributes []Attribute        `json:"attributes,omitempty"`
 }
 
-type Operation struct {
+type operation struct {
 	Resource string   `json:"resource,omitempty"`
 	Methods  []string `json:"methods,omitempty"`
 }
 
-type GraphQLoperation struct {
+type graphQLoperation struct {
 	OperationTypes []string `json:"operationTypes,omitempty"`
 	Operation      string   `json:"operation,omitempty"`
 }
 
-type Quota struct {
+type quota struct {
 	Limit    string `json:"limit,omitempty"`
 	Interval string `json:"interval,omitempty"`
 	TimeUnit string `json:"timeUnit,omitempty"`
@@ -107,11 +103,11 @@ type Attribute struct {
 	Value string `json:"value,omitempty"`
 }
 
-func Create(p Product) (respBody []byte, err error) {
+func Create(p APIProduct) (respBody []byte, err error) {
 	return upsert(p, CREATE)
 }
 
-func Update(p Product) (respBody []byte, err error) {
+func Update(p APIProduct) (respBody []byte, err error) {
 	return upsert(p, UPDATE)
 }
 
@@ -132,7 +128,7 @@ func Delete(name string) (respBody []byte, err error) {
 }
 
 // upsert - use Action to control if upsert is enabled
-func upsert(p Product, a Action) (respBody []byte, err error) {
+func upsert(p APIProduct, a Action) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 
 	var createNew bool //default false
@@ -202,7 +198,8 @@ func ListAttributes(name string) (respBody []byte, err error) {
 }
 
 // List
-func List(count int, expand bool) (respBody []byte, err error) {
+func List(count int, expand bool, filter map[string]string) (respBody []byte, err error) {
+	printSetting := apiclient.GetPrintOutput()
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts")
 	q := u.Query()
@@ -214,8 +211,46 @@ func List(count int, expand bool) (respBody []byte, err error) {
 	if count != -1 {
 		q.Set("count", strconv.Itoa(count))
 	}
+
 	u.RawQuery = q.Encode()
+
+	if len(filter) > 0 && filter["proxy"] != "" {
+		apiclient.SetPrintOutput(false)
+	}
+
 	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+
+	if len(filter) > 0 && filter["proxy"] != "" {
+		prds := apiProducts{}
+		outProducts := apiProducts{}
+		err = json.Unmarshal(respBody, &prds)
+		if err != nil {
+			return nil, err
+		}
+		for _, p := range prds.APIProduct {
+			if p.OperationGroup != nil && len(p.OperationGroup.OperationConfigs) > 0 {
+				if p.OperationGroup.OperationConfigType == "proxy" {
+					for _, o := range p.OperationGroup.OperationConfigs {
+						if o.APISource == filter["proxy"] {
+							outProducts.APIProduct = append(outProducts.APIProduct, p)
+						}
+					}
+				}
+			}
+			if p.GraphQLOperationGroup != nil && len(p.GraphQLOperationGroup.OperationConfigs) > 0 {
+				for _, o := range p.GraphQLOperationGroup.OperationConfigs {
+					if o.APISource == filter["proxy"] {
+						outProducts.APIProduct = append(outProducts.APIProduct, p)
+					}
+				}
+			}
+		}
+		respBody, err = json.Marshal(outProducts)
+		apiclient.SetPrintOutput(printSetting)
+		_ = apiclient.PrettyPrint(respBody)
+		return respBody, err
+	}
+
 	return respBody, err
 }
 
@@ -240,7 +275,7 @@ func Export(conn int) (payload [][]byte, err error) {
 		return apiclient.GetEntityPayloadList(), err
 	}
 
-	numProd := len(products.APIProducts)
+	numProd := len(products.APIProduct)
 	clilog.Info.Printf("Found %d products in the org\n", numProd)
 	clilog.Info.Printf("Exporting products with %d connections\n", conn)
 
@@ -257,7 +292,7 @@ func Export(conn int) (payload [][]byte, err error) {
 		pwg.Add(1)
 		end = (i * conn) + conn
 		clilog.Info.Printf("Exporting batch %d of products\n", (i + 1))
-		go batchExport(products.APIProducts[start:end], entityType, &pwg, &mu)
+		go batchExport(products.APIProduct[start:end], entityType, &pwg, &mu)
 		start = end
 		pwg.Wait()
 	}
@@ -265,7 +300,7 @@ func Export(conn int) (payload [][]byte, err error) {
 	if remaining > 0 {
 		pwg.Add(1)
 		clilog.Info.Printf("Exporting remaining %d products\n", remaining)
-		go batchExport(products.APIProducts[start:numProd], entityType, &pwg, &mu)
+		go batchExport(products.APIProduct[start:numProd], entityType, &pwg, &mu)
 		pwg.Wait()
 	}
 
@@ -320,7 +355,7 @@ func Import(conn int, filePath string, upsert bool) (err error) {
 }
 
 // batch created a batch of products to query
-func batchExport(entities []apiProduct, entityType string, pwg *sync.WaitGroup, mu *sync.Mutex) {
+func batchExport(entities []APIProduct, entityType string, pwg *sync.WaitGroup, mu *sync.Mutex) {
 	defer pwg.Done()
 	//batch workgroup
 	var bwg sync.WaitGroup
@@ -336,7 +371,7 @@ func batchExport(entities []apiProduct, entityType string, pwg *sync.WaitGroup, 
 }
 
 // batch creates a batch of products to create
-func batchImport(url string, entities []Product, upsert bool, pwg *sync.WaitGroup) {
+func batchImport(url string, entities []APIProduct, upsert bool, pwg *sync.WaitGroup) {
 
 	defer pwg.Done()
 	//batch workgroup
@@ -350,7 +385,7 @@ func batchImport(url string, entities []Product, upsert bool, pwg *sync.WaitGrou
 	bwg.Wait()
 }
 
-func createAsyncProduct(url string, entity Product, createOrUpdate bool, wg *sync.WaitGroup) {
+func createAsyncProduct(url string, entity APIProduct, createOrUpdate bool, wg *sync.WaitGroup) {
 	defer wg.Done()
 	var err error
 
@@ -369,9 +404,9 @@ func createAsyncProduct(url string, entity Product, createOrUpdate bool, wg *syn
 	clilog.Info.Printf("Completed entity: %s", entity.Name)
 }
 
-func readProductsFile(filePath string) ([]Product, error) {
+func readProductsFile(filePath string) ([]APIProduct, error) {
 
-	products := []Product{}
+	products := []APIProduct{}
 
 	jsonFile, err := os.Open(filePath)
 

@@ -32,7 +32,7 @@ var CreateCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 
-		p := products.Product{}
+		p := products.APIProduct{}
 
 		p.Name = name
 		p.DisplayName = displayName
