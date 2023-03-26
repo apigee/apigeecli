@@ -1,6 +1,6 @@
 module github.com/apigee/apigeecli
 
-go 1.19
+go 1.20
 
 require (
 	github.com/getkin/kin-openapi v0.88.0
