@@ -15,12 +15,13 @@
 package env
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	environments "github.com/apigee/apigeecli/client/env"
 	"github.com/spf13/cobra"
 )
 
-//Cmd to manage tracing of apis
+// Cmd to manage tracing of apis
 var SetDebugCmd = &cobra.Command{
 	Use:   "set",
 	Short: "Set debugmasks for an Environment",

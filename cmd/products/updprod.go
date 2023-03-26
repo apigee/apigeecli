@@ -15,12 +15,13 @@
 package products
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/products"
 	"github.com/spf13/cobra"
 )
 
-//Cmd to update a product
+// Cmd to update a product
 var UpdateCmd = &cobra.Command{
 	Use:   "update",
 	Short: "Update an API product",

@@ -15,12 +15,13 @@
 package references
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/references"
 	"github.com/spf13/cobra"
 )
 
-//Cmd to get reference
+// Cmd to get reference
 var ListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List all references in an environment",

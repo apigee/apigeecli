@@ -15,12 +15,13 @@
 package envgroup
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/envgroups"
 	"github.com/spf13/cobra"
 )
 
-//DetachCmd to get env group
+// DetachCmd to get env group
 var DetachCmd = &cobra.Command{
 	Use:   "detach",
 	Short: "Detach an env from an Environment Group",

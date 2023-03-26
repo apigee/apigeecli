@@ -17,12 +17,13 @@ package kvm
 import (
 	"fmt"
 
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/kvm"
 	"github.com/spf13/cobra"
 )
 
-//DelEntryCmd to delete kvm map entry
+// DelEntryCmd to delete kvm map entry
 var DelEntryCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete a KVM Map entry",

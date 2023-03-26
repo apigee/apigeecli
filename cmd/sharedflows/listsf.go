@@ -15,12 +15,13 @@
 package sharedflows
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/sharedflows"
 	"github.com/spf13/cobra"
 )
 
-//Cmd to list shared flow
+// Cmd to list shared flow
 var ListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "Lists all shared flows in the organization.",

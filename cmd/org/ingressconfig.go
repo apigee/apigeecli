@@ -15,12 +15,13 @@
 package org
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/orgs"
 	"github.com/spf13/cobra"
 )
 
-//IngressCmd to get org details
+// IngressCmd to get org details
 var IngressCmd = &cobra.Command{
 	Use:   "ingressconfig",
 	Short: "Show details of the Ingress configuration for an Apigee Org",

@@ -15,12 +15,13 @@
 package env
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/env"
 	"github.com/spf13/cobra"
 )
 
-//Cmd to set mart endpoint
+// Cmd to set mart endpoint
 var PropCmd = &cobra.Command{
 	Use:   "set",
 	Short: "Set environment property",

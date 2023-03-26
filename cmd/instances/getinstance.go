@@ -15,12 +15,13 @@
 package instances
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/instances"
 	"github.com/spf13/cobra"
 )
 
-//GetCmd to get instance
+// GetCmd to get instance
 var GetCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Get an Instance",

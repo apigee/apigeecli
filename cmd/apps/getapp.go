@@ -17,12 +17,13 @@ package apps
 import (
 	"fmt"
 
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/apps"
 	"github.com/spf13/cobra"
 )
 
-//GetCmd to get app
+// GetCmd to get app
 var GetCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Get App in an Organization by App ID",

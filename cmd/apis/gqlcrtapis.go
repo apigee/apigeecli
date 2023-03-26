@@ -23,11 +23,14 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/apigee/apigeecli/apiclient"
-	bundle "github.com/apigee/apigeecli/bundlegen"
-	proxybundle "github.com/apigee/apigeecli/bundlegen/proxybundle"
+	"internal/apiclient"
+
+	"internal/clilog"
+
+	bundle "internal/bundlegen"
+	proxybundle "internal/bundlegen/proxybundle"
+
 	"github.com/apigee/apigeecli/client/apis"
-	"github.com/apigee/apigeecli/clilog"
 	"github.com/spf13/cobra"
 )
 

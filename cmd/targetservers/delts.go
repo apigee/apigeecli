@@ -15,12 +15,13 @@
 package targetservers
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/targetservers"
 	"github.com/spf13/cobra"
 )
 
-//DelCmd to delete target servers
+// DelCmd to delete target servers
 var DelCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete a Target Server",

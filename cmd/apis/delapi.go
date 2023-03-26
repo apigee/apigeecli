@@ -15,12 +15,13 @@
 package apis
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/apis"
 	"github.com/spf13/cobra"
 )
 
-//DelCmd to delete api
+// DelCmd to delete api
 var DelCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Deletes an API proxy",

@@ -15,12 +15,13 @@
 package flowhooks
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/flowhooks"
 	"github.com/spf13/cobra"
 )
 
-//Cmd to delete flow hooks
+// Cmd to delete flow hooks
 var DelCmd = &cobra.Command{
 	Use:   "detach",
 	Short: "Detach a flowhook",

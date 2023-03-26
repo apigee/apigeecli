@@ -21,7 +21,10 @@ import (
 	"os"
 	"path"
 
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
+	"internal/clilog"
+
 	"github.com/apigee/apigeecli/client/apis"
 	"github.com/apigee/apigeecli/client/apps"
 	"github.com/apigee/apigeecli/client/datacollectors"
@@ -34,7 +37,6 @@ import (
 	"github.com/apigee/apigeecli/client/references"
 	"github.com/apigee/apigeecli/client/sharedflows"
 	"github.com/apigee/apigeecli/client/targetservers"
-	"github.com/apigee/apigeecli/clilog"
 	"github.com/apigee/apigeecli/cmd/utils"
 	"github.com/spf13/cobra"
 )

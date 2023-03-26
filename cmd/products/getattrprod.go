@@ -15,12 +15,13 @@
 package products
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/products"
 	"github.com/spf13/cobra"
 )
 
-//GetAttrCmd to delete product attribute
+// GetAttrCmd to delete product attribute
 var GetAttrCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Get an attribute of an API product",

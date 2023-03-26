@@ -15,12 +15,13 @@
 package apis
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/apis"
 	"github.com/spf13/cobra"
 )
 
-//UndepCmd to undeloy api
+// UndepCmd to undeloy api
 var UndepCmd = &cobra.Command{
 	Use:   "undeploy",
 	Short: "Undeploys a revision of an existing API proxy",

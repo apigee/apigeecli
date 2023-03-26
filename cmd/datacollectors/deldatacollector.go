@@ -15,12 +15,13 @@
 package datacollectors
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/datacollectors"
 	"github.com/spf13/cobra"
 )
 
-//DelCmd to create a new data collector
+// DelCmd to create a new data collector
 var DelCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete a Data Collector",

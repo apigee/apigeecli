@@ -15,12 +15,13 @@
 package developers
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/developers"
 	"github.com/spf13/cobra"
 )
 
-//Cmd to get developer
+// Cmd to get developer
 var GetCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Returns the profile for a developer by email address or ID",

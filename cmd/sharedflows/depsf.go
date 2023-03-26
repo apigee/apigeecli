@@ -15,12 +15,13 @@
 package sharedflows
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/sharedflows"
 	"github.com/spf13/cobra"
 )
 
-//Cmd to deploy shared flow
+// Cmd to deploy shared flow
 var DepCmd = &cobra.Command{
 	Use:   "deploy",
 	Short: "Deploys a revision of an existing Sharedflow",

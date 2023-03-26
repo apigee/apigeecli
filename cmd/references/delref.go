@@ -15,12 +15,13 @@
 package references
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/references"
 	"github.com/spf13/cobra"
 )
 
-//Cmd to delete reference
+// Cmd to delete reference
 var DelCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete a reference in an environment",

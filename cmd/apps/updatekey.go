@@ -15,12 +15,13 @@
 package apps
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/apps"
 	"github.com/spf13/cobra"
 )
 
-//UpdateKeyCmd to create developer keys
+// UpdateKeyCmd to create developer keys
 var UpdateKeyCmd = &cobra.Command{
 	Use:   "update",
 	Short: "Update a developer app key",

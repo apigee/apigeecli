@@ -15,12 +15,13 @@
 package org
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/orgs"
 	"github.com/spf13/cobra"
 )
 
-//Cmd to set mart endpoint
+// Cmd to set mart endpoint
 var SetAddonCmd = &cobra.Command{
 	Use:   "setaddons",
 	Short: "Enable addons for an Apigee organization",

@@ -18,12 +18,13 @@ import (
 	"fmt"
 	"regexp"
 
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	environments "github.com/apigee/apigeecli/client/env"
 	"github.com/spf13/cobra"
 )
 
-//SetCustCmd to manage custom roles for an env
+// SetCustCmd to manage custom roles for an env
 var SetCustCmd = &cobra.Command{
 	Use:   "setcustom",
 	Short: "Set a custom role for a member on an environment",

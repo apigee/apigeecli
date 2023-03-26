@@ -15,12 +15,13 @@
 package keystores
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/keystores"
 	"github.com/spf13/cobra"
 )
 
-//Cmd to create key stores
+// Cmd to create key stores
 var CreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a Key Store",

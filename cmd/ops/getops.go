@@ -15,12 +15,13 @@
 package ops
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/operations"
 	"github.com/spf13/cobra"
 )
 
-//Cmd to get ops details
+// Cmd to get ops details
 var GetCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Get operation of an org",

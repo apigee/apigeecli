@@ -17,12 +17,13 @@ package references
 import (
 	"fmt"
 
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/references"
 	"github.com/spf13/cobra"
 )
 
-//UpdateCmd to update references
+// UpdateCmd to update references
 var UpdateCmd = &cobra.Command{
 	Use:   "update",
 	Short: "Update a reference in an environment",

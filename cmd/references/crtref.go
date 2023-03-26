@@ -17,12 +17,13 @@ package references
 import (
 	"fmt"
 
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/references"
 	"github.com/spf13/cobra"
 )
 
-//CreateCmd to create references
+// CreateCmd to create references
 var CreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a reference in an environment",

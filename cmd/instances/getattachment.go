@@ -15,12 +15,13 @@
 package instances
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/instances"
 	"github.com/spf13/cobra"
 )
 
-//Cmd to create a new instance
+// Cmd to create a new instance
 var GetAttachCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Get attachment details for an instance",

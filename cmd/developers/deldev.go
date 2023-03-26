@@ -15,12 +15,13 @@
 package developers
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/developers"
 	"github.com/spf13/cobra"
 )
 
-//Cmd to delete developer
+// Cmd to delete developer
 var DelCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Deletes an App Developer from an organization",

@@ -15,12 +15,13 @@
 package products
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/products"
 	"github.com/spf13/cobra"
 )
 
-//Cmd to delete products
+// Cmd to delete products
 var DelCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Deletes an API product from an organization",

@@ -17,12 +17,13 @@ package env
 import (
 	"fmt"
 
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	environments "github.com/apigee/apigeecli/client/env"
 	"github.com/spf13/cobra"
 )
 
-//RemoveRoleCmd to a member from a role
+// RemoveRoleCmd to a member from a role
 var RemoveRoleCmd = &cobra.Command{
 	Use:   "removerole",
 	Short: "Remove a member or SA from a role for an environment",

@@ -15,12 +15,13 @@
 package env
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	environments "github.com/apigee/apigeecli/client/env"
 	"github.com/spf13/cobra"
 )
 
-//ListTraceOverridesCmd to manage tracing of apis
+// ListTraceOverridesCmd to manage tracing of apis
 var ListTraceOverridesCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List Distributed Trace config overrides",

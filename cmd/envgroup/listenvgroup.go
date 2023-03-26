@@ -15,12 +15,13 @@
 package envgroup
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/envgroups"
 	"github.com/spf13/cobra"
 )
 
-//Cmd to list products
+// Cmd to list products
 var ListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "Returns a list of environment groups",

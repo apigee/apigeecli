@@ -15,12 +15,13 @@
 package apps
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/apps"
 	"github.com/spf13/cobra"
 )
 
-//CreateCmd to create app
+// CreateCmd to create app
 var CreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a Developer App",

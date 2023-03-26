@@ -15,14 +15,16 @@
 package overrides
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
+	"internal/clilog"
+
 	"github.com/apigee/apigeecli/client/env"
 	"github.com/apigee/apigeecli/client/envgroups"
-	"github.com/apigee/apigeecli/clilog"
 	"github.com/spf13/cobra"
 )
 
-//DeleteCmd provisions control plane entities for hybrid
+// DeleteCmd provisions control plane entities for hybrid
 var DeleteCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete control plane entities",

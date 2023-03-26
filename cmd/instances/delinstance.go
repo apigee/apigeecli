@@ -15,12 +15,13 @@
 package instances
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/instances"
 	"github.com/spf13/cobra"
 )
 
-//DeleteCmd to get instance
+// DeleteCmd to get instance
 var DeleteCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete an Instance",

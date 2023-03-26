@@ -15,12 +15,13 @@
 package products
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/products"
 	"github.com/spf13/cobra"
 )
 
-//Cmd to create a new product
+// Cmd to create a new product
 var CreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create an API product",

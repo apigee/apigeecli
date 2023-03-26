@@ -15,12 +15,13 @@
 package apps
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/apps"
 	"github.com/spf13/cobra"
 )
 
-//ExpCmd to export apps
+// ExpCmd to export apps
 var ExpCmd = &cobra.Command{
 	Use:   "export",
 	Short: "Export API products to a file",

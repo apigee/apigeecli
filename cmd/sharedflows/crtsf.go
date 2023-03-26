@@ -19,8 +19,10 @@ import (
 	"os"
 	"path"
 
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/bundlegen/proxybundle"
+	"internal/apiclient"
+
+	"internal/bundlegen/proxybundle"
+
 	"github.com/apigee/apigeecli/client/sharedflows"
 	"github.com/spf13/cobra"
 )

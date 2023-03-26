@@ -15,12 +15,13 @@
 package apis
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/apis"
 	"github.com/spf13/cobra"
 )
 
-//ExpCmd to export apis
+// ExpCmd to export apis
 var ExpCmd = &cobra.Command{
 	Use:   "export",
 	Short: "export API proxy bundles from an org",

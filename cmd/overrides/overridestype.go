@@ -18,7 +18,7 @@ import (
 	"encoding/json"
 	"os"
 
-	"github.com/apigee/apigeecli/clilog"
+	"internal/clilog"
 
 	yaml "gopkg.in/yaml.v2"
 )

@@ -22,8 +22,10 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/clilog"
+	"internal/apiclient"
+
+	"internal/clilog"
+
 	"github.com/apigee/apigeecli/cmd/apis"
 	"github.com/apigee/apigeecli/cmd/apps"
 	cache "github.com/apigee/apigeecli/cmd/cache"

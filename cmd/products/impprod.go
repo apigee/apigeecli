@@ -15,12 +15,13 @@
 package products
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/products"
 	"github.com/spf13/cobra"
 )
 
-//Cmd to import products
+// Cmd to import products
 var ImpCmd = &cobra.Command{
 	Use:   "import",
 	Short: "Import a file containing API products",

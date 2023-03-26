@@ -17,7 +17,8 @@ package kvm
 import (
 	"fmt"
 
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/kvm"
 	"github.com/spf13/cobra"
 )

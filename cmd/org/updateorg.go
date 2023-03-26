@@ -17,12 +17,13 @@ package org
 import (
 	"fmt"
 
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/orgs"
 	"github.com/spf13/cobra"
 )
 
-//UpdateCmd to get org details
+// UpdateCmd to get org details
 var UpdateCmd = &cobra.Command{
 	Use:   "update",
 	Short: "Update settings of an Apigee Org",

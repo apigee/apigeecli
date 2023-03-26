@@ -15,12 +15,13 @@
 package products
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/products"
 	"github.com/spf13/cobra"
 )
 
-//DelRatePlanCmd to list envs
+// DelRatePlanCmd to list envs
 var DelRatePlanCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete rate plan associated with the API Product",

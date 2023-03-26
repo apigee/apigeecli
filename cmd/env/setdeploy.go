@@ -17,12 +17,13 @@ package env
 import (
 	"fmt"
 
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	environments "github.com/apigee/apigeecli/client/env"
 	"github.com/spf13/cobra"
 )
 
-//Cmd to manage tracing of apis
+// Cmd to manage tracing of apis
 var SetDepCmd = &cobra.Command{
 	Use:   "setdeploy",
 	Short: "Set Apigee Deployer role for a member on an environment",

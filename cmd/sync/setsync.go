@@ -18,14 +18,15 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/sync"
 	"github.com/spf13/cobra"
 )
 
 //{"identities":["serviceAccount:srinandans-apigee@srinandans-apigee.iam.gserviceaccount.com"]}
 
-//Cmd to set identities
+// Cmd to set identities
 var SetCmd = &cobra.Command{
 	Use:   "set",
 	Short: "Set identity with access to control plane resources",

@@ -15,12 +15,13 @@
 package flowhooks
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/flowhooks"
 	"github.com/spf13/cobra"
 )
 
-//Cmd to create flow hooks
+// Cmd to create flow hooks
 var CreateCmd = &cobra.Command{
 	Use:   "attach",
 	Short: "Attach a flowhook",

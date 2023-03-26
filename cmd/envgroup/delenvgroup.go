@@ -15,7 +15,8 @@
 package envgroup
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/envgroups"
 	"github.com/spf13/cobra"
 )

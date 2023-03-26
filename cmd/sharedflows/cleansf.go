@@ -15,12 +15,13 @@
 package sharedflows
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/sharedflows"
 	"github.com/spf13/cobra"
 )
 
-//CleanCmd to delete sf
+// CleanCmd to delete sf
 var CleanCmd = &cobra.Command{
 	Use:   "clean",
 	Short: "Deletes undeployed/unused reivisions of a Sharedflow",

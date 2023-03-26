@@ -15,12 +15,13 @@
 package apps
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/apps"
 	"github.com/spf13/cobra"
 )
 
-//DelCmd to delete app
+// DelCmd to delete app
 var DelCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Deletes a Developer App from an organization",

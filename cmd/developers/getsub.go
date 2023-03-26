@@ -15,12 +15,13 @@
 package developers
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/developers"
 	"github.com/spf13/cobra"
 )
 
-//GetSubCmd to list developer subscriptions
+// GetSubCmd to list developer subscriptions
 var GetSubCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Returns a Developer subscription",

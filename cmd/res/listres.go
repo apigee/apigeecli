@@ -15,12 +15,13 @@
 package res
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/res"
 	"github.com/spf13/cobra"
 )
 
-//Cmd to list resources
+// Cmd to list resources
 var ListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List all resources in your environment",

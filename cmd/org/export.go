@@ -22,7 +22,10 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
+	"internal/clilog"
+
 	"github.com/apigee/apigeecli/client/apis"
 	"github.com/apigee/apigeecli/client/apps"
 	"github.com/apigee/apigeecli/client/datacollectors"
@@ -37,7 +40,6 @@ import (
 	"github.com/apigee/apigeecli/client/sharedflows"
 	"github.com/apigee/apigeecli/client/sync"
 	"github.com/apigee/apigeecli/client/targetservers"
-	"github.com/apigee/apigeecli/clilog"
 	"github.com/spf13/cobra"
 )
 

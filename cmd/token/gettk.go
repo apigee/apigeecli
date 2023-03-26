@@ -17,12 +17,14 @@ package token
 import (
 	"fmt"
 
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/clilog"
+	"internal/apiclient"
+
+	"internal/clilog"
+
 	"github.com/spf13/cobra"
 )
 
-//GetCmd to generate a new access token
+// GetCmd to generate a new access token
 var GetCmd = &cobra.Command{
 	Use:   "gen",
 	Short: "Generate a new access token",

@@ -15,12 +15,13 @@
 package apis
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/apis"
 	"github.com/spf13/cobra"
 )
 
-//GetCmd to get api details
+// GetCmd to get api details
 var GetCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Gets an API Proxy by name",

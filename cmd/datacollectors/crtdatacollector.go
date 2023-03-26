@@ -17,12 +17,13 @@ package datacollectors
 import (
 	"fmt"
 
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/datacollectors"
 	"github.com/spf13/cobra"
 )
 
-//Cmd to create a new data collector
+// Cmd to create a new data collector
 var CreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a Data Collector",

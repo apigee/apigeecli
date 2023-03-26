@@ -20,8 +20,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/bundlegen/proxybundle"
+	"internal/apiclient"
+
+	"internal/bundlegen/proxybundle"
+
 	"github.com/apigee/apigeecli/client/env"
 	"github.com/apigee/apigeecli/client/operations"
 	"github.com/spf13/cobra"
@@ -46,7 +48,7 @@ type metadata struct {
 	State              string `json:"state,omitempty"`
 }
 
-//CreateArchiveCmd to create env archive
+// CreateArchiveCmd to create env archive
 var CreateArchiveCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a new revision of archive in the environment",

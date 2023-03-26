@@ -15,12 +15,13 @@
 package apis
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/apis"
 	"github.com/spf13/cobra"
 )
 
-//ListKvmCmd to manage tracing of apis
+// ListKvmCmd to manage tracing of apis
 var ListKvmCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List all KVMs for an API proxy",

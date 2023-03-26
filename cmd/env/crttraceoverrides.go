@@ -15,12 +15,13 @@
 package env
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	environments "github.com/apigee/apigeecli/client/env"
 	"github.com/spf13/cobra"
 )
 
-//CrtTraceOverridesCmd to manage tracing of apis
+// CrtTraceOverridesCmd to manage tracing of apis
 var CrtTraceOverridesCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a new Distributed Trace config override",

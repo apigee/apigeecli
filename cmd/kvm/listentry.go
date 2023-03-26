@@ -17,12 +17,13 @@ package kvm
 import (
 	"fmt"
 
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/kvm"
 	"github.com/spf13/cobra"
 )
 
-//ListEntryCmd to list kvm map entries
+// ListEntryCmd to list kvm map entries
 var ListEntryCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List KV Map entries",

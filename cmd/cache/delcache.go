@@ -15,12 +15,13 @@
 package cache
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/cache"
 	"github.com/spf13/cobra"
 )
 
-//Cmd to delete cache
+// Cmd to delete cache
 var DelCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete a cache resource from the environment",

@@ -15,12 +15,13 @@
 package keyaliases
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/keyaliases"
 	"github.com/spf13/cobra"
 )
 
-//Cmd to list key aliases
+// Cmd to list key aliases
 var ListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List Key Aliases",

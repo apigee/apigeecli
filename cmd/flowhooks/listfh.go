@@ -15,12 +15,13 @@
 package flowhooks
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/flowhooks"
 	"github.com/spf13/cobra"
 )
 
-//Cmd to list flow hooks
+// Cmd to list flow hooks
 var ListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List Flowhooks",

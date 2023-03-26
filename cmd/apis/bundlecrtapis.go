@@ -20,8 +20,10 @@ import (
 	"path"
 	"path/filepath"
 
-	"github.com/apigee/apigeecli/apiclient"
-	proxybundle "github.com/apigee/apigeecli/bundlegen/proxybundle"
+	"internal/apiclient"
+
+	proxybundle "internal/bundlegen/proxybundle"
+
 	"github.com/apigee/apigeecli/client/apis"
 	"github.com/spf13/cobra"
 )

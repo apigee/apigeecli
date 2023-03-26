@@ -18,11 +18,12 @@ import (
 	"net/url"
 	"path"
 
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/spf13/cobra"
 )
 
-//TestCmd to manage tracing of apis
+// TestCmd to manage tracing of apis
 var TestCmd = &cobra.Command{
 	Use:   "testiam",
 	Short: "Test IAM policy for a GCP Project",

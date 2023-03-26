@@ -15,12 +15,13 @@
 package eptattachment
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/eptattachment"
 	"github.com/spf13/cobra"
 )
 
-//Cmd to list endpoint attachments
+// Cmd to list endpoint attachments
 var GetCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Get a service endpoint",

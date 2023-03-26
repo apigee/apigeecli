@@ -15,12 +15,13 @@
 package developers
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/developers"
 	"github.com/spf13/cobra"
 )
 
-//Cmd to import developer
+// Cmd to import developer
 var ImpCmd = &cobra.Command{
 	Use:   "import",
 	Short: "Import a file containing App Developers",

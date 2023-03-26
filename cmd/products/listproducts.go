@@ -15,12 +15,13 @@
 package products
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/products"
 	"github.com/spf13/cobra"
 )
 
-//Cmd to list products
+// Cmd to list products
 var ListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "Returns a list of API products",

@@ -15,12 +15,13 @@
 package keystores
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/keystores"
 	"github.com/spf13/cobra"
 )
 
-//Cmd to delete key stores
+// Cmd to delete key stores
 var DelCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete a Key Store",

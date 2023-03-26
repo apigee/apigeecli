@@ -15,12 +15,13 @@
 package developers
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/developers"
 	"github.com/spf13/cobra"
 )
 
-//Cmd to create developer subscription
+// Cmd to create developer subscription
 var CreateSubCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a subcription for a developer",

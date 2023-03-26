@@ -15,12 +15,13 @@
 package references
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/references"
 	"github.com/spf13/cobra"
 )
 
-//ExpCmd to export references
+// ExpCmd to export references
 var ExpCmd = &cobra.Command{
 	Use:   "export",
 	Short: "Export Environment References",

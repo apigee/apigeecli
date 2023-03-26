@@ -15,12 +15,13 @@
 package apis
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/apis"
 	"github.com/spf13/cobra"
 )
 
-//ListCmd to list api
+// ListCmd to list api
 var ListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List APIs in an Apigee Org",

@@ -15,12 +15,13 @@
 package envgroup
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/envgroups"
 	"github.com/spf13/cobra"
 )
 
-//ListAttachCmd to get env group
+// ListAttachCmd to get env group
 var ListAttachCmd = &cobra.Command{
 	Use:   "listattach",
 	Short: "List attachments of an Environment Group",

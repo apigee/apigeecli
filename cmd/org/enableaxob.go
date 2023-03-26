@@ -15,12 +15,13 @@
 package org
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/orgs"
 	"github.com/spf13/cobra"
 )
 
-//Cmd to enable AX obfuscation
+// Cmd to enable AX obfuscation
 var ObCmd = &cobra.Command{
 	Use:   "enable-ax-obfuscation",
 	Short: "Obfuscate analytics fields",

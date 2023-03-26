@@ -15,12 +15,13 @@
 package env
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/env"
 	"github.com/spf13/cobra"
 )
 
-//DelArchiveCmd to list envs
+// DelArchiveCmd to list envs
 var DelArchiveCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete Apigee Archive from the environment",

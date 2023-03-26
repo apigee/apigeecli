@@ -15,12 +15,13 @@
 package apps
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/apps"
 	"github.com/spf13/cobra"
 )
 
-//GetKeyCmd to manage tracing of apis
+// GetKeyCmd to manage tracing of apis
 var GetKeyCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Get a developer app key",

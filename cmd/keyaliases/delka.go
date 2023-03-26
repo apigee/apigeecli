@@ -15,12 +15,13 @@
 package keyaliases
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/keyaliases"
 	"github.com/spf13/cobra"
 )
 
-//Cmd to delete key aliases
+// Cmd to delete key aliases
 var DelCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete a Key Alias",

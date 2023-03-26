@@ -15,12 +15,13 @@
 package org
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/orgs"
 	"github.com/spf13/cobra"
 )
 
-//Cmd to list orgs
+// Cmd to list orgs
 var ListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List the Apigee organizations",

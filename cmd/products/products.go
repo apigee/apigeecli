@@ -18,8 +18,9 @@ import (
 	"encoding/json"
 	"os"
 
+	"internal/clilog"
+
 	"github.com/apigee/apigeecli/client/products"
-	"github.com/apigee/apigeecli/clilog"
 	"github.com/spf13/cobra"
 )
 

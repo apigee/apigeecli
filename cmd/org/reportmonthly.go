@@ -20,12 +20,13 @@ import (
 	"text/tabwriter"
 	"time"
 
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/orgs"
 	"github.com/spf13/cobra"
 )
 
-//MonthlyCmd to get monthly usage
+// MonthlyCmd to get monthly usage
 var MonthlyCmd = &cobra.Command{
 	Use:   "monthly",
 	Short: "Report monthly usage for an Apigee Org",

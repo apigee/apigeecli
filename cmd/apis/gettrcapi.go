@@ -15,12 +15,13 @@
 package apis
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/client/apis"
 	"github.com/spf13/cobra"
 )
 
-//GetTrcCmd to manage tracing of apis
+// GetTrcCmd to manage tracing of apis
 var GetTrcCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Get a debug session for an API proxy revision",
