@@ -20,7 +20,7 @@ import (
 	"path"
 	"testing"
 
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
 )
 
 const proxyName = "test"

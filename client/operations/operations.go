@@ -19,7 +19,7 @@ import (
 	"net/url"
 	"path"
 
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
 )
 
 type ops struct {
@@ -59,7 +59,7 @@ const (
 	Both    OperationCompleteState = "Both"
 )
 
-//Get
+// Get
 func Get(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "operations", name)
@@ -67,7 +67,7 @@ func Get(name string) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//List
+// List
 func List(state string, completeState OperationCompleteState) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "operations")

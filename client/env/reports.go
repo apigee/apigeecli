@@ -25,8 +25,9 @@ import (
 	"text/tabwriter"
 	"time"
 
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/clilog"
+	"internal/apiclient"
+
+	"internal/clilog"
 )
 
 const proxy_dimension = "apiproxy"
@@ -114,12 +115,12 @@ func TotalAPICallsInMonth(environment string, month int, year int) (total int, e
 	return apiCalls, nil
 }
 
-//GetCount
+// GetCount
 func (c *apiCalls) GetCount() int {
 	return c.count
 }
 
-//ResetCount
+// ResetCount
 func (c *apiCalls) ResetCount() {
 	c.Lock()
 	defer c.Unlock()
@@ -127,13 +128,13 @@ func (c *apiCalls) ResetCount() {
 }
 
 // daysIn returns the number of days in a month for a given year.
-//source https://groups.google.com/g/golang-nuts/c/W-ezk71hioo
+// source https://groups.google.com/g/golang-nuts/c/W-ezk71hioo
 func daysIn(m time.Month, year int) int {
 	// This is equivalent to time.daysIn(m, year).
 	return time.Date(year, m+1, 0, 0, 0, 0, 0, time.UTC).Day()
 }
 
-//incrementCount synchronizes counting
+// incrementCount synchronizes counting
 func (c *apiCalls) incrementCount(total int) {
 	c.Lock()
 	defer c.Unlock()

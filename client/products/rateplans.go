@@ -18,10 +18,10 @@ import (
 	"net/url"
 	"path"
 
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
 )
 
-//CreateRatePlan
+// CreateRatePlan
 func CreateRatePlan(productName string, rateplan []byte) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts", productName, "rateplans")
@@ -29,7 +29,7 @@ func CreateRatePlan(productName string, rateplan []byte) (respBody []byte, err e
 	return respBody, err
 }
 
-//DeleteRatePlan
+// DeleteRatePlan
 func DeleteRatePlan(productName string, rateplan string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts", productName, "rateplans", rateplan)
@@ -37,7 +37,7 @@ func DeleteRatePlan(productName string, rateplan string) (respBody []byte, err e
 	return respBody, err
 }
 
-//GetRatePlan
+// GetRatePlan
 func GetRatePlan(productName string, rateplan string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts", productName, "rateplans", rateplan)
@@ -45,7 +45,7 @@ func GetRatePlan(productName string, rateplan string) (respBody []byte, err erro
 	return respBody, err
 }
 
-//ListRatePlan
+// ListRatePlan
 func ListRatePlan(productName string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts", productName, "rateplans")
@@ -53,7 +53,7 @@ func ListRatePlan(productName string) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//ExportRateplan
+// ExportRateplan
 func ExportRateplan(productName string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts", productName, "rateplans")

@@ -23,8 +23,9 @@ import (
 	"strconv"
 	"sync"
 
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/clilog"
+	"internal/apiclient"
+
+	"internal/clilog"
 )
 
 type keyvalueentry struct {

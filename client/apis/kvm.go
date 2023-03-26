@@ -19,10 +19,10 @@ import (
 	"path"
 	"strconv"
 
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
 )
 
-//CreateProxyKVM
+// CreateProxyKVM
 func CreateProxyKVM(proxyName string, name string, encrypted bool) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apis", proxyName, "keyvaluemaps")
@@ -31,7 +31,7 @@ func CreateProxyKVM(proxyName string, name string, encrypted bool) (respBody []b
 	return respBody, err
 }
 
-//DeleteProxyKVM
+// DeleteProxyKVM
 func DeleteProxyKVM(proxyName string, name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apis", name, "keyvaluemaps", name)
@@ -39,7 +39,7 @@ func DeleteProxyKVM(proxyName string, name string) (respBody []byte, err error) 
 	return respBody, err
 }
 
-//ListProxyKVM
+// ListProxyKVM
 func ListProxyKVM(proxyName string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apis", proxyName, "keyvaluemaps")

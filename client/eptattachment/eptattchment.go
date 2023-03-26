@@ -19,10 +19,10 @@ import (
 	"path"
 	"strings"
 
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
 )
 
-//Create
+// Create
 func Create(name string, serviceAttachment string, location string) (respBody []byte, err error) {
 
 	endpointAttachment := []string{}
@@ -43,7 +43,7 @@ func Create(name string, serviceAttachment string, location string) (respBody []
 	return respBody, err
 }
 
-//Get
+// Get
 func Get(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "endpointAttachments", name)
@@ -51,7 +51,7 @@ func Get(name string) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//Delete
+// Delete
 func Delete(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "endpointAttachments", name)
@@ -59,7 +59,7 @@ func Delete(name string) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//List
+// List
 func List() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "endpointAttachments")

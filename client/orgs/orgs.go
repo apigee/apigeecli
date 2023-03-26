@@ -21,21 +21,22 @@ import (
 	"path"
 	"strings"
 
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/clilog"
+	"internal/apiclient"
+
+	"internal/clilog"
 )
 
 var analyticsRegions = [...]string{"asia-east1", "asia-east1", "asia-northeast1", "asia-southeast1",
 	"europe-west1", "us-central1", "us-east1", "us-east4", "us-west1", "australia-southeast1",
 	"europe-west2"}
 
-//OrgProperty contains an individual org flag or property
+// OrgProperty contains an individual org flag or property
 type orgProperty struct {
 	Name  string `json:"name,omitempty"`
 	Value string `json:"value,omitempty"`
 }
 
-//OrgProperties stores all the org feature flags and properties
+// OrgProperties stores all the org feature flags and properties
 type orgProperties struct {
 	Property []orgProperty `json:"property,omitempty"`
 }
@@ -81,7 +82,7 @@ func validRegion(region string) bool {
 	return false
 }
 
-//Create
+// Create
 func Create(region string, network string, runtimeType string, databaseKey string, billingType string, disablePortal bool) (respBody []byte, err error) {
 	const baseURL = "https://apigee.googleapis.com/v1/organizations"
 	var stageBaseURL = "https://staging-apigee.sandbox.googleapis.com/v1/organizations/"
@@ -124,7 +125,7 @@ func Create(region string, network string, runtimeType string, databaseKey strin
 	return respBody, err
 }
 
-//Get
+// Get
 func Get() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg())
@@ -132,7 +133,7 @@ func Get() (respBody []byte, err error) {
 	return respBody, err
 }
 
-//Delete
+// Delete
 func Delete(retension string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	if retension != "" {
@@ -164,14 +165,14 @@ func GetOrgField(key string) (value string, err error) {
 	return fmt.Sprintf("%v", orgMap[key]), nil
 }
 
-//List
+// List
 func List() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
 	return respBody, err
 }
 
-//GetDeployedIngressConfig
+// GetDeployedIngressConfig
 func GetDeployedIngressConfig(view bool) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	if view {
@@ -184,7 +185,7 @@ func GetDeployedIngressConfig(view bool) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//SetOrgProperty is used to set org properties
+// SetOrgProperty is used to set org properties
 func SetOrgProperty(name string, value string) (err error) {
 
 	u, _ := url.Parse(apiclient.BaseURL)
@@ -233,7 +234,7 @@ func SetOrgProperty(name string, value string) (err error) {
 	return err
 }
 
-//Update
+// Update
 func Update(description string, displayName string, region string, network string, runtimeType string, databaseKey string) (respBody []byte, err error) {
 
 	apiclient.SetPrintOutput(false)
@@ -285,7 +286,7 @@ func Update(description string, displayName string, region string, network strin
 	return respBody, err
 }
 
-//SetAddons
+// SetAddons
 func SetAddons(advancedApiOpsConfig bool, integrationConfig bool, monetizationConfig bool, connectorsConfig bool, apiSecurityConfig bool) (respBody []byte, err error) {
 
 	apiclient.SetPrintOutput(false)

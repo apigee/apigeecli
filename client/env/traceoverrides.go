@@ -20,7 +20,7 @@ import (
 	"path"
 	"strings"
 
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
 )
 
 func CreateTraceOverrides(apiproxy string, exporter string, endpoint string, sampler string, sample_rate string) (respBody []byte, err error) {

@@ -19,10 +19,10 @@ import (
 	"path"
 	"strings"
 
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
 )
 
-//ReserveNatIP
+// ReserveNatIP
 func ReserveNatIP(name string, natid string) (respBody []byte, err error) {
 	reserveNat := []string{}
 	reserveNat = append(reserveNat, "\"name\":\""+natid+"\"")
@@ -34,7 +34,7 @@ func ReserveNatIP(name string, natid string) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//ActivateNatIP
+// ActivateNatIP
 func ActivateNatIP(name string, natid string) (respBody []byte, err error) {
 	payload := "{}"
 	u, _ := url.Parse(apiclient.BaseURL)
@@ -43,7 +43,7 @@ func ActivateNatIP(name string, natid string) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//DeleteNatIP
+// DeleteNatIP
 func DeleteNatIP(name string, natid string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "instances", name, "natAddresses", natid)
@@ -51,7 +51,7 @@ func DeleteNatIP(name string, natid string) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//ListNatIPs
+// ListNatIPs
 func ListNatIPs(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "instances", name, "natAddresses")

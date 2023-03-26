@@ -19,7 +19,7 @@ import (
 	"net/url"
 	"path"
 
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
 )
 
 // Create

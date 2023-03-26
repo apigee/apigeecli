@@ -20,7 +20,8 @@ import (
 	"net/url"
 	"path"
 
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/apigee/apigeecli/cmd/utils"
 )
 

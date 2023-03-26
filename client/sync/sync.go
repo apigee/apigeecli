@@ -21,7 +21,7 @@ import (
 	"path"
 	"strings"
 
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
 )
 
 type iAMIdentities struct {
@@ -40,7 +40,7 @@ func validate(i string) string {
 	return "serviceAccount:" + i
 }
 
-//Get
+// Get
 func Get() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg()+":getSyncAuthorization")
@@ -48,7 +48,7 @@ func Get() (respBody []byte, err error) {
 	return respBody, err
 }
 
-//Reset
+// Reset
 func Reset() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg()+":setSyncAuthorization")
@@ -57,7 +57,7 @@ func Reset() (respBody []byte, err error) {
 	return respBody, err
 }
 
-//Set
+// Set
 func Set(identity interface{}) (respBody []byte, err error) {
 
 	u, _ := url.Parse(apiclient.BaseURL)
@@ -108,7 +108,7 @@ func Set(identity interface{}) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//SetList
+// SetList
 func SetList(identities []string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg()+":getSyncAuthorization")
@@ -145,7 +145,7 @@ func SetList(identities []string) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//Remove
+// Remove
 func Remove(identity string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg()+":getSyncAuthorization")

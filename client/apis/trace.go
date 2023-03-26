@@ -21,7 +21,7 @@ import (
 	"path"
 	"strconv"
 
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
 )
 
 func getFilterStr(filter map[string]string) string {
@@ -32,7 +32,7 @@ func getFilterStr(filter map[string]string) string {
 	return b.String()
 }
 
-//CreateTraceSession
+// CreateTraceSession
 func CreateTraceSession(name string, revision int, filter map[string]string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(),
@@ -51,7 +51,7 @@ func CreateTraceSession(name string, revision int, filter map[string]string) (re
 	return respBody, err
 }
 
-//GetTraceSession
+// GetTraceSession
 func GetTraceSession(name string, revision int, sessionID string, messageID string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	if messageID == "" {
@@ -69,7 +69,7 @@ func GetTraceSession(name string, revision int, sessionID string, messageID stri
 	return respBody, err
 }
 
-//ListTracceSession
+// ListTracceSession
 func ListTracceSession(name string, revision int) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(),

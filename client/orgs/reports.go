@@ -20,9 +20,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
+	"internal/clilog"
+
 	"github.com/apigee/apigeecli/client/env"
-	"github.com/apigee/apigeecli/clilog"
 )
 
 func TotalAPICallsInMonth(month int, year int, envDetails bool, conn int) (total int, err error) {

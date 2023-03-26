@@ -20,12 +20,12 @@ import (
 	"path"
 	"strings"
 
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
 )
 
 var validMemberTypes = []string{"serviceAccount", "group", "user", "domain"}
 
-//GetIAM
+// GetIAM
 func GetIAM() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv()+":getIamPolicy")
@@ -33,7 +33,7 @@ func GetIAM() (respBody []byte, err error) {
 	return respBody, err
 }
 
-//SetIAM
+// SetIAM
 func SetIAM(memberName string, permission string, memberType string) (err error) {
 	if !isValidMemberType(memberType) {
 		return fmt.Errorf("Invalid memberType. Valid types are %v", validMemberTypes)
@@ -41,7 +41,7 @@ func SetIAM(memberName string, permission string, memberType string) (err error)
 	return apiclient.SetIAMPermission(memberName, permission, memberType)
 }
 
-//RemoveIAM
+// RemoveIAM
 func RemoveIAM(memberName string, role string) (err error) {
 	parts := strings.Split(memberName, ":")
 	if !isValidMemberType(parts[0]) {
@@ -50,7 +50,7 @@ func RemoveIAM(memberName string, role string) (err error) {
 	return apiclient.RemoveIAMPermission(memberName, role)
 }
 
-//TestIAM
+// TestIAM
 func TestIAM(resource string, verb string) (respBody []byte, err error) {
 	var permission = "apigee." + resource + "." + verb
 	u, _ := url.Parse(apiclient.BaseURL)

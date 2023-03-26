@@ -21,10 +21,10 @@ import (
 	"path"
 	"strings"
 
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
 )
 
-//Create
+// Create
 func Create(deploymentType string, apiProxyType string) (respBody []byte, err error) {
 
 	environment := []string{}
@@ -52,7 +52,7 @@ func Create(deploymentType string, apiProxyType string) (respBody []byte, err er
 	return respBody, err
 }
 
-//Delete
+// Delete
 func Delete() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv())
@@ -60,7 +60,7 @@ func Delete() (respBody []byte, err error) {
 	return respBody, err
 }
 
-//Get
+// Get
 func Get(config bool) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	if config {
@@ -72,7 +72,7 @@ func Get(config bool) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//List
+// List
 func List() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments")
@@ -80,7 +80,7 @@ func List() (respBody []byte, err error) {
 	return respBody, err
 }
 
-//GetDeployments
+// GetDeployments
 func GetDeployments(sharedflows bool) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	if sharedflows {
@@ -118,7 +118,7 @@ func GetAllDeployments() (respBody []byte, err error) {
 	return []byte(payload), err
 }
 
-//GetDeployedConfig
+// GetDeployedConfig
 func GetDeployedConfig() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "deployedConfig")
@@ -126,7 +126,7 @@ func GetDeployedConfig() (respBody []byte, err error) {
 	return respBody, err
 }
 
-//SetEnvProperty is used to set env properties
+// SetEnvProperty is used to set env properties
 func SetEnvProperty(name string, value string) (err error) {
 	//EnvProperty contains an individual org flag or property
 	type envProperty struct {
@@ -193,7 +193,7 @@ func SetEnvProperty(name string, value string) (err error) {
 	return err
 }
 
-//ClearEnvProperties is used to set env properties
+// ClearEnvProperties is used to set env properties
 func ClearEnvProperties() (err error) {
 	//EnvProperty contains an individual org flag or property
 	type envProperty struct {

@@ -21,7 +21,7 @@ import (
 	"path"
 	"strings"
 
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
 )
 
 type traceCfg struct {
@@ -35,7 +35,7 @@ type samplingCfg struct {
 	SamplingRate float64 `json:"samplingRate,omitempty"`
 }
 
-//GetTraceConfig
+// GetTraceConfig
 func GetTraceConfig() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "traceConfig")
@@ -43,7 +43,7 @@ func GetTraceConfig() (respBody []byte, err error) {
 	return respBody, err
 }
 
-//UpdateTraceConfig
+// UpdateTraceConfig
 func UpdateTraceConfig(exporter string, endpoint string, sampler string, sample_rate string) (respBody []byte, err error) {
 	if exporter != "CLOUD_TRACE" && exporter != "JAEGER" {
 		return nil, fmt.Errorf("invalid exporter format. Must be CLOUD_TRACE or JAEGER")

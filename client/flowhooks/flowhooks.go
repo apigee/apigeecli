@@ -20,10 +20,10 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
 )
 
-//Attach
+// Attach
 func Attach(name string, description string, sharedflow string, continueOnErr bool) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 
@@ -47,7 +47,7 @@ func Attach(name string, description string, sharedflow string, continueOnErr bo
 	return respBody, err
 }
 
-//Detach
+// Detach
 func Detach(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "flowhooks", name)
@@ -55,7 +55,7 @@ func Detach(name string) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//Get
+// Get
 func Get(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "flowhooks", name)
@@ -63,7 +63,7 @@ func Get(name string) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//List
+// List
 func List() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "flowhooks")

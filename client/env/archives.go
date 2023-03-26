@@ -21,10 +21,10 @@ import (
 	"path"
 	"strings"
 
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
 )
 
-//generateUploadURL
+// generateUploadURL
 func generateUploadURL() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "archiveDeployments:generateUploadUrl")
@@ -32,7 +32,7 @@ func generateUploadURL() (respBody []byte, err error) {
 	return respBody, err
 }
 
-//CreatetArchive
+// CreatetArchive
 func CreateArchive(name string, zipfile string) (respBody []byte, err error) {
 
 	genUrlJson := make(map[string]interface{})
@@ -76,7 +76,7 @@ func CreateArchive(name string, zipfile string) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//GetArchive
+// GetArchive
 func GetArchive(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "archiveDeployments", name)
@@ -84,7 +84,7 @@ func GetArchive(name string) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//ListArchives
+// ListArchives
 func ListArchives() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "archiveDeployments")
@@ -92,7 +92,7 @@ func ListArchives() (respBody []byte, err error) {
 	return respBody, err
 }
 
-//DeleteArchive
+// DeleteArchive
 func DeleteArchive(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "archiveDeployments", name)

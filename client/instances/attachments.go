@@ -21,10 +21,10 @@ import (
 	"path"
 	"strings"
 
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
 )
 
-//Attach
+// Attach
 func Attach(name string, environment string) (respBody []byte, err error) {
 
 	envgroup := []string{}
@@ -37,7 +37,7 @@ func Attach(name string, environment string) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//DetachEnv
+// DetachEnv
 func DetachEnv(instance string) (respBody []byte, err error) {
 
 	var attachmentName string
@@ -56,7 +56,7 @@ func DetachEnv(instance string) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//func GetEnv
+// func GetEnv
 func GetEnv(instance string) (respBody []byte, err error) {
 	var attachmentName string
 	u, _ := url.Parse(apiclient.BaseURL)
@@ -74,7 +74,7 @@ func GetEnv(instance string) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//Detach
+// Detach
 func Detach(name string, instanceName string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "instances", instanceName, "attachments", name)
@@ -82,7 +82,7 @@ func Detach(name string, instanceName string) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//GetAttach
+// GetAttach
 func GetAttach(name string, instanceName string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "instances", instanceName, "attachments", name)
@@ -90,7 +90,7 @@ func GetAttach(name string, instanceName string) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//ListAttach
+// ListAttach
 func ListAttach(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "instances", name, "attachments")
@@ -98,7 +98,7 @@ func ListAttach(name string) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//getAttachmentName
+// getAttachmentName
 func getAttachmentName(instance string) (attachmentName string, err error) {
 
 	type instanceAttachment struct {

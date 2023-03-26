@@ -19,7 +19,7 @@ import (
 	"path"
 	"strings"
 
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
 )
 
 func CreateSubscription(email string, name string, apiproduct string, startTime string, endTime string) (respBody []byte, err error) {
@@ -39,7 +39,7 @@ func CreateSubscription(email string, name string, apiproduct string, startTime 
 
 }
 
-//ExpireSubscriptions
+// ExpireSubscriptions
 func ExpireSubscriptions(email string, subscription string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", url.QueryEscape(email), "subscriptions", subscription, ":expire") //since developer emails can have +
@@ -47,7 +47,7 @@ func ExpireSubscriptions(email string, subscription string) (respBody []byte, er
 	return respBody, err
 }
 
-//GetSubscriptions
+// GetSubscriptions
 func GetSubscriptions(email string, subscription string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", url.QueryEscape(email), "subscriptions", subscription) //since developer emails can have +
@@ -55,7 +55,7 @@ func GetSubscriptions(email string, subscription string) (respBody []byte, err e
 	return respBody, err
 }
 
-//ListSubscriptions
+// ListSubscriptions
 func ListSubscriptions(email string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", url.QueryEscape(email), "subscriptions") //since developer emails can have +
@@ -63,7 +63,7 @@ func ListSubscriptions(email string) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//ExportSubscriptions
+// ExportSubscriptions
 func ExportSubscriptions(email string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", url.QueryEscape(email), "subscriptions")

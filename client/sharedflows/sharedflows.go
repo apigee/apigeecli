@@ -30,8 +30,9 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/clilog"
+	"internal/apiclient"
+
+	"internal/clilog"
 )
 
 type sharedflows struct {

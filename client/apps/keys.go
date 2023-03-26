@@ -20,10 +20,10 @@ import (
 	"path"
 	"strings"
 
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
 )
 
-//CreateKey
+// CreateKey
 func CreateKey(developerEmail string, appID string, consumerKey string, consumerSecret string, apiProducts []string, scopes []string, attrs map[string]string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 
@@ -65,7 +65,7 @@ func CreateKey(developerEmail string, appID string, consumerKey string, consumer
 	return respBody, err
 }
 
-//DeleteKey
+// DeleteKey
 func DeleteKey(developerEmail string, appName string, key string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", developerEmail, "apps", appName, "keys", key)
@@ -73,7 +73,7 @@ func DeleteKey(developerEmail string, appName string, key string) (respBody []by
 	return respBody, err
 }
 
-//GetKey
+// GetKey
 func GetKey(developerEmail string, appID string, key string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", developerEmail, "apps", appID, "keys", key)
@@ -81,7 +81,7 @@ func GetKey(developerEmail string, appID string, key string) (respBody []byte, e
 	return respBody, err
 }
 
-//UpdateKey
+// UpdateKey
 func UpdateKey(developerEmail string, appID string, consumerKey string, consumerSecret string, apiProducts []string, scopes []string, attrs map[string]string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 

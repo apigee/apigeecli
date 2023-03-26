@@ -20,10 +20,10 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
 )
 
-//Create
+// Create
 func Create(proxyName string, name string, encrypt bool) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	kvm := []string{}
@@ -46,7 +46,7 @@ func Create(proxyName string, name string, encrypt bool) (respBody []byte, err e
 	return respBody, err
 }
 
-//Delete
+// Delete
 func Delete(proxyName string, name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 
@@ -62,7 +62,7 @@ func Delete(proxyName string, name string) (respBody []byte, err error) {
 	return respBody, err
 }
 
-//List
+// List
 func List(proxyName string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	if apiclient.GetApigeeEnv() != "" {
