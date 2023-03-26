@@ -20,7 +20,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//Cmd to update a product
+// Cmd to update a product
 var UpdateCmd = &cobra.Command{
 	Use:   "update",
 	Short: "Update an API product",
@@ -30,7 +30,7 @@ var UpdateCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 
-		p := products.Product{}
+		p := products.APIProduct{}
 
 		p.Name = name
 		p.DisplayName = displayName
