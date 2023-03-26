@@ -20,7 +20,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//Cmd to create a new product
+// Cmd to create a new product
 var CreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create an API product",
@@ -30,7 +30,7 @@ var CreateCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 
-		p := products.Product{}
+		p := products.APIProduct{}
 
 		p.Name = name
 		p.DisplayName = displayName
