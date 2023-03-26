@@ -21,7 +21,8 @@ import (
 
 	"internal/clilog"
 
-	"github.com/apigee/apigeecli/client/products"
+	"internal/client/products"
+
 	"github.com/spf13/cobra"
 )
 

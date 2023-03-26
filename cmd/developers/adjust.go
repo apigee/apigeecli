@@ -17,7 +17,8 @@ package developers
 import (
 	"internal/apiclient"
 
-	"github.com/apigee/apigeecli/client/developers"
+	"internal/client/developers"
+
 	"github.com/spf13/cobra"
 )
 

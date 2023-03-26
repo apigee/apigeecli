@@ -24,8 +24,9 @@ import (
 
 	"internal/bundlegen/proxybundle"
 
-	"github.com/apigee/apigeecli/client/env"
-	"github.com/apigee/apigeecli/client/operations"
+	"internal/client/env"
+	"internal/client/operations"
+
 	"github.com/spf13/cobra"
 )
 

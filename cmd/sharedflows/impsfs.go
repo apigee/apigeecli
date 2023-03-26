@@ -20,7 +20,8 @@ import (
 
 	"internal/apiclient"
 
-	"github.com/apigee/apigeecli/client/sharedflows"
+	"internal/client/sharedflows"
+
 	"github.com/spf13/cobra"
 )
 

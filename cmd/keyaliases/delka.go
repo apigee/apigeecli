@@ -17,7 +17,8 @@ package keyaliases
 import (
 	"internal/apiclient"
 
-	"github.com/apigee/apigeecli/client/keyaliases"
+	"internal/client/keyaliases"
+
 	"github.com/spf13/cobra"
 )
 

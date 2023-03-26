@@ -17,7 +17,8 @@ package flowhooks
 import (
 	"internal/apiclient"
 
-	"github.com/apigee/apigeecli/client/flowhooks"
+	"internal/client/flowhooks"
+
 	"github.com/spf13/cobra"
 )
 

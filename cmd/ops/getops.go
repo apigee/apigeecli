@@ -17,7 +17,8 @@ package ops
 import (
 	"internal/apiclient"
 
-	"github.com/apigee/apigeecli/client/operations"
+	"internal/client/operations"
+
 	"github.com/spf13/cobra"
 )
 

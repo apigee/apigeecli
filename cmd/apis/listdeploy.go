@@ -19,7 +19,8 @@ import (
 
 	"internal/apiclient"
 
-	"github.com/apigee/apigeecli/client/apis"
+	"internal/client/apis"
+
 	"github.com/spf13/cobra"
 )
 

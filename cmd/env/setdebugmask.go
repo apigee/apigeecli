@@ -17,7 +17,8 @@ package env
 import (
 	"internal/apiclient"
 
-	environments "github.com/apigee/apigeecli/client/env"
+	environments "internal/client/env"
+
 	"github.com/spf13/cobra"
 )
 

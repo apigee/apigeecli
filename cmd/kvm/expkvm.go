@@ -22,7 +22,8 @@ import (
 
 	"internal/apiclient"
 
-	"github.com/apigee/apigeecli/client/kvm"
+	"internal/client/kvm"
+
 	"github.com/spf13/cobra"
 )
 

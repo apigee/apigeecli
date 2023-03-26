@@ -6,6 +6,10 @@ require internal/apiclient v1.0.0
 
 replace internal/apiclient => ./internal/apiclient
 
+require internal/client v1.0.0
+
+replace internal/client => ./internal/client
+
 require internal/bundlegen v1.0.0
 
 replace internal/bundlegen => ./internal/bundlegen

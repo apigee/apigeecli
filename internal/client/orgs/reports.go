@@ -24,7 +24,7 @@ import (
 
 	"internal/clilog"
 
-	"github.com/apigee/apigeecli/client/env"
+	"internal/client/env"
 )
 
 func TotalAPICallsInMonth(month int, year int, envDetails bool, conn int) (total int, err error) {

@@ -17,7 +17,8 @@ package sync
 import (
 	"internal/apiclient"
 
-	"github.com/apigee/apigeecli/client/sync"
+	"internal/client/sync"
+
 	"github.com/spf13/cobra"
 )
 

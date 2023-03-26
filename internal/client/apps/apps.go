@@ -29,7 +29,8 @@ import (
 
 	"internal/clilog"
 
-	"github.com/apigee/apigeecli/client/developers"
+	"internal/client/developers"
+
 	"github.com/thedevsaddam/gojsonq"
 )
 

@@ -17,7 +17,8 @@ package references
 import (
 	"internal/apiclient"
 
-	"github.com/apigee/apigeecli/client/references"
+	"internal/client/references"
+
 	"github.com/spf13/cobra"
 )
 

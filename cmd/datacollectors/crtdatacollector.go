@@ -19,7 +19,8 @@ import (
 
 	"internal/apiclient"
 
-	"github.com/apigee/apigeecli/client/datacollectors"
+	"internal/client/datacollectors"
+
 	"github.com/spf13/cobra"
 )
 

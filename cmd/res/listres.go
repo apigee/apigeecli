@@ -17,7 +17,8 @@ package res
 import (
 	"internal/apiclient"
 
-	"github.com/apigee/apigeecli/client/res"
+	"internal/client/res"
+
 	"github.com/spf13/cobra"
 )
 

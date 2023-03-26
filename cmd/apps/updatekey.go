@@ -17,7 +17,8 @@ package apps
 import (
 	"internal/apiclient"
 
-	"github.com/apigee/apigeecli/client/apps"
+	"internal/client/apps"
+
 	"github.com/spf13/cobra"
 )
 

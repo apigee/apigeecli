@@ -21,10 +21,11 @@ import (
 
 	"internal/clilog"
 
-	"github.com/apigee/apigeecli/client/env"
-	"github.com/apigee/apigeecli/client/envgroups"
-	"github.com/apigee/apigeecli/client/orgs"
-	"github.com/apigee/apigeecli/client/sync"
+	"internal/client/env"
+	"internal/client/envgroups"
+	"internal/client/orgs"
+	"internal/client/sync"
+
 	"github.com/spf13/cobra"
 )
 

@@ -17,7 +17,8 @@ package instances
 import (
 	"internal/apiclient"
 
-	"github.com/apigee/apigeecli/client/instances"
+	"internal/client/instances"
+
 	"github.com/spf13/cobra"
 )
 

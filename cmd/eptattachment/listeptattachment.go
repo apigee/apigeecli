@@ -17,7 +17,8 @@ package eptattachment
 import (
 	"internal/apiclient"
 
-	"github.com/apigee/apigeecli/client/eptattachment"
+	"internal/client/eptattachment"
+
 	"github.com/spf13/cobra"
 )
 

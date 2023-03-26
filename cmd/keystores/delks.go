@@ -17,7 +17,8 @@ package keystores
 import (
 	"internal/apiclient"
 
-	"github.com/apigee/apigeecli/client/keystores"
+	"internal/client/keystores"
+
 	"github.com/spf13/cobra"
 )
 

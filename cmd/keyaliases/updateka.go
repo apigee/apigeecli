@@ -19,7 +19,8 @@ import (
 
 	"internal/apiclient"
 
-	"github.com/apigee/apigeecli/client/keyaliases"
+	"internal/client/keyaliases"
+
 	"github.com/apigee/apigeecli/cmd/utils"
 	"github.com/spf13/cobra"
 )
