@@ -198,8 +198,8 @@ func ListAttributes(name string) (respBody []byte, err error) {
 }
 
 // List
-func List(count int, expand bool, filter map[string]string) (respBody []byte, err error) {
-	printSetting := apiclient.GetPrintOutput()
+func List(count int, startKey string, expand bool) (respBody []byte, err error) {
+
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts")
 	q := u.Query()
@@ -211,28 +211,57 @@ func List(count int, expand bool, filter map[string]string) (respBody []byte, er
 	if count != -1 {
 		q.Set("count", strconv.Itoa(count))
 	}
+	if startKey != "" {
+		q.Set("startKey", startKey)
+	}
 
 	u.RawQuery = q.Encode()
 
-	if len(filter) > 0 && filter["proxy"] != "" {
-		apiclient.SetPrintOutput(false)
-	}
-
 	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
 
-	if len(filter) > 0 && filter["proxy"] != "" {
-		prds := apiProducts{}
-		outProducts := apiProducts{}
-		err = json.Unmarshal(respBody, &prds)
+	return respBody, err
+}
+
+// ListFilter
+func ListFilter(filter map[string]string) (respBody []byte, err error) {
+
+	maxProducts := 1000
+	nextPage := true
+	startKey := ""
+	allprds := apiProducts{}
+	outprds := apiProducts{}
+
+	printSetting := apiclient.GetPrintOutput()
+	apiclient.SetPrintOutput(false)
+
+	for nextPage {
+		pageResp, err := List(maxProducts, startKey, true)
 		if err != nil {
 			return nil, err
 		}
-		for _, p := range prds.APIProduct {
+		prds := apiProducts{}
+		err = json.Unmarshal(pageResp, &prds)
+		if err != nil {
+			return nil, err
+		}
+
+		startKey = prds.APIProduct[len(prds.APIProduct)-1].Name
+
+		allprds.APIProduct = append(allprds.APIProduct, prds.APIProduct...)
+
+		// if there is only one item in the list, the there are no more products to fetch
+		if len(prds.APIProduct) == 1 {
+			nextPage = false
+		}
+	}
+
+	if filter["proxy"] != "" {
+		for _, p := range allprds.APIProduct {
 			if p.OperationGroup != nil && len(p.OperationGroup.OperationConfigs) > 0 {
 				if p.OperationGroup.OperationConfigType == "proxy" {
 					for _, o := range p.OperationGroup.OperationConfigs {
 						if o.APISource == filter["proxy"] {
-							outProducts.APIProduct = append(outProducts.APIProduct, p)
+							outprds.APIProduct = append(outprds.APIProduct, p)
 						}
 					}
 				}
@@ -240,16 +269,18 @@ func List(count int, expand bool, filter map[string]string) (respBody []byte, er
 			if p.GraphQLOperationGroup != nil && len(p.GraphQLOperationGroup.OperationConfigs) > 0 {
 				for _, o := range p.GraphQLOperationGroup.OperationConfigs {
 					if o.APISource == filter["proxy"] {
-						outProducts.APIProduct = append(outProducts.APIProduct, p)
+						outprds.APIProduct = append(outprds.APIProduct, p)
 					}
 				}
 			}
 		}
-		respBody, err = json.Marshal(outProducts)
-		apiclient.SetPrintOutput(printSetting)
-		_ = apiclient.PrettyPrint(respBody)
-		return respBody, err
+	} else {
+		outprds = allprds
 	}
+
+	respBody, err = json.Marshal(outprds)
+	apiclient.SetPrintOutput(printSetting)
+	_ = apiclient.PrettyPrint(respBody)
 
 	return respBody, err
 }
