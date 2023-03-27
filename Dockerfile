@@ -15,7 +15,6 @@
 FROM golang:1.20 as builder
 
 ADD ./internal /go/src/apigeecli/internaln
-ADD ./client /go/src/apigeecli/client
 ADD ./cmd /go/src/apigeecli/cmd
 
 COPY main.go /go/src/apigeecli/main.go
