@@ -15,12 +15,14 @@
 package sync
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/sync"
+	"internal/apiclient"
+
+	"internal/client/sync"
+
 	"github.com/spf13/cobra"
 )
 
-//Cmd to get list of identities
+// Cmd to get list of identities
 var GetCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Show the list of identities with access to control plane resources",

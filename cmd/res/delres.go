@@ -15,12 +15,14 @@
 package res
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/res"
+	"internal/apiclient"
+
+	"internal/client/res"
+
 	"github.com/spf13/cobra"
 )
 
-//Cmd to del a resource
+// Cmd to del a resource
 var DelCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete a resource file",

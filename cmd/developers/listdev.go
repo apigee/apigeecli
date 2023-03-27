@@ -15,12 +15,14 @@
 package developers
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/developers"
+	"internal/apiclient"
+
+	"internal/client/developers"
+
 	"github.com/spf13/cobra"
 )
 
-//Cmd to list developer
+// Cmd to list developer
 var ListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "Returns a list of App Developers",

@@ -15,12 +15,14 @@
 package instances
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/instances"
+	"internal/apiclient"
+
+	"internal/client/instances"
+
 	"github.com/spf13/cobra"
 )
 
-//Cmd to list products
+// Cmd to list products
 var ListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "Returns a list of environment groups",

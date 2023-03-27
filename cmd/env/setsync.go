@@ -17,12 +17,14 @@ package env
 import (
 	"fmt"
 
-	"github.com/apigee/apigeecli/apiclient"
-	environments "github.com/apigee/apigeecli/client/env"
+	"internal/apiclient"
+
+	environments "internal/client/env"
+
 	"github.com/spf13/cobra"
 )
 
-//Cmd to manage tracing of apis
+// Cmd to manage tracing of apis
 var SetSyncCmd = &cobra.Command{
 	Use:   "setsync",
 	Short: "Set Synchronization Manager role for a member on an environment",

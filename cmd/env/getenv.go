@@ -15,12 +15,14 @@
 package env
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/env"
+	"internal/apiclient"
+
+	"internal/client/env"
+
 	"github.com/spf13/cobra"
 )
 
-//Cmd to get env details
+// Cmd to get env details
 var GetCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Get properties of an environment",

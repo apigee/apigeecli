@@ -15,12 +15,14 @@
 package res
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/res"
+	"internal/apiclient"
+
+	"internal/client/res"
+
 	"github.com/spf13/cobra"
 )
 
-//Cmd to get a resource
+// Cmd to get a resource
 var GetCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Get a resource file",

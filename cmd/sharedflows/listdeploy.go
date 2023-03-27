@@ -17,12 +17,14 @@ package sharedflows
 import (
 	"fmt"
 
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/sharedflows"
+	"internal/apiclient"
+
+	"internal/client/sharedflows"
+
 	"github.com/spf13/cobra"
 )
 
-//ListDepCmd to list deployed api
+// ListDepCmd to list deployed api
 var ListDepCmd = &cobra.Command{
 	Use:   "listdeploy",
 	Short: "Lists all deployments of a Sharedflow",

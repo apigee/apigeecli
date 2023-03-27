@@ -15,12 +15,14 @@
 package developers
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/developers"
+	"internal/apiclient"
+
+	"internal/client/developers"
+
 	"github.com/spf13/cobra"
 )
 
-//AdjustCmd to list developer subscriptions
+// AdjustCmd to list developer subscriptions
 var AdjustCmd = &cobra.Command{
 	Use:   "adjust",
 	Short: "Adjust the prepaid balance for the developer",

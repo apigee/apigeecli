@@ -17,8 +17,10 @@ package keyaliases
 import (
 	"fmt"
 
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/keyaliases"
+	"internal/apiclient"
+
+	"internal/client/keyaliases"
+
 	"github.com/apigee/apigeecli/cmd/utils"
 	"github.com/spf13/cobra"
 )

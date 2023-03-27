@@ -19,8 +19,10 @@ import (
 	"path"
 	"strings"
 
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/kvm"
+	"internal/apiclient"
+
+	"internal/client/kvm"
+
 	"github.com/apigee/apigeecli/cmd/utils"
 	"github.com/spf13/cobra"
 )

@@ -15,12 +15,14 @@
 package res
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/res"
+	"internal/apiclient"
+
+	"internal/client/res"
+
 	"github.com/spf13/cobra"
 )
 
-//Cmd to create a resource
+// Cmd to create a resource
 var CreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a resource file",

@@ -19,12 +19,14 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/apis"
+	"internal/apiclient"
+
+	"internal/client/apis"
+
 	"github.com/spf13/cobra"
 )
 
-//DepCmd to deploy api
+// DepCmd to deploy api
 var DepCmd = &cobra.Command{
 	Use:   "deploy",
 	Short: "Deploys a revision of an existing API proxy",

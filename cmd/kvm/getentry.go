@@ -17,12 +17,14 @@ package kvm
 import (
 	"fmt"
 
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/kvm"
+	"internal/apiclient"
+
+	"internal/client/kvm"
+
 	"github.com/spf13/cobra"
 )
 
-//GetEntryCmd to create kvm map entry
+// GetEntryCmd to create kvm map entry
 var GetEntryCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Get a KV Map entry",

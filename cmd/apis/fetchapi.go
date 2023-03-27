@@ -15,12 +15,14 @@
 package apis
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/apis"
+	"internal/apiclient"
+
+	"internal/client/apis"
+
 	"github.com/spf13/cobra"
 )
 
-//FetCmd to download api
+// FetCmd to download api
 var FetCmd = &cobra.Command{
 	Use:   "fetch",
 	Short: "Returns a zip-formatted proxy bundle ",

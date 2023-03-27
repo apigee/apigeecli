@@ -15,12 +15,14 @@
 package developers
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/developers"
+	"internal/apiclient"
+
+	"internal/client/developers"
+
 	"github.com/spf13/cobra"
 )
 
-//ExportSubCmd to export developer
+// ExportSubCmd to export developer
 var ExportSubCmd = &cobra.Command{
 	Use:   "export",
 	Short: "Export Developer subscriptions to a file",

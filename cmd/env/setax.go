@@ -17,12 +17,14 @@ package env
 import (
 	"fmt"
 
-	"github.com/apigee/apigeecli/apiclient"
-	environments "github.com/apigee/apigeecli/client/env"
+	"internal/apiclient"
+
+	environments "internal/client/env"
+
 	"github.com/spf13/cobra"
 )
 
-//Cmd to manage tracing of apis
+// Cmd to manage tracing of apis
 var SetAxCmd = &cobra.Command{
 	Use:   "setax",
 	Short: "Set Analytics Agent role for a member on an environment",

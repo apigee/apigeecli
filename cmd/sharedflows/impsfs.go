@@ -18,8 +18,10 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/sharedflows"
+	"internal/apiclient"
+
+	"internal/client/sharedflows"
+
 	"github.com/spf13/cobra"
 )
 

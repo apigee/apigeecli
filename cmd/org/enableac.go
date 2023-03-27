@@ -15,12 +15,14 @@
 package org
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/orgs"
+	"internal/apiclient"
+
+	"internal/client/orgs"
+
 	"github.com/spf13/cobra"
 )
 
-//Cmd to set mart endpoint
+// Cmd to set mart endpoint
 var AcCmd = &cobra.Command{
 	Use:   "enable-apigee-connect",
 	Short: "Enable Apigee Connect for an Apigee Org",

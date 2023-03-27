@@ -15,12 +15,14 @@
 package env
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/env"
+	"internal/apiclient"
+
+	"internal/client/env"
+
 	"github.com/spf13/cobra"
 )
 
-//GetArchiveCmd to list envs
+// GetArchiveCmd to list envs
 var GetArchiveCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Get archive details",

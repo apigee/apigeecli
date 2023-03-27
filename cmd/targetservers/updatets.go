@@ -18,12 +18,14 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/targetservers"
+	"internal/apiclient"
+
+	"internal/client/targetservers"
+
 	"github.com/spf13/cobra"
 )
 
-//UpdateCmd to get target servers
+// UpdateCmd to get target servers
 var UpdateCmd = &cobra.Command{
 	Use:   "update",
 	Short: "Update a Target Server",

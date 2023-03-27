@@ -15,12 +15,14 @@
 package env
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
-	environments "github.com/apigee/apigeecli/client/env"
+	"internal/apiclient"
+
+	environments "internal/client/env"
+
 	"github.com/spf13/cobra"
 )
 
-//UpdateTraceConfigCmd to manage tracing of apis
+// UpdateTraceConfigCmd to manage tracing of apis
 var UpdateTraceConfigCmd = &cobra.Command{
 	Use:   "update",
 	Short: "Update Distributed Trace config for the environment",

@@ -12,12 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM golang:1.19 as builder
-ADD ./apiclient /go/src/apigeecli/apiclient
-ADD ./bundlegen /go/src/apigeecli/bundlegen
+FROM golang:1.20 as builder
+
+ADD ./internal /go/src/apigeecli/internal
 ADD ./client /go/src/apigeecli/client
 ADD ./cmd /go/src/apigeecli/cmd
-ADD ./clilog /go/src/apigeecli/clilog
 
 COPY main.go /go/src/apigeecli/main.go
 COPY go.mod go.sum /go/src/apigeecli/
@@ -30,4 +29,6 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -a -ldflags='-s -w 
 
 FROM google/cloud-sdk:alpine
 COPY --from=builder /go/bin/apigeecli /tmp
+COPY LICENSE.txt /
+COPY third-party-licenses.txt /
 RUN apk --update add jq

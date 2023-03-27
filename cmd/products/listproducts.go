@@ -16,9 +16,10 @@ package products
 
 import (
 	"fmt"
+	"internal/apiclient"
 
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/products"
+	"internal/client/products"
+
 	"github.com/spf13/cobra"
 )
 

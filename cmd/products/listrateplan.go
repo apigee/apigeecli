@@ -15,12 +15,14 @@
 package products
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/products"
+	"internal/apiclient"
+
+	"internal/client/products"
+
 	"github.com/spf13/cobra"
 )
 
-//ListRatePlanCmd to list envs
+// ListRatePlanCmd to list envs
 var ListRatePlanCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List rate plans associated with an API Product",

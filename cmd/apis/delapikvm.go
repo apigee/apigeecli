@@ -15,12 +15,14 @@
 package apis
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/apis"
+	"internal/apiclient"
+
+	"internal/client/apis"
+
 	"github.com/spf13/cobra"
 )
 
-//DelKvmCmd to manage tracing of apis
+// DelKvmCmd to manage tracing of apis
 var DelKvmCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Deletes an API Proxy scoped KVM",

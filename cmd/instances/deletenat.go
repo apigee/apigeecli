@@ -15,12 +15,14 @@
 package instances
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/instances"
+	"internal/apiclient"
+
+	"internal/client/instances"
+
 	"github.com/spf13/cobra"
 )
 
-//DeleteNatCmd activates NAT for an Apigee instance
+// DeleteNatCmd activates NAT for an Apigee instance
 var DeleteNatCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete a NAT IP for an Apigee instance",

@@ -15,11 +15,12 @@
 package iam
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/spf13/cobra"
 )
 
-//WidCmd to get org details
+// WidCmd to get org details
 var WidCmd = &cobra.Command{
 	Use:   "addwid",
 	Short: "Provide WID role to a Service Account for Apigee Runtime",

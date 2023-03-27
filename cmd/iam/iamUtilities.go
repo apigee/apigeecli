@@ -21,10 +21,10 @@ import (
 
 func GenerateName(prefix string) string {
 	const letterBytes = "abcdefghijklmnopqrstuvwxyz0123456789"
-	rand.Seed(time.Now().UnixNano())
+	r := rand.New(rand.NewSource(time.Now().UTC().UnixNano()))
 	b := make([]byte, 7) //7 random chars
 	for i := range b {
-		b[i] = letterBytes[rand.Intn(len(letterBytes))]
+		b[i] = letterBytes[r.Intn(len(letterBytes))]
 	}
 	return prefix + string(b)
 }

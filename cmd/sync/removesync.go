@@ -18,14 +18,16 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/sync"
+	"internal/apiclient"
+
+	"internal/client/sync"
+
 	"github.com/spf13/cobra"
 )
 
 //{"identities":["serviceAccount:srinandans-apigee@srinandans-apigee.iam.gserviceaccount.com"]}
 
-//Cmd to set identities
+// Cmd to set identities
 var RemoveCmd = &cobra.Command{
 	Use:   "remove",
 	Short: "Remove identity with access to control plane resources",

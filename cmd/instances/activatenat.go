@@ -15,12 +15,14 @@
 package instances
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/instances"
+	"internal/apiclient"
+
+	"internal/client/instances"
+
 	"github.com/spf13/cobra"
 )
 
-//ActivateNatCmd activates NAT for an Apigee instance
+// ActivateNatCmd activates NAT for an Apigee instance
 var ActivateNatCmd = &cobra.Command{
 	Use:   "activate",
 	Short: "Activate NAT IP for an Apigee instance",

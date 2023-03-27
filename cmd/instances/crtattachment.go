@@ -15,12 +15,14 @@
 package instances
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/instances"
+	"internal/apiclient"
+
+	"internal/client/instances"
+
 	"github.com/spf13/cobra"
 )
 
-//Cmd to create a new instance
+// Cmd to create a new instance
 var CreateAttachCmd = &cobra.Command{
 	Use:   "attach",
 	Short: "Attach an environment to an instance",

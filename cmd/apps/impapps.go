@@ -15,12 +15,14 @@
 package apps
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/apps"
+	"internal/apiclient"
+
+	"internal/client/apps"
+
 	"github.com/spf13/cobra"
 )
 
-//ImpCmd to import apps
+// ImpCmd to import apps
 var ImpCmd = &cobra.Command{
 	Use:   "import",
 	Short: "Import a file containing Developer Apps",

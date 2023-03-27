@@ -15,12 +15,14 @@
 package sync
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/sync"
+	"internal/apiclient"
+
+	"internal/client/sync"
+
 	"github.com/spf13/cobra"
 )
 
-//Cmd to set identities
+// Cmd to set identities
 var ResetCmd = &cobra.Command{
 	Use:   "reset",
 	Short: "Reset identities with access to control plane resources",

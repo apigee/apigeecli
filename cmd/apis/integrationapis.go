@@ -17,9 +17,11 @@ package apis
 import (
 	"os"
 
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/bundlegen"
-	"github.com/apigee/apigeecli/bundlegen/proxybundle"
+	"internal/apiclient"
+
+	"internal/bundlegen"
+	"internal/bundlegen/proxybundle"
+
 	"github.com/spf13/cobra"
 )
 

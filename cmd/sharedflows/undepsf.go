@@ -15,12 +15,14 @@
 package sharedflows
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/sharedflows"
+	"internal/apiclient"
+
+	"internal/client/sharedflows"
+
 	"github.com/spf13/cobra"
 )
 
-//Cmd to undeploy shared flow
+// Cmd to undeploy shared flow
 var UndepCmd = &cobra.Command{
 	Use:   "undeploy",
 	Short: "Undeploys a revision of an existing API proxy",

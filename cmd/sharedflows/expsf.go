@@ -15,12 +15,14 @@
 package sharedflows
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/sharedflows"
+	"internal/apiclient"
+
+	"internal/client/sharedflows"
+
 	"github.com/spf13/cobra"
 )
 
-//Cmd to export shared flows
+// Cmd to export shared flows
 var ExpCmd = &cobra.Command{
 	Use:   "export",
 	Short: "export Sharedflow bundles from an org",

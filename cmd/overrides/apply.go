@@ -17,16 +17,19 @@ package overrides
 import (
 	"fmt"
 
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/env"
-	"github.com/apigee/apigeecli/client/envgroups"
-	"github.com/apigee/apigeecli/client/orgs"
-	"github.com/apigee/apigeecli/client/sync"
-	"github.com/apigee/apigeecli/clilog"
+	"internal/apiclient"
+
+	"internal/clilog"
+
+	"internal/client/env"
+	"internal/client/envgroups"
+	"internal/client/orgs"
+	"internal/client/sync"
+
 	"github.com/spf13/cobra"
 )
 
-//ApplyCmd provisions control plane entities for hybrid
+// ApplyCmd provisions control plane entities for hybrid
 var ApplyCmd = &cobra.Command{
 	Use:   "apply",
 	Short: "Apply control plane entities",

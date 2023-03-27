@@ -15,12 +15,14 @@
 package targetservers
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/targetservers"
+	"internal/apiclient"
+
+	"internal/client/targetservers"
+
 	"github.com/spf13/cobra"
 )
 
-//Cmd to list target servers
+// Cmd to list target servers
 var ListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List Target Servers",

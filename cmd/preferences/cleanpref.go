@@ -15,11 +15,12 @@
 package preferences
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/spf13/cobra"
 )
 
-//Cmd to get org details
+// Cmd to get org details
 var CleanCmd = &cobra.Command{
 	Use:   "remove",
 	Short: "Remove preferences file from the home dir",

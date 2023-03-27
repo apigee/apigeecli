@@ -15,12 +15,14 @@
 package instances
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/instances"
+	"internal/apiclient"
+
+	"internal/client/instances"
+
 	"github.com/spf13/cobra"
 )
 
-//Cmd to create a new instance
+// Cmd to create a new instance
 var DeleteAttachCmd = &cobra.Command{
 	Use:   "detach",
 	Short: "Detach an environment from an instance",

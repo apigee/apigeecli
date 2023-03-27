@@ -17,9 +17,12 @@ package products
 import (
 	"os"
 
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/products"
-	"github.com/apigee/apigeecli/clilog"
+	"internal/apiclient"
+
+	"internal/clilog"
+
+	"internal/client/products"
+
 	"github.com/spf13/cobra"
 )
 

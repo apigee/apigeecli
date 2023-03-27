@@ -15,12 +15,14 @@
 package developers
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/developers"
+	"internal/apiclient"
+
+	"internal/client/developers"
+
 	"github.com/spf13/cobra"
 )
 
-//ExpSubCmd to expire a developer subscription
+// ExpSubCmd to expire a developer subscription
 var ExpSubCmd = &cobra.Command{
 	Use:   "expire",
 	Short: "Expires a Developer subscription",

@@ -17,12 +17,14 @@ package env
 import (
 	"strconv"
 
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/env"
+	"internal/apiclient"
+
+	"internal/client/env"
+
 	"github.com/spf13/cobra"
 )
 
-//Cmd to enable AX obfuscation
+// Cmd to enable AX obfuscation
 var ObCmd = &cobra.Command{
 	Use:   "ax-obfuscation",
 	Short: "Obfuscate analytics fields",

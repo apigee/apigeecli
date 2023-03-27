@@ -17,12 +17,14 @@ package apis
 import (
 	"fmt"
 
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/apis"
+	"internal/apiclient"
+
+	"internal/client/apis"
+
 	"github.com/spf13/cobra"
 )
 
-//ListDepCmd to list deployed api
+// ListDepCmd to list deployed api
 var ListDepCmd = &cobra.Command{
 	Use:   "listdeploy",
 	Short: "Lists all deployments of an API proxy",

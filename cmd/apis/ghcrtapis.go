@@ -19,10 +19,14 @@ import (
 	"os"
 	"regexp"
 
-	"github.com/apigee/apigeecli/apiclient"
-	proxybundle "github.com/apigee/apigeecli/bundlegen/proxybundle"
-	"github.com/apigee/apigeecli/client/apis"
-	"github.com/apigee/apigeecli/clilog"
+	"internal/apiclient"
+
+	"internal/clilog"
+
+	proxybundle "internal/bundlegen/proxybundle"
+
+	"internal/client/apis"
+
 	"github.com/spf13/cobra"
 )
 

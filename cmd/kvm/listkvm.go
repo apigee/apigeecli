@@ -17,12 +17,14 @@ package kvm
 import (
 	"fmt"
 
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/kvm"
+	"internal/apiclient"
+
+	"internal/client/kvm"
+
 	"github.com/spf13/cobra"
 )
 
-//Cmd to list kvms
+// Cmd to list kvms
 var ListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "Returns a list of KVMs",

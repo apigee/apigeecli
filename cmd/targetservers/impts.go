@@ -15,12 +15,14 @@
 package targetservers
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/targetservers"
+	"internal/apiclient"
+
+	"internal/client/targetservers"
+
 	"github.com/spf13/cobra"
 )
 
-//ImpCmd to import ts
+// ImpCmd to import ts
 var ImpCmd = &cobra.Command{
 	Use:   "import",
 	Short: "Import a file containing target servers",

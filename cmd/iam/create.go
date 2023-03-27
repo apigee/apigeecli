@@ -18,11 +18,12 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/apigee/apigeecli/apiclient"
+	"internal/apiclient"
+
 	"github.com/spf13/cobra"
 )
 
-//Cmd to get org details
+// Cmd to get org details
 var CallCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a new IAM Service Account with permissions for Apigee Runtime",

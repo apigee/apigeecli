@@ -15,12 +15,14 @@
 package developers
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/developers"
+	"internal/apiclient"
+
+	"internal/client/developers"
+
 	"github.com/spf13/cobra"
 )
 
-//CreditCmd to list developer subscriptions
+// CreditCmd to list developer subscriptions
 var CreditCmd = &cobra.Command{
 	Use:   "credit",
 	Short: "Credits the account balance for the developer",

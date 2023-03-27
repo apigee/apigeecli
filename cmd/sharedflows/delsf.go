@@ -15,12 +15,14 @@
 package sharedflows
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/sharedflows"
+	"internal/apiclient"
+
+	"internal/client/sharedflows"
+
 	"github.com/spf13/cobra"
 )
 
-//Cmd to delete shared flow
+// Cmd to delete shared flow
 var DelCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Deletes a shared flow",

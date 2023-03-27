@@ -15,12 +15,14 @@
 package cache
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/cache"
+	"internal/apiclient"
+
+	"internal/client/cache"
+
 	"github.com/spf13/cobra"
 )
 
-//Cmd to list caches
+// Cmd to list caches
 var ListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List all caches in your environment",

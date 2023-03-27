@@ -15,12 +15,14 @@
 package apps
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/apps"
+	"internal/apiclient"
+
+	"internal/client/apps"
+
 	"github.com/spf13/cobra"
 )
 
-//DeleteKeyCmd to manage tracing of apis
+// DeleteKeyCmd to manage tracing of apis
 var DeleteKeyCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete a developer app key",

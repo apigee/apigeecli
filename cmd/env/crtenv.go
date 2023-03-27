@@ -15,12 +15,14 @@
 package env
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/env"
+	"internal/apiclient"
+
+	"internal/client/env"
+
 	"github.com/spf13/cobra"
 )
 
-//Cmd to get env details
+// Cmd to get env details
 var CreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a new environment",

@@ -15,12 +15,14 @@
 package envgroup
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/envgroups"
+	"internal/apiclient"
+
+	"internal/client/envgroups"
+
 	"github.com/spf13/cobra"
 )
 
-//Cmd to create a new product
+// Cmd to create a new product
 var CreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create an Environment Group",

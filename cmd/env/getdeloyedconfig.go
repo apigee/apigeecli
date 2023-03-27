@@ -15,12 +15,14 @@
 package env
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
-	environments "github.com/apigee/apigeecli/client/env"
+	"internal/apiclient"
+
+	environments "internal/client/env"
+
 	"github.com/spf13/cobra"
 )
 
-//GetConfigCmd to get deployed apis in an env
+// GetConfigCmd to get deployed apis in an env
 var GetConfigCmd = &cobra.Command{
 	Use:   "config",
 	Short: "Get deployment configuration for an Environment",

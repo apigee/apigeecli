@@ -15,12 +15,14 @@
 package targetservers
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/targetservers"
+	"internal/apiclient"
+
+	"internal/client/targetservers"
+
 	"github.com/spf13/cobra"
 )
 
-//ExpCmd to export target servers
+// ExpCmd to export target servers
 var ExpCmd = &cobra.Command{
 	Use:   "export",
 	Short: "Export target servers to a file",

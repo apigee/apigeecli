@@ -15,8 +15,10 @@
 package products
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/products"
+	"internal/apiclient"
+
+	"internal/client/products"
+
 	"github.com/spf13/cobra"
 )
 

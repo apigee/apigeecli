@@ -15,12 +15,14 @@
 package apps
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/apps"
+	"internal/apiclient"
+
+	"internal/client/apps"
+
 	"github.com/spf13/cobra"
 )
 
-//GenKeyCmd to generate key
+// GenKeyCmd to generate key
 var GenKeyCmd = &cobra.Command{
 	Use:   "genkey",
 	Short: "Generate a new developer KeyPair",

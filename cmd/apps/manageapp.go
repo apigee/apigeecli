@@ -15,12 +15,14 @@
 package apps
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/apps"
+	"internal/apiclient"
+
+	"internal/client/apps"
+
 	"github.com/spf13/cobra"
 )
 
-//ManageCmd to create developer keys
+// ManageCmd to create developer keys
 var ManageCmd = &cobra.Command{
 	Use:   "manage",
 	Short: "Approve or revoke a developer app",

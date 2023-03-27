@@ -15,12 +15,14 @@
 package env
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/env"
+	"internal/apiclient"
+
+	"internal/client/env"
+
 	"github.com/spf13/cobra"
 )
 
-//DelCmd to delete env
+// DelCmd to delete env
 var DelCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete an environment",

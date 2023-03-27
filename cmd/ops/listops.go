@@ -17,12 +17,14 @@ package ops
 import (
 	"fmt"
 
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/operations"
+	"internal/apiclient"
+
+	"internal/client/operations"
+
 	"github.com/spf13/cobra"
 )
 
-//Cmd to list envs
+// Cmd to list envs
 var ListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List operations in an Apigee Org",

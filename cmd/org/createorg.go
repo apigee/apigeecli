@@ -17,12 +17,14 @@ package org
 import (
 	"fmt"
 
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/orgs"
+	"internal/apiclient"
+
+	"internal/client/orgs"
+
 	"github.com/spf13/cobra"
 )
 
-//Cmd to get org details
+// Cmd to get org details
 var CreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a new Apigee Org",

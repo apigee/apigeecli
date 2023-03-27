@@ -92,6 +92,8 @@ printf "\n"
 cd "$HOME" || exit
 mkdir -p "$HOME/.apigeecli/bin"
 mv "${tmp}/apigeecli_${APIGEECLI_VERSION}_${OSEXT}_${APIGEECLI_ARCH}/apigeecli" "$HOME/.apigeecli/bin"
+mv "${tmp}/apigeecli_${APIGEECLI_VERSION}_${OSEXT}_${APIGEECLI_ARCH}/LICENSE.txt" "$HOME/.apigeecli/LICENSE.txt"
+
 printf "Copied apigeecli into the $HOME/.apigeecli/bin folder.\n"
 chmod +x "$HOME/.apigeecli/bin/apigeecli"
 rm -r "${tmp}"

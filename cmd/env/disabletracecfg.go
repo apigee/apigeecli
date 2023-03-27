@@ -15,12 +15,14 @@
 package env
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
-	environments "github.com/apigee/apigeecli/client/env"
+	"internal/apiclient"
+
+	environments "internal/client/env"
+
 	"github.com/spf13/cobra"
 )
 
-//DisableTraceConfigCmd to manage tracing of apis
+// DisableTraceConfigCmd to manage tracing of apis
 var DisableTraceConfigCmd = &cobra.Command{
 	Use:   "disable",
 	Short: "Disable Distributed Trace config for the environment",

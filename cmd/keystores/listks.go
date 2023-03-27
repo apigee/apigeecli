@@ -15,12 +15,14 @@
 package keystores
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/keystores"
+	"internal/apiclient"
+
+	"internal/client/keystores"
+
 	"github.com/spf13/cobra"
 )
 
-//Cmd to list key stores
+// Cmd to list key stores
 var ListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List Key Stores",

@@ -15,12 +15,14 @@
 package apis
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/apis"
+	"internal/apiclient"
+
+	"internal/client/apis"
+
 	"github.com/spf13/cobra"
 )
 
-//CleanCmd to delete api
+// CleanCmd to delete api
 var CleanCmd = &cobra.Command{
 	Use:   "clean",
 	Short: "Deletes undeployed/unused revisions of an API proxy",

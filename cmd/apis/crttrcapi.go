@@ -15,12 +15,14 @@
 package apis
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/apis"
+	"internal/apiclient"
+
+	"internal/client/apis"
+
 	"github.com/spf13/cobra"
 )
 
-//CreateTrcCmd to manage tracing of apis
+// CreateTrcCmd to manage tracing of apis
 var CreateTrcCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a new debug session for an API proxy",

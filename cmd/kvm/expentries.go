@@ -19,13 +19,16 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/kvm"
-	"github.com/apigee/apigeecli/clilog"
+	"internal/apiclient"
+
+	"internal/clilog"
+
+	"internal/client/kvm"
+
 	"github.com/spf13/cobra"
 )
 
-//ExpEntryCmd to export map entries to files
+// ExpEntryCmd to export map entries to files
 var ExpEntryCmd = &cobra.Command{
 	Use:   "export",
 	Short: "Export KV Map entries",

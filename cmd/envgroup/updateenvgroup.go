@@ -15,12 +15,14 @@
 package envgroup
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/envgroups"
+	"internal/apiclient"
+
+	"internal/client/envgroups"
+
 	"github.com/spf13/cobra"
 )
 
-//UpdateCmd to create a new product
+// UpdateCmd to create a new product
 var UpdateCmd = &cobra.Command{
 	Use:   "update",
 	Short: "Update hostnames in an Environment Group",

@@ -15,12 +15,14 @@
 package apps
 
 import (
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/apps"
+	"internal/apiclient"
+
+	"internal/client/apps"
+
 	"github.com/spf13/cobra"
 )
 
-//ListCmd to list apps
+// ListCmd to list apps
 var ListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "Returns a list of Developer Applications",

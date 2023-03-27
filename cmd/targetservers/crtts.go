@@ -18,12 +18,14 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/targetservers"
+	"internal/apiclient"
+
+	"internal/client/targetservers"
+
 	"github.com/spf13/cobra"
 )
 
-//CreateCmd to create target servers
+// CreateCmd to create target servers
 var CreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a Target Server",

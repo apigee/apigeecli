@@ -18,9 +18,11 @@ import (
 	"fmt"
 	"regexp"
 
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/instances"
-	"github.com/apigee/apigeecli/client/orgs"
+	"internal/apiclient"
+
+	"internal/client/instances"
+	"internal/client/orgs"
+
 	"github.com/spf13/cobra"
 )
 

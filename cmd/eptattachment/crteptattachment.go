@@ -18,12 +18,14 @@ import (
 	"fmt"
 	"regexp"
 
-	"github.com/apigee/apigeecli/apiclient"
-	"github.com/apigee/apigeecli/client/eptattachment"
+	"internal/apiclient"
+
+	"internal/client/eptattachment"
+
 	"github.com/spf13/cobra"
 )
 
-//Cmd to list endpoint attachments
+// Cmd to list endpoint attachments
 var CreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a new service endpoint",
