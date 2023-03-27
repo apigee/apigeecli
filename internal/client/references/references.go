@@ -329,7 +329,7 @@ func importReferences(knownRefs map[string]bool, wg *sync.WaitGroup, jobs <-chan
 		if err != nil {
 			errs <- err
 			continue
-		} else if resp.StatusCode%100 != 2 {
+		} else if resp.StatusCode/100 != 2 && resp.StatusCode != http.StatusConflict {
 			errs <- fmt.Errorf("failed to import reference, apigee returned HTTP %d: %s", resp.StatusCode, resp.Status)
 			continue
 		}

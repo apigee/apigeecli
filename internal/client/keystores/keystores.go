@@ -141,7 +141,7 @@ func importKeystores(wg *sync.WaitGroup, jobs <-chan string, errs chan<- error) 
 		if err != nil {
 			errs <- err
 			continue
-		} else if resp.StatusCode%100 != 2 && resp.StatusCode != http.StatusConflict {
+		} else if resp.StatusCode/100 != 2 && resp.StatusCode != http.StatusConflict {
 			// We ignore 409s as the only configurable parameter of a keystore is it's name. Hence if it already exists
 			// then it is consistent with what is being imported.
 			errs <- fmt.Errorf("apigee responded with HTTP %d: %s", resp.StatusCode, resp.Status)
