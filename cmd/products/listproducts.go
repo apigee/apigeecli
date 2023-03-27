@@ -32,13 +32,17 @@ var ListCmd = &cobra.Command{
 		if len(filter) > 1 {
 			return fmt.Errorf("invalid filter options. Only proxies are supported")
 		}
-		if len(filter) == 1 && (filter["proxy"] == "" || !expand || count != -1) {
+		if len(filter) == 1 && (filter["proxy"] == "") {
 			return fmt.Errorf("invalid filter options. Filter option must be proxies, expand must be set to true and count cannot be set")
 		}
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = products.List(count, expand, filter)
+		if len(filter) > 0 {
+			_, err = products.ListFilter(filter)
+		} else {
+			_, err = products.List(count, startKey, expand)
+		}
 		return
 
 	},
@@ -47,6 +51,7 @@ var ListCmd = &cobra.Command{
 var expand = false
 var count int
 var filter map[string]string
+var startKey string
 
 func init() {
 
@@ -55,6 +60,9 @@ func init() {
 
 	ListCmd.Flags().IntVarP(&count, "count", "c",
 		-1, "Number of products; limit is 1000")
+
+	ListCmd.Flags().StringVarP(&startKey, "start", "s",
+		"", "Set an API Product name as the start key")
 
 	ListCmd.Flags().StringToStringVarP(&filter, "filter", "",
 		nil, "Add a filter condition. Ex: proxies=foo will return products that contain the proxy foo")
