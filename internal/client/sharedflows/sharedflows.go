@@ -370,7 +370,7 @@ func exportSharedFlows(wg *sync.WaitGroup, jobs <-chan revision, folder string, 
 			continue
 		}
 
-		c, err := apiclient.GetHttpClient()
+		err = apiclient.GetHttpClient()
 		if err != nil {
 			errs <- err
 			continue
@@ -386,7 +386,7 @@ func exportSharedFlows(wg *sync.WaitGroup, jobs <-chan revision, folder string, 
 			continue
 		}
 
-		resp, err := c.Do(req)
+		resp, err := apiclient.ApigeeAPIClient.Do(req)
 		if err != nil {
 			errs <- err
 			continue
@@ -501,7 +501,7 @@ func importSharedFlows(wg *sync.WaitGroup, jobs <-chan string, errs chan<- error
 		fd.Close()
 		w.Close()
 
-		c, err := apiclient.GetHttpClient()
+		err = apiclient.GetHttpClient()
 		if err != nil {
 			errs <- err
 			continue
@@ -518,7 +518,7 @@ func importSharedFlows(wg *sync.WaitGroup, jobs <-chan string, errs chan<- error
 		}
 		req.Header.Add("Content-Type", w.FormDataContentType())
 
-		resp, err := c.Do(req)
+		resp, err := apiclient.ApigeeAPIClient.Do(req)
 		if err != nil {
 			errs <- err
 			continue
