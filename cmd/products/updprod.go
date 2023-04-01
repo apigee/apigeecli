@@ -55,6 +55,11 @@ var UpdateCmd = &cobra.Command{
 			return nil
 		}
 
+		p.GrpcOperationGroup, err = getGrpcOperationGroup(grpcOperationGroupFile)
+		if err != nil {
+			return nil
+		}
+
 		p.Attributes = getAttributes(attrs)
 
 		_, err = products.Update(p)
@@ -91,6 +96,8 @@ func init() {
 		"", "File containing Operation Group JSON. See samples for how to create the file")
 	UpdateCmd.Flags().StringVarP(&gqlOperationGroupFile, "gqlopgrp", "",
 		"", "File containing GraphQL Operation Group JSON. See samples for how to create the file")
+	UpdateCmd.Flags().StringVarP(&grpcOperationGroupFile, "grpcopgrp", "",
+		"", "File containing gRPC Operation Group JSON. See samples for how to create the file")
 	//TODO: apiresource -r later
 
 	_ = UpdateCmd.MarkFlagRequired("name")

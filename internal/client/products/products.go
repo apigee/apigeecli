@@ -49,6 +49,7 @@ type APIProduct struct {
 	APIResources          []string               `json:"apiResources,omitempty"`
 	OperationGroup        *OperationGroup        `json:"operationGroup,omitempty"`
 	GraphQLOperationGroup *GraphqlOperationGroup `json:"graphqlOperationGroup,omitempty"`
+	GrpcOperationGroup    *GrpcOperationGroup    `json:"grpcOperationGroup,omitempty"`
 	Environments          []string               `json:"environments,omitempty"`
 	Proxies               []string               `json:"proxies,omitempty"`
 	Quota                 string                 `json:"quota,omitempty"`
@@ -67,6 +68,11 @@ type GraphqlOperationGroup struct {
 	OperationConfigType string                   `json:"operationConfigType,omitempty"`
 }
 
+type GrpcOperationGroup struct {
+	OperationConfigs    []grpcOperationConfig `json:"operationConfigs,omitempty"`
+	OperationConfigType string                `json:"operationConfigType,omitempty"`
+}
+
 type operationConfig struct {
 	APISource  string      `json:"apiSource,omitempty"`
 	Operations []operation `json:"operations,omitempty"`
@@ -79,6 +85,13 @@ type graphQLOperationConfig struct {
 	Operations []graphQLoperation `json:"operations,omitempty"`
 	Quota      *quota             `json:"quota,omitempty"`
 	Attributes []Attribute        `json:"attributes,omitempty"`
+}
+
+type grpcOperationConfig struct {
+	APISource  string      `json:"apiSource,omitempty"`
+	Methods    []string    `json:"grpcOperation,omitempty"`
+	Quota      *quota      `json:"quota,omitempty"`
+	Attributes []Attribute `json:"attributes,omitempty"`
 }
 
 type operation struct {
@@ -268,6 +281,13 @@ func ListFilter(filter map[string]string) (respBody []byte, err error) {
 			}
 			if p.GraphQLOperationGroup != nil && len(p.GraphQLOperationGroup.OperationConfigs) > 0 {
 				for _, o := range p.GraphQLOperationGroup.OperationConfigs {
+					if o.APISource == filter["proxy"] {
+						outprds.APIProduct = append(outprds.APIProduct, p)
+					}
+				}
+			}
+			if p.GrpcOperationGroup != nil && len(p.GraphQLOperationGroup.OperationConfigs) > 0 {
+				for _, o := range p.GrpcOperationGroup.OperationConfigs {
 					if o.APISource == filter["proxy"] {
 						outprds.APIProduct = append(outprds.APIProduct, p)
 					}

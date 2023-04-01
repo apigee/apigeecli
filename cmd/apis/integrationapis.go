@@ -58,7 +58,7 @@ var integration, apitrigger string
 func init() {
 	IntegrationCmd.Flags().StringVarP(&name, "name", "n",
 		"", "API Proxy name")
-	IntegrationCmd.Flags().StringVarP(&integration, "intergration", "i",
+	IntegrationCmd.Flags().StringVarP(&integration, "integration", "i",
 		"", "Integration name")
 	IntegrationCmd.Flags().StringVarP(&apitrigger, "trigger", "",
 		"", "API Trigger name; don't include 'api_trigger/'")
