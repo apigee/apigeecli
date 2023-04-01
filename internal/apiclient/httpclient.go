@@ -44,7 +44,17 @@ type RateLimitedHTTPClient struct {
 var ApigeeAPIClient *RateLimitedHTTPClient
 
 // allow 1 every 100 milliseconds
-var apigeeAPIRate = rate.NewLimiter(rate.Every(100*time.Millisecond), 1)
+var apigeeAPIRateLimit = rate.NewLimiter(rate.Every(100*time.Millisecond), 1)
+
+//source: https://cloud.google.com/apigee/docs/api-platform/reference/limits#apigee-apis
+
+// allow 1 every 1 second
+var apigeeAnalyticsAPIRateLimit = rate.NewLimiter(rate.Every(time.Second), 1)
+
+//source: https://cloud.google.com/apigee/docs/api-platform/reference/limits#analytics-apis
+
+// disable rate limit
+var noAPIRateLimit = rate.NewLimiter(rate.Inf, 1)
 
 // PostHttpZip method is used to send resources, proxy bundles, shared flows etc.
 func PostHttpZip(print bool, auth bool, method string, url string, headers map[string]string, zipfile string) (err error) {
@@ -344,6 +354,19 @@ func (c *RateLimitedHTTPClient) Do(req *http.Request) (*http.Response, error) {
 
 // GetHttpClient returns new http client with a rate limiter
 func GetHttpClient() (err error) {
+	var apiRateLimit *rate.Limiter
+
+	switch r := GetRate(); r {
+	case ApigeeAPI:
+		apiRateLimit = apigeeAPIRateLimit
+	case ApigeeAnalyticsAPI:
+		apiRateLimit = apigeeAnalyticsAPIRateLimit
+	case None:
+		apiRateLimit = noAPIRateLimit
+	default:
+		apiRateLimit = noAPIRateLimit
+	}
+
 	if GetProxyURL() != "" {
 		if proxyUrl, err := url.Parse(GetProxyURL()); err != nil {
 			ApigeeAPIClient = &RateLimitedHTTPClient{
@@ -352,7 +375,7 @@ func GetHttpClient() (err error) {
 						Proxy: http.ProxyURL(proxyUrl),
 					},
 				},
-				Ratelimiter: apigeeAPIRate,
+				Ratelimiter: apiRateLimit,
 			}
 		} else {
 			return err
@@ -360,7 +383,7 @@ func GetHttpClient() (err error) {
 	} else {
 		ApigeeAPIClient = &RateLimitedHTTPClient{
 			client:      http.DefaultClient,
-			Ratelimiter: apigeeAPIRate,
+			Ratelimiter: apiRateLimit,
 		}
 	}
 	return nil
