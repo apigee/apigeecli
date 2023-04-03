@@ -70,7 +70,7 @@ func TotalAPICallsInMonthAsync(environment string, month int, year int, envDetai
 	}
 	ApiCalls.incrementCount(total)
 	if envDetails {
-		w := tabwriter.NewWriter(os.Stdout, 26, 4, 0, ' ', 0)
+		w := tabwriter.NewWriter(os.Stdout, 32, 4, 0, ' ', 0)
 		fmt.Fprintf(w, "%s\t%d/%d\t%d", environment, month, year, total)
 		fmt.Fprintln(w)
 		w.Flush()
