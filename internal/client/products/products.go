@@ -89,7 +89,8 @@ type graphQLOperationConfig struct {
 
 type grpcOperationConfig struct {
 	APISource  string      `json:"apiSource,omitempty"`
-	Methods    []string    `json:"grpcOperation,omitempty"`
+	Service    string      `json:"service,omitempty"`
+	Methods    []string    `json:"methods,omitempty"`
 	Quota      *quota      `json:"quota,omitempty"`
 	Attributes []Attribute `json:"attributes,omitempty"`
 }
