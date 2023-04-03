@@ -96,6 +96,26 @@ func getGqlOperationGroup(gqlOperationGroupFile string) (*products.GraphqlOperat
 	return nil, nil
 }
 
+func getGrpcOperationGroup(grpcOperationGroupFile string) (*products.GrpcOperationGroup, error) {
+	var grpcOperationGrpBytes []byte
+	var err error
+
+	grpcOperationGrp := products.GrpcOperationGroup{}
+
+	if gqlOperationGroupFile != "" {
+		if grpcOperationGrpBytes, err = os.ReadFile(gqlOperationGroupFile); err != nil {
+			clilog.Info.Println(err)
+			return nil, err
+		}
+		if err = json.Unmarshal(grpcOperationGrpBytes, &grpcOperationGrp); err != nil {
+			clilog.Info.Println(err)
+			return nil, err
+		}
+		return &grpcOperationGrp, nil
+	}
+	return nil, nil
+}
+
 func getAttributes(attrs map[string]string) []products.Attribute {
 	var attributes []products.Attribute
 
