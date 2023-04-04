@@ -34,7 +34,7 @@ var CreateCmd = &cobra.Command{
 		apiclient.SetApigeeEnv(env)
 		if sslinfo != "" {
 			if _, err = strconv.ParseBool(sslinfo); err != nil {
-				return fmt.Errorf("Invalid value for sslinfo. Must be set to true or false")
+				return fmt.Errorf("invalid value for sslinfo. Must be set to true or false")
 			}
 		}
 		return apiclient.SetApigeeOrg(org)
@@ -46,8 +46,8 @@ var CreateCmd = &cobra.Command{
 	},
 }
 
-var description, host, keyStore, keyAlias, trustStore, sslinfo, enable string
-var grpc, tlsenabled, clientAuthEnabled, ignoreValidationErrors bool
+var description, host, keyStore, keyAlias, trustStore, sslinfo string
+var grpc, enable, tlsenabled, clientAuthEnabled, ignoreValidationErrors bool
 var port int
 
 func init() {
@@ -58,8 +58,8 @@ func init() {
 		"", "Description for the Target Server")
 	CreateCmd.Flags().StringVarP(&host, "host", "s",
 		"", "Host name of the target")
-	CreateCmd.Flags().StringVarP(&enable, "enable", "b",
-		"", "Enabling/disabling a TargetServer")
+	CreateCmd.Flags().BoolVarP(&enable, "enable", "b",
+		true, "Enabling/disabling a TargetServer")
 	CreateCmd.Flags().BoolVarP(&grpc, "grpc", "g",
 		false, "Enable target server for gRPC")
 
