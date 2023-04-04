@@ -24,7 +24,6 @@ import (
 	"net/url"
 	"os"
 	"path"
-	"strconv"
 	"strings"
 	"sync"
 
@@ -44,15 +43,15 @@ type targetserver struct {
 }
 
 type sslInfo struct {
-	Enabled                bool       `json:"enabled,omitempty"`
-	ClientAuthEnabled      bool       `json:"clientAuthEnabled,omitempty"`
-	Keystore               string     `json:"keyStore,omitempty"`
-	Keyalias               string     `json:"keyAlias,omitempty"`
-	Truststore             string     `json:"trustStore,omitempty"`
-	IgnoreValidationErrors bool       `json:"ignoreValidationErrors,omitempty"`
-	Protocols              []string   `json:"protocols,omitempty"`
-	Ciphers                []string   `json:"ciphers,omitempty"`
-	CommonName             commonName `json:"commonName,omitempty"`
+	Enabled                bool        `json:"enabled,omitempty"`
+	ClientAuthEnabled      bool        `json:"clientAuthEnabled,omitempty"`
+	Keystore               string      `json:"keyStore,omitempty"`
+	Keyalias               string      `json:"keyAlias,omitempty"`
+	Truststore             string      `json:"trustStore,omitempty"`
+	IgnoreValidationErrors bool        `json:"ignoreValidationErrors,omitempty"`
+	Protocols              []string    `json:"protocols,omitempty"`
+	Ciphers                []string    `json:"ciphers,omitempty"`
+	CommonName             *commonName `json:"commonName,omitempty"`
 }
 
 type commonName struct {
@@ -61,16 +60,16 @@ type commonName struct {
 }
 
 // Create
-func Create(name string, description string, host string, port int, enable string, grpc bool, keyStore string, keyAlias string, sslinfo string, tlsenabled bool, clientAuthEnabled bool, ignoreValidationErrors bool) (respBody []byte, err error) {
+func Create(name string, description string, host string, port int, enable bool, grpc bool, keyStore string, keyAlias string, trustStore string, sslinfo string, tlsenabled bool, clientAuthEnabled bool, ignoreValidationErrors bool) (respBody []byte, err error) {
 	targetsvr := targetserver{
 		Name: name,
 	}
 
-	return createOrUpdate("create", targetsvr, name, description, host, port, enable, grpc, keyStore, keyAlias, sslinfo, tlsenabled, clientAuthEnabled, ignoreValidationErrors)
+	return createOrUpdate("create", targetsvr, name, description, host, port, enable, grpc, keyStore, keyAlias, trustStore, sslinfo, tlsenabled, clientAuthEnabled, ignoreValidationErrors)
 }
 
 // Update
-func Update(name string, description string, host string, port int, enable string, grpc bool, keyStore string, keyAlias string, sslinfo string, tlsenabled bool, clientAuthEnabled bool, ignoreValidationErrors bool) (respBody []byte, err error) {
+func Update(name string, description string, host string, port int, enable bool, grpc bool, keyStore string, keyAlias string, trustStore string, sslinfo string, tlsenabled bool, clientAuthEnabled bool, ignoreValidationErrors bool) (respBody []byte, err error) {
 	apiclient.SetPrintOutput(false)
 	targetRespBody, err := Get(name)
 	if err != nil {
@@ -82,13 +81,13 @@ func Update(name string, description string, host string, port int, enable strin
 	if err = json.Unmarshal(targetRespBody, &targetsvr); err != nil {
 		return nil, err
 	}
-	return createOrUpdate("update", targetsvr, name, description, host, port, enable, grpc, keyStore, keyAlias, sslinfo, tlsenabled, clientAuthEnabled, ignoreValidationErrors)
+	return createOrUpdate("update", targetsvr, name, description, host, port, enable, grpc, keyStore, keyAlias, trustStore, sslinfo, tlsenabled, clientAuthEnabled, ignoreValidationErrors)
 }
 
-func createOrUpdate(action string, targetsvr targetserver, name string, description string, host string, port int, enable string, grpc bool, keyStore string, keyAlias string, sslinfo string, tlsenabled bool, clientAuthEnabled bool, ignoreValidationErrors bool) (respBody []byte, err error) {
+func createOrUpdate(action string, targetsvr targetserver, name string, description string, host string, port int, enable bool, grpc bool, keyStore string, keyAlias string, trustStore string, sslinfo string, tlsenabled bool, clientAuthEnabled bool, ignoreValidationErrors bool) (respBody []byte, err error) {
 	targetsvr.Description = description
 	targetsvr.Host = host
-	targetsvr.IsEnabled, _ = strconv.ParseBool(enable)
+	targetsvr.IsEnabled = enable
 
 	if port != -1 {
 		targetsvr.Port = port
@@ -96,13 +95,14 @@ func createOrUpdate(action string, targetsvr targetserver, name string, descript
 	if grpc {
 		targetsvr.Protocol = "GRPC"
 	}
-	if strings.ToLower(sslinfo) == "true" {
+	if strings.ToLower(sslinfo) == "true" || tlsenabled {
 		targetsvr.SslInfo = &sslInfo{
 			Enabled:                tlsenabled,
 			ClientAuthEnabled:      clientAuthEnabled,
 			IgnoreValidationErrors: ignoreValidationErrors,
 			Keyalias:               keyAlias,
 			Keystore:               keyStore,
+			Truststore:             trustStore,
 		}
 	}
 

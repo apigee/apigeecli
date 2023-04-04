@@ -34,20 +34,20 @@ var CreateCmd = &cobra.Command{
 		apiclient.SetApigeeEnv(env)
 		if sslinfo != "" {
 			if _, err = strconv.ParseBool(sslinfo); err != nil {
-				return fmt.Errorf("Invalid value for sslinfo. Must be set to true or false")
+				return fmt.Errorf("invalid value for sslinfo. Must be set to true or false")
 			}
 		}
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = targetservers.Create(name, description, host, port, enable, grpc, keyStore, keyAlias, sslinfo, tlsenabled, clientAuthEnabled, ignoreValidationErrors)
+		_, err = targetservers.Create(name, description, host, port, enable, grpc, keyStore, keyAlias, trustStore, sslinfo, tlsenabled, clientAuthEnabled, ignoreValidationErrors)
 		return
 
 	},
 }
 
-var description, host, keyStore, keyAlias, sslinfo, enable string
-var grpc, tlsenabled, clientAuthEnabled, ignoreValidationErrors bool
+var description, host, keyStore, keyAlias, trustStore, sslinfo string
+var grpc, enable, tlsenabled, clientAuthEnabled, ignoreValidationErrors bool
 var port int
 
 func init() {
@@ -58,8 +58,8 @@ func init() {
 		"", "Description for the Target Server")
 	CreateCmd.Flags().StringVarP(&host, "host", "s",
 		"", "Host name of the target")
-	CreateCmd.Flags().StringVarP(&enable, "enable", "b",
-		"", "Enabling/disabling a TargetServer")
+	CreateCmd.Flags().BoolVarP(&enable, "enable", "b",
+		true, "Enabling/disabling a TargetServer")
 	CreateCmd.Flags().BoolVarP(&grpc, "grpc", "g",
 		false, "Enable target server for gRPC")
 
@@ -67,6 +67,8 @@ func init() {
 		"", "Key store for the target server; must be used with sslinfo")
 	CreateCmd.Flags().StringVarP(&keyAlias, "keyAlias", "",
 		"", "Key alias for the target server; must be used with sslinfo")
+	CreateCmd.Flags().StringVarP(&trustStore, "trustStore", "",
+		"", "Trust store for the target server; must be used with sslinfo")
 	CreateCmd.Flags().StringVarP(&sslinfo, "sslinfo", "",
 		"", "Enable SSL Info on the target server")
 	CreateCmd.Flags().BoolVarP(&tlsenabled, "tls", "",

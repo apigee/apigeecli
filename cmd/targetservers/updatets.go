@@ -37,15 +37,10 @@ var UpdateCmd = &cobra.Command{
 				return fmt.Errorf("Invalid value for sslinfo. Must be set to true or false")
 			}
 		}
-		if enable != "" {
-			if _, err = strconv.ParseBool(enable); err != nil {
-				return fmt.Errorf("Invalid value for enable. Must be set to true or false")
-			}
-		}
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = targetservers.Update(name, description, host, port, enable, grpc, keyStore, keyAlias, sslinfo, tlsenabled, clientAuthEnabled, ignoreValidationErrors)
+		_, err = targetservers.Update(name, description, host, port, enable, grpc, keyStore, keyAlias, trustStore, sslinfo, tlsenabled, clientAuthEnabled, ignoreValidationErrors)
 		return
 	},
 }
@@ -58,8 +53,8 @@ func init() {
 		"", "Description for the Target Server")
 	UpdateCmd.Flags().StringVarP(&host, "host", "s",
 		"", "Host name of the target")
-	UpdateCmd.Flags().StringVarP(&enable, "enable", "b",
-		"", "Enabling/disabling a TargetServer")
+	UpdateCmd.Flags().BoolVarP(&enable, "enable", "b",
+		true, "Enabling/disabling a TargetServer")
 	UpdateCmd.Flags().BoolVarP(&grpc, "grpc", "g",
 		false, "Enable target server for gRPC")
 
@@ -67,6 +62,8 @@ func init() {
 		"", "Key store for the target server; must be used with sslinfo")
 	UpdateCmd.Flags().StringVarP(&keyAlias, "keyAlias", "",
 		"", "Key alias for the target server; must be used with sslinfo")
+	UpdateCmd.Flags().StringVarP(&trustStore, "trustStore", "",
+		"", "Trust store for the target server; must be used with sslinfo")
 	UpdateCmd.Flags().StringVarP(&sslinfo, "sslinfo", "",
 		"", "Enable SSL Info on the target server")
 	UpdateCmd.Flags().BoolVarP(&tlsenabled, "tls", "",
