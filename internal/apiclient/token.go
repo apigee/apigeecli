@@ -74,10 +74,12 @@ func generateJWT(privateKey string) (string, error) {
 	}
 
 	now := time.Now()
-	token := jwt.New()
 
 	//Google OAuth takes aud as a string, not array
+	//ref: https://github.com/lestrrat-go/jwx/releases/tag/v2.0.7
 	jwt.Settings(jwt.WithFlattenAudience(true))
+	token := jwt.New()
+	token.Options().IsEnabled(jwt.FlattenAudience)
 
 	_ = token.Set("aud", tokenUri)
 	_ = token.Set(jwt.IssuerKey, getServiceAccountProperty("ClientEmail"))
