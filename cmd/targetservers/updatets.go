@@ -37,11 +37,6 @@ var UpdateCmd = &cobra.Command{
 				return fmt.Errorf("Invalid value for sslinfo. Must be set to true or false")
 			}
 		}
-		if enable != "" {
-			if _, err = strconv.ParseBool(enable); err != nil {
-				return fmt.Errorf("Invalid value for enable. Must be set to true or false")
-			}
-		}
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
@@ -58,8 +53,8 @@ func init() {
 		"", "Description for the Target Server")
 	UpdateCmd.Flags().StringVarP(&host, "host", "s",
 		"", "Host name of the target")
-	UpdateCmd.Flags().StringVarP(&enable, "enable", "b",
-		"", "Enabling/disabling a TargetServer")
+	UpdateCmd.Flags().BoolVarP(&enable, "enable", "b",
+		true, "Enabling/disabling a TargetServer")
 	UpdateCmd.Flags().BoolVarP(&grpc, "grpc", "g",
 		false, "Enable target server for gRPC")
 
