@@ -41,7 +41,9 @@ var DepCmd = &cobra.Command{
 				return
 			}
 		}
-		_, err = apis.DeployProxy(name, revision, overrides, serviceAccountName)
+		if _, err = apis.DeployProxy(name, revision, overrides, serviceAccountName); err != nil {
+			return
+		}
 
 		if wait {
 			fmt.Printf("Checking deployment status in %d seconds\n", interval)
