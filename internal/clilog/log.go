@@ -22,6 +22,7 @@ import (
 
 // log levels, default is error
 var (
+	Debug   *log.Logger
 	Info    *log.Logger
 	Warning *log.Logger
 	Error   *log.Logger
@@ -29,18 +30,22 @@ var (
 
 // Init function initializes the logger objects
 func Init(skipLogInfo bool) {
-	var infoHandle = io.Discard
+	var debugHandle = io.Discard
 
 	if !skipLogInfo {
-		infoHandle = os.Stdout
+		debugHandle = os.Stdout
 	}
 
+	infoHandle := os.Stdout
 	warningHandle := os.Stdout
 	errorHandle := os.Stdout
 
-	Info = log.New(infoHandle,
+	Debug = log.New(debugHandle,
 		"INFO: ",
 		log.Ldate|log.Ltime|log.Lshortfile)
+
+	Info = log.New(infoHandle,
+		"", log.Default().Flags())
 
 	Warning = log.New(warningHandle,
 		"WARNING: ",
