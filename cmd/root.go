@@ -79,12 +79,13 @@ var RootCmd = &cobra.Command{
 
 		return nil
 	},
+	SilenceUsage:  getUsageFlag(),
+	SilenceErrors: getErrorsFlag(),
 }
 
 func Execute() {
 	if err := RootCmd.Execute(); err != nil {
 		clilog.Error.Println(err)
-		os.Exit(1)
 	}
 }
 
@@ -135,6 +136,7 @@ func init() {
 	RootCmd.AddCommand(preferences.Cmd)
 	RootCmd.AddCommand(overrides.Cmd)
 	RootCmd.AddCommand(eptattachment.Cmd)
+
 }
 
 func initConfig() {
@@ -203,4 +205,16 @@ func getLatestVersion() (version string, err error) {
 	} else {
 		return fmt.Sprintf("%s", result["tag_name"]), nil
 	}
+}
+
+// getUsageFlag
+func getUsageFlag() bool {
+	clilog.Debug.Println("APIGEECLI_NO_USAGE is enabled")
+	return os.Getenv("APIGEECLI_NO_USAGE") == "true"
+}
+
+// getErrorsFlag
+func getErrorsFlag() bool {
+	clilog.Debug.Println("APIGEECLI_NO_ERRORS is enabled")
+	return os.Getenv("APIGEECLI_NO_ERRORS") == "true"
 }
