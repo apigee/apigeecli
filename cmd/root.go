@@ -89,7 +89,7 @@ func Execute() {
 }
 
 var accessToken, serviceAccount string
-var disableCheck, printOutput bool
+var disableCheck, printOutput, noOutput bool
 
 func init() {
 	cobra.OnInitialize(initConfig)
@@ -104,7 +104,10 @@ func init() {
 		false, "Disable check for newer versions")
 
 	RootCmd.PersistentFlags().BoolVarP(&printOutput, "print-output", "",
-		true, "Disable printing API responses from the control plane")
+		true, "Control printing responses to stdout")
+
+	RootCmd.PersistentFlags().BoolVarP(&noOutput, "no-output", "",
+		false, "[DEPRECATED] Same as print-output, maintained for backward compatibility")
 
 	RootCmd.AddCommand(apis.Cmd)
 	RootCmd.AddCommand(org.Cmd)
@@ -144,6 +147,10 @@ func initConfig() {
 
 	skipCache, _ = strconv.ParseBool(os.Getenv("APIGEECLI_SKIPCACHE"))
 
+	if noOutput {
+		printOutput = noOutput
+	}
+
 	apiclient.NewApigeeClient(apiclient.ApigeeClientOptions{
 		TokenCheck:  true,
 		PrintOutput: printOutput,
@@ -152,7 +159,7 @@ func initConfig() {
 	})
 
 	if os.Getenv("APIGEECLI_ENABLE_RATELIMIT") == "true" {
-		clilog.Info.Println("APIGEECLI_RATELIMIT is enabled")
+		clilog.Debug.Println("APIGEECLI_RATELIMIT is enabled")
 		apiclient.SetRate(apiclient.ApigeeAPI)
 	}
 }
