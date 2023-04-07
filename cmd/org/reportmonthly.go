@@ -38,6 +38,7 @@ var MonthlyCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		var apiCalls int
+		w := tabwriter.NewWriter(os.Stdout, 32, 4, 0, ' ', 0)
 
 		clilog.Warning.Println("This API is rate limited to 1 API Call per second")
 
@@ -46,7 +47,7 @@ var MonthlyCmd = &cobra.Command{
 		}
 
 		if envDetails {
-			w := tabwriter.NewWriter(os.Stdout, 32, 4, 0, ' ', 0)
+
 			fmt.Fprintln(w, "ENVIRONMENT\tMONTH\tAPI CALLS")
 			w.Flush()
 		}
@@ -59,7 +60,6 @@ var MonthlyCmd = &cobra.Command{
 			fmt.Printf("\nSummary\n\n")
 		}
 
-		w := tabwriter.NewWriter(os.Stdout, 32, 4, 0, ' ', 0)
 		fmt.Fprintln(w, "ORGANIATION\tMONTH\tAPI CALLS")
 		fmt.Fprintf(w, "%s\t%d/%d\t%d\n", apiclient.GetApigeeOrg(), month, year, apiCalls)
 		fmt.Fprintln(w)
