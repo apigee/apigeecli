@@ -30,7 +30,7 @@ func TestInit(t *testing.T) {
 
 func TestHttpGet(t *testing.T) {
 	clilog.Init(true, true)
-	_, err := HttpClient(true, "https://httpbin.org/get")
+	_, err := HttpClient("https://httpbin.org/get")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -38,28 +38,28 @@ func TestHttpGet(t *testing.T) {
 
 func TestHttpPost(t *testing.T) {
 	payload := "test"
-	_, err := HttpClient(true, "https://httpbin.org/post", payload)
+	_, err := HttpClient("https://httpbin.org/post", payload)
 	if err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestHttpDelete(t *testing.T) {
-	_, err := HttpClient(true, "https://httpbin.org/delete", "", "DELETE")
+	_, err := HttpClient("https://httpbin.org/delete", "", "DELETE")
 	if err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestHttpInvalidParam(t *testing.T) {
-	_, err := HttpClient(true, "https://httpbin.org/delete", "", "DELTE")
+	_, err := HttpClient("https://httpbin.org/delete", "", "DELTE")
 	if err == nil {
 		t.Fatal(err)
 	}
 }
 
 func TestHttpInvalidNumberOfParams(t *testing.T) {
-	_, err := HttpClient(true, "https://httpbin.org/delete", "", "DELETE", "SOMETHING ELSE")
+	_, err := HttpClient("https://httpbin.org/delete", "", "DELETE", "SOMETHING ELSE")
 	if err == nil {
 		t.Fatal(err)
 	}
