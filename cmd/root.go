@@ -209,12 +209,10 @@ func getLatestVersion() (version string, err error) {
 
 // getUsageFlag
 func getUsageFlag() bool {
-	clilog.Debug.Println("APIGEECLI_NO_USAGE is enabled")
 	return os.Getenv("APIGEECLI_NO_USAGE") == "true"
 }
 
 // getErrorsFlag
 func getErrorsFlag() bool {
-	clilog.Debug.Println("APIGEECLI_NO_ERRORS is enabled")
 	return os.Getenv("APIGEECLI_NO_ERRORS") == "true"
 }

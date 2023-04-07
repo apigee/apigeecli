@@ -42,12 +42,13 @@ var YearlyCmd = &cobra.Command{
 
 		clilog.Warning.Println("This API is rate limited to 1 API Call per second")
 
+		clilog.Warning.Println("This API is rate limited to 1 API Call per second")
+
 		if _, err = time.Parse("2006", fmt.Sprintf("%d", year)); err != nil {
 			return
 		}
 
 		if envDetails {
-
 			fmt.Fprintln(w, "ENVIRONMENT\tMONTH\tAPI CALLS")
 			w.Flush()
 		}
