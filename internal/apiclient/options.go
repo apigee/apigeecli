@@ -111,7 +111,7 @@ func UseStaging() {
 func SetApigeeOrg(org string) (err error) {
 	if org == "" {
 		if GetApigeeOrg() == "" {
-			return fmt.Errorf("An org name was not set in preferences or supplied in the command")
+			return fmt.Errorf("an org name was not set in preferences or supplied in the command")
 		}
 		return nil
 	}

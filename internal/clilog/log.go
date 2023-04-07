@@ -22,10 +22,11 @@ import (
 
 // log levels, default is error
 var (
-	Debug   *log.Logger
-	Info    *log.Logger
-	Warning *log.Logger
-	Error   *log.Logger
+	Debug     *log.Logger
+	Info      *log.Logger
+	Warning   *log.Logger
+	Error     *log.Logger
+	HttpError *log.Logger
 )
 
 // Init function initializes the logger objects
@@ -58,6 +59,9 @@ func Init(debug bool, print bool) {
 	Error = log.New(errorHandle,
 		"ERROR: ",
 		log.Ldate|log.Ltime|log.Lshortfile)
+
+	HttpError = log.New(errorHandle,
+		"", 0)
 }
 
 // EnablePrintOutput
