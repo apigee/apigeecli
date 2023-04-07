@@ -116,6 +116,17 @@ For more information, refer to the [Apigee API Reference](https://cloud.google.c
 
 Here is a [list](./docs/apigeecli.md) of available commands
 
+## Enviroment Variables
+
+The following environment variables may be set to control the behavior of `apigeecli`. The default values are all `false`
+
+* `APIGEECLI_DEBUG=true` enables debug log
+* `APIGEECLI_SKIPCACHE=true` will not cache the access token on the disk
+* `APIGEECLI_ENABLE_RATELIMIT=true` enables rate limiting when making Apigee APIs (at 1 API call every 100ms)
+* `APIGEECLI_NO_USAGE=true` does not print usage when the command fails
+* `APIGEECLI_NO_ERRORS=true` does not print error messages from the CLI (control plane error messages are displayed)
+* `APIGEECLI_DRYRUN=true` does not execute Apigee control plane APIs
+
 ## Generating API Proxies
 `apigeecli` can generate API proxies from:
 
