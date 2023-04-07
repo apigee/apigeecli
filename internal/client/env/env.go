@@ -22,6 +22,7 @@ import (
 	"strings"
 
 	"internal/apiclient"
+	"internal/clilog"
 )
 
 // Create
@@ -48,7 +49,7 @@ func Create(deploymentType string, apiProxyType string) (respBody []byte, err er
 
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments")
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload)
+	respBody, err = apiclient.HttpClient(u.String(), payload)
 	return respBody, err
 }
 
@@ -56,7 +57,7 @@ func Create(deploymentType string, apiProxyType string) (respBody []byte, err er
 func Delete() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv())
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "", "DELETE")
+	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
 	return respBody, err
 }
 
@@ -68,7 +69,7 @@ func Get(config bool) (respBody []byte, err error) {
 	} else {
 		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv())
 	}
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
@@ -76,7 +77,7 @@ func Get(config bool) (respBody []byte, err error) {
 func List() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments")
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
@@ -89,13 +90,13 @@ func GetDeployments(sharedflows bool) (respBody []byte, err error) {
 		u.RawQuery = q.Encode()
 	}
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "deployments")
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
 func GetAllDeployments() (respBody []byte, err error) {
 
-	apiclient.SetPrintOutput(false)
+	clilog.EnablePrintOutput(false)
 	proxiesResponse, err := GetDeployments(false)
 	if err != nil {
 		return nil, err
@@ -113,7 +114,7 @@ func GetAllDeployments() (respBody []byte, err error) {
 	payload := "{" + strings.Join(deployments, ",") + "}"
 
 	err = apiclient.PrettyPrint([]byte(payload))
-	apiclient.SetPrintOutput(true)
+	clilog.EnablePrintOutput(apiclient.GetPrintOutput())
 
 	return []byte(payload), err
 }
@@ -122,7 +123,7 @@ func GetAllDeployments() (respBody []byte, err error) {
 func GetDeployedConfig() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "deployedConfig")
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
@@ -150,7 +151,9 @@ func SetEnvProperty(name string, value string) (err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv())
 	//get env details
-	envBody, err := apiclient.HttpClient(false, u.String())
+	clilog.EnablePrintOutput(false)
+	envBody, err := apiclient.HttpClient(u.String())
+	clilog.EnablePrintOutput(apiclient.GetPrintOutput())
 	if err != nil {
 		return err
 	}
@@ -165,7 +168,7 @@ func SetEnvProperty(name string, value string) (err error) {
 	found := false
 	for i, properties := range env.Properties.Property {
 		if properties.Name == name {
-			fmt.Println("Property found, enabling property")
+			clilog.Info.Println("Property found, enabling property")
 			env.Properties.Property[i].Value = value
 			found = true
 			break
@@ -188,7 +191,7 @@ func SetEnvProperty(name string, value string) (err error) {
 
 	u, _ = url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv())
-	_, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), string(newEnvBody), "PUT")
+	_, err = apiclient.HttpClient(u.String(), string(newEnvBody), "PUT")
 
 	return err
 }
@@ -217,7 +220,9 @@ func ClearEnvProperties() (err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv())
 	//get env details
-	envBody, err := apiclient.HttpClient(false, u.String())
+	clilog.EnablePrintOutput(false)
+	envBody, err := apiclient.HttpClient(u.String())
+	clilog.EnablePrintOutput(apiclient.GetPrintOutput())
 	if err != nil {
 		return err
 	}
@@ -238,7 +243,7 @@ func ClearEnvProperties() (err error) {
 
 	u, _ = url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv())
-	_, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), string(newEnvBody), "PUT")
+	_, err = apiclient.HttpClient(u.String(), string(newEnvBody), "PUT")
 
 	return err
 }

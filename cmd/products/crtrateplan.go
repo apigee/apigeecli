@@ -36,7 +36,7 @@ var CreateRateplanCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		if rateplanData, err = os.ReadFile(rateplanFile); err != nil {
-			clilog.Info.Println(err)
+			clilog.Debug.Println(err)
 			return
 		}
 		_, err = products.CreateRatePlan(apiproduct, rateplanData)

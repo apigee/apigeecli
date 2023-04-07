@@ -58,7 +58,7 @@ func Create(name string, proxy string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sharedflows")
 	proxyName := "{\"name\":\"" + name + "\"}"
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), proxyName)
+	respBody, err = apiclient.HttpClient(u.String(), proxyName)
 	return respBody, err
 }
 
@@ -70,17 +70,17 @@ func Get(name string, revision int) (respBody []byte, err error) {
 	} else {
 		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sharedflows", name)
 	}
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
 // GetHighestSfRevision
 func GetHighestSfRevision(name string) (version int, err error) {
-	apiclient.SetPrintOutput(false)
+	clilog.EnablePrintOutput(false)
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sharedflows", name)
-	respBody, err := apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
-	apiclient.SetPrintOutput(true)
+	respBody, err := apiclient.HttpClient(u.String())
+	clilog.EnablePrintOutput(apiclient.GetPrintOutput())
 	if err != nil {
 		return -1, err
 	}
@@ -104,7 +104,7 @@ func Delete(name string, revision int) (respBody []byte, err error) {
 	} else {
 		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sharedflows", name)
 	}
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "", "DELETE")
+	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
 	return respBody, err
 }
 
@@ -117,7 +117,7 @@ func List(includeRevisions bool) (respBody []byte, err error) {
 		u.RawQuery = q.Encode()
 	}
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sharedflows")
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
@@ -134,7 +134,7 @@ func ListEnvDeployments() (respBody []byte, err error) {
 	u.RawQuery = q.Encode()
 
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "deployments")
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
@@ -142,7 +142,7 @@ func ListEnvDeployments() (respBody []byte, err error) {
 func ListDeployments(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sharedflows", name, "deployments")
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
@@ -154,7 +154,7 @@ func ListRevisionDeployments(name string, revision int) (respBody []byte, err er
 	}
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "sharedflows", name, "revisions",
 		strconv.Itoa(revision), "deployments")
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
@@ -173,7 +173,7 @@ func Deploy(name string, revision int, overrides bool, serviceAccountName string
 	}
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(),
 		"sharedflows", name, "revisions", strconv.Itoa(revision), "deployments")
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "")
+	respBody, err = apiclient.HttpClient(u.String(), "")
 	return respBody, err
 }
 
@@ -213,7 +213,7 @@ func Clean(name string, reportOnly bool) (err error) {
 	var revision int
 
 	// disable printing
-	apiclient.SetPrintOutput(false)
+	clilog.EnablePrintOutput(false)
 
 	// step 1. get a list of revisions that are deployed.
 	if sfDeploymentsBytes, err = ListDeployments(name); err != nil {
@@ -234,7 +234,7 @@ func Clean(name string, reportOnly bool) (err error) {
 		}
 	}
 
-	fmt.Println("Revisions [" + getRevisions(deployedRevisions) + "] deployed for Sharedflow " + name)
+	clilog.Info.Println("Revisions [" + getRevisions(deployedRevisions) + "] deployed for Sharedflow " + name)
 
 	// step 2. get all the revisions for the sf
 	if sfRevisionsBytes, err = Get(name, -1); err != nil {
@@ -246,7 +246,7 @@ func Clean(name string, reportOnly bool) (err error) {
 	}
 
 	// enable printing
-	apiclient.SetPrintOutput(true)
+	clilog.EnablePrintOutput(apiclient.GetPrintOutput())
 
 	for _, sfRevision := range sfRevisions.Revision {
 		if !isRevisionDeployed(deployedRevisions, sfRevision) {
@@ -259,7 +259,7 @@ func Clean(name string, reportOnly bool) (err error) {
 				if revision, err = strconv.Atoi(sfRevision); err != nil {
 					return err
 				}
-				fmt.Println("Deleting revision: " + sfRevision)
+				clilog.Info.Println("Deleting revision: " + sfRevision)
 				if _, err = Delete(name, revision); err != nil {
 					return err
 				}
@@ -268,7 +268,7 @@ func Clean(name string, reportOnly bool) (err error) {
 	}
 
 	if reportOnly && len(reportRevisions) > 0 {
-		fmt.Println("[REPORT]: Sharedflow '" + name + "' revisions: " + getRevisions(reportRevisions) + " can be cleaned")
+		clilog.Info.Println("[REPORT]: Sharedflow '" + name + "' revisions: " + getRevisions(reportRevisions) + " can be cleaned")
 	}
 
 	return nil
@@ -279,7 +279,7 @@ func Undeploy(name string, revision int) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(),
 		"sharedflows", name, "revisions", strconv.Itoa(revision), "deployments")
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "", "DELETE")
+	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
 	return respBody, err
 }
 
@@ -297,7 +297,9 @@ func Export(conn int, folder string, allRevisions bool) (err error) {
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sharedflows")
 
 	// don't print to sysout
-	respBody, err := apiclient.HttpClient(false, u.String())
+	clilog.EnablePrintOutput(false)
+	respBody, err := apiclient.HttpClient(u.String())
+	clilog.EnablePrintOutput(apiclient.GetPrintOutput())
 	if err != nil {
 		return err
 	}
@@ -307,8 +309,8 @@ func Export(conn int, folder string, allRevisions bool) (err error) {
 		return err
 	}
 
-	clilog.Info.Printf("Found %d API Proxies in the org\n", len(shrdflows.Flows))
-	clilog.Info.Printf("Exporting bundles with %d connections\n", conn)
+	clilog.Debug.Printf("Found %d API Proxies in the org\n", len(shrdflows.Flows))
+	clilog.Debug.Printf("Exporting bundles with %d connections\n", conn)
 
 	jobChan := make(chan revision)
 	errChan := make(chan error)
@@ -429,8 +431,8 @@ func Import(conn int, folder string) error {
 		return err
 	}
 
-	clilog.Info.Printf("Found %d sharedflow bundles in the folder\n", len(bundles))
-	clilog.Info.Printf("Importing sharedflows with %d parallel connections\n", conn)
+	clilog.Debug.Printf("Found %d sharedflow bundles in the folder\n", len(bundles))
+	clilog.Debug.Printf("Importing sharedflows with %d parallel connections\n", conn)
 
 	jobChan := make(chan string)
 	errChan := make(chan error)
@@ -537,9 +539,8 @@ func importSharedFlows(wg *sync.WaitGroup, jobs <-chan string, errs chan<- error
 			if err = json.Indent(out, bytes.TrimSpace(b), "", "  "); err != nil {
 				errs <- fmt.Errorf("apigee returned invalid json: %w", err)
 			}
-			fmt.Println(out.String())
 		}
-		clilog.Info.Printf("Completed bundle import: %s", job)
+		clilog.Debug.Printf("Completed bundle import: %s", job)
 	}
 }
 

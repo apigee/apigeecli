@@ -21,6 +21,7 @@ import (
 	"strings"
 
 	"internal/apiclient"
+	"internal/clilog"
 )
 
 // CreateKey
@@ -48,9 +49,9 @@ func CreateKey(developerEmail string, appID string, consumerKey string, consumer
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", developerEmail, "apps", appID, "keys")
 
 	if len(apiProducts) > 0 {
-		apiclient.SetPrintOutput(false)
+		clilog.EnablePrintOutput(false)
 	}
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload)
+	respBody, err = apiclient.HttpClient(u.String(), payload)
 
 	if err != nil {
 		return respBody, err
@@ -58,7 +59,7 @@ func CreateKey(developerEmail string, appID string, consumerKey string, consumer
 
 	//since the API does not support adding products when creating a key, use a second API call to add products
 	if len(apiProducts) > 0 {
-		apiclient.SetPrintOutput(true)
+		clilog.EnablePrintOutput(apiclient.GetPrintOutput())
 		respBody, err = UpdateKeyProducts(developerEmail, appID, consumerKey, apiProducts)
 	}
 
@@ -69,7 +70,7 @@ func CreateKey(developerEmail string, appID string, consumerKey string, consumer
 func DeleteKey(developerEmail string, appName string, key string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", developerEmail, "apps", appName, "keys", key)
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "", "DELETE")
+	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
 	return respBody, err
 }
 
@@ -77,7 +78,7 @@ func DeleteKey(developerEmail string, appName string, key string) (respBody []by
 func GetKey(developerEmail string, appID string, key string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", developerEmail, "apps", appID, "keys", key)
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
@@ -113,7 +114,7 @@ func UpdateKey(developerEmail string, appID string, consumerKey string, consumer
 	payload := "{" + strings.Join(key, ",") + "}"
 
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", developerEmail, "apps", appID, "keys", consumerKey)
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload)
+	respBody, err = apiclient.HttpClient(u.String(), payload)
 
 	return respBody, err
 }
@@ -127,7 +128,7 @@ func UpdateKeyProducts(developerEmail string, appID string, consumerKey string, 
 	payload := "{" + strings.Join(key, ",") + "}"
 
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", developerEmail, "apps", appID, "keys", consumerKey)
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload)
+	respBody, err = apiclient.HttpClient(u.String(), payload)
 
 	return respBody, err
 }
@@ -143,7 +144,7 @@ func ManageKey(developerEmail string, appID string, consumerKey string, action s
 	q := u.Query()
 	q.Set("action", action)
 	u.RawQuery = q.Encode()
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "", "POST", "application/octet-stream")
+	respBody, err = apiclient.HttpClient(u.String(), "", "POST", "application/octet-stream")
 
 	return respBody, err
 }

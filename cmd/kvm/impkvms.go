@@ -15,11 +15,11 @@
 package kvm
 
 import (
-	"fmt"
 	"path"
 	"strings"
 
 	"internal/apiclient"
+	"internal/clilog"
 
 	"internal/client/kvm"
 
@@ -41,7 +41,7 @@ var ImpCmd = &cobra.Command{
 
 		var kvmList []string
 
-		apiclient.SetPrintOutput(false)
+		clilog.EnablePrintOutput(false)
 
 		orgKVMFileList, envKVMFileList, proxyKVMFileList, err := utils.ListKVMFiles(folder)
 		if err != nil {
@@ -49,17 +49,17 @@ var ImpCmd = &cobra.Command{
 		}
 
 		if utils.FileExists(path.Join(folder, "org_"+org+"_"+kVMFileName)) {
-			fmt.Println("Importing Org scoped KVMs...")
+			clilog.Info.Println("Importing Org scoped KVMs...")
 			if kvmList, err = utils.ReadEntityFile(path.Join(folder, "org_"+org+"_"+kVMFileName)); err != nil {
 				return err
 			}
 			for _, kvmName := range kvmList {
 				//create only encrypted KVMs
-				fmt.Printf("\tCreating KVM %s\n", kvmName)
+				clilog.Info.Printf("\tCreating KVM %s\n", kvmName)
 				if _, err = kvm.Create("", kvmName, true); err != nil {
 					return err
 				}
-				fmt.Printf("\tImporting entries for %s\n", kvmName)
+				clilog.Info.Printf("\tImporting entries for %s\n", kvmName)
 				if orgKVMFileList[kvmName] != "" {
 					if err = kvm.ImportEntries("", kvmName, conn, orgKVMFileList[kvmName]); err != nil {
 						return err
@@ -69,15 +69,15 @@ var ImpCmd = &cobra.Command{
 		}
 
 		if len(envKVMFileList) > 0 {
-			fmt.Println("Importing env scoped KVMs...")
+			clilog.Info.Println("Importing env scoped KVMs...")
 			for _, envKVMFile := range envKVMFileList {
 				kvmMetadata := strings.Split(envKVMFile, "_")
 				apiclient.SetApigeeEnv(kvmMetadata[1])
-				fmt.Printf("\tCreating KVM %s\n", envKVMFile)
+				clilog.Info.Printf("\tCreating KVM %s\n", envKVMFile)
 				if _, err = kvm.Create("", kvmMetadata[2], true); err != nil {
 					return err
 				}
-				fmt.Printf("\tImporting entries for %s\n", envKVMFile)
+				clilog.Info.Printf("\tImporting entries for %s\n", envKVMFile)
 				if err = kvm.ImportEntries("", kvmMetadata[2], conn, envKVMFile); err != nil {
 					return err
 				}
@@ -85,14 +85,14 @@ var ImpCmd = &cobra.Command{
 		}
 
 		if len(proxyKVMFileList) > 0 {
-			fmt.Println("Importing proxy scoped KVMs...")
+			clilog.Info.Println("Importing proxy scoped KVMs...")
 			for _, proxyKVMFile := range proxyKVMFileList {
 				kvmMetadata := strings.Split(proxyKVMFile, "_")
-				fmt.Printf("\tCreating KVM %s\n", proxyKVMFile)
+				clilog.Info.Printf("\tCreating KVM %s\n", proxyKVMFile)
 				if _, err = kvm.Create(kvmMetadata[1], "", true); err != nil {
 					return err
 				}
-				fmt.Printf("\tImporting entries for %s\n", proxyKVMFile)
+				clilog.Info.Printf("\tImporting entries for %s\n", proxyKVMFile)
 				if err = kvm.ImportEntries(kvmMetadata[1], kvmMetadata[2], conn, proxyKVMFile); err != nil {
 					return err
 				}

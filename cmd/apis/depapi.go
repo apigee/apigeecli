@@ -16,10 +16,10 @@ package apis
 
 import (
 	"encoding/json"
-	"fmt"
 	"time"
 
 	"internal/apiclient"
+	"internal/clilog"
 
 	"internal/client/apis"
 
@@ -41,32 +41,34 @@ var DepCmd = &cobra.Command{
 				return
 			}
 		}
-		_, err = apis.DeployProxy(name, revision, overrides, serviceAccountName)
+		if _, err = apis.DeployProxy(name, revision, overrides, serviceAccountName); err != nil {
+			return
+		}
 
 		if wait {
-			fmt.Printf("Checking deployment status in %d seconds\n", interval)
-
-			apiclient.SetPrintOutput(false)
+			clilog.Info.Printf("Checking deployment status in %d seconds\n", interval)
 
 			stop := apiclient.Every(interval*time.Second, func(time.Time) bool {
 				var respBody []byte
 				respMap := make(map[string]interface{})
+				clilog.EnablePrintOutput(false)
 				if respBody, err = apis.ListProxyRevisionDeployments(name, revision); err != nil {
 					return true
 				}
+				clilog.EnablePrintOutput(apiclient.GetPrintOutput())
 
 				if err = json.Unmarshal(respBody, &respMap); err != nil {
 					return true
 				}
 
 				if respMap["state"] == "PROGRESSING" {
-					fmt.Printf("Proxy deployment status is: %s. Waiting %d seconds.\n", respMap["state"], interval)
+					clilog.Info.Printf("Proxy deployment status is: %s. Waiting %d seconds.\n", respMap["state"], interval)
 					return true
 				} else if respMap["state"] == "READY" {
-					fmt.Println("Proxy deployment completed with status: ", respMap["state"])
+					clilog.Info.Println("Proxy deployment completed with status: ", respMap["state"])
 					return false
 				} else {
-					fmt.Println("Proxy deployment failed with status: ", respMap["state"])
+					clilog.Info.Println("Proxy deployment failed with status: ", respMap["state"])
 					return false
 				}
 			})

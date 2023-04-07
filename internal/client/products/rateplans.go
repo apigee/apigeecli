@@ -19,13 +19,14 @@ import (
 	"path"
 
 	"internal/apiclient"
+	"internal/clilog"
 )
 
 // CreateRatePlan
 func CreateRatePlan(productName string, rateplan []byte) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts", productName, "rateplans")
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), string(rateplan))
+	respBody, err = apiclient.HttpClient(u.String(), string(rateplan))
 	return respBody, err
 }
 
@@ -33,7 +34,7 @@ func CreateRatePlan(productName string, rateplan []byte) (respBody []byte, err e
 func DeleteRatePlan(productName string, rateplan string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts", productName, "rateplans", rateplan)
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "", "DELETE")
+	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
 	return respBody, err
 }
 
@@ -41,7 +42,7 @@ func DeleteRatePlan(productName string, rateplan string) (respBody []byte, err e
 func GetRatePlan(productName string, rateplan string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts", productName, "rateplans", rateplan)
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
@@ -49,7 +50,7 @@ func GetRatePlan(productName string, rateplan string) (respBody []byte, err erro
 func ListRatePlan(productName string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts", productName, "rateplans")
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
@@ -59,6 +60,8 @@ func ExportRateplan(productName string) (respBody []byte, err error) {
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts", productName, "rateplans")
 
 	//don't print to sysout
-	respBody, err = apiclient.HttpClient(false, u.String())
+	clilog.EnablePrintOutput(false)
+	respBody, err = apiclient.HttpClient(u.String())
+	clilog.EnablePrintOutput(apiclient.GetPrintOutput())
 	return respBody, err
 }

@@ -129,7 +129,7 @@ func Update(p APIProduct) (respBody []byte, err error) {
 func Get(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts", name)
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
@@ -137,7 +137,7 @@ func Get(name string) (respBody []byte, err error) {
 func Delete(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts", name)
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "", "DELETE")
+	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
 	return respBody, err
 }
 
@@ -153,26 +153,26 @@ func upsert(p APIProduct, a Action) (respBody []byte, err error) {
 	case UPDATE:
 		createNew = false
 	case UPSERT:
-		apiclient.SetPrintOutput(false)
+		clilog.EnablePrintOutput(false)
 		_, err = Get(p.Name)
 		if err != nil {
 			createNew = true //product does not exist
 		}
-		apiclient.SetPrintOutput(true)
+		clilog.EnablePrintOutput(apiclient.GetPrintOutput())
 	}
 
 	payload, err := json.Marshal(p)
 	if err != nil {
-		clilog.Info.Println(err)
+		clilog.Debug.Println(err)
 		return nil, err
 	}
 
 	if createNew {
 		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts")
-		respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), string(payload))
+		respBody, err = apiclient.HttpClient(u.String(), string(payload))
 	} else {
 		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts", p.Name)
-		respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), string(payload), "PUT")
+		respBody, err = apiclient.HttpClient(u.String(), string(payload), "PUT")
 	}
 
 	return respBody, err
@@ -183,7 +183,7 @@ func UpdateAttribute(name string, key string, value string) (respBody []byte, er
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts", name, "attributes", key)
 	payload := "{ \"name\":\"" + key + "\",\"value\":\"" + value + "\"}"
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload)
+	respBody, err = apiclient.HttpClient(u.String(), payload)
 	return respBody, err
 }
 
@@ -191,7 +191,7 @@ func UpdateAttribute(name string, key string, value string) (respBody []byte, er
 func DeleteAttribute(name string, key string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts", name, "attributes", key)
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "", "DELETE")
+	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
 	return respBody, err
 }
 
@@ -199,7 +199,7 @@ func DeleteAttribute(name string, key string) (respBody []byte, err error) {
 func GetAttribute(name string, key string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts", name, "attributes", key)
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
@@ -207,7 +207,7 @@ func GetAttribute(name string, key string) (respBody []byte, err error) {
 func ListAttributes(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts", name, "attributes")
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
@@ -231,7 +231,7 @@ func List(count int, startKey string, expand bool) (respBody []byte, err error) 
 
 	u.RawQuery = q.Encode()
 
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	respBody, err = apiclient.HttpClient(u.String())
 
 	return respBody, err
 }
@@ -245,8 +245,7 @@ func ListFilter(filter map[string]string) (respBody []byte, err error) {
 	allprds := apiProducts{}
 	outprds := apiProducts{}
 
-	printSetting := apiclient.GetPrintOutput()
-	apiclient.SetPrintOutput(false)
+	clilog.EnablePrintOutput(false)
 
 	for nextPage {
 		pageResp, err := List(maxProducts, startKey, true)
@@ -300,7 +299,7 @@ func ListFilter(filter map[string]string) (respBody []byte, err error) {
 	}
 
 	respBody, err = json.Marshal(outprds)
-	apiclient.SetPrintOutput(printSetting)
+	clilog.EnablePrintOutput(apiclient.GetPrintOutput())
 	_ = apiclient.PrettyPrint(respBody)
 
 	return respBody, err
@@ -316,7 +315,9 @@ func Export(conn int) (payload [][]byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), entityType)
 	//don't print to sysout
-	respBody, err := apiclient.HttpClient(false, u.String())
+	clilog.EnablePrintOutput(false)
+	respBody, err := apiclient.HttpClient(u.String())
+	clilog.EnablePrintOutput(apiclient.GetPrintOutput())
 	if err != nil {
 		return apiclient.GetEntityPayloadList(), err
 	}
@@ -328,8 +329,8 @@ func Export(conn int) (payload [][]byte, err error) {
 	}
 
 	numProd := len(products.APIProduct)
-	clilog.Info.Printf("Found %d products in the org\n", numProd)
-	clilog.Info.Printf("Exporting products with %d connections\n", conn)
+	clilog.Debug.Printf("Found %d products in the org\n", numProd)
+	clilog.Debug.Printf("Exporting products with %d connections\n", conn)
 
 	numOfLoops, remaining := numProd/conn, numProd%conn
 
@@ -343,7 +344,7 @@ func Export(conn int) (payload [][]byte, err error) {
 	for i, end := 0, 0; i < numOfLoops; i++ {
 		pwg.Add(1)
 		end = (i * conn) + conn
-		clilog.Info.Printf("Exporting batch %d of products\n", (i + 1))
+		clilog.Debug.Printf("Exporting batch %d of products\n", (i + 1))
 		go batchExport(products.APIProduct[start:end], entityType, &pwg, &mu)
 		start = end
 		pwg.Wait()
@@ -351,7 +352,7 @@ func Export(conn int) (payload [][]byte, err error) {
 
 	if remaining > 0 {
 		pwg.Add(1)
-		clilog.Info.Printf("Exporting remaining %d products\n", remaining)
+		clilog.Debug.Printf("Exporting remaining %d products\n", remaining)
 		go batchExport(products.APIProduct[start:numProd], entityType, &pwg, &mu)
 		pwg.Wait()
 	}
@@ -375,8 +376,8 @@ func Import(conn int, filePath string, upsert bool) (err error) {
 	}
 
 	numEntities := len(entities)
-	clilog.Info.Printf("Found %d products in the file\n", numEntities)
-	clilog.Info.Printf("Create products with %d connections\n", conn)
+	clilog.Debug.Printf("Found %d products in the file\n", numEntities)
+	clilog.Debug.Printf("Create products with %d connections\n", conn)
 
 	numOfLoops, remaining := numEntities/conn, numEntities%conn
 
@@ -390,7 +391,7 @@ func Import(conn int, filePath string, upsert bool) (err error) {
 	for i, end := 0, 0; i < numOfLoops; i++ {
 		pwg.Add(1)
 		end = (i * conn) + conn
-		clilog.Info.Printf("Creating batch %d of products\n", (i + 1))
+		clilog.Debug.Printf("Creating batch %d of products\n", (i + 1))
 		go batchImport(u.String(), entities[start:end], upsert, &pwg)
 		start = end
 		pwg.Wait()
@@ -398,7 +399,7 @@ func Import(conn int, filePath string, upsert bool) (err error) {
 
 	if remaining > 0 {
 		pwg.Add(1)
-		clilog.Info.Printf("Creating remaining %d products\n", remaining)
+		clilog.Debug.Printf("Creating remaining %d products\n", remaining)
 		go batchImport(u.String(), entities[start:numEntities], upsert, &pwg)
 		pwg.Wait()
 	}
@@ -453,7 +454,7 @@ func createAsyncProduct(url string, entity APIProduct, createOrUpdate bool, wg *
 		}
 	}
 
-	clilog.Info.Printf("Completed entity: %s", entity.Name)
+	clilog.Debug.Printf("Completed entity: %s", entity.Name)
 }
 
 func readProductsFile(filePath string) ([]APIProduct, error) {

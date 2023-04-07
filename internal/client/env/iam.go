@@ -29,7 +29,7 @@ var validMemberTypes = []string{"serviceAccount", "group", "user", "domain"}
 func GetIAM() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv()+":getIamPolicy")
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
@@ -56,7 +56,7 @@ func TestIAM(resource string, verb string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv()+":testIamPermissions")
 	payload := "{\"permissions\":[\"" + permission + "\"]}"
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload)
+	respBody, err = apiclient.HttpClient(u.String(), payload)
 	return respBody, err
 }
 

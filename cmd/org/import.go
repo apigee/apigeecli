@@ -60,21 +60,21 @@ var ImportCmd = &cobra.Command{
 
 		clilog.Warning.Println("Calls to Apigee APIs have a quota of 6000 per min. Running this tool against large list of entities can exhaust that quota and impact the usage of the platform.")
 
-		fmt.Println("Importing API Proxies...")
+		clilog.Info.Println("Importing API Proxies...")
 		if err = apis.ImportProxies(conn, path.Join(folder, proxiesFolderName)); err != nil {
 			return err
 		}
 
-		fmt.Println("Importing Sharedflows...")
+		clilog.Info.Println("Importing Sharedflows...")
 		if err = sharedflows.Import(conn, path.Join(folder, sharedFlowsFolderName)); err != nil {
 			return err
 		}
 
-		fmt.Println("Check for files with KVM Entries")
+		clilog.Info.Println("Check for files with KVM Entries")
 		orgKVMFileList, envKVMFileList, _, _ := utils.ListKVMFiles(folder)
 
 		if utils.FileExists(path.Join(folder, "org_"+org+"_"+kVMFileName)) {
-			fmt.Println("Importing Org scoped KVMs...")
+			clilog.Info.Println("Importing Org scoped KVMs...")
 			if kvmList, err = utils.ReadEntityFile(path.Join(folder, "org_"+org+"_"+kVMFileName)); err != nil {
 				return err
 			}
@@ -92,39 +92,39 @@ var ImportCmd = &cobra.Command{
 		}
 
 		if utils.FileExists(path.Join(folder, productsFileName)) {
-			fmt.Println("Importing Products...")
+			clilog.Info.Println("Importing Products...")
 			if err = products.Import(conn, path.Join(folder, productsFileName), false); err != nil {
 				return err
 			}
 		}
 
 		if utils.FileExists(path.Join(folder, developersFileName)) {
-			fmt.Println("Importing Developers...")
+			clilog.Info.Println("Importing Developers...")
 			if err = developers.Import(conn, path.Join(folder, developersFileName)); err != nil {
 				return err
 			}
 
-			fmt.Println("Importing Apps...")
+			clilog.Info.Println("Importing Apps...")
 			if err = apps.Import(conn, path.Join(folder, appsFileName), path.Join(folder, developersFileName)); err != nil {
 				return err
 			}
 		}
 
 		if utils.FileExists(path.Join(folder, envGroupsFileName)) {
-			fmt.Println("Importing Environment Group Configuration...")
+			clilog.Info.Println("Importing Environment Group Configuration...")
 			if err = envgroups.Import(path.Join(folder, envGroupsFileName)); err != nil {
 				return err
 			}
 		}
 
 		if utils.FileExists(path.Join(folder, dataCollFileName)) {
-			fmt.Println("Importing Data Collectors Configuration...")
+			clilog.Info.Println("Importing Data Collectors Configuration...")
 			if err = datacollectors.Import(path.Join(folder, dataCollFileName)); err != nil {
 				return err
 			}
 		}
 
-		apiclient.SetPrintOutput(false)
+		clilog.EnablePrintOutput(false)
 
 		var envRespBody []byte
 		if envRespBody, err = env.List(); err != nil {
@@ -140,32 +140,32 @@ var ImportCmd = &cobra.Command{
 		}
 
 		for _, environment := range environments {
-			fmt.Println("Importing configuration for environment " + environment)
+			clilog.Info.Println("Importing configuration for environment " + environment)
 			apiclient.SetApigeeEnv(environment)
 
 			if utils.FileExists(path.Join(folder, environment+"_"+keyStoresFileName)) {
-				fmt.Println("\tImporting Keystore names...")
+				clilog.Info.Println("\tImporting Keystore names...")
 				if err = keystores.Import(conn, path.Join(folder, environment+"_"+keyStoresFileName)); err != nil {
 					return err
 				}
 			}
 
 			if utils.FileExists(path.Join(folder, environment+"_"+targetServerFileName)) {
-				fmt.Println("\tImporting Target servers...")
+				clilog.Info.Println("\tImporting Target servers...")
 				if err = targetservers.Import(conn, path.Join(folder, environment+"_"+targetServerFileName)); err != nil {
 					return err
 				}
 			}
 
 			if utils.FileExists(path.Join(folder, environment+"_"+referencesFileName)) {
-				fmt.Println("\tImporting References...")
+				clilog.Info.Println("\tImporting References...")
 				if err = references.Import(conn, path.Join(folder, environment+"_"+referencesFileName)); err != nil {
 					return err
 				}
 			}
 
 			if utils.FileExists(path.Join(folder, "env_"+environment+"_"+kVMFileName)) {
-				fmt.Println("\tImporting KVM Names only...")
+				clilog.Info.Println("\tImporting KVM Names only...")
 				if kvmList, err = utils.ReadEntityFile(path.Join(folder, "env_"+environment+"_"+kVMFileName)); err != nil {
 					return err
 				}
@@ -184,7 +184,7 @@ var ImportCmd = &cobra.Command{
 
 			if importDebugmask {
 				if utils.FileExists(path.Join(folder, environment+debugmaskFileName)) {
-					fmt.Println("\tImporting Debug Mask configuration...")
+					clilog.Info.Println("\tImporting Debug Mask configuration...")
 					debugMask, _ := readEntityFileAsString(path.Join(folder, environment+debugmaskFileName))
 					if _, err = env.SetDebug(debugMask); err != nil {
 						return err
@@ -194,7 +194,7 @@ var ImportCmd = &cobra.Command{
 
 			if importTrace {
 				if utils.FileExists(path.Join(folder, environment+tracecfgFileName)) {
-					fmt.Println("\tImporting Trace configuration...")
+					clilog.Info.Println("\tImporting Trace configuration...")
 					traceCfg, _ := readEntityFileAsString(path.Join(folder, environment+tracecfgFileName))
 					if _, err = env.ImportTraceConfig(traceCfg); err != nil {
 						return err

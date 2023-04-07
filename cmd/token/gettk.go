@@ -15,8 +15,6 @@
 package token
 
 import (
-	"fmt"
-
 	"internal/apiclient"
 
 	"internal/clilog"
@@ -34,12 +32,12 @@ var GetCmd = &cobra.Command{
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		clilog.Init(apiclient.IsSkipLogInfo())
+		clilog.Init(apiclient.DebugEnabled(), apiclient.GetPrintOutput())
 		err := apiclient.SetAccessToken()
 		if err != nil {
 			return err
 		}
-		fmt.Println(apiclient.GetApigeeToken())
+		clilog.Info.Println(apiclient.GetApigeeToken())
 		return nil
 	},
 }

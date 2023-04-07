@@ -38,7 +38,7 @@ func Create(name string, resPath string, resourceType string) (respBody []byte, 
 	formParams := map[string]string{
 		"file": resPath,
 	}
-	respBody, err = apiclient.PostHttpOctet(true, false, u.String(), formParams)
+	respBody, err = apiclient.PostHttpOctet(false, u.String(), formParams)
 	return respBody, err
 }
 
@@ -49,7 +49,7 @@ func Delete(name string, resourceType string) (respBody []byte, err error) {
 	}
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "resourcefiles", resourceType, name)
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "", "DELETE")
+	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
 	return respBody, err
 }
 
@@ -74,7 +74,7 @@ func Update(name string, resPath string, resourceType string) (err error) {
 	formParams := map[string]string{
 		"file": resPath,
 	}
-	_, err = apiclient.PostHttpOctet(true, true, u.String(), formParams)
+	_, err = apiclient.PostHttpOctet(true, u.String(), formParams)
 	return
 }
 
@@ -94,7 +94,7 @@ func List(resourceType string) (respBody []byte, err error) {
 		q.Set("type", resourceType)
 		u.RawQuery = q.Encode()
 	}
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 

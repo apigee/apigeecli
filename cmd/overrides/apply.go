@@ -45,16 +45,16 @@ var ApplyCmd = &cobra.Command{
 
 		apiclient.SetProjectID(getOrg())
 		_ = apiclient.SetApigeeOrg(getOrg())
-		apiclient.SetPrintOutput(false)
+		clilog.EnablePrintOutput(false)
 
 		//check if the org exists
 		if _, err = orgs.Get(); err != nil {
 			if _, err = orgs.Create(getOrgRegion(), "", "HYBRID", "", "", false); err != nil {
 				return err
 			}
-			fmt.Printf("Org %s created\n", getOrg())
+			clilog.Info.Printf("Org %s created\n", getOrg())
 		} else {
-			fmt.Printf("Org %s already exists\n", getOrg())
+			clilog.Info.Printf("Org %s already exists\n", getOrg())
 		}
 
 		//check setSyncAuth
@@ -63,7 +63,7 @@ var ApplyCmd = &cobra.Command{
 			if _, err = sync.Set(identities); err != nil {
 				clilog.Warning.Println("Error setting identities: ", err)
 			} else {
-				fmt.Printf("Org setSync identities set: %v", identities)
+				clilog.Info.Printf("Org setSync identities set: %v", identities)
 			}
 		} else {
 			clilog.Warning.Println("No sync identities were set in overrides")
@@ -78,9 +78,9 @@ var ApplyCmd = &cobra.Command{
 				if _, err = env.Create("PROXY", "PROGRAMMABLE"); err != nil {
 					return err
 				}
-				fmt.Printf("Environment %s created", environment)
+				clilog.Info.Printf("Environment %s created", environment)
 			} else {
-				fmt.Printf("Environment %s already exists\n", environment)
+				clilog.Info.Printf("Environment %s already exists\n", environment)
 			}
 		}
 
@@ -92,9 +92,9 @@ var ApplyCmd = &cobra.Command{
 				if _, err = envgroups.Create(environmentGroup, getDomainName(i)); err != nil {
 					return err
 				}
-				fmt.Printf("Environment Group %s provisioned with a temporary domain name %s\n", environmentGroup, getDomainName(i))
+				clilog.Info.Printf("Environment Group %s provisioned with a temporary domain name %s\n", environmentGroup, getDomainName(i))
 			} else {
-				fmt.Printf("Environment Group %s already exists\n", environmentGroup)
+				clilog.Info.Printf("Environment Group %s already exists\n", environmentGroup)
 			}
 		}
 

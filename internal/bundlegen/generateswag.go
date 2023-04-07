@@ -84,7 +84,7 @@ func LoadSwaggerFromUri(endpoint string) (string, []byte, error) {
 	var docType string
 
 	u, err := url.Parse(endpoint)
-	clilog.Info.Printf("%v\n", u)
+	clilog.Debug.Printf("%v\n", u)
 	if err != nil {
 		clilog.Error.Println(err)
 		return "", nil, err
@@ -95,7 +95,7 @@ func LoadSwaggerFromUri(endpoint string) (string, []byte, error) {
 		docType = "json"
 		name = name + ".json"
 	}
-	clilog.Info.Printf("docType: %s\n", docType)
+	clilog.Debug.Printf("docType: %s\n", docType)
 
 	if err = apiclient.DownloadResource(endpoint, name, docType, false); err != nil {
 		clilog.Error.Println(err)
@@ -133,7 +133,7 @@ func LoadSwaggerFromFile(filePath string) (string, []byte, error) {
 		return "", nil, err
 	}
 
-	clilog.Info.Printf("%s", string(jsonContent))
+	clilog.Debug.Printf("%s", string(jsonContent))
 
 	return filepath.Base(filePath), jsonContent, err
 }
@@ -281,19 +281,19 @@ func loadSecurityDefinition(secDefName string, securityScheme openapi2.SecurityS
 func loadGoogleExtensions() (err error) {
 
 	for extensionName, extensionValue := range doc2.Extensions {
-		clilog.Info.Printf("Found extension: %s", extensionName)
+		clilog.Debug.Printf("Found extension: %s", extensionName)
 		if extensionName == "x-google-management" {
 			if err := parseManagementExtension(extensionValue); err != nil {
 				return err
 			}
 		} else if extensionName == "x-google-allow" {
 			allowValue := strings.ReplaceAll(fmt.Sprintf("%s", extensionValue), "\"", "")
-			clilog.Info.Printf("Allow Value: %s\n", allowValue)
+			clilog.Debug.Printf("Allow Value: %s\n", allowValue)
 			if allowValue != "configured" && allowValue != "all" {
 				return fmt.Errorf("invalid value for x-google-allow: %s", allowValue)
 			}
 		} else if extensionName == "x-google-api-name" {
-			clilog.Info.Printf("Found API Name: %s\n", extensionValue)
+			clilog.Debug.Printf("Found API Name: %s\n", extensionValue)
 			if apiName, err = parseApiExtension(extensionValue); err != nil {
 				return err
 			}
@@ -301,7 +301,7 @@ func loadGoogleExtensions() (err error) {
 			if defaultBackend, err = parseBackendExtension(extensionValue, false); err != nil {
 				return err
 			}
-			clilog.Info.Printf("Found default backend: %v", defaultBackend)
+			clilog.Debug.Printf("Found default backend: %v", defaultBackend)
 		}
 	}
 	return nil
@@ -339,7 +339,7 @@ func getSwaggerSecurityRequirements(securityRequirements openapi2.SecurityRequir
 
 func loadSwaggerSecurityRequirements(securityDefinitions map[string]*openapi2.SecurityScheme) {
 	for secDefName, secDef := range securityDefinitions {
-		clilog.Info.Printf("Loading Security Definition: %s\n", secDefName)
+		clilog.Debug.Printf("Loading Security Definition: %s\n", secDefName)
 		securitySchemesList.SecuritySchemes = append(securitySchemesList.SecuritySchemes, loadSecurityDefinition(secDefName, *secDef))
 	}
 }
@@ -628,7 +628,7 @@ func parseBackendExtension(i interface{}, operation bool) (backendDef, error) {
 
 	//If address is not set, ESPv2 will automatically set disable_auth to true
 	if backend.Address == "" {
-		clilog.Info.Println("Address not set, disabling auth")
+		clilog.Debug.Println("Address not set, disabling auth")
 		backend.DisableAuth = true
 	}
 
@@ -646,7 +646,7 @@ func parseBackendExtension(i interface{}, operation bool) (backendDef, error) {
 
 	//If an operation uses x-google-backend but does not specify either jwt_audience
 	// or disable_auth, ESPv2 will automatically default the jwt_audience to match the address
-	clilog.Info.Printf("Operation: %t, Audience %s, disable_auth: %s\n", operation, backend.JwtAudience, disableAuth)
+	clilog.Debug.Printf("Operation: %t, Audience %s, disable_auth: %s\n", operation, backend.JwtAudience, disableAuth)
 	if operation && backend.JwtAudience == "" && disableAuth == "" {
 		backend.JwtAudience = backend.Address
 	}
@@ -671,7 +671,7 @@ func parseBackendExtension(i interface{}, operation bool) (backendDef, error) {
 		backend.PathTranslation = "APPEND_PATH_TO_ADDRESS"
 	}
 
-	clilog.Info.Printf("Parsed Backend: %v\n", backend)
+	clilog.Debug.Printf("Parsed Backend: %v\n", backend)
 
 	return backend, nil
 }
@@ -688,7 +688,7 @@ func parseManagementExtension(i interface{}) error {
 	googMgmt = googleManagementDef{}
 	str := fmt.Sprintf("%s", i)
 
-	clilog.Info.Printf("Raw x-google-management: %s\n", str)
+	clilog.Debug.Printf("Raw x-google-management: %s\n", str)
 
 	if err := json.Unmarshal([]byte(str), &googMgmt); err != nil {
 		return err
@@ -700,7 +700,7 @@ func parseManagementExtension(i interface{}) error {
 		quota.QuotaTimeUnitLiteral = "minute"
 		quota.QuotaIntervalLiteral = "1"
 		quota.QuotaAllowLiteral = limit.Value.Standard
-		clilog.Info.Printf("Found quota definition: %v\n", quota)
+		clilog.Debug.Printf("Found quota definition: %v\n", quota)
 		quotaList = append(quotaList, quota)
 	}
 	return nil
@@ -805,10 +805,10 @@ func addBackend(backend backendDef) (err error) {
 		return fmt.Errorf("address is a mandatory field in x-google-backend")
 	}
 	//if there is a jwt_audience specified and auth is not disabled, use google auth
-	clilog.Info.Printf("JwtAudience %s and DisableAuth %t\n", backend.JwtAudience, backend.DisableAuth)
+	clilog.Debug.Printf("JwtAudience %s and DisableAuth %t\n", backend.JwtAudience, backend.DisableAuth)
 	if backend.JwtAudience != "" && !backend.DisableAuth {
 		if !targets.IsExists(GoogleAuthTargetName) {
-			clilog.Info.Println("Adding Google Auth Target Server")
+			clilog.Debug.Println("Adding Google Auth Target Server")
 			apiproxy.AddTargetEndpoint(GoogleAuthTargetName)
 			targets.NewTargetEndpoint(GoogleAuthTargetName, backend.Address, "", backend.JwtAudience, "")
 			//at the moment one cannot have different deadlines per target.
@@ -816,11 +816,11 @@ func addBackend(backend backendDef) (err error) {
 				targets.AddTargetEndpointProperty(GoogleAuthTargetName, "connect.timeout.millis", fmt.Sprintf("%d", backend.Deadline*1000))
 			}
 		} else {
-			clilog.Info.Println("Google Auth Target Server already exists")
+			clilog.Debug.Println("Google Auth Target Server already exists")
 		}
 	} else {
 		if !targets.IsExists(NoAuthTargetName) {
-			clilog.Info.Println("Adding Default Target Server")
+			clilog.Debug.Println("Adding Default Target Server")
 			apiproxy.AddTargetEndpoint(NoAuthTargetName)
 			targets.NewTargetEndpoint(NoAuthTargetName, backend.Address, "", "", "")
 			//at the moment one cannot have different deadlines per target.
@@ -828,7 +828,7 @@ func addBackend(backend backendDef) (err error) {
 				targets.AddTargetEndpointProperty(NoAuthTargetName, "connect.timeout.millis", fmt.Sprintf("%d", backend.Deadline*1000))
 			}
 		} else {
-			clilog.Info.Println("Default Target Server already exists")
+			clilog.Debug.Println("Default Target Server already exists")
 		}
 	}
 	return nil

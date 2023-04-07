@@ -20,6 +20,7 @@ import (
 	"path"
 
 	"internal/apiclient"
+	"internal/clilog"
 )
 
 type ops struct {
@@ -63,7 +64,7 @@ const (
 func Get(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "operations", name)
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
@@ -72,13 +73,15 @@ func List(state string, completeState OperationCompleteState) (respBody []byte, 
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "operations")
 	if state != "" {
-		if respBody, err = apiclient.HttpClient(false, u.String()); err != nil {
+		clilog.EnablePrintOutput(false)
+		if respBody, err = apiclient.HttpClient(u.String()); err != nil {
 			return nil, err
 		}
+		clilog.EnablePrintOutput(apiclient.GetPrintOutput())
 		return filterOperation(respBody, state, completeState)
 	}
 
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 

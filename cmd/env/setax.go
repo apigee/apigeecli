@@ -18,6 +18,7 @@ import (
 	"fmt"
 
 	"internal/apiclient"
+	"internal/clilog"
 
 	environments "internal/client/env"
 
@@ -41,7 +42,7 @@ var SetAxCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		fmt.Printf("Member %s granted access to %s role\n", memberName, role)
+		clilog.Info.Printf("Member %s granted access to %s role\n", memberName, role)
 		return nil
 	},
 }

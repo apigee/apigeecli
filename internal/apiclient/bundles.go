@@ -169,7 +169,8 @@ func GetAsyncEntity(entityURL string, wg *sync.WaitGroup, mu *sync.Mutex) {
 	var respBody []byte
 
 	//don't print to sysout
-	respBody, err := HttpClient(false, entityURL)
+	clilog.EnablePrintOutput(false)
+	respBody, err := HttpClient(entityURL)
 
 	if err != nil {
 		clilog.Error.Fatalf("error with entity: %s", entityURL)
@@ -181,7 +182,7 @@ func GetAsyncEntity(entityURL string, wg *sync.WaitGroup, mu *sync.Mutex) {
 	mu.Lock()
 	entityPayloadList = append(entityPayloadList, respBody)
 	mu.Unlock()
-	clilog.Info.Printf("Completed entity: %s", entityURL)
+	clilog.Debug.Printf("Completed entity: %s", entityURL)
 }
 
 func GetEntityPayloadList() [][]byte {
@@ -264,13 +265,13 @@ func ImportBundle(entityType string, name string, bundlePath string) error {
 		"proxy": bundlePath,
 	}
 
-	_, err = PostHttpOctet(true, false, u.String(), formParams)
+	_, err = PostHttpOctet(false, u.String(), formParams)
 	if err != nil {
 		clilog.Error.Println(err)
 		return err
 	}
 
-	clilog.Info.Printf("Completed entity: %s", u.String())
+	clilog.Debug.Printf("Completed entity: %s", u.String())
 	return nil
 }
 

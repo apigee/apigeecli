@@ -19,6 +19,7 @@ import (
 	"regexp"
 
 	"internal/apiclient"
+	"internal/clilog"
 
 	environments "internal/client/env"
 
@@ -44,7 +45,7 @@ var SetCustCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		fmt.Printf("Member %s, granted access to %s\n", memberName, role)
+		clilog.Info.Printf("Member %s, granted access to %s\n", memberName, role)
 		return nil
 	},
 }

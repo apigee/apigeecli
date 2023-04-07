@@ -15,9 +15,8 @@
 package env
 
 import (
-	"fmt"
-
 	"internal/apiclient"
+	"internal/clilog"
 
 	environments "internal/client/env"
 
@@ -38,7 +37,7 @@ var SetSyncCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		fmt.Printf("Member %s granted access to Apigee Synchronizer Manager role\n", memberName)
+		clilog.Info.Printf("Member %s granted access to Apigee Synchronizer Manager role\n", memberName)
 		return nil
 	},
 }

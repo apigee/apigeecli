@@ -22,13 +22,16 @@ import (
 	"strings"
 
 	"internal/apiclient"
+	"internal/clilog"
 )
 
 // generateUploadURL
 func generateUploadURL() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "archiveDeployments:generateUploadUrl")
-	respBody, err = apiclient.HttpClient(false, u.String(), "")
+	clilog.EnablePrintOutput(false)
+	respBody, err = apiclient.HttpClient(u.String(), "")
+	clilog.EnablePrintOutput(apiclient.GetPrintOutput())
 	return respBody, err
 }
 
@@ -59,7 +62,7 @@ func CreateArchive(name string, zipfile string) (respBody []byte, err error) {
 	headers["content-type"] = "application/zip"
 	headers["x-goog-content-length-range"] = "0,1073741824"
 
-	err = apiclient.PostHttpZip(apiclient.GetPrintOutput(), false, "PUT", gcsURI, headers, zipfile)
+	err = apiclient.PostHttpZip(false, "PUT", gcsURI, headers, zipfile)
 	if err != nil {
 		return nil, err
 	}
@@ -72,7 +75,7 @@ func CreateArchive(name string, zipfile string) (respBody []byte, err error) {
 
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "archiveDeployments")
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload)
+	respBody, err = apiclient.HttpClient(u.String(), payload)
 	return respBody, err
 }
 
@@ -80,7 +83,7 @@ func CreateArchive(name string, zipfile string) (respBody []byte, err error) {
 func GetArchive(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "archiveDeployments", name)
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
@@ -88,7 +91,7 @@ func GetArchive(name string) (respBody []byte, err error) {
 func ListArchives() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "archiveDeployments")
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
@@ -96,6 +99,6 @@ func ListArchives() (respBody []byte, err error) {
 func DeleteArchive(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "archiveDeployments", name)
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "", "DELETE")
+	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
 	return respBody, err
 }

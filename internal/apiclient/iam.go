@@ -110,6 +110,8 @@ func CreateIAMServiceAccount(name string, iamRole string) (err error) {
 		return fmt.Errorf("invalid service account role")
 	}
 
+	clilog.EnablePrintOutput(false)
+
 	//Step 1: create a new service account
 	u, _ := url.Parse(iamURL)
 	u.Path = path.Join(u.Path, GetProjectID(), "serviceAccounts")
@@ -120,7 +122,7 @@ func CreateIAMServiceAccount(name string, iamRole string) (err error) {
 
 	payload := "{" + strings.Join(iamPayload, ",") + "}"
 
-	_, err = HttpClient(false, u.String(), payload)
+	_, err = HttpClient(u.String(), payload)
 
 	if err != nil {
 		clilog.Error.Println(err)
@@ -132,7 +134,7 @@ func CreateIAMServiceAccount(name string, iamRole string) (err error) {
 	u.Path = path.Join(u.Path, GetProjectID(), "serviceAccounts",
 		serviceAccountName, "keys")
 
-	respKeyBody, err := HttpClient(false, u.String(), "")
+	respKeyBody, err := HttpClient(u.String(), "")
 
 	if err != nil {
 		clilog.Error.Println(err)
@@ -176,7 +178,7 @@ func CreateIAMServiceAccount(name string, iamRole string) (err error) {
 	//Step 6: get the current IAM policies for the project
 	u, _ = url.Parse(CrmURL)
 	u.Path = path.Join(u.Path, GetProjectID()+":getIamPolicy")
-	respBody, err := HttpClient(false, u.String(), "")
+	respBody, err := HttpClient(u.String(), "")
 
 	iamPolicy := iamPolicy{}
 
@@ -206,7 +208,9 @@ func CreateIAMServiceAccount(name string, iamRole string) (err error) {
 	u, _ = url.Parse(crmBetaURL)
 	u.Path = path.Join(u.Path, GetProjectID()+":setIamPolicy")
 
-	_, err = HttpClient(false, u.String(), string(setIamPolicyBody))
+	_, err = HttpClient(u.String(), string(setIamPolicyBody))
+
+	clilog.EnablePrintOutput(GetPrintOutput())
 
 	return err
 }
@@ -252,9 +256,11 @@ func SetIAMPermission(memberName string, iamRole string, memberType string) (err
 		role = iamRole
 	}
 
+	clilog.EnablePrintOutput(false)
+
 	u, _ := url.Parse(BaseURL)
 	u.Path = path.Join(u.Path, GetApigeeOrg(), "environments", GetApigeeEnv()+":getIamPolicy")
-	getIamPolicyBody, err := HttpClient(false, u.String())
+	getIamPolicyBody, err := HttpClient(u.String())
 	if err != nil {
 		clilog.Error.Println(err)
 		return err
@@ -297,17 +303,20 @@ func SetIAMPermission(memberName string, iamRole string, memberType string) (err
 		return err
 	}
 
-	_, err = HttpClient(false, u.String(), string(setIamPolicyBody))
+	_, err = HttpClient(u.String(), string(setIamPolicyBody))
+
+	clilog.EnablePrintOutput(GetPrintOutput())
 
 	return err
 }
 
 // RemoveIAMPermission removes/unbinds IAM permission from all roles for an Apigee Env
 func RemoveIAMPermission(memberName string, iamRole string) (err error) {
+	clilog.EnablePrintOutput(false)
 	u, _ := url.Parse(BaseURL)
 	u.Path = path.Join(u.Path, GetApigeeOrg(), "environments", GetApigeeEnv()+":getIamPolicy")
-	getIamPolicyBody, err := HttpClient(false, u.String())
-	clilog.Info.Println(string(getIamPolicyBody))
+	getIamPolicyBody, err := HttpClient(u.String())
+	clilog.Debug.Println(string(getIamPolicyBody))
 	if err != nil {
 		clilog.Error.Println(err)
 		return err
@@ -330,7 +339,7 @@ func RemoveIAMPermission(memberName string, iamRole string) (err error) {
 	if numBindings < 1 {
 		return fmt.Errorf("role %s not found for environment %s", iamRole, GetApigeeEnv())
 	} else if numBindings == 1 { //there is only 1 binding
-		clilog.Info.Printf("comparing %s and %s\n", getIamPolicy.Bindings[0].Role, iamRole)
+		clilog.Debug.Printf("comparing %s and %s\n", getIamPolicy.Bindings[0].Role, iamRole)
 		if getIamPolicy.Bindings[0].Role == iamRole {
 			if len(getIamPolicy.Bindings[0].Members) > 1 { //more than one member in the role
 				removeIamPolicy.Policy.Etag = getIamPolicy.Etag
@@ -340,9 +349,9 @@ func RemoveIAMPermission(memberName string, iamRole string) (err error) {
 				removeIamPolicy.Policy.Bindings[0].Role = getIamPolicy.Bindings[0].Role
 				//copy other members
 				for _, member := range getIamPolicy.Bindings[0].Members {
-					clilog.Info.Printf("comparing %s and %s\n", memberName, member)
+					clilog.Debug.Printf("comparing %s and %s\n", memberName, member)
 					if member == memberName {
-						clilog.Info.Println("found member")
+						clilog.Debug.Println("found member")
 						foundMember = true
 						//don't include this member
 					} else {
@@ -354,7 +363,7 @@ func RemoveIAMPermission(memberName string, iamRole string) (err error) {
 				}
 			} else { //there is one member, one role
 				if getIamPolicy.Bindings[0].Members[0] == memberName {
-					clilog.Info.Printf("comparing %s and %s\n", getIamPolicy.Bindings[0].Members[0], memberName)
+					clilog.Debug.Printf("comparing %s and %s\n", getIamPolicy.Bindings[0].Members[0], memberName)
 					removeIamPolicy.Policy.Etag = getIamPolicy.Etag
 				} else {
 					return fmt.Errorf("member %s not set for role %s in environment %s", memberName, iamRole, GetApigeeEnv())
@@ -367,11 +376,11 @@ func RemoveIAMPermission(memberName string, iamRole string) (err error) {
 		removeIamPolicy.Policy.Etag = getIamPolicy.Etag
 		for _, binding := range getIamPolicy.Bindings {
 			members := []string{}
-			clilog.Info.Printf("comparing %s and %s\n", binding.Role, iamRole)
+			clilog.Debug.Printf("comparing %s and %s\n", binding.Role, iamRole)
 			if binding.Role == iamRole {
 				if len(binding.Members) > 1 { //there is more than one member in the role
 					for _, member := range binding.Members {
-						clilog.Info.Printf("comparing %s and %s\n", member, memberName)
+						clilog.Debug.Printf("comparing %s and %s\n", member, memberName)
 						if member == memberName { //remove the member
 							foundMember = true
 						} else {
@@ -412,8 +421,8 @@ func RemoveIAMPermission(memberName string, iamRole string) (err error) {
 		return err
 	}
 
-	_, err = HttpClient(false, u.String(), string(removeIamPolicyBody))
-
+	_, err = HttpClient(u.String(), string(removeIamPolicyBody))
+	clilog.EnablePrintOutput(GetPrintOutput())
 	return err
 }
 
@@ -438,7 +447,8 @@ func AddWid(projectID string, namespace string, kServiceAccount string, gService
 	u, _ := url.Parse(crmBetaURL)
 	u.Path = path.Join(u.Path, GetProjectID()+":setIamPolicy")
 
-	_, err = HttpClient(false, u.String(), string(setIamPolicyBody))
-
+	clilog.EnablePrintOutput(false)
+	_, err = HttpClient(u.String(), string(setIamPolicyBody))
+	clilog.EnablePrintOutput(GetPrintOutput())
 	return err
 }

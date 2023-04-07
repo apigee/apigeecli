@@ -64,11 +64,11 @@ func getOperationGroup(operationGroupFile string) (*products.OperationGroup, err
 
 	if operationGroupFile != "" {
 		if operationGrpBytes, err = os.ReadFile(operationGroupFile); err != nil {
-			clilog.Info.Println(err)
+			clilog.Debug.Println(err)
 			return nil, err
 		}
 		if err = json.Unmarshal(operationGrpBytes, &operationGrp); err != nil {
-			clilog.Info.Println(err)
+			clilog.Debug.Println(err)
 			return nil, err
 		}
 		return &operationGrp, nil
@@ -84,11 +84,11 @@ func getGqlOperationGroup(gqlOperationGroupFile string) (*products.GraphqlOperat
 
 	if gqlOperationGroupFile != "" {
 		if gqlOperationGrpBytes, err = os.ReadFile(gqlOperationGroupFile); err != nil {
-			clilog.Info.Println(err)
+			clilog.Debug.Println(err)
 			return nil, err
 		}
 		if err = json.Unmarshal(gqlOperationGrpBytes, &gqlOperationGrp); err != nil {
-			clilog.Info.Println(err)
+			clilog.Debug.Println(err)
 			return nil, err
 		}
 		return &gqlOperationGrp, nil
@@ -104,11 +104,11 @@ func getGrpcOperationGroup(grpcOperationGroupFile string) (*products.GrpcOperati
 
 	if gqlOperationGroupFile != "" {
 		if grpcOperationGrpBytes, err = os.ReadFile(gqlOperationGroupFile); err != nil {
-			clilog.Info.Println(err)
+			clilog.Debug.Println(err)
 			return nil, err
 		}
 		if err = json.Unmarshal(grpcOperationGrpBytes, &grpcOperationGrp); err != nil {
-			clilog.Info.Println(err)
+			clilog.Debug.Println(err)
 			return nil, err
 		}
 		return &grpcOperationGrp, nil

@@ -29,23 +29,27 @@ var (
 )
 
 // Init function initializes the logger objects
-func Init(skipLogInfo bool) {
+func Init(debug bool, print bool) {
 	var debugHandle = io.Discard
+	var infoHandle = io.Discard
 
-	if !skipLogInfo {
+	if debug {
 		debugHandle = os.Stdout
 	}
 
-	infoHandle := os.Stdout
+	if print {
+		infoHandle = os.Stdout
+	}
+
 	warningHandle := os.Stdout
 	errorHandle := os.Stdout
 
 	Debug = log.New(debugHandle,
-		"INFO: ",
+		"DEBUG: ",
 		log.Ldate|log.Ltime|log.Lshortfile)
 
 	Info = log.New(infoHandle,
-		"", log.Default().Flags())
+		"", 0)
 
 	Warning = log.New(warningHandle,
 		"WARNING: ",
@@ -54,4 +58,16 @@ func Init(skipLogInfo bool) {
 	Error = log.New(errorHandle,
 		"ERROR: ",
 		log.Ldate|log.Ltime|log.Lshortfile)
+}
+
+// EnablePrintOutput
+func EnablePrintOutput(print bool) {
+	var infoHandle = io.Discard
+
+	if print {
+		infoHandle = os.Stdout
+	}
+
+	Info = log.New(infoHandle,
+		"", 0)
 }

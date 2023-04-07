@@ -21,14 +21,15 @@ import (
 )
 
 func TestInit(t *testing.T) {
-	clilog.Init(true)
+	clilog.Init(true, true)
+	clilog.Debug.Println("Printing Debug")
 	clilog.Info.Println("Printing Information")
 	clilog.Warning.Println("Printing Warning")
 	clilog.Error.Println("Printing Error")
 }
 
 func TestHttpGet(t *testing.T) {
-	clilog.Init(true)
+	clilog.Init(true, true)
 	_, err := HttpClient(true, "https://httpbin.org/get")
 	if err != nil {
 		t.Fatal(err)
@@ -66,7 +67,7 @@ func TestHttpInvalidNumberOfParams(t *testing.T) {
 
 func TestDownloadResource(t *testing.T) {
 	//download 1000 bytes
-	clilog.Init(true)
+	clilog.Init(true, true)
 	err := DownloadResource("https://httpbin.org/stream-bytes/1000", "test", ".zip", false)
 	if err != nil {
 		t.Fatal(err)
@@ -74,7 +75,7 @@ func TestDownloadResource(t *testing.T) {
 }
 
 func TestWriteJSONArrayToFile(t *testing.T) {
-	clilog.Init(true)
+	clilog.Init(true, true)
 	var entityPayloadList = []byte{'g', 'o', 'l', 'a', 'n', 'g'}
 	err := WriteByteArrayToFile("test.json", false, entityPayloadList)
 	if err != nil {

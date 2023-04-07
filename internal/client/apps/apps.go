@@ -114,7 +114,7 @@ func Create(name string, email string, expires string, callback string, apiProdu
 
 	payload := "{" + strings.Join(app, ",") + "}"
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", email, "apps")
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload)
+	respBody, err = apiclient.HttpClient(u.String(), payload)
 	return respBody, err
 }
 
@@ -122,7 +122,7 @@ func Create(name string, email string, expires string, callback string, apiProdu
 func Delete(name string, developerID string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", developerID, "apps", name)
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "", "DELETE")
+	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
 	return respBody, err
 }
 
@@ -130,7 +130,7 @@ func Delete(name string, developerID string) (respBody []byte, err error) {
 func Get(appID string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apps", appID)
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
@@ -146,7 +146,7 @@ func Manage(appID string, developerEmail string, action string) (respBody []byte
 	q.Set("action", action)
 	u.RawQuery = q.Encode()
 
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "", "POST", "application/octet-stream")
+	respBody, err = apiclient.HttpClient(u.String(), "", "POST", "application/octet-stream")
 	return respBody, err
 }
 
@@ -160,7 +160,9 @@ func SearchApp(name string) (respBody []byte, err error) {
 	q.Set("includeCred", "false")
 	u.RawQuery = q.Encode()
 	//don't print the list
-	respBody, err = apiclient.HttpClient(false, u.String())
+	clilog.EnablePrintOutput(false)
+	respBody, err = apiclient.HttpClient(u.String())
+	clilog.EnablePrintOutput(apiclient.GetPrintOutput())
 	if err != nil {
 		return respBody, err
 	}
@@ -192,7 +194,7 @@ func List(includeCred bool, expand bool, count int) (respBody []byte, err error)
 		q.Set("row", strconv.Itoa(count))
 	}
 	u.RawQuery = q.Encode()
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
@@ -203,7 +205,7 @@ func ListApps(productName string) (respBody []byte, err error) {
 	q := u.Query()
 	q.Set("apiProduct", productName)
 	u.RawQuery = q.Encode()
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
@@ -230,7 +232,7 @@ func GenerateKey(name string, developerID string, apiProducts []string, callback
 
 	payload := "{" + strings.Join(key, ",") + "}"
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", developerID, "apps", name)
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload)
+	respBody, err = apiclient.HttpClient(u.String(), payload)
 	return respBody, err
 }
 
@@ -244,7 +246,9 @@ func Export(conn int) (payload [][]byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), entityType)
 	//don't print to sysout
-	respBody, err := apiclient.HttpClient(false, u.String())
+	clilog.EnablePrintOutput(false)
+	respBody, err := apiclient.HttpClient(u.String())
+	clilog.EnablePrintOutput(apiclient.GetPrintOutput())
 	if err != nil {
 		return apiclient.GetEntityPayloadList(), err
 	}
@@ -256,8 +260,8 @@ func Export(conn int) (payload [][]byte, err error) {
 	}
 
 	numEntities := len(entities.Apps)
-	clilog.Info.Printf("Found %d apps in the org\n", numEntities)
-	clilog.Info.Printf("Exporting apps with %d connections\n", conn)
+	clilog.Debug.Printf("Found %d apps in the org\n", numEntities)
+	clilog.Debug.Printf("Exporting apps with %d connections\n", conn)
 
 	numOfLoops, remaining := numEntities/conn, numEntities%conn
 
@@ -271,7 +275,7 @@ func Export(conn int) (payload [][]byte, err error) {
 	for i, end := 0, 0; i < numOfLoops; i++ {
 		pwg.Add(1)
 		end = (i * conn) + conn
-		clilog.Info.Printf("Exporting batch %d of apps\n", (i + 1))
+		clilog.Debug.Printf("Exporting batch %d of apps\n", (i + 1))
 		go batchExport(entities.Apps[start:end], entityType, &pwg, &mu)
 		start = end
 		pwg.Wait()
@@ -279,7 +283,7 @@ func Export(conn int) (payload [][]byte, err error) {
 
 	if remaining > 0 {
 		pwg.Add(1)
-		clilog.Info.Printf("Exporting remaining %d apps\n", remaining)
+		clilog.Debug.Printf("Exporting remaining %d apps\n", remaining)
 		go batchExport(entities.Apps[start:numEntities], entityType, &pwg, &mu)
 		pwg.Wait()
 	}
@@ -300,8 +304,8 @@ func Import(conn int, filePath string, developersFilePath string) error {
 	}
 
 	numEntities := len(entities)
-	clilog.Info.Printf("Found %d apps in the file\n", numEntities)
-	clilog.Info.Printf("Create apps with %d connections\n", conn)
+	clilog.Debug.Printf("Found %d apps in the file\n", numEntities)
+	clilog.Debug.Printf("Create apps with %d connections\n", conn)
 
 	numOfLoops, remaining := numEntities/conn, numEntities%conn
 
@@ -315,7 +319,7 @@ func Import(conn int, filePath string, developersFilePath string) error {
 	for i, end := 0, 0; i < numOfLoops; i++ {
 		pwg.Add(1)
 		end = (i * conn) + conn
-		clilog.Info.Printf("Creating batch %d of apps\n", (i + 1))
+		clilog.Debug.Printf("Creating batch %d of apps\n", (i + 1))
 		go batchImport(entities[start:end], developerEntities, &pwg)
 		start = end
 		pwg.Wait()
@@ -323,7 +327,7 @@ func Import(conn int, filePath string, developersFilePath string) error {
 
 	if remaining > 0 {
 		pwg.Add(1)
-		clilog.Info.Printf("Creating remaining %d apps\n", remaining)
+		clilog.Debug.Printf("Creating remaining %d apps\n", remaining)
 		go batchImport(entities[start:numEntities], developerEntities, &pwg)
 		pwg.Wait()
 	}
@@ -424,7 +428,7 @@ func createAsyncApp(app application, developerEntities developers.Appdevelopers,
 	}
 
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", developerID, "apps")
-	appRespBody, err := apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), string(out))
+	appRespBody, err := apiclient.HttpClient(u.String(), string(out))
 	if err != nil {
 		clilog.Error.Println(err)
 		return
@@ -441,10 +445,10 @@ func createAsyncApp(app application, developerEntities developers.Appdevelopers,
 	//delete the auto-generated key
 	newAppCredentials := newDeveloperApp["credentials"].([]interface{})
 	temporaryCredential := newAppCredentials[0].(map[string]interface{})
-	printSetting := apiclient.GetPrintOutput()
-	apiclient.SetPrintOutput(false)
+
+	clilog.EnablePrintOutput(false)
 	_, err = DeleteKey(developerEmail, newDeveloperApp["name"].(string), temporaryCredential["consumerKey"].(string))
-	apiclient.SetPrintOutput(printSetting)
+	clilog.EnablePrintOutput(apiclient.GetPrintOutput())
 	if err != nil {
 		clilog.Error.Println(err)
 		return
@@ -465,7 +469,7 @@ func createAsyncApp(app application, developerEntities developers.Appdevelopers,
 			return
 		}
 
-		_, err = apiclient.HttpClient(apiclient.GetPrintOutput(), createDeveloperAppUrl.String(), string(impCredJSON))
+		_, err = apiclient.HttpClient(createDeveloperAppUrl.String(), string(impCredJSON))
 		if err != nil {
 			return
 		}
@@ -495,7 +499,7 @@ func createAsyncApp(app application, developerEntities developers.Appdevelopers,
 				return
 			}
 
-			_, err = apiclient.HttpClient(apiclient.GetPrintOutput(), updateDeveloperAppUrl.String(), string(updateCredJSON))
+			_, err = apiclient.HttpClient(updateDeveloperAppUrl.String(), string(updateCredJSON))
 			if err != nil {
 				return
 			}
@@ -503,7 +507,7 @@ func createAsyncApp(app application, developerEntities developers.Appdevelopers,
 			clilog.Warning.Println("NOTE: apiProducts are not associated with the app")
 		}
 	}
-	clilog.Info.Printf("Completed entity: %s", app.Name)
+	clilog.Debug.Printf("Completed entity: %s", app.Name)
 }
 
 func getArrayStr(str []string) string {

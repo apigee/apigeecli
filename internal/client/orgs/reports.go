@@ -36,7 +36,7 @@ func TotalAPICallsInMonth(month int, year int, envDetails bool, conn int) (total
 	//ensure the count is reset to zero before calculating the next set
 	defer env.ApiCalls.ResetCount()
 
-	apiclient.SetPrintOutput(false)
+	clilog.EnablePrintOutput(false)
 
 	if envListBytes, err = env.List(); err != nil {
 		return -1, err
@@ -47,8 +47,8 @@ func TotalAPICallsInMonth(month int, year int, envDetails bool, conn int) (total
 	}
 
 	numEntities := len(envList)
-	clilog.Info.Printf("Found %d environments\n", numEntities)
-	clilog.Info.Printf("Generate report with %d connections\n", conn)
+	clilog.Debug.Printf("Found %d environments\n", numEntities)
+	clilog.Debug.Printf("Generate report with %d connections\n", conn)
 
 	numOfLoops, remaining := numEntities/conn, numEntities%conn
 
@@ -62,7 +62,7 @@ func TotalAPICallsInMonth(month int, year int, envDetails bool, conn int) (total
 	for i, end := 0, 0; i < numOfLoops; i++ {
 		pwg.Add(1)
 		end = (i * conn) + conn
-		clilog.Info.Printf("Creating reports for a batch %d of environments\n", (i + 1))
+		clilog.Debug.Printf("Creating reports for a batch %d of environments\n", (i + 1))
 		go batchReport(envList[start:end], month, year, envDetails, &pwg)
 		start = end
 		pwg.Wait()
@@ -70,12 +70,12 @@ func TotalAPICallsInMonth(month int, year int, envDetails bool, conn int) (total
 
 	if remaining > 0 {
 		pwg.Add(1)
-		clilog.Info.Printf("Creating reports for remaining %d environments\n", remaining)
+		clilog.Debug.Printf("Creating reports for remaining %d environments\n", remaining)
 		go batchReport(envList[start:numEntities], month, year, envDetails, &pwg)
 		pwg.Wait()
 	}
 
-	apiclient.SetPrintOutput(true)
+	clilog.EnablePrintOutput(apiclient.GetPrintOutput())
 
 	return env.ApiCalls.GetCount(), nil
 }

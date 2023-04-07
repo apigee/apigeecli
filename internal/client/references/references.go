@@ -56,7 +56,7 @@ func Create(name string, description string, resourceType string, refers string)
 	payload := "{" + strings.Join(reference, ",") + "}"
 
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "references")
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload)
+	respBody, err = apiclient.HttpClient(u.String(), payload)
 	return respBody, err
 }
 
@@ -64,7 +64,7 @@ func Create(name string, description string, resourceType string, refers string)
 func Get(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "references", name)
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
@@ -72,7 +72,7 @@ func Get(name string) (respBody []byte, err error) {
 func Delete(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "references", name)
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "", "DELETE")
+	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
 	return respBody, err
 }
 
@@ -80,7 +80,7 @@ func Delete(name string) (respBody []byte, err error) {
 func List() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "references")
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
@@ -107,7 +107,7 @@ func Update(name string, description string, resourceType string, refers string)
 	payload := "{" + strings.Join(reference, ",") + "}"
 
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "references", name)
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload, "PUT")
+	respBody, err = apiclient.HttpClient(u.String(), payload, "PUT")
 	return respBody, err
 }
 
@@ -116,7 +116,9 @@ func Export(conn int) (payload [][]byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "references")
 	// don't print to sysout
-	respBody, err := apiclient.HttpClient(false, u.String())
+	clilog.EnablePrintOutput(false)
+	respBody, err := apiclient.HttpClient(u.String())
+	clilog.EnablePrintOutput(apiclient.GetPrintOutput())
 	if err != nil {
 		return nil, err
 	}
@@ -127,8 +129,8 @@ func Export(conn int) (payload [][]byte, err error) {
 		return nil, err
 	}
 
-	clilog.Info.Printf("Found %d references in the org\n", len(references))
-	clilog.Info.Printf("Exporting references with %d connections\n", conn)
+	clilog.Debug.Printf("Found %d references in the org\n", len(references))
+	clilog.Debug.Printf("Exporting references with %d connections\n", conn)
 
 	jobChan := make(chan string)
 	resultChan := make(chan []byte)
@@ -185,6 +187,8 @@ func Export(conn int) (payload [][]byte, err error) {
 
 func exportReferences(wg *sync.WaitGroup, jobs <-chan string, results chan<- []byte, errs chan<- error) {
 	defer wg.Done()
+	defer clilog.EnablePrintOutput(apiclient.GetPrintOutput())
+	clilog.EnablePrintOutput(false)
 	for {
 		job, ok := <-jobs
 		if !ok {
@@ -192,7 +196,7 @@ func exportReferences(wg *sync.WaitGroup, jobs <-chan string, results chan<- []b
 		}
 		u, _ := url.Parse(apiclient.BaseURL)
 		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "targetservers", job)
-		respBody, err := apiclient.HttpClient(false, u.String())
+		respBody, err := apiclient.HttpClient(u.String())
 		if err != nil {
 			errs <- err
 		} else {
@@ -209,8 +213,8 @@ func Import(conn int, filePath string) (err error) {
 		return err
 	}
 
-	clilog.Info.Printf("Found %d references in the file\n", len(references))
-	clilog.Info.Printf("Create references with %d connections\n", conn)
+	clilog.Debug.Printf("Found %d references in the file\n", len(references))
+	clilog.Debug.Printf("Create references with %d connections\n", conn)
 
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "references")
@@ -345,9 +349,8 @@ func importReferences(knownRefs map[string]bool, wg *sync.WaitGroup, jobs <-chan
 			if err = json.Indent(out, bytes.TrimSpace(b), "", "  "); err != nil {
 				errs <- fmt.Errorf("apigee returned invalid json: %w", err)
 			}
-			fmt.Println(out.String())
 		}
-		clilog.Info.Printf("Completed reference: %s", job.Name)
+		clilog.Debug.Printf("Completed reference: %s", job.Name)
 	}
 }
 

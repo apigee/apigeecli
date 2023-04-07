@@ -15,9 +15,8 @@
 package env
 
 import (
-	"fmt"
-
 	"internal/apiclient"
+	"internal/clilog"
 
 	environments "internal/client/env"
 
@@ -38,7 +37,7 @@ var RemoveRoleCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		fmt.Printf("Member %s removed access to role %s\n", memberName, role)
+		clilog.Info.Printf("Member %s removed access to role %s\n", memberName, role)
 		return nil
 	},
 }

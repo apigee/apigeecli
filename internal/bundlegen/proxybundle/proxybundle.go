@@ -623,7 +623,7 @@ func GitHubImportBundle(owner string, repo string, repopath string) (err error) 
 	}
 
 	if client != nil {
-		fmt.Println("")
+		clilog.Info.Println("")
 	}
 
 	//2. compress the proxy folder
@@ -696,27 +696,27 @@ func downloadResource(repoPath string, url string) (err error) {
 
 	out, err := os.Create(apiproxyFile)
 	if err != nil {
-		clilog.Info.Println("error creating file: ", err)
+		clilog.Debug.Println("error creating file: ", err)
 		return err
 	}
 	defer out.Close()
 
 	client := &http.Client{}
 
-	clilog.Info.Println("Connecting to : ", url)
+	clilog.Debug.Println("Connecting to : ", url)
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		clilog.Info.Println("error in client: ", err)
+		clilog.Debug.Println("error in client: ", err)
 		return err
 	}
 
 	resp, err := client.Do(req)
 
 	if err != nil {
-		clilog.Info.Println("error connecting: ", err)
+		clilog.Debug.Println("error connecting: ", err)
 		return err
 	} else if resp.StatusCode > 299 {
-		clilog.Info.Println("error in response: ", resp.Body)
+		clilog.Debug.Println("error in response: ", resp.Body)
 		return errors.New("error in response")
 	}
 
@@ -725,16 +725,16 @@ func downloadResource(repoPath string, url string) (err error) {
 	}
 
 	if resp == nil {
-		clilog.Info.Println("error in response: Response was null")
+		clilog.Debug.Println("error in response: Response was null")
 		return fmt.Errorf("error in response: Response was null")
 	}
 
 	_, err = io.Copy(out, resp.Body)
 	if err != nil {
-		clilog.Info.Println("error writing response to file: ", err)
+		clilog.Debug.Println("error writing response to file: ", err)
 		return err
 	}
 
-	clilog.Info.Println("Resource " + apiproxyFolder + " completed")
+	clilog.Debug.Println("Resource " + apiproxyFolder + " completed")
 	return nil
 }

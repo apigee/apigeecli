@@ -22,6 +22,7 @@ import (
 	"strings"
 
 	"internal/apiclient"
+	"internal/clilog"
 )
 
 // Attach
@@ -33,7 +34,7 @@ func Attach(name string, environment string) (respBody []byte, err error) {
 
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "instances", name, "attachments")
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload)
+	respBody, err = apiclient.HttpClient(u.String(), payload)
 	return respBody, err
 }
 
@@ -52,7 +53,7 @@ func DetachEnv(instance string) (respBody []byte, err error) {
 	}
 
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "instances", instance, "attachments", attachmentName)
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "", "DELETE")
+	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
 	return respBody, err
 }
 
@@ -70,7 +71,7 @@ func GetEnv(instance string) (respBody []byte, err error) {
 	}
 
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "instances", instance, "attachments", attachmentName)
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
@@ -78,7 +79,7 @@ func GetEnv(instance string) (respBody []byte, err error) {
 func Detach(name string, instanceName string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "instances", instanceName, "attachments", name)
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "", "DELETE")
+	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
 	return respBody, err
 }
 
@@ -86,7 +87,7 @@ func Detach(name string, instanceName string) (respBody []byte, err error) {
 func GetAttach(name string, instanceName string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "instances", instanceName, "attachments", name)
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
@@ -94,7 +95,7 @@ func GetAttach(name string, instanceName string) (respBody []byte, err error) {
 func ListAttach(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "instances", name, "attachments")
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
@@ -113,12 +114,12 @@ func getAttachmentName(instance string) (attachmentName string, err error) {
 
 	instAttach := instanceAttachments{}
 
-	apiclient.SetPrintOutput(false)
+	clilog.EnablePrintOutput(false)
 	listAttachments, err := ListAttach(instance)
 	if err != nil {
 		return "", err
 	}
-	apiclient.SetPrintOutput(true)
+	clilog.EnablePrintOutput(apiclient.GetPrintOutput())
 
 	err = json.Unmarshal(listAttachments, &instAttach)
 	if err != nil {

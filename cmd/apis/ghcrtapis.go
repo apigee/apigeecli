@@ -46,7 +46,7 @@ var GhCreateCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		if os.Getenv("GITHUB_TOKEN") == "" {
-			clilog.Info.Println("github token is not set as an env var. Running unauthenticated")
+			clilog.Debug.Println("github token is not set as an env var. Running unauthenticated")
 		}
 		if err = proxybundle.GitHubImportBundle(ghOwner, ghRepo, ghPath); err != nil {
 			proxybundle.CleanUp()

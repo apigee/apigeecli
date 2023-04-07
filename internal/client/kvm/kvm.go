@@ -42,7 +42,7 @@ func Create(proxyName string, name string, encrypt bool) (respBody []byte, err e
 		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "keyvaluemaps")
 	}
 
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload)
+	respBody, err = apiclient.HttpClient(u.String(), payload)
 	return respBody, err
 }
 
@@ -58,7 +58,7 @@ func Delete(proxyName string, name string) (respBody []byte, err error) {
 		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "keyvaluemaps", name)
 	}
 
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "", "DELETE")
+	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
 	return respBody, err
 }
 
@@ -72,6 +72,6 @@ func List(proxyName string) (respBody []byte, err error) {
 	} else {
 		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "keyvaluemaps")
 	}
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }

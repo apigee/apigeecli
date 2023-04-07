@@ -21,6 +21,7 @@ import (
 	"strings"
 
 	"internal/apiclient"
+	"internal/clilog"
 
 	"internal/client/kvm"
 
@@ -45,7 +46,7 @@ var ExpCmd = &cobra.Command{
 		var payload [][]byte
 		var fileName string
 
-		apiclient.SetPrintOutput(false)
+		clilog.EnablePrintOutput(false)
 		listKVMBytes, err := kvm.List(proxyName)
 		if err != nil {
 			return err
@@ -75,8 +76,8 @@ var ExpCmd = &cobra.Command{
 				}
 			}
 		}
-		apiclient.SetPrintOutput(false)
-		fmt.Println("KVMs exports successfully")
+		clilog.EnablePrintOutput(false)
+		clilog.Info.Println("KVMs exported successfully")
 		return
 	},
 }

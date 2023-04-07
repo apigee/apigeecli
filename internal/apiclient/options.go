@@ -32,11 +32,10 @@ type ApigeeClientOptions struct {
 	Token          string //Google OAuth access token
 	ServiceAccount string //Google service account json
 	ProjectID      string //GCP Project ID
-	SkipLogInfo    bool   //LogInfo controls the log level
-	SkipCheck      bool   //skip checking access token expiry
+	DebugLog       bool   //Enable debug logs
+	TokenCheck     bool   //Check access token expiry
 	SkipCache      bool   //skip writing access token to file
 	PrintOutput    bool   //prints output from http calls
-	NoOutput       bool   //disables printing API responses
 	ProxyUrl       string //use a proxy url
 }
 
@@ -63,33 +62,30 @@ func NewApigeeClient(o ApigeeClientOptions) {
 	if o.Env != "" {
 		options.Env = o.Env
 	}
-	if o.SkipCheck {
-		options.SkipCheck = true
+	if o.TokenCheck {
+		options.TokenCheck = true
 	} else {
-		options.SkipCheck = false
+		options.TokenCheck = false
 	}
 	if o.SkipCache {
 		options.SkipCache = true
 	} else {
 		options.SkipCache = false
 	}
-	if o.SkipLogInfo {
-		options.SkipLogInfo = true
-		clilog.Init(true)
+	if o.DebugLog {
+		options.DebugLog = true
 	} else {
-		options.SkipLogInfo = false
-		clilog.Init(false)
+		options.DebugLog = false
 	}
 	if o.PrintOutput {
 		options.PrintOutput = true
 	} else {
 		options.PrintOutput = false
 	}
-	if o.NoOutput {
-		options.NoOutput = true
-	} else {
-		options.NoOutput = false
-	}
+
+	//initialize logs
+	clilog.Init(options.DebugLog, options.PrintOutput)
+
 	//read preference file
 	_ = ReadPreferencesFile()
 
@@ -163,9 +159,9 @@ func GetServiceAccount() string {
 	return options.ServiceAccount
 }
 
-// IsSkipCheck
-func IsSkipCheck() bool {
-	return options.SkipCheck
+// TokenCheckEnabled
+func TokenCheckEnabled() bool {
+	return options.TokenCheck
 }
 
 // IsSkipCache
@@ -173,15 +169,9 @@ func IsSkipCache() bool {
 	return options.SkipCache
 }
 
-// IsSkipLogInfo
-func IsSkipLogInfo() bool {
-	return options.SkipLogInfo
-}
-
-// SetSkipLogIngo
-func SetSkipLogInfo(l bool) {
-	options.SkipLogInfo = l
-	clilog.Init(l)
+// DebugEnabled
+func DebugEnabled() bool {
+	return options.DebugLog
 }
 
 // PrintOutput

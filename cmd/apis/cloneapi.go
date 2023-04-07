@@ -63,10 +63,6 @@ var CloneCmd = &cobra.Command{
 			if proxyFolder, err = unzipBundle(); err != nil {
 				return err
 			}
-			if true {
-				fmt.Println(proxyFolder)
-				return nil
-			}
 		}
 
 		if proxyFolder != "" {

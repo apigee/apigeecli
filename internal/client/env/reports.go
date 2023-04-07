@@ -93,7 +93,7 @@ func TotalAPICallsInMonth(environment string, month int, year int) (total int, e
 	u.RawQuery = q.Encode()
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", environment, "stats", proxy_dimension)
 
-	if respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String()); err != nil {
+	if respBody, err = apiclient.HttpClient(u.String()); err != nil {
 		return -1, err
 	}
 

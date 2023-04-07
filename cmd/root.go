@@ -68,9 +68,9 @@ var RootCmd = &cobra.Command{
 			if ok, _ := apiclient.TestAndUpdateLastCheck(); !ok {
 				latestVersion, _ := getLatestVersion()
 				if cmd.Version == "" {
-					clilog.Info.Println("apigeecli wasn't built with a valid Version tag.")
+					clilog.Debug.Println("apigeecli wasn't built with a valid Version tag.")
 				} else if latestVersion != "" && cmd.Version != latestVersion {
-					fmt.Printf("You are using %s, the latest version %s is available for download\n", cmd.Version, latestVersion)
+					clilog.Info.Printf("You are using %s, the latest version %s is available for download\n", cmd.Version, latestVersion)
 				}
 			}
 		}
@@ -83,13 +83,13 @@ var RootCmd = &cobra.Command{
 
 func Execute() {
 	if err := RootCmd.Execute(); err != nil {
-		fmt.Println(err)
+		clilog.Error.Println(err)
 		os.Exit(1)
 	}
 }
 
 var accessToken, serviceAccount string
-var disableCheck, noOutput bool
+var disableCheck, printOutput bool
 
 func init() {
 	cobra.OnInitialize(initConfig)
@@ -103,8 +103,8 @@ func init() {
 	RootCmd.PersistentFlags().BoolVarP(&disableCheck, "disable-check", "",
 		false, "Disable check for newer versions")
 
-	RootCmd.PersistentFlags().BoolVarP(&noOutput, "no-output", "",
-		false, "Disable printing API responses from the control plane")
+	RootCmd.PersistentFlags().BoolVarP(&printOutput, "print-output", "",
+		true, "Disable printing API responses from the control plane")
 
 	RootCmd.AddCommand(apis.Cmd)
 	RootCmd.AddCommand(org.Cmd)
@@ -135,21 +135,20 @@ func init() {
 }
 
 func initConfig() {
-	var skipLogInfo = true
+	var debug = false
 	var skipCache bool
 
-	if os.Getenv("APIGEECLI_SKIPLOG") == "false" {
-		skipLogInfo = false
+	if os.Getenv("APIGEECLI_DEBUG") == "true" {
+		debug = true
 	}
 
 	skipCache, _ = strconv.ParseBool(os.Getenv("APIGEECLI_SKIPCACHE"))
 
 	apiclient.NewApigeeClient(apiclient.ApigeeClientOptions{
-		SkipCheck:   true,
-		PrintOutput: true,
-		SkipLogInfo: skipLogInfo,
+		TokenCheck:  true,
+		PrintOutput: printOutput,
+		DebugLog:    debug,
 		SkipCache:   skipCache,
-		NoOutput:    noOutput,
 	})
 }
 
@@ -187,7 +186,7 @@ func getLatestVersion() (version string, err error) {
 	}
 
 	if result["tag_name"] == "" {
-		clilog.Info.Println("Unable to determine latest tag, skipping this information")
+		clilog.Debug.Println("Unable to determine latest tag, skipping this information")
 		return "", nil
 	} else {
 		return fmt.Sprintf("%s", result["tag_name"]), nil

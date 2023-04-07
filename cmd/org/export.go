@@ -16,7 +16,6 @@ package org
 
 import (
 	"encoding/json"
-	"fmt"
 	"os"
 	"path"
 	"strconv"
@@ -71,17 +70,17 @@ var ExportCmd = &cobra.Command{
 
 		clilog.Warning.Println("Calls to Apigee APIs have a quota of 6000 per min. Running this tool against large list of entities can exhaust that quota and impact the usage of the platform.")
 
-		fmt.Println("Exporting API Proxies...")
+		clilog.Info.Println("Exporting API Proxies...")
 		if err = apis.ExportProxies(conn, proxiesFolderName, allRevisions); proceedOnError(err) != nil {
 			return err
 		}
 
-		fmt.Println("Exporting Sharedflows...")
+		clilog.Info.Println("Exporting Sharedflows...")
 		if err = sharedflows.Export(conn, sharedFlowsFolderName, allRevisions); proceedOnError(err) != nil {
 			return err
 		}
 
-		fmt.Println("Exporting API Products...")
+		clilog.Info.Println("Exporting API Products...")
 		if productResponse, err = products.Export(conn); proceedOnError(err) != nil {
 			return err
 		}
@@ -89,9 +88,9 @@ var ExportCmd = &cobra.Command{
 			return err
 		}
 
-		apiclient.SetPrintOutput(false)
+		clilog.EnablePrintOutput(false)
 
-		fmt.Printf("Exporting KV Map names for org %s\n", org)
+		clilog.Info.Printf("Exporting KV Map names for org %s\n", org)
 		if listKVMBytes, err = kvm.List(""); proceedOnError(err) != nil {
 			return err
 		}
@@ -105,7 +104,7 @@ var ExportCmd = &cobra.Command{
 			}
 		}
 
-		fmt.Println("Exporting Developers...")
+		clilog.Info.Println("Exporting Developers...")
 		if respBody, err = developers.Export(); proceedOnError(err) != nil {
 			return err
 		}
@@ -113,7 +112,7 @@ var ExportCmd = &cobra.Command{
 			return err
 		}
 
-		fmt.Println("Exporting Developer Apps...")
+		clilog.Info.Println("Exporting Developer Apps...")
 		if appsResponse, err = apps.Export(conn); proceedOnError(err) != nil {
 			return err
 		}
@@ -121,9 +120,9 @@ var ExportCmd = &cobra.Command{
 			return err
 		}
 
-		apiclient.SetPrintOutput(false)
+		clilog.EnablePrintOutput(false)
 
-		fmt.Println("Exporting Environment Group Configuration...")
+		clilog.Info.Println("Exporting Environment Group Configuration...")
 		if respBody, err = envgroups.List(); proceedOnError(err) != nil {
 			return err
 		}
@@ -131,7 +130,7 @@ var ExportCmd = &cobra.Command{
 			return err
 		}
 
-		fmt.Println("Exporting Data collectors Configuration...")
+		clilog.Info.Println("Exporting Data collectors Configuration...")
 		if respBody, err = datacollectors.List(); proceedOnError(err) != nil {
 			return err
 		}
@@ -140,7 +139,7 @@ var ExportCmd = &cobra.Command{
 		}
 
 		if runtimeType == "HYBRID" {
-			fmt.Println("Exporting Sync Authorization Identities...")
+			clilog.Info.Println("Exporting Sync Authorization Identities...")
 			if respBody, err = sync.Get(); err != nil {
 				return err
 			}
@@ -161,10 +160,10 @@ var ExportCmd = &cobra.Command{
 		}
 
 		for _, environment := range environments {
-			fmt.Println("Exporting configuration for environment " + environment)
+			clilog.Info.Println("Exporting configuration for environment " + environment)
 			apiclient.SetApigeeEnv(environment)
-			apiclient.SetPrintOutput(false)
-			fmt.Println("\tExporting Target servers...")
+			clilog.EnablePrintOutput(false)
+			clilog.Info.Println("\tExporting Target servers...")
 			if targetServerResponse, err = targetservers.Export(conn); proceedOnError(err) != nil {
 				return err
 			}
@@ -172,7 +171,7 @@ var ExportCmd = &cobra.Command{
 				return err
 			}
 
-			fmt.Printf("\tExporting KV Map names for environment %s...\n", environment)
+			clilog.Info.Printf("\tExporting KV Map names for environment %s...\n", environment)
 			if listKVMBytes, err = kvm.List(""); err != nil {
 				return err
 			}
@@ -186,9 +185,9 @@ var ExportCmd = &cobra.Command{
 				}
 			}
 
-			apiclient.SetPrintOutput(false)
+			clilog.EnablePrintOutput(false)
 
-			fmt.Println("\tExporting Key store names...")
+			clilog.Info.Println("\tExporting Key store names...")
 			if respBody, err = keystores.List(); proceedOnError(err) != nil {
 				return err
 			}
@@ -196,7 +195,7 @@ var ExportCmd = &cobra.Command{
 				return err
 			}
 
-			fmt.Println("\tExporting debugmask configuration...")
+			clilog.Info.Println("\tExporting debugmask configuration...")
 			if respBody, err = env.GetDebug(); err != nil {
 				return err
 			}
@@ -204,7 +203,7 @@ var ExportCmd = &cobra.Command{
 				return err
 			}
 
-			fmt.Println("\tExporting traceconfig...")
+			clilog.Info.Println("\tExporting traceconfig...")
 			if respBody, err = env.GetTraceConfig(); err != nil {
 				return err
 			}
@@ -212,7 +211,7 @@ var ExportCmd = &cobra.Command{
 				return err
 			}
 
-			fmt.Println("\tExporting references...")
+			clilog.Info.Println("\tExporting references...")
 			if referencesResponse, err = references.Export(conn); proceedOnError(err) != nil {
 				return err
 			}
@@ -268,7 +267,7 @@ func exportKVMEntries(scope string, env string, listKVMBytes []byte) (err error)
 
 	for _, mapName := range listKVM {
 
-		fmt.Printf("\tExporting KVM entries for %s in org %s\n", org, mapName)
+		clilog.Info.Printf("\tExporting KVM entries for %s in org %s\n", org, mapName)
 		if kvmEntries, err = kvm.ExportEntries("", mapName); err != nil {
 			return err
 		}

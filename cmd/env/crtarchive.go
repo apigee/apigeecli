@@ -21,6 +21,7 @@ import (
 	"time"
 
 	"internal/apiclient"
+	"internal/clilog"
 
 	"internal/bundlegen/proxybundle"
 
@@ -80,34 +81,34 @@ var CreateArchiveCmd = &cobra.Command{
 			s := strings.Split(archiveResponse.Name, "/")
 			operationId := s[len(s)-1]
 
-			fmt.Printf("Deployment operation id is %s\n", operationId)
-			fmt.Printf("Checking deployment status in %d seconds\n", interval)
-
-			apiclient.SetPrintOutput(false)
+			clilog.Info.Printf("Deployment operation id is %s\n", operationId)
+			clilog.Info.Printf("Checking deployment status in %d seconds\n", interval)
 
 			stop := apiclient.Every(interval*time.Second, func(time.Time) bool {
 				var respOpsBody []byte
 				respMap := op{}
+				clilog.EnablePrintOutput(false)
 				if respOpsBody, err = operations.Get(operationId); err != nil {
 					return true
 				}
+				clilog.EnablePrintOutput(apiclient.GetPrintOutput())
 
 				if err = json.Unmarshal(respOpsBody, &respMap); err != nil {
 					return true
 				}
 
 				if respMap.Metadata.State == "IN_PROGRESS" {
-					fmt.Printf("Archive deployment status is: %s. Waiting %d seconds.\n", respMap.Metadata.State, interval)
+					clilog.Info.Printf("Archive deployment status is: %s. Waiting %d seconds.\n", respMap.Metadata.State, interval)
 					return true
 				} else if respMap.Metadata.State == "FINISHED" {
 					if respMap.Error == (operationError{}) {
-						fmt.Println("Archive deployment completed with status: ", respMap.Metadata.State)
+						clilog.Info.Println("Archive deployment completed with status: ", respMap.Metadata.State)
 					} else {
-						fmt.Printf("Archive deployment failed with status: %s", respMap.Error.Message)
+						clilog.Info.Printf("Archive deployment failed with status: %s", respMap.Error.Message)
 					}
 					return false
 				} else {
-					fmt.Printf("Unknown state %s", respMap.Metadata.State)
+					clilog.Info.Printf("Unknown state %s", respMap.Metadata.State)
 					return false
 				}
 			})
