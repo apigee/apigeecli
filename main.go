@@ -29,6 +29,6 @@ func main() {
 	rootCmd.Version = Version + ", Git: " + Git
 
 	if err := rootCmd.Execute(); err != nil {
-		os.Exit(-1)
+		os.Exit(1)
 	}
 }
