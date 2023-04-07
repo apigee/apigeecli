@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//Cmd to manage orgs
+// Cmd to manage orgs
 var Cmd = &cobra.Command{
 	Use:   "iam",
 	Short: "Manage IAM permissions for Apigee",

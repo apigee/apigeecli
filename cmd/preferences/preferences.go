@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//Cmd to manage preferences
+// Cmd to manage preferences
 var Cmd = &cobra.Command{
 	Use:     "preferences",
 	Aliases: []string{"prefs"},

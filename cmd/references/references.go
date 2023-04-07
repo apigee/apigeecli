@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//Cmd to manage references
+// Cmd to manage references
 var Cmd = &cobra.Command{
 	Use:     "references",
 	Aliases: []string{"refs"},

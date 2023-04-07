@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//KeysCmd manages developer app keys
+// KeysCmd manages developer app keys
 var KeysCmd = &cobra.Command{
 	Use:   "keys",
 	Short: "Manage developer app keys",

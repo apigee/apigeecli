@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//Cmd to manage tracing of apis
+// Cmd to manage tracing of apis
 var DebugCmd = &cobra.Command{
 	Use:   "debugmask",
 	Short: "Manage debugmasks for the environment",

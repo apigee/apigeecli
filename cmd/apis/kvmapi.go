@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//KvmCmd to manage tracing of apis
+// KvmCmd to manage tracing of apis
 var KvmCmd = &cobra.Command{
 	Use:   "kvm",
 	Short: "Manage API proxy scoped KVMs",

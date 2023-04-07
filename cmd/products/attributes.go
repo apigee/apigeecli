@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//AttributesCmd to manage tracing of apis
+// AttributesCmd to manage tracing of apis
 var AttributesCmd = &cobra.Command{
 	Use:     "attributes",
 	Aliases: []string{"attrs"},

@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//Cmd to manage tracing of apis
+// Cmd to manage tracing of apis
 var TraceConfigCmd = &cobra.Command{
 	Use:   "traceconfig",
 	Short: "Manage Distributed Trace config for the environment",

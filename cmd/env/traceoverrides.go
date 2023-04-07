@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//Cmd to manage tracing of apis
+// Cmd to manage tracing of apis
 var TraceOverridesCmd = &cobra.Command{
 	Use:   "overrides",
 	Short: "Manage Distributed Trace config overrides for the environment",

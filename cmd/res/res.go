@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//Cmd to manage resources
+// Cmd to manage resources
 var Cmd = &cobra.Command{
 	Use:     "resources",
 	Aliases: []string{"res"},

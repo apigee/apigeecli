@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//Cmd to manage key stores
+// Cmd to manage key stores
 var Cmd = &cobra.Command{
 	Use:     "keystores",
 	Aliases: []string{"ks"},

@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//Cmd to manage envs
+// Cmd to manage envs
 var Cmd = &cobra.Command{
 	Use:   "envgroups",
 	Short: "Manage Apigee environment groups",

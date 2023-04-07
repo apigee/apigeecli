@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//DeployCmd to manage api deployments for an environment
+// DeployCmd to manage api deployments for an environment
 var DeployCmd = &cobra.Command{
 	Use:   "deployments",
 	Short: "Manage deployments for the environment",

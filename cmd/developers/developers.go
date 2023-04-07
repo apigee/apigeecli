@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//Cmd to manage developers
+// Cmd to manage developers
 var Cmd = &cobra.Command{
 	Use:     "developers",
 	Aliases: []string{"devs"},

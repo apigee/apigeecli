@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//Cmd to manage tracing of apis
+// Cmd to manage tracing of apis
 var IamCmd = &cobra.Command{
 	Use:   "iam",
 	Short: "Manage IAM permissions for the environment",

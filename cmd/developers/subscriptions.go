@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//SubCmd to manage subscriptions of developers
+// SubCmd to manage subscriptions of developers
 var SubCmd = &cobra.Command{
 	Use:   "subscriptions",
 	Short: "Manage subscriptions for a Developer",

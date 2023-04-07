@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//Cmd to manage flow hooks
+// Cmd to manage flow hooks
 var Cmd = &cobra.Command{
 	Use:     "flowhooks",
 	Aliases: []string{"fs"},

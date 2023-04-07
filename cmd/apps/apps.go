@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//Cmd to manage apps
+// Cmd to manage apps
 var Cmd = &cobra.Command{
 	Use:     "apps",
 	Aliases: []string{"applications"},

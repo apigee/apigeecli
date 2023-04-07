@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//Cmd to manage targetservers
+// Cmd to manage targetservers
 var Cmd = &cobra.Command{
 	Use:     "targetservers",
 	Aliases: []string{"ts"},

@@ -20,7 +20,7 @@ import (
 	"github.com/apigee/apigeecli/cmd"
 )
 
-//Version
+// Version
 var Version, Git string
 
 func main() {

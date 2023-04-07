@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//RatePlanCmd to manage rateplans of api products
+// RatePlanCmd to manage rateplans of api products
 var RatePlanCmd = &cobra.Command{
 	Use:   "rateplans",
 	Short: "Manage rateplans for an API Product",

@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//TraceCmd to manage tracing of apis
+// TraceCmd to manage tracing of apis
 var TraceCmd = &cobra.Command{
 	Use:   "debugsessions",
 	Short: "Manage debusessions of Apigee API proxies",
