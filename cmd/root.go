@@ -151,6 +151,11 @@ func initConfig() {
 		SkipCache:   skipCache,
 		NoOutput:    noOutput,
 	})
+
+	if os.Getenv("APIGEECLI_ENABLE_RATELIMIT") == "true" {
+		clilog.Info.Println("APIGEECLI_RATELIMIT is enabled")
+		apiclient.SetRate(apiclient.ApigeeAPI)
+	}
 }
 
 // GetRootCmd returns the root of the cobra command-tree.
