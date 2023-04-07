@@ -61,17 +61,17 @@ type commonName struct {
 }
 
 // Create
-func Create(name string, description string, host string, port int, enable string, grpc bool, keyStore string, keyAlias string, sslinfo string, tlsenabled bool, clientAuthEnabled bool, ignoreValidationErrors bool) (respBody []byte, err error) {
+func Create(name string, description string, host string, port int, enable string, grpc bool, keyStore string, keyAlias string, trustStore string, sslinfo string, tlsenabled bool, clientAuthEnabled bool, ignoreValidationErrors bool) (respBody []byte, err error) {
 	targetsvr := targetserver{
 		Name: name,
 	}
 
-	return createOrUpdate("create", targetsvr, name, description, host, port, enable, grpc, keyStore, keyAlias, sslinfo, tlsenabled, clientAuthEnabled, ignoreValidationErrors)
+	return createOrUpdate("create", targetsvr, name, description, host, port, enable, grpc, keyStore, keyAlias, trustStore, sslinfo, tlsenabled, clientAuthEnabled, ignoreValidationErrors)
 }
 
 // Update
-func Update(name string, description string, host string, port int, enable string, grpc bool, keyStore string, keyAlias string, sslinfo string, tlsenabled bool, clientAuthEnabled bool, ignoreValidationErrors bool) (respBody []byte, err error) {
-	clilog.EnablePrintOutput(false)
+func Update(name string, description string, host string, port int, enable string, grpc bool, keyStore string, keyAlias string, trustStore string, sslinfo string, tlsenabled bool, clientAuthEnabled bool, ignoreValidationErrors bool) (respBody []byte, err error) {
+	apiclient.SetPrintOutput(false)
 	targetRespBody, err := Get(name)
 	if err != nil {
 		return nil, err
@@ -82,10 +82,10 @@ func Update(name string, description string, host string, port int, enable strin
 	if err = json.Unmarshal(targetRespBody, &targetsvr); err != nil {
 		return nil, err
 	}
-	return createOrUpdate("update", targetsvr, name, description, host, port, enable, grpc, keyStore, keyAlias, sslinfo, tlsenabled, clientAuthEnabled, ignoreValidationErrors)
+	return createOrUpdate("update", targetsvr, name, description, host, port, enable, grpc, keyStore, keyAlias, trustStore, sslinfo, tlsenabled, clientAuthEnabled, ignoreValidationErrors)
 }
 
-func createOrUpdate(action string, targetsvr targetserver, name string, description string, host string, port int, enable string, grpc bool, keyStore string, keyAlias string, sslinfo string, tlsenabled bool, clientAuthEnabled bool, ignoreValidationErrors bool) (respBody []byte, err error) {
+func createOrUpdate(action string, targetsvr targetserver, name string, description string, host string, port int, enable string, grpc bool, keyStore string, keyAlias string, trustStore string, sslinfo string, tlsenabled bool, clientAuthEnabled bool, ignoreValidationErrors bool) (respBody []byte, err error) {
 	targetsvr.Description = description
 	targetsvr.Host = host
 	targetsvr.IsEnabled, _ = strconv.ParseBool(enable)
@@ -103,6 +103,7 @@ func createOrUpdate(action string, targetsvr targetserver, name string, descript
 			IgnoreValidationErrors: ignoreValidationErrors,
 			Keyalias:               keyAlias,
 			Keystore:               keyStore,
+			Truststore:             trustStore,
 		}
 	}
 
@@ -254,7 +255,7 @@ func Import(conn int, filePath string) (err error) {
 
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "targetservers")
-	c, err := apiclient.GetHttpClient()
+	err = apiclient.GetHttpClient()
 	if err != nil {
 		return err
 	}
@@ -267,7 +268,7 @@ func Import(conn int, filePath string) (err error) {
 		return err
 	}
 
-	resp, err := c.Do(req)
+	resp, err := apiclient.ApigeeAPIClient.Do(req)
 	if err != nil {
 		return err
 	}
@@ -337,7 +338,7 @@ func importServers(knownServers map[string]bool, wg *sync.WaitGroup, jobs <-chan
 			continue
 		}
 
-		c, err := apiclient.GetHttpClient()
+		err = apiclient.GetHttpClient()
 		if err != nil {
 			errs <- err
 			continue
@@ -364,7 +365,7 @@ func importServers(knownServers map[string]bool, wg *sync.WaitGroup, jobs <-chan
 			continue
 		}
 
-		resp, err := c.Do(req)
+		resp, err := apiclient.ApigeeAPIClient.Do(req)
 		if err != nil {
 			errs <- err
 			continue

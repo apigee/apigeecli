@@ -37,9 +37,20 @@ type ApigeeClientOptions struct {
 	SkipCache      bool   //skip writing access token to file
 	PrintOutput    bool   //prints output from http calls
 	ProxyUrl       string //use a proxy url
+	APIRate        Rate   //throttle api calls to Apigee
 }
 
 var options *ApigeeClientOptions
+
+type Rate uint8
+
+const (
+	None Rate = iota
+	ApigeeAPI
+	ApigeeAnalyticsAPI
+)
+
+var apiRate Rate
 
 // NewApigeeClient sets up options to invoke Apigee APIs
 func NewApigeeClient(o ApigeeClientOptions) {
@@ -201,4 +212,14 @@ func DryRun() bool {
 		return true
 	}
 	return false
+}
+
+// SetRate
+func SetRate(r Rate) {
+	apiRate = r
+}
+
+// GetRate
+func GetRate() Rate {
+	return apiRate
 }

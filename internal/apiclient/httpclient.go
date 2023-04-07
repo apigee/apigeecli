@@ -16,6 +16,7 @@ package apiclient
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -26,9 +27,34 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"internal/clilog"
+
+	"golang.org/x/time/rate"
 )
+
+// RateLimitedHttpClient
+type RateLimitedHTTPClient struct {
+	client      *http.Client
+	Ratelimiter *rate.Limiter
+}
+
+// RateLimitedHTTPClient for Apigee API
+var ApigeeAPIClient *RateLimitedHTTPClient
+
+// allow 1 every 100 milliseconds
+var apigeeAPIRateLimit = rate.NewLimiter(rate.Every(100*time.Millisecond), 1)
+
+//source: https://cloud.google.com/apigee/docs/api-platform/reference/limits#apigee-apis
+
+// allow 1 every 1 second
+var apigeeAnalyticsAPIRateLimit = rate.NewLimiter(rate.Every(time.Second), 1)
+
+//source: https://cloud.google.com/apigee/docs/api-platform/reference/limits#analytics-apis
+
+// disable rate limit
+var noAPIRateLimit = rate.NewLimiter(rate.Inf, 1)
 
 // PostHttpZip method is used to send resources, proxy bundles, shared flows etc.
 func PostHttpZip(auth bool, method string, url string, headers map[string]string, zipfile string) (err error) {
@@ -39,7 +65,7 @@ func PostHttpZip(auth bool, method string, url string, headers map[string]string
 		return err
 	}
 
-	client, err := GetHttpClient()
+	err = GetHttpClient()
 	if err != nil {
 		return err
 	}
@@ -67,7 +93,7 @@ func PostHttpZip(auth bool, method string, url string, headers map[string]string
 		}
 	}
 
-	resp, err := client.Do(req)
+	resp, err := ApigeeAPIClient.Do(req)
 	if err != nil {
 		clilog.Error.Println("error connecting: ", err)
 		return err
@@ -121,7 +147,7 @@ func PostHttpOctet(update bool, url string, formParams map[string]string) (respB
 
 	var req *http.Request
 
-	client, err := GetHttpClient()
+	err = GetHttpClient()
 	if err != nil {
 		return nil, err
 	}
@@ -144,7 +170,7 @@ func PostHttpOctet(update bool, url string, formParams map[string]string) (respB
 	}
 
 	req.Header.Set("Content-Type", writer.FormDataContentType())
-	resp, err := client.Do(req)
+	resp, err := ApigeeAPIClient.Do(req)
 	if err != nil {
 		clilog.Error.Println("error connecting: ", err)
 		return nil, err
@@ -154,7 +180,7 @@ func PostHttpOctet(update bool, url string, formParams map[string]string) (respB
 }
 
 func DownloadFile(url string, auth bool) (resp *http.Response, err error) {
-	client, err := GetHttpClient()
+	err = GetHttpClient()
 	if err != nil {
 		return nil, err
 	}
@@ -177,7 +203,7 @@ func DownloadFile(url string, auth bool) (resp *http.Response, err error) {
 		}
 	}
 
-	resp, err = client.Do(req)
+	resp, err = ApigeeAPIClient.Do(req)
 
 	if err != nil {
 		clilog.Error.Println("error connecting: ", err)
@@ -244,7 +270,7 @@ func HttpClient(params ...string) (respBody []byte, err error) {
 	var req *http.Request
 	contentType := "application/json"
 
-	client, err := GetHttpClient()
+	err = GetHttpClient()
 	if err != nil {
 		return nil, err
 	}
@@ -287,7 +313,7 @@ func HttpClient(params ...string) (respBody []byte, err error) {
 	clilog.Debug.Println("Content-Type : ", contentType)
 	req.Header.Set("Content-Type", contentType)
 
-	resp, err := client.Do(req)
+	resp, err := ApigeeAPIClient.Do(req)
 	if err != nil {
 		clilog.Error.Println("error connecting: ", err)
 		return nil, err
@@ -307,6 +333,58 @@ func PrettyPrint(body []byte) error {
 		}
 
 		clilog.Info.Println(prettyJSON.String())
+	}
+	return nil
+}
+
+// Do the HTTP request
+func (c *RateLimitedHTTPClient) Do(req *http.Request) (*http.Response, error) {
+	ctx := context.Background()
+	//Wait until the rate is below Apigee limits
+	err := c.Ratelimiter.Wait(ctx)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := c.client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+// GetHttpClient returns new http client with a rate limiter
+func GetHttpClient() (err error) {
+	var apiRateLimit *rate.Limiter
+
+	switch r := GetRate(); r {
+	case ApigeeAPI:
+		apiRateLimit = apigeeAPIRateLimit
+	case ApigeeAnalyticsAPI:
+		apiRateLimit = apigeeAnalyticsAPIRateLimit
+	case None:
+		apiRateLimit = noAPIRateLimit
+	default:
+		apiRateLimit = noAPIRateLimit
+	}
+
+	if GetProxyURL() != "" {
+		if proxyUrl, err := url.Parse(GetProxyURL()); err != nil {
+			ApigeeAPIClient = &RateLimitedHTTPClient{
+				client: &http.Client{
+					Transport: &http.Transport{
+						Proxy: http.ProxyURL(proxyUrl),
+					},
+				},
+				Ratelimiter: apiRateLimit,
+			}
+		} else {
+			return err
+		}
+	} else {
+		ApigeeAPIClient = &RateLimitedHTTPClient{
+			client:      http.DefaultClient,
+			Ratelimiter: apiRateLimit,
+		}
 	}
 	return nil
 }
@@ -338,23 +416,6 @@ func SetAuthHeader(req *http.Request) (*http.Request, error) {
 	clilog.Debug.Println("Setting token : ", GetApigeeToken())
 	req.Header.Add("Authorization", "Bearer "+GetApigeeToken())
 	return req, nil
-}
-
-func GetHttpClient() (client *http.Client, err error) {
-	if GetProxyURL() != "" {
-		if pUrl, err := url.Parse(GetProxyURL()); err != nil {
-			client = &http.Client{
-				Transport: &http.Transport{
-					Proxy: http.ProxyURL(pUrl),
-				},
-			}
-		} else {
-			return nil, err
-		}
-	} else {
-		client = &http.Client{}
-	}
-	return client, nil
 }
 
 func handleResponse(resp *http.Response) (respBody []byte, err error) {

@@ -40,13 +40,13 @@ var CreateCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = targetservers.Create(name, description, host, port, enable, grpc, keyStore, keyAlias, sslinfo, tlsenabled, clientAuthEnabled, ignoreValidationErrors)
+		_, err = targetservers.Create(name, description, host, port, enable, grpc, keyStore, keyAlias, trustStore, sslinfo, tlsenabled, clientAuthEnabled, ignoreValidationErrors)
 		return
 
 	},
 }
 
-var description, host, keyStore, keyAlias, sslinfo, enable string
+var description, host, keyStore, keyAlias, trustStore, sslinfo, enable string
 var grpc, tlsenabled, clientAuthEnabled, ignoreValidationErrors bool
 var port int
 
@@ -67,6 +67,8 @@ func init() {
 		"", "Key store for the target server; must be used with sslinfo")
 	CreateCmd.Flags().StringVarP(&keyAlias, "keyAlias", "",
 		"", "Key alias for the target server; must be used with sslinfo")
+	CreateCmd.Flags().StringVarP(&trustStore, "trustStore", "",
+		"", "Trust store for the target server; must be used with sslinfo")
 	CreateCmd.Flags().StringVarP(&sslinfo, "sslinfo", "",
 		"", "Enable SSL Info on the target server")
 	CreateCmd.Flags().BoolVarP(&tlsenabled, "tls", "",

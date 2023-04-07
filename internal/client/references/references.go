@@ -218,7 +218,7 @@ func Import(conn int, filePath string) (err error) {
 
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "references")
-	c, err := apiclient.GetHttpClient()
+	err = apiclient.GetHttpClient()
 	if err != nil {
 		return err
 	}
@@ -231,7 +231,7 @@ func Import(conn int, filePath string) (err error) {
 		return err
 	}
 
-	resp, err := c.Do(req)
+	resp, err := apiclient.ApigeeAPIClient.Do(req)
 	if err != nil {
 		return err
 	}
@@ -302,7 +302,7 @@ func importReferences(knownRefs map[string]bool, wg *sync.WaitGroup, jobs <-chan
 			continue
 		}
 
-		c, err := apiclient.GetHttpClient()
+		err = apiclient.GetHttpClient()
 		if err != nil {
 			errs <- err
 			continue
@@ -329,7 +329,7 @@ func importReferences(knownRefs map[string]bool, wg *sync.WaitGroup, jobs <-chan
 			continue
 		}
 
-		resp, err := c.Do(req)
+		resp, err := apiclient.ApigeeAPIClient.Do(req)
 		if err != nil {
 			errs <- err
 			continue

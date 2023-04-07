@@ -125,7 +125,7 @@ func importKeystores(wg *sync.WaitGroup, jobs <-chan string, errs chan<- error) 
 		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "keystores")
 		u.RawQuery = fmt.Sprintf("name=%s", job)
 
-		c, err := apiclient.GetHttpClient()
+		err := apiclient.GetHttpClient()
 		if err != nil {
 			errs <- err
 			continue
@@ -137,7 +137,7 @@ func importKeystores(wg *sync.WaitGroup, jobs <-chan string, errs chan<- error) 
 			continue
 		}
 
-		resp, err := c.Do(req)
+		resp, err := apiclient.ApigeeAPIClient.Do(req)
 		if err != nil {
 			errs <- err
 			continue

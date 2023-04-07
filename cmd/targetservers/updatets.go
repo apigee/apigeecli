@@ -45,7 +45,7 @@ var UpdateCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = targetservers.Update(name, description, host, port, enable, grpc, keyStore, keyAlias, sslinfo, tlsenabled, clientAuthEnabled, ignoreValidationErrors)
+		_, err = targetservers.Update(name, description, host, port, enable, grpc, keyStore, keyAlias, trustStore, sslinfo, tlsenabled, clientAuthEnabled, ignoreValidationErrors)
 		return
 	},
 }
@@ -67,6 +67,8 @@ func init() {
 		"", "Key store for the target server; must be used with sslinfo")
 	UpdateCmd.Flags().StringVarP(&keyAlias, "keyAlias", "",
 		"", "Key alias for the target server; must be used with sslinfo")
+	UpdateCmd.Flags().StringVarP(&trustStore, "trustStore", "",
+		"", "Trust store for the target server; must be used with sslinfo")
 	UpdateCmd.Flags().StringVarP(&sslinfo, "sslinfo", "",
 		"", "Enable SSL Info on the target server")
 	UpdateCmd.Flags().BoolVarP(&tlsenabled, "tls", "",
