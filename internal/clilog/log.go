@@ -42,7 +42,7 @@ func Init(debug bool, print bool) {
 	}
 
 	warningHandle := os.Stdout
-	errorHandle := os.Stdout
+	errorHandle := os.Stderr
 
 	Debug = log.New(debugHandle,
 		"DEBUG: ",
