@@ -433,9 +433,41 @@ func handleResponse(resp *http.Response) (respBody []byte, err error) {
 		clilog.Error.Println("error in response: ", err)
 		return nil, err
 	} else if resp.StatusCode > 399 {
-		clilog.Error.Printf("status code %d, error in response: %s\n", resp.StatusCode, string(respBody))
-		return nil, errors.New("error in response")
+		clilog.Debug.Printf("status code %d, error in response: %s\n", resp.StatusCode, string(respBody))
+		clilog.HttpError.Println(string(respBody))
+		return nil, errors.New(getErrorMessage(resp.StatusCode))
 	}
 
 	return respBody, PrettyPrint(respBody)
+}
+
+func getErrorMessage(statusCode int) string {
+	switch statusCode {
+	case 400:
+		return "Bad Request - malformed request syntax"
+	case 401:
+		return "Unauthorized - the client must authenticate itself"
+	case 403:
+		return "Forbidden - the client does not have access rights"
+	case 404:
+		return "Not found - the server cannot find the requested resource"
+	case 405:
+		return "Method Not Allowed - the request method is not supported by the target resource"
+	case 409:
+		return "Conflict - request conflicts with the current state of the server"
+	case 415:
+		return "Unsupported media type - media format of the requested data is not supported by the server"
+	case 429:
+		return "Too Many Request - user has sent too many requests"
+	case 500:
+		return "Internal server error"
+	case 501:
+		return "Not Implemented - request method is not supported by the server"
+	case 502:
+		return "Bad Gateway"
+	case 503:
+		return "Service Unavaliable - the server is not ready to handle the request"
+	default:
+		return "unknown error"
+	}
 }
