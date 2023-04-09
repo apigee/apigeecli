@@ -95,7 +95,8 @@ func Get(email string) (respBody []byte, err error) {
 
 // GetDeveloperId
 func GetDeveloperId(email string) (developerId string, err error) {
-	clilog.EnablePrintOutput(false)
+	apiclient.SetClientPrintHttpResponse(false)
+	defer apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
 	var developerMap map[string]interface{}
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", url.QueryEscape(email)) //since developer emails can have +
@@ -104,7 +105,6 @@ func GetDeveloperId(email string) (developerId string, err error) {
 		return "", err
 	}
 
-	clilog.EnablePrintOutput(apiclient.GetPrintOutput())
 	err = json.Unmarshal(respBody, &developerMap)
 	if err != nil {
 		return "", err
@@ -159,9 +159,9 @@ func Export() (respBody []byte, err error) {
 
 	u.RawQuery = q.Encode()
 	//don't print to sysout
-	clilog.EnablePrintOutput(false)
+	apiclient.SetClientPrintHttpResponse(false)
+	defer apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
 	respBody, err = apiclient.HttpClient(u.String())
-	clilog.EnablePrintOutput(apiclient.GetPrintOutput())
 	return respBody, err
 }
 

@@ -36,6 +36,7 @@ type ApigeeClientOptions struct {
 	TokenCheck     bool   //Check access token expiry
 	SkipCache      bool   //skip writing access token to file
 	PrintOutput    bool   //prints output from http calls
+	NoOutput       bool   //Disable all statements to stdout
 	ProxyUrl       string //use a proxy url
 	APIRate        Rate   //throttle api calls to Apigee
 }
@@ -51,6 +52,9 @@ const (
 )
 
 var apiRate Rate
+
+var cmdPrintHttpResponses = true
+var clientPrintHttpResponses = true
 
 // NewApigeeClient sets up options to invoke Apigee APIs
 func NewApigeeClient(o ApigeeClientOptions) {
@@ -73,29 +77,15 @@ func NewApigeeClient(o ApigeeClientOptions) {
 	if o.Env != "" {
 		options.Env = o.Env
 	}
-	if o.TokenCheck {
-		options.TokenCheck = true
-	} else {
-		options.TokenCheck = false
-	}
-	if o.SkipCache {
-		options.SkipCache = true
-	} else {
-		options.SkipCache = false
-	}
-	if o.DebugLog {
-		options.DebugLog = true
-	} else {
-		options.DebugLog = false
-	}
-	if o.PrintOutput {
-		options.PrintOutput = true
-	} else {
-		options.PrintOutput = false
-	}
+
+	options.TokenCheck = o.TokenCheck
+	options.SkipCache = o.SkipCache
+	options.DebugLog = o.DebugLog
+	options.PrintOutput = o.PrintOutput
+	options.NoOutput = o.NoOutput
 
 	//initialize logs
-	clilog.Init(options.DebugLog, options.PrintOutput)
+	clilog.Init(options.DebugLog, options.PrintOutput, options.NoOutput)
 
 	//read preference file
 	_ = ReadPreferencesFile()
@@ -195,6 +185,31 @@ func GetPrintOutput() bool {
 	return options.PrintOutput
 }
 
+// DisableCmdPrintHttpResponse
+func DisableCmdPrintHttpResponse() {
+	cmdPrintHttpResponses = false
+}
+
+// EnableCmdPrintHttpResponse
+func EnableCmdPrintHttpResponse() {
+	cmdPrintHttpResponses = true
+}
+
+// GetPrintHttpResponseSetting
+func GetCmdPrintHttpResponseSetting() bool {
+	return cmdPrintHttpResponses
+}
+
+// SetClientPrintHttpResponse
+func SetClientPrintHttpResponse(b bool) {
+	clientPrintHttpResponses = b
+}
+
+// GetPrintHttpResponseSetting
+func GetClientPrintHttpResponseSetting() bool {
+	return clientPrintHttpResponses
+}
+
 // GetProxyURL
 func GetProxyURL() string {
 	return options.ProxyUrl
@@ -212,6 +227,16 @@ func DryRun() bool {
 		return true
 	}
 	return false
+}
+
+// SetNoOutput
+func SetNoOutput(b bool) {
+	options.NoOutput = b
+}
+
+// GetNoOutput
+func GetNoOutput() bool {
+	return options.NoOutput
 }
 
 // SetRate

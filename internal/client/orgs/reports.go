@@ -36,7 +36,8 @@ func TotalAPICallsInMonth(month int, year int, envDetails bool, conn int) (total
 	//ensure the count is reset to zero before calculating the next set
 	defer env.ApiCalls.ResetCount()
 
-	clilog.EnablePrintOutput(false)
+	apiclient.SetClientPrintHttpResponse(false)
+	defer apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
 
 	if envListBytes, err = env.List(); err != nil {
 		return -1, err
@@ -74,8 +75,6 @@ func TotalAPICallsInMonth(month int, year int, envDetails bool, conn int) (total
 		go batchReport(envList[start:numEntities], month, year, envDetails, &pwg)
 		pwg.Wait()
 	}
-
-	clilog.EnablePrintOutput(apiclient.GetPrintOutput())
 
 	return env.ApiCalls.GetCount(), nil
 }

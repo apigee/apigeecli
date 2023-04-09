@@ -22,7 +22,6 @@ import (
 	"strings"
 
 	"internal/apiclient"
-	"internal/clilog"
 )
 
 type traceCfg struct {
@@ -82,11 +81,11 @@ func DisableTraceConfig() (respBody []byte, err error) {
 	var traceRespBody []byte
 	var payload []byte
 
-	clilog.EnablePrintOutput(false)
+	apiclient.SetClientPrintHttpResponse(false)
 	if traceRespBody, err = GetTraceConfig(); err != nil {
 		return nil, err
 	}
-	clilog.EnablePrintOutput(apiclient.GetPrintOutput())
+	apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
 
 	traceResp := traceCfg{}
 	if err = json.Unmarshal(traceRespBody, &traceResp); err != nil {

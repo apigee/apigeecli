@@ -41,7 +41,7 @@ var ImpCmd = &cobra.Command{
 
 		var kvmList []string
 
-		clilog.EnablePrintOutput(false)
+		apiclient.DisableCmdPrintHttpResponse()
 
 		orgKVMFileList, envKVMFileList, proxyKVMFileList, err := utils.ListKVMFiles(folder)
 		if err != nil {

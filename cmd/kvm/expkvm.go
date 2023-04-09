@@ -46,7 +46,7 @@ var ExpCmd = &cobra.Command{
 		var payload [][]byte
 		var fileName string
 
-		clilog.EnablePrintOutput(false)
+		apiclient.DisableCmdPrintHttpResponse()
 		listKVMBytes, err := kvm.List(proxyName)
 		if err != nil {
 			return err
@@ -76,7 +76,7 @@ var ExpCmd = &cobra.Command{
 				}
 			}
 		}
-		clilog.EnablePrintOutput(false)
+
 		clilog.Info.Println("KVMs exported successfully")
 		return
 	},

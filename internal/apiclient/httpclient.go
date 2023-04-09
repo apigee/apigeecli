@@ -324,7 +324,7 @@ func HttpClient(params ...string) (respBody []byte, err error) {
 
 // PrettyPrint method prints formatted json
 func PrettyPrint(body []byte) error {
-	if options.PrintOutput {
+	if GetCmdPrintHttpResponseSetting() && GetClientPrintHttpResponseSetting() {
 		var prettyJSON bytes.Buffer
 		err := json.Indent(&prettyJSON, body, "", "\t")
 		if err != nil {
@@ -332,7 +332,7 @@ func PrettyPrint(body []byte) error {
 			return err
 		}
 
-		clilog.Info.Println(prettyJSON.String())
+		clilog.HttpResponse.Println(prettyJSON.String())
 	}
 	return nil
 }

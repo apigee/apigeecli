@@ -150,12 +150,10 @@ func GetOrgField(key string) (value string, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg())
 
-	clilog.EnablePrintOutput(false)
 	orgBody, err := apiclient.HttpClient(u.String())
 	if err != nil {
 		return "", err
 	}
-	clilog.EnablePrintOutput(apiclient.GetPrintOutput())
 
 	var orgMap map[string]interface{}
 	err = json.Unmarshal(orgBody, &orgMap)
@@ -191,9 +189,9 @@ func SetOrgProperty(name string, value string) (err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg())
 	//get org details
-	clilog.EnablePrintOutput(false)
+	apiclient.SetClientPrintHttpResponse(false)
 	orgBody, err := apiclient.HttpClient(u.String())
-	clilog.EnablePrintOutput(apiclient.GetPrintOutput())
+	apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
 	if err != nil {
 		return err
 	}
@@ -239,12 +237,12 @@ func SetOrgProperty(name string, value string) (err error) {
 // Update
 func Update(description string, displayName string, region string, network string, runtimeType string, databaseKey string) (respBody []byte, err error) {
 
-	clilog.EnablePrintOutput(false)
+	apiclient.SetClientPrintHttpResponse(false)
 	orgBody, err := Get()
 	if err != nil {
 		return nil, err
 	}
-	clilog.EnablePrintOutput(apiclient.GetPrintOutput())
+	apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
 
 	org := organization{}
 	err = json.Unmarshal(orgBody, &org)
@@ -291,7 +289,7 @@ func Update(description string, displayName string, region string, network strin
 // SetAddons
 func SetAddons(advancedApiOpsConfig bool, integrationConfig bool, monetizationConfig bool, connectorsConfig bool, apiSecurityConfig bool) (respBody []byte, err error) {
 
-	clilog.EnablePrintOutput(false)
+	apiclient.SetClientPrintHttpResponse(false)
 
 	orgRespBody, err := Get()
 	if err != nil {
@@ -305,7 +303,7 @@ func SetAddons(advancedApiOpsConfig bool, integrationConfig bool, monetizationCo
 		return nil, err
 	}
 
-	clilog.EnablePrintOutput(apiclient.GetPrintOutput())
+	apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
 
 	addonPayload := []string{}
 

@@ -45,17 +45,17 @@ var DepCmd = &cobra.Command{
 			return
 		}
 
+		apiclient.DisableCmdPrintHttpResponse()
+
 		if wait {
 			clilog.Info.Printf("Checking deployment status in %d seconds\n", interval)
 
 			stop := apiclient.Every(interval*time.Second, func(time.Time) bool {
 				var respBody []byte
 				respMap := make(map[string]interface{})
-				clilog.EnablePrintOutput(false)
 				if respBody, err = apis.ListProxyRevisionDeployments(name, revision); err != nil {
 					return true
 				}
-				clilog.EnablePrintOutput(apiclient.GetPrintOutput())
 
 				if err = json.Unmarshal(respBody, &respMap); err != nil {
 					return true

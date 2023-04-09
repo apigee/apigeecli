@@ -118,11 +118,12 @@ func GetProxy(name string, revision int) (respBody []byte, err error) {
 
 // GetHighestProxyRevision
 func GetHighestProxyRevision(name string) (version int, err error) {
-	clilog.EnablePrintOutput(false)
+	apiclient.SetClientPrintHttpResponse(false)
+	defer apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
+
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apis", name)
 	respBody, err := apiclient.HttpClient(u.String())
-	clilog.EnablePrintOutput(apiclient.GetPrintOutput())
 	if err != nil {
 		return -1, err
 	}
@@ -269,7 +270,8 @@ func CleanProxy(name string, reportOnly bool, keepList []string) (err error) {
 	var revision int
 
 	// disable printing
-	clilog.EnablePrintOutput(false)
+	apiclient.SetClientPrintHttpResponse(false)
+	defer apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
 
 	// step 1. get a list of revisions that are deployed.
 	if proxyDeploymentsBytes, err = ListProxyDeployments(name); err != nil {
@@ -300,9 +302,6 @@ func CleanProxy(name string, reportOnly bool, keepList []string) (err error) {
 	if err = json.Unmarshal(proxyRevisionsBytes, &proxyRevisions); err != nil {
 		return err
 	}
-
-	// enable printing
-	clilog.EnablePrintOutput(apiclient.GetPrintOutput())
 
 	for _, proxyRevision := range proxyRevisions.Revision {
 
@@ -345,7 +344,11 @@ func ExportProxies(conn int, folder string, allRevisions bool) (err error) {
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apis")
 
 	// don't print to sysout
+	apiclient.SetClientPrintHttpResponse(false)
+	defer apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
+
 	respBody, err := apiclient.HttpClient(u.String())
+
 	if err != nil {
 		return err
 	}
@@ -446,7 +449,7 @@ func exportAPIProxies(wg *sync.WaitGroup, jobs <-chan revision, folder string, e
 		_ = fd.Close()
 
 		fpath := filepath.Join(folder, fname+".zip")
-		if err = os.Rename(filepath.Join(os.TempDir(), fd.Name()), fpath); err != nil {
+		if err = os.Rename(filepath.Join(fd.Name()), fpath); err != nil {
 			errs <- err
 			continue
 		}

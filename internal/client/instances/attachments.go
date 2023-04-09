@@ -22,7 +22,6 @@ import (
 	"strings"
 
 	"internal/apiclient"
-	"internal/clilog"
 )
 
 // Attach
@@ -114,12 +113,12 @@ func getAttachmentName(instance string) (attachmentName string, err error) {
 
 	instAttach := instanceAttachments{}
 
-	clilog.EnablePrintOutput(false)
+	apiclient.SetClientPrintHttpResponse(false)
 	listAttachments, err := ListAttach(instance)
 	if err != nil {
 		return "", err
 	}
-	clilog.EnablePrintOutput(apiclient.GetPrintOutput())
+	apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
 
 	err = json.Unmarshal(listAttachments, &instAttach)
 	if err != nil {

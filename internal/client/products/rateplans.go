@@ -19,7 +19,6 @@ import (
 	"path"
 
 	"internal/apiclient"
-	"internal/clilog"
 )
 
 // CreateRatePlan
@@ -60,8 +59,8 @@ func ExportRateplan(productName string) (respBody []byte, err error) {
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts", productName, "rateplans")
 
 	//don't print to sysout
-	clilog.EnablePrintOutput(false)
+	apiclient.SetClientPrintHttpResponse(false)
+	defer apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
 	respBody, err = apiclient.HttpClient(u.String())
-	clilog.EnablePrintOutput(apiclient.GetPrintOutput())
 	return respBody, err
 }

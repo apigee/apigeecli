@@ -38,8 +38,8 @@ var DeleteCmd = &cobra.Command{
 			return err
 		}
 		apiclient.SetProjectID(getOrg())
+		apiclient.DisableCmdPrintHttpResponse()
 		_ = apiclient.SetApigeeOrg(getOrg())
-		clilog.EnablePrintOutput(false)
 
 		//delete environments
 		environmentList := getEnvs()

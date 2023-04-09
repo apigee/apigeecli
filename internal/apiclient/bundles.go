@@ -169,7 +169,8 @@ func GetAsyncEntity(entityURL string, wg *sync.WaitGroup, mu *sync.Mutex) {
 	var respBody []byte
 
 	//don't print to sysout
-	clilog.EnablePrintOutput(false)
+	SetClientPrintHttpResponse(false)
+	defer SetClientPrintHttpResponse(GetCmdPrintHttpResponseSetting())
 	respBody, err := HttpClient(entityURL)
 
 	if err != nil {

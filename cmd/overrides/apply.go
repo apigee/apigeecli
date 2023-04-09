@@ -44,8 +44,8 @@ var ApplyCmd = &cobra.Command{
 		}
 
 		apiclient.SetProjectID(getOrg())
+		apiclient.DisableCmdPrintHttpResponse()
 		_ = apiclient.SetApigeeOrg(getOrg())
-		clilog.EnablePrintOutput(false)
 
 		//check if the org exists
 		if _, err = orgs.Get(); err != nil {

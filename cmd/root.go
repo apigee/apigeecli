@@ -105,10 +105,10 @@ func init() {
 		false, "Disable check for newer versions")
 
 	RootCmd.PersistentFlags().BoolVarP(&printOutput, "print-output", "",
-		true, "Control printing responses to stdout")
+		true, "Control printing of info log statements")
 
 	RootCmd.PersistentFlags().BoolVarP(&noOutput, "no-output", "",
-		false, "[DEPRECATED] Same as print-output, maintained for backward compatibility")
+		false, "Disable printing all statements to stdout")
 
 	RootCmd.AddCommand(apis.Cmd)
 	RootCmd.AddCommand(org.Cmd)
@@ -156,6 +156,7 @@ func initConfig() {
 	apiclient.NewApigeeClient(apiclient.ApigeeClientOptions{
 		TokenCheck:  true,
 		PrintOutput: printOutput,
+		NoOutput:    noOutput,
 		DebugLog:    debug,
 		SkipCache:   skipCache,
 	})

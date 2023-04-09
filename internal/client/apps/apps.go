@@ -152,6 +152,10 @@ func Manage(appID string, developerEmail string, action string) (respBody []byte
 
 // SearchApp
 func SearchApp(name string) (respBody []byte, err error) {
+
+	apiclient.SetClientPrintHttpResponse(false)
+	defer apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
+
 	u, _ := url.Parse(apiclient.BaseURL)
 	//search by name is not implemented; use list and return the appropriate app
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apps")
@@ -159,10 +163,8 @@ func SearchApp(name string) (respBody []byte, err error) {
 	q.Set("expand", "true")
 	q.Set("includeCred", "false")
 	u.RawQuery = q.Encode()
-	//don't print the list
-	clilog.EnablePrintOutput(false)
+
 	respBody, err = apiclient.HttpClient(u.String())
-	clilog.EnablePrintOutput(apiclient.GetPrintOutput())
 	if err != nil {
 		return respBody, err
 	}
@@ -238,6 +240,10 @@ func GenerateKey(name string, developerID string, apiProducts []string, callback
 
 // Export
 func Export(conn int) (payload [][]byte, err error) {
+
+	apiclient.SetClientPrintHttpResponse(false)
+	defer apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
+
 	//parent workgroup
 	var pwg sync.WaitGroup
 	var mu sync.Mutex
@@ -245,10 +251,8 @@ func Export(conn int) (payload [][]byte, err error) {
 
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), entityType)
-	//don't print to sysout
-	clilog.EnablePrintOutput(false)
+
 	respBody, err := apiclient.HttpClient(u.String())
-	clilog.EnablePrintOutput(apiclient.GetPrintOutput())
 	if err != nil {
 		return apiclient.GetEntityPayloadList(), err
 	}
@@ -446,9 +450,9 @@ func createAsyncApp(app application, developerEntities developers.Appdevelopers,
 	newAppCredentials := newDeveloperApp["credentials"].([]interface{})
 	temporaryCredential := newAppCredentials[0].(map[string]interface{})
 
-	clilog.EnablePrintOutput(false)
+	apiclient.SetClientPrintHttpResponse(false)
 	_, err = DeleteKey(developerEmail, newDeveloperApp["name"].(string), temporaryCredential["consumerKey"].(string))
-	clilog.EnablePrintOutput(apiclient.GetPrintOutput())
+	apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
 	if err != nil {
 		clilog.Error.Println(err)
 		return

@@ -22,17 +22,19 @@ import (
 
 // log levels, default is error
 var (
-	Debug     *log.Logger
-	Info      *log.Logger
-	Warning   *log.Logger
-	Error     *log.Logger
-	HttpError *log.Logger
+	Debug        *log.Logger
+	Info         *log.Logger
+	Warning      *log.Logger
+	Error        *log.Logger
+	HttpResponse *log.Logger
+	HttpError    *log.Logger
 )
 
 // Init function initializes the logger objects
-func Init(debug bool, print bool) {
+func Init(debug bool, print bool, NoOutput bool) {
 	var debugHandle = io.Discard
 	var infoHandle = io.Discard
+	var warningHandle, errorHandle, responseHandle io.Writer
 
 	if debug {
 		debugHandle = os.Stdout
@@ -42,8 +44,16 @@ func Init(debug bool, print bool) {
 		infoHandle = os.Stdout
 	}
 
-	warningHandle := os.Stdout
-	errorHandle := os.Stderr
+	if NoOutput {
+		responseHandle = io.Discard
+		infoHandle = io.Discard
+		errorHandle = io.Discard
+		warningHandle = io.Discard
+	} else {
+		responseHandle = os.Stdout
+		warningHandle = os.Stdout
+		errorHandle = os.Stderr
+	}
 
 	Debug = log.New(debugHandle,
 		"DEBUG: ",
@@ -60,18 +70,9 @@ func Init(debug bool, print bool) {
 		"ERROR: ",
 		log.Ldate|log.Ltime|log.Lshortfile)
 
-	HttpError = log.New(errorHandle,
+	HttpResponse = log.New(responseHandle,
 		"", 0)
-}
 
-// EnablePrintOutput
-func EnablePrintOutput(print bool) {
-	var infoHandle = io.Discard
-
-	if print {
-		infoHandle = os.Stdout
-	}
-
-	Info = log.New(infoHandle,
+	HttpError = log.New(errorHandle,
 		"", 0)
 }

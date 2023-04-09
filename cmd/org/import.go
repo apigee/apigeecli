@@ -58,6 +58,7 @@ var ImportCmd = &cobra.Command{
 			return fmt.Errorf("supplied path is not a folder")
 		}
 
+		apiclient.DisableCmdPrintHttpResponse()
 		clilog.Warning.Println("Calls to Apigee APIs have a quota of 6000 per min. Running this tool against large list of entities can exhaust that quota and impact the usage of the platform.")
 
 		clilog.Info.Println("Importing API Proxies...")
@@ -123,8 +124,6 @@ var ImportCmd = &cobra.Command{
 				return err
 			}
 		}
-
-		clilog.EnablePrintOutput(false)
 
 		var envRespBody []byte
 		if envRespBody, err = env.List(); err != nil {

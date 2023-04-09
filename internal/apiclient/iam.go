@@ -110,7 +110,8 @@ func CreateIAMServiceAccount(name string, iamRole string) (err error) {
 		return fmt.Errorf("invalid service account role")
 	}
 
-	clilog.EnablePrintOutput(false)
+	SetClientPrintHttpResponse(false)
+	defer SetClientPrintHttpResponse(GetCmdPrintHttpResponseSetting())
 
 	//Step 1: create a new service account
 	u, _ := url.Parse(iamURL)
@@ -210,8 +211,6 @@ func CreateIAMServiceAccount(name string, iamRole string) (err error) {
 
 	_, err = HttpClient(u.String(), string(setIamPolicyBody))
 
-	clilog.EnablePrintOutput(GetPrintOutput())
-
 	return err
 }
 
@@ -256,7 +255,8 @@ func SetIAMPermission(memberName string, iamRole string, memberType string) (err
 		role = iamRole
 	}
 
-	clilog.EnablePrintOutput(false)
+	SetClientPrintHttpResponse(false)
+	defer SetClientPrintHttpResponse(GetCmdPrintHttpResponseSetting())
 
 	u, _ := url.Parse(BaseURL)
 	u.Path = path.Join(u.Path, GetApigeeOrg(), "environments", GetApigeeEnv()+":getIamPolicy")
@@ -305,14 +305,14 @@ func SetIAMPermission(memberName string, iamRole string, memberType string) (err
 
 	_, err = HttpClient(u.String(), string(setIamPolicyBody))
 
-	clilog.EnablePrintOutput(GetPrintOutput())
-
 	return err
 }
 
 // RemoveIAMPermission removes/unbinds IAM permission from all roles for an Apigee Env
 func RemoveIAMPermission(memberName string, iamRole string) (err error) {
-	clilog.EnablePrintOutput(false)
+	SetClientPrintHttpResponse(false)
+	defer SetClientPrintHttpResponse(GetCmdPrintHttpResponseSetting())
+
 	u, _ := url.Parse(BaseURL)
 	u.Path = path.Join(u.Path, GetApigeeOrg(), "environments", GetApigeeEnv()+":getIamPolicy")
 	getIamPolicyBody, err := HttpClient(u.String())
@@ -422,7 +422,6 @@ func RemoveIAMPermission(memberName string, iamRole string) (err error) {
 	}
 
 	_, err = HttpClient(u.String(), string(removeIamPolicyBody))
-	clilog.EnablePrintOutput(GetPrintOutput())
 	return err
 }
 
@@ -447,8 +446,9 @@ func AddWid(projectID string, namespace string, kServiceAccount string, gService
 	u, _ := url.Parse(crmBetaURL)
 	u.Path = path.Join(u.Path, GetProjectID()+":setIamPolicy")
 
-	clilog.EnablePrintOutput(false)
+	SetClientPrintHttpResponse(false)
+	defer SetClientPrintHttpResponse(GetCmdPrintHttpResponseSetting())
 	_, err = HttpClient(u.String(), string(setIamPolicyBody))
-	clilog.EnablePrintOutput(GetPrintOutput())
+
 	return err
 }

@@ -116,9 +116,9 @@ func Export(conn int) (payload [][]byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "references")
 	// don't print to sysout
-	clilog.EnablePrintOutput(false)
+	apiclient.SetClientPrintHttpResponse(false)
 	respBody, err := apiclient.HttpClient(u.String())
-	clilog.EnablePrintOutput(apiclient.GetPrintOutput())
+	apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
 	if err != nil {
 		return nil, err
 	}
@@ -187,8 +187,8 @@ func Export(conn int) (payload [][]byte, err error) {
 
 func exportReferences(wg *sync.WaitGroup, jobs <-chan string, results chan<- []byte, errs chan<- error) {
 	defer wg.Done()
-	defer clilog.EnablePrintOutput(apiclient.GetPrintOutput())
-	clilog.EnablePrintOutput(false)
+	defer apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
+	apiclient.SetClientPrintHttpResponse(false)
 	for {
 		job, ok := <-jobs
 		if !ok {

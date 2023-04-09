@@ -96,7 +96,7 @@ func GetDeployments(sharedflows bool) (respBody []byte, err error) {
 
 func GetAllDeployments() (respBody []byte, err error) {
 
-	clilog.EnablePrintOutput(false)
+	apiclient.SetClientPrintHttpResponse(false)
 	proxiesResponse, err := GetDeployments(false)
 	if err != nil {
 		return nil, err
@@ -113,9 +113,8 @@ func GetAllDeployments() (respBody []byte, err error) {
 	deployments = append(deployments, "\"sharedFlows\":"+string(sharedFlowsResponse))
 	payload := "{" + strings.Join(deployments, ",") + "}"
 
+	apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
 	err = apiclient.PrettyPrint([]byte(payload))
-	clilog.EnablePrintOutput(apiclient.GetPrintOutput())
-
 	return []byte(payload), err
 }
 
@@ -151,9 +150,9 @@ func SetEnvProperty(name string, value string) (err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv())
 	//get env details
-	clilog.EnablePrintOutput(false)
+	apiclient.SetClientPrintHttpResponse(false)
 	envBody, err := apiclient.HttpClient(u.String())
-	clilog.EnablePrintOutput(apiclient.GetPrintOutput())
+	apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
 	if err != nil {
 		return err
 	}
@@ -220,9 +219,9 @@ func ClearEnvProperties() (err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv())
 	//get env details
-	clilog.EnablePrintOutput(false)
+	apiclient.SetClientPrintHttpResponse(false)
 	envBody, err := apiclient.HttpClient(u.String())
-	clilog.EnablePrintOutput(apiclient.GetPrintOutput())
+	apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
 	if err != nil {
 		return err
 	}

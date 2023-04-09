@@ -20,6 +20,7 @@ import (
 	"path"
 	"strconv"
 	"strings"
+	"syscall"
 
 	"internal/apiclient"
 
@@ -56,9 +57,9 @@ var ExportCmd = &cobra.Command{
 		var productResponse, appsResponse, targetServerResponse, referencesResponse [][]byte
 		var respBody, listKVMBytes []byte
 
-		runtimeType, _ := orgs.GetOrgField("runtimeType")
+		apiclient.DisableCmdPrintHttpResponse()
 
-		apiclient.SetPrintOutput(false)
+		runtimeType, _ := orgs.GetOrgField("runtimeType")
 
 		if cleanPath {
 			if err = cleanExportData(); err != nil {
@@ -72,19 +73,16 @@ var ExportCmd = &cobra.Command{
 
 		clilog.Warning.Println("Calls to Apigee APIs have a quota of 6000 per min. Running this tool against large list of entities can exhaust that quota and impact the usage of the platform.")
 
-		clilog.EnablePrintOutput(true)
 		clilog.Info.Println("Exporting API Proxies...")
 		if err = apis.ExportProxies(conn, proxiesFolderName, allRevisions); proceedOnError(err) != nil {
 			return err
 		}
 
-		clilog.EnablePrintOutput(true)
 		clilog.Info.Println("Exporting Sharedflows...")
 		if err = sharedflows.Export(conn, sharedFlowsFolderName, allRevisions); proceedOnError(err) != nil {
 			return err
 		}
 
-		clilog.EnablePrintOutput(true)
 		clilog.Info.Println("Exporting API Products...")
 		if productResponse, err = products.Export(conn); proceedOnError(err) != nil {
 			return err
@@ -93,7 +91,6 @@ var ExportCmd = &cobra.Command{
 			return err
 		}
 
-		clilog.EnablePrintOutput(true)
 		clilog.Info.Printf("Exporting KV Map names for org %s\n", org)
 		if listKVMBytes, err = kvm.List(""); proceedOnError(err) != nil {
 			return err
@@ -108,7 +105,6 @@ var ExportCmd = &cobra.Command{
 			}
 		}
 
-		clilog.EnablePrintOutput(true)
 		clilog.Info.Println("Exporting Developers...")
 		if respBody, err = developers.Export(); proceedOnError(err) != nil {
 			return err
@@ -117,7 +113,6 @@ var ExportCmd = &cobra.Command{
 			return err
 		}
 
-		clilog.EnablePrintOutput(true)
 		clilog.Info.Println("Exporting Developer Apps...")
 		if appsResponse, err = apps.Export(conn); proceedOnError(err) != nil {
 			return err
@@ -126,7 +121,6 @@ var ExportCmd = &cobra.Command{
 			return err
 		}
 
-		clilog.EnablePrintOutput(true)
 		clilog.Info.Println("Exporting Environment Group Configuration...")
 		if respBody, err = envgroups.List(); proceedOnError(err) != nil {
 			return err
@@ -135,7 +129,6 @@ var ExportCmd = &cobra.Command{
 			return err
 		}
 
-		clilog.EnablePrintOutput(true)
 		clilog.Info.Println("Exporting Data collectors Configuration...")
 		if respBody, err = datacollectors.List(); proceedOnError(err) != nil {
 			return err
@@ -145,7 +138,6 @@ var ExportCmd = &cobra.Command{
 		}
 
 		if runtimeType == "HYBRID" {
-			clilog.EnablePrintOutput(true)
 			clilog.Info.Println("Exporting Sync Authorization Identities...")
 			if respBody, err = sync.Get(); err != nil {
 				return err
@@ -167,10 +159,8 @@ var ExportCmd = &cobra.Command{
 		}
 
 		for _, environment := range environments {
-			clilog.EnablePrintOutput(true)
 			clilog.Info.Println("Exporting configuration for environment " + environment)
 			apiclient.SetApigeeEnv(environment)
-			clilog.EnablePrintOutput(true)
 			clilog.Info.Println("\tExporting Target servers...")
 			if targetServerResponse, err = targetservers.Export(conn); proceedOnError(err) != nil {
 				return err
@@ -179,7 +169,6 @@ var ExportCmd = &cobra.Command{
 				return err
 			}
 
-			clilog.EnablePrintOutput(true)
 			clilog.Info.Printf("\tExporting KV Map names for environment %s...\n", environment)
 			if listKVMBytes, err = kvm.List(""); err != nil {
 				return err
@@ -194,7 +183,6 @@ var ExportCmd = &cobra.Command{
 				}
 			}
 
-			clilog.EnablePrintOutput(true)
 			clilog.Info.Println("\tExporting Key store names...")
 			if respBody, err = keystores.List(); proceedOnError(err) != nil {
 				return err
@@ -203,7 +191,6 @@ var ExportCmd = &cobra.Command{
 				return err
 			}
 
-			clilog.EnablePrintOutput(true)
 			clilog.Info.Println("\tExporting debugmask configuration...")
 			if respBody, err = env.GetDebug(); err != nil {
 				return err
@@ -212,7 +199,6 @@ var ExportCmd = &cobra.Command{
 				return err
 			}
 
-			clilog.EnablePrintOutput(true)
 			clilog.Info.Println("\tExporting traceconfig...")
 			if respBody, err = env.GetTraceConfig(); err != nil {
 				return err
@@ -221,7 +207,6 @@ var ExportCmd = &cobra.Command{
 				return err
 			}
 
-			clilog.EnablePrintOutput(true)
 			clilog.Info.Println("\tExporting references...")
 			if referencesResponse, err = references.Export(conn); proceedOnError(err) != nil {
 				return err
@@ -310,28 +295,52 @@ func proceedOnError(e error) error {
 
 func cleanExportData() (err error) {
 	if err = os.RemoveAll(path.Join(folder, "proxies")); err != nil {
-		return err
+		pathErr, _ := err.(*os.PathError)
+		if pathErr.Err != syscall.ENOENT {
+			return err
+		}
 	}
 	if err = os.RemoveAll(path.Join(folder, "sharedflows")); err != nil {
-		return err
+		pathErr, _ := err.(*os.PathError)
+		if pathErr.Err != syscall.ENOENT {
+			return err
+		}
 	}
 	if err = os.Remove(path.Join(folder, productsFileName)); err != nil {
-		return err
+		pathErr, _ := err.(*os.PathError)
+		if pathErr.Err != syscall.ENOENT {
+			return err
+		}
 	}
 	if err = os.Remove(path.Join(folder, developersFileName)); err != nil {
-		return err
+		pathErr, _ := err.(*os.PathError)
+		if pathErr.Err != syscall.ENOENT {
+			return err
+		}
 	}
 	if err = os.Remove(path.Join(folder, appsFileName)); err != nil {
-		return err
+		pathErr, _ := err.(*os.PathError)
+		if pathErr.Err != syscall.ENOENT {
+			return err
+		}
 	}
 	if err = os.Remove(path.Join(folder, "*"+targetServerFileName)); err != nil {
-		return err
+		pathErr, _ := err.(*os.PathError)
+		if pathErr.Err != syscall.ENOENT {
+			return err
+		}
 	}
 	if err = os.Remove(path.Join(folder, "*"+envGroupsFileName)); err != nil {
-		return err
+		pathErr, _ := err.(*os.PathError)
+		if pathErr.Err != syscall.ENOENT {
+			return err
+		}
 	}
 	if err = os.Remove(path.Join(folder, "*"+dataCollFileName)); err != nil {
-		return err
+		pathErr, _ := err.(*os.PathError)
+		if pathErr.Err != syscall.ENOENT {
+			return err
+		}
 	}
 
 	return nil

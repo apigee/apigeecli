@@ -20,7 +20,6 @@ import (
 	"strings"
 
 	"internal/apiclient"
-	"internal/clilog"
 )
 
 func CreateSubscription(email string, name string, apiproduct string, startTime string, endTime string) (respBody []byte, err error) {
@@ -70,8 +69,8 @@ func ExportSubscriptions(email string) (respBody []byte, err error) {
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", url.QueryEscape(email), "subscriptions")
 
 	//don't print to sysout
-	clilog.EnablePrintOutput(false)
+	apiclient.SetClientPrintHttpResponse(false)
+	defer apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
 	respBody, err = apiclient.HttpClient(u.String())
-	clilog.EnablePrintOutput(apiclient.GetPrintOutput())
 	return respBody, err
 }

@@ -22,16 +22,15 @@ import (
 	"strings"
 
 	"internal/apiclient"
-	"internal/clilog"
 )
 
 // generateUploadURL
 func generateUploadURL() (respBody []byte, err error) {
+	apiclient.SetClientPrintHttpResponse(false)
+	defer apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "archiveDeployments:generateUploadUrl")
-	clilog.EnablePrintOutput(false)
 	respBody, err = apiclient.HttpClient(u.String(), "")
-	clilog.EnablePrintOutput(apiclient.GetPrintOutput())
 	return respBody, err
 }
 

@@ -84,14 +84,14 @@ var CreateArchiveCmd = &cobra.Command{
 			clilog.Info.Printf("Deployment operation id is %s\n", operationId)
 			clilog.Info.Printf("Checking deployment status in %d seconds\n", interval)
 
+			apiclient.DisableCmdPrintHttpResponse()
+
 			stop := apiclient.Every(interval*time.Second, func(time.Time) bool {
 				var respOpsBody []byte
 				respMap := op{}
-				clilog.EnablePrintOutput(false)
 				if respOpsBody, err = operations.Get(operationId); err != nil {
 					return true
 				}
-				clilog.EnablePrintOutput(apiclient.GetPrintOutput())
 
 				if err = json.Unmarshal(respOpsBody, &respMap); err != nil {
 					return true

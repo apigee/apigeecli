@@ -24,7 +24,6 @@ import (
 	"strings"
 
 	"internal/apiclient"
-	"internal/clilog"
 )
 
 type environmentgroups struct {
@@ -123,11 +122,11 @@ func DetachEnvironment(name string, environment string) (respBody []byte, err er
 
 	envGroupAttachments := attachments{}
 
-	clilog.EnablePrintOutput(false)
+	apiclient.SetClientPrintHttpResponse(false)
 	if respBody, err = ListAttach(name); err != nil {
 		return nil, err
 	}
-	clilog.EnablePrintOutput(apiclient.GetPrintOutput())
+	apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
 
 	if err := json.Unmarshal(respBody, &envGroupAttachments); err != nil {
 		return nil, err

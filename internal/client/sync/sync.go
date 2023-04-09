@@ -22,7 +22,6 @@ import (
 	"strings"
 
 	"internal/apiclient"
-	"internal/clilog"
 )
 
 type iAMIdentities struct {
@@ -63,7 +62,7 @@ func Set(identity interface{}) (respBody []byte, err error) {
 
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg()+":getSyncAuthorization")
-	clilog.EnablePrintOutput(false)
+	apiclient.SetClientPrintHttpResponse(false)
 	respBody, err = apiclient.HttpClient(u.String(), "")
 	if err != nil {
 		return respBody, err
@@ -101,7 +100,7 @@ func Set(identity interface{}) (respBody []byte, err error) {
 		return respBody, err
 	}
 
-	clilog.EnablePrintOutput(apiclient.GetPrintOutput())
+	apiclient.SetClientPrintHttpResponse(apiclient.GetClientPrintHttpResponseSetting())
 	u, _ = url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg()+":setSyncAuthorization")
 	respBody, err = apiclient.HttpClient(u.String(), string(payload))
@@ -113,7 +112,7 @@ func Set(identity interface{}) (respBody []byte, err error) {
 func SetList(identities []string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg()+":getSyncAuthorization")
-	clilog.EnablePrintOutput(false)
+	apiclient.SetClientPrintHttpResponse(false)
 	respBody, err = apiclient.HttpClient(u.String(), "")
 	if err != nil {
 		return respBody, err
@@ -138,7 +137,7 @@ func SetList(identities []string) (respBody []byte, err error) {
 		return respBody, err
 	}
 
-	clilog.EnablePrintOutput(apiclient.GetPrintOutput())
+	apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
 	u, _ = url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg()+":setSyncAuthorization")
 	respBody, err = apiclient.HttpClient(u.String(), string(payload))
@@ -150,7 +149,7 @@ func SetList(identities []string) (respBody []byte, err error) {
 func Remove(identity string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg()+":getSyncAuthorization")
-	clilog.EnablePrintOutput(false)
+	apiclient.SetClientPrintHttpResponse(false)
 	respBody, err = apiclient.HttpClient(u.String(), "")
 	if err != nil {
 		return respBody, err
@@ -190,7 +189,7 @@ func Remove(identity string) (respBody []byte, err error) {
 		return respBody, err
 	}
 
-	clilog.EnablePrintOutput(apiclient.GetPrintOutput())
+	apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
 	u, _ = url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg()+":setSyncAuthorization")
 	respBody, err = apiclient.HttpClient(u.String(), string(payload))

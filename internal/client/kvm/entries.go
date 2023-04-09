@@ -112,7 +112,9 @@ func ExportEntries(proxyName string, mapName string) (payload [][]byte, err erro
 	var respBody []byte
 	count := 1
 
-	clilog.EnablePrintOutput(false)
+	apiclient.SetClientPrintHttpResponse(false)
+	defer apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
+
 	if respBody, err = ListEntries(proxyName, mapName, -1, ""); err != nil {
 		return nil, err
 	}
@@ -138,7 +140,6 @@ func ExportEntries(proxyName string, mapName string) (payload [][]byte, err erro
 		payload = append(payload, respBody)
 	}
 
-	clilog.EnablePrintOutput(apiclient.GetPrintOutput())
 	return payload, nil
 }
 
