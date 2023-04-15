@@ -44,7 +44,6 @@ var CreateCmd = &cobra.Command{
 }
 
 func init() {
-
 	CreateCmd.PersistentFlags().StringVarP(&name, "name", "n",
 		"", "Reference name")
 	CreateCmd.Flags().StringVarP(&description, "desc", "d",

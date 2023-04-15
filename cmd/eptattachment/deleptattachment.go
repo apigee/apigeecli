@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to list endpoint attachments
+// RemoveCmd to list endpoint attachments
 var RemoveCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete a service endpoint",
@@ -37,7 +37,6 @@ var RemoveCmd = &cobra.Command{
 }
 
 func init() {
-
 	RemoveCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of the service endpoint")
 

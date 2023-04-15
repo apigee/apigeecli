@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to get target servers
+// GetCmd to get target servers
 var GetCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Get a Target Server",
@@ -38,7 +38,6 @@ var GetCmd = &cobra.Command{
 }
 
 func init() {
-
 	GetCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of the targetserver")
 

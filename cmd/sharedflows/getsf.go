@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to get shared flow
+// GetCmd to get shared flow
 var GetCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Gets a shared flow by name",

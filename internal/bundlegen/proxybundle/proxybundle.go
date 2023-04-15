@@ -52,8 +52,8 @@ func GenerateAPIProxyBundleFromOAS(name string,
 	oasGoogleIdTokenAudLiteral string,
 	oasGoogleIdTokenAudRef string,
 	oasTargetUrlRef string,
-	targetUrl string) (err error) {
-
+	targetUrl string,
+) (err error) {
 	var apiProxyData, proxyEndpointData, targetEndpointData string
 	const resourceType = "oas"
 
@@ -123,7 +123,7 @@ func GenerateAPIProxyBundleFromOAS(name string,
 		return err
 	}
 
-	//add set target url
+	// add set target url
 	if targetUrl == "" {
 		if genapi.GenerateSetTargetPolicy() {
 			if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"Set-Target-1.xml",
@@ -133,7 +133,7 @@ func GenerateAPIProxyBundleFromOAS(name string,
 		}
 	}
 
-	//add security policies
+	// add security policies
 	for _, securityScheme := range genapi.GetSecuritySchemesList() {
 		if securityScheme.APIKeyPolicy.APIKeyPolicyEnabled {
 			if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"Verify-API-Key-"+securityScheme.SchemeName+".xml",
@@ -151,14 +151,14 @@ func GenerateAPIProxyBundleFromOAS(name string,
 		}
 	}
 
-	//add quota policies
+	// add quota policies
 	for quotaPolicyName, quotaPolicyContent := range genapi.GetQuotaPolicies() {
 		if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"Quota-"+quotaPolicyName+".xml", quotaPolicyContent); err != nil {
 			return err
 		}
 	}
 
-	//add spike arrest policies
+	// add spike arrest policies
 	for spikeArrestPolicyName, spikeArrestPolicyContent := range genapi.GetSpikeArrestPolicies() {
 		if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"Spike-Arrest-"+spikeArrestPolicyName+".xml", spikeArrestPolicyContent); err != nil {
 			return err
@@ -166,7 +166,7 @@ func GenerateAPIProxyBundleFromOAS(name string,
 	}
 
 	if !skipPolicy {
-		//add oas policy
+		// add oas policy
 		if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"OpenAPI-Spec-Validation-1.xml",
 			policies.AddOpenAPIValidatePolicy(fileName)); err != nil {
 			return err
@@ -174,7 +174,7 @@ func GenerateAPIProxyBundleFromOAS(name string,
 	}
 
 	if addCORS {
-		//add cors policy
+		// add cors policy
 		if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"Add-CORS.xml", policies.AddCORSPolicy()); err != nil {
 			return err
 		}
@@ -197,8 +197,8 @@ func GenerateAPIProxyBundleFromGQL(name string,
 	skipPolicy bool,
 	addCORS bool,
 	targetUrlRef string,
-	targetUrl string) (err error) {
-
+	targetUrl string,
+) (err error) {
 	var apiProxyData, proxyEndpointData, targetEndpointData string
 	const resourceType = "graphql"
 
@@ -276,7 +276,7 @@ func GenerateAPIProxyBundleFromGQL(name string,
 	}
 
 	if !skipPolicy {
-		//add gql policy
+		// add gql policy
 		if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"Validate-"+name+"-Schema.xml",
 			policies.AddGraphQLPolicy(name, action, fileName)); err != nil {
 			return err
@@ -284,7 +284,7 @@ func GenerateAPIProxyBundleFromGQL(name string,
 	}
 
 	if keyName != "" {
-		//add verifyapi key policy
+		// add verifyapi key policy
 		if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"Verify-API-Key-"+name+".xml",
 			policies.AddVerifyApiKeyPolicy(location, name, keyName)); err != nil {
 			return err
@@ -292,7 +292,7 @@ func GenerateAPIProxyBundleFromGQL(name string,
 	}
 
 	if addCORS {
-		//add cors policy
+		// add cors policy
 		if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"Add-CORS.xml", policies.AddCORSPolicy()); err != nil {
 			return err
 		}
@@ -307,7 +307,6 @@ func GenerateAPIProxyBundleFromGQL(name string,
 }
 
 func GenerateIntegrationAPIProxyBundle(name string, integration string, apitrigger string, skipPolicy bool) (err error) {
-
 	var apiProxyData, proxyEndpointData, integrationEndpointData string
 
 	tmpDir, err := os.MkdirTemp("", "proxy")
@@ -361,7 +360,7 @@ func GenerateIntegrationAPIProxyBundle(name string, integration string, apitrigg
 		return err
 	}
 
-	//add set integration request policy
+	// add set integration request policy
 	if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"set-integration-request.xml",
 		policies.AddSetIntegrationRequestPolicy(integration, apitrigger)); err != nil {
 		return err
@@ -377,8 +376,8 @@ func GenerateIntegrationAPIProxyBundle(name string, integration string, apitrigg
 
 func GenerateAPIProxyBundleFromSwagger(name string,
 	skipPolicy bool,
-	addCORS bool) (err error) {
-
+	addCORS bool,
+) (err error) {
 	var apiProxyData, proxyEndpointData, targetEndpointData string
 
 	tmpDir, err := os.MkdirTemp("", "proxy")
@@ -441,14 +440,14 @@ func GenerateAPIProxyBundleFromSwagger(name string,
 		return err
 	}
 
-	//add AM policies
+	// add AM policies
 	for amPolicyName, amPolicyContent := range genapi.GetAMPolicies() {
 		if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"AM-"+amPolicyName+".xml", amPolicyContent); err != nil {
 			return err
 		}
 	}
 
-	//add security policies
+	// add security policies
 	for _, securityScheme := range genapi.GetSecuritySchemesList() {
 		if securityScheme.JWTPolicy.JWTPolicyEnabled {
 			if len(securityScheme.JWTPolicy.Location) > 0 {
@@ -493,7 +492,7 @@ func GenerateAPIProxyBundleFromSwagger(name string,
 		}
 	}
 
-	//add quota policies
+	// add quota policies
 	for quotaPolicyName, quotaPolicyContent := range genapi.GetQuotaPolicies() {
 		if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"Quota-"+quotaPolicyName+".xml", quotaPolicyContent); err != nil {
 			return err
@@ -507,14 +506,14 @@ func GenerateAPIProxyBundleFromSwagger(name string,
 	}
 
 	if addCORS {
-		//add cors policy
+		// add cors policy
 		if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"Add-CORS.xml", policies.AddCORSPolicy()); err != nil {
 			return err
 		}
 	}
 
 	if policies.IsCopyAuthEnabled() {
-		//add AM policy
+		// add AM policy
 		if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"Copy-Auth-Var.xml", policies.AddCopyAuthHeaderPolicy()); err != nil {
 			return err
 		}
@@ -548,10 +547,9 @@ func GenerateArchiveBundle(pathToZip, destinationPath string) error {
 }
 
 func archiveBundle(pathToZip, destinationPath string) (err error) {
-
 	var destinationFile *os.File
 
-	pathSep := `/` //For archives/zip the path separator is always /
+	pathSep := `/` // For archives/zip the path separator is always /
 
 	if destinationFile, err = os.Create(destinationPath); err != nil {
 		return err
@@ -598,8 +596,7 @@ func archiveBundle(pathToZip, destinationPath string) (err error) {
 }
 
 func GitHubImportBundle(owner string, repo string, repopath string) (err error) {
-
-	//clean up any files or folders
+	// clean up any files or folders
 	CleanUp()
 	os.RemoveAll(rootDir)
 
@@ -617,7 +614,7 @@ func GitHubImportBundle(owner string, repo string, repopath string) (err error) 
 		client = github.NewClient(nil)
 	}
 
-	//1. download the proxy
+	// 1. download the proxy
 	if err := downloadProxyFromRepo(client, ctx, owner, repo, repopath); err != nil {
 		return err
 	}
@@ -626,7 +623,7 @@ func GitHubImportBundle(owner string, repo string, repopath string) (err error) 
 		clilog.Info.Println("")
 	}
 
-	//2. compress the proxy folder
+	// 2. compress the proxy folder
 	curDir, _ := os.Getwd()
 	if err := archiveBundle(path.Join(curDir, rootDir), path.Join(curDir, rootDir+".zip")); err != nil {
 		return err
@@ -643,7 +640,6 @@ func CleanUp() {
 }
 
 func downloadProxyFromRepo(client *github.Client, ctx context.Context, owner string, repo string, repopath string) (err error) {
-
 	var fileContent *github.RepositoryContent
 	var directoryContents []*github.RepositoryContent
 
@@ -685,14 +681,13 @@ func getApiProxyFolder(repoPath string) (apiProxyFolder string, apiProxyFile str
 
 // downloadResource method is used to download resources, proxy bundles, sharedflows
 func downloadResource(repoPath string, url string) (err error) {
-
 	var apiproxyFolder, apiproxyFile string
 
 	if apiproxyFolder, apiproxyFile = getApiProxyFolder(repoPath); err != nil {
 		return err
 	}
 
-	_ = os.MkdirAll(apiproxyFolder, 0755)
+	_ = os.MkdirAll(apiproxyFolder, 0o755)
 
 	out, err := os.Create(apiproxyFile)
 	if err != nil {

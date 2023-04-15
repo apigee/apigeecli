@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to create a resource
+// CreateCmd to create a resource
 var CreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a resource file",
@@ -40,7 +40,6 @@ var CreateCmd = &cobra.Command{
 var resPath string
 
 func init() {
-
 	CreateCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of the resource file")
 	CreateCmd.Flags().StringVarP(&resType, "type", "p",

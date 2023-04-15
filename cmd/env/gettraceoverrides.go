@@ -40,7 +40,6 @@ var GetTraceOverridesCmd = &cobra.Command{
 var configName string
 
 func init() {
-
 	GetTraceOverridesCmd.Flags().StringVarP(&configName, "name", "n",
 		"", "Trace configuration override name")
 

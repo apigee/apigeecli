@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to import developer
+// ImpCmd to import developer
 var ImpCmd = &cobra.Command{
 	Use:   "import",
 	Short: "Import a file containing App Developers",
@@ -35,11 +35,12 @@ var ImpCmd = &cobra.Command{
 	},
 }
 
-var conn int
-var filePath string
+var (
+	conn     int
+	filePath string
+)
 
 func init() {
-
 	ImpCmd.Flags().StringVarP(&filePath, "file", "f",
 		"", "File containing App Developers")
 	ImpCmd.Flags().IntVarP(&conn, "conn", "c",

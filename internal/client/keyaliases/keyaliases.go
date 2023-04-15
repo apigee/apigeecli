@@ -44,7 +44,6 @@ type subject struct {
 }
 
 func CreateOrUpdateSelfSigned(keystoreName string, name string, update bool, ignoreExpiry bool, ignoreNewLine bool, selfsignedFile string) (respBody []byte, err error) {
-
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(),
 		"keystores", keystoreName, "aliases")
@@ -103,7 +102,6 @@ func CreateOrUpdateSelfSigned(keystoreName string, name string, update bool, ign
 }
 
 func CreateOrUpdatePfx(keystoreName string, name string, update bool, ignoreExpiry bool, ignoreNewLine bool, pfxFile string, password string) (respBpdy []byte, err error) {
-
 	if pfxFile == "" {
 		return nil, fmt.Errorf("pfxFile cannot be empty")
 	}
@@ -119,8 +117,8 @@ func CreateOrUpdatePfx(keystoreName string, name string, update bool, ignoreExpi
 }
 
 func CreateOrUpdateKeyCert(keystoreName string, name string, update bool, ignoreExpiry bool, ignoreNewLine bool,
-	certFile string, keyFile string, password string) (respBpdy []byte, err error) {
-
+	certFile string, keyFile string, password string,
+) (respBpdy []byte, err error) {
 	if certFile == "" {
 		return nil, fmt.Errorf("certFile cannot be empty")
 	}
@@ -136,7 +134,6 @@ func CreateOrUpdateKeyCert(keystoreName string, name string, update bool, ignore
 }
 
 func createOrUpdate(keystoreName string, name string, format string, password string, update bool, ignoreExpiry bool, ignoreNewLine bool, formParams map[string]string) (respBody []byte, err error) {
-
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(),
 		"keystores", keystoreName, "aliases")

@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to create developer
+// CreateCmd to create developer
 var CreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a developer",
@@ -36,11 +36,12 @@ var CreateCmd = &cobra.Command{
 	},
 }
 
-var lastName, firstName, userName string
-var attrs map[string]string
+var (
+	lastName, firstName, userName string
+	attrs                         map[string]string
+)
 
 func init() {
-
 	CreateCmd.Flags().StringVarP(&email, "email", "n",
 		"", "The developer's email")
 	CreateCmd.Flags().StringVarP(&firstName, "first", "f",

@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to update a product
+// UpdateCmd to update a product
 var UpdateCmd = &cobra.Command{
 	Use:   "update",
 	Short: "Update an API product",
@@ -31,7 +31,6 @@ var UpdateCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-
 		p := products.APIProduct{}
 
 		p.Name = name
@@ -69,7 +68,6 @@ var UpdateCmd = &cobra.Command{
 }
 
 func init() {
-
 	UpdateCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of the API Product")
 	UpdateCmd.Flags().StringVarP(&displayName, "displayname", "m",
@@ -98,7 +96,7 @@ func init() {
 		"", "File containing GraphQL Operation Group JSON. See samples for how to create the file")
 	UpdateCmd.Flags().StringVarP(&grpcOperationGroupFile, "grpcopgrp", "",
 		"", "File containing gRPC Operation Group JSON. See samples for how to create the file")
-	//TODO: apiresource -r later
+	// TODO: apiresource -r later
 
 	_ = UpdateCmd.MarkFlagRequired("name")
 }

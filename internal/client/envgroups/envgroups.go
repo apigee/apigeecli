@@ -40,7 +40,6 @@ type environmentgroup struct {
 
 // Create
 func Create(name string, hostnames []string) (respBody []byte, err error) {
-
 	envgroup := []string{}
 
 	envgroup = append(envgroup, "\"name\":\""+name+"\"")
@@ -96,7 +95,6 @@ func PatchHosts(name string, hostnames []string) (respBody []byte, err error) {
 
 // Attach
 func Attach(name string, environment string) (respBody []byte, err error) {
-
 	envgroup := []string{}
 	envgroup = append(envgroup, "\"environment\":\""+environment+"\"")
 	payload := "{" + strings.Join(envgroup, ",") + "}"
@@ -109,7 +107,6 @@ func Attach(name string, environment string) (respBody []byte, err error) {
 
 // DetachEnvironment
 func DetachEnvironment(name string, environment string) (respBody []byte, err error) {
-
 	type attachment struct {
 		Name        string `json:"name,omitempty"`
 		Environment string `json:"environment,omitempty"`
@@ -166,7 +163,6 @@ func getArrayStr(str []string) string {
 
 // Import
 func Import(filePath string) (err error) {
-
 	var environmentGroups environmentgroups
 
 	if environmentGroups, err = readEnvGroupsFile(filePath); err != nil {
@@ -182,11 +178,9 @@ func Import(filePath string) (err error) {
 }
 
 func readEnvGroupsFile(filePath string) (environmentgroups, error) {
-
 	environmentGroups := environmentgroups{}
 
 	jsonFile, err := os.Open(filePath)
-
 	if err != nil {
 		return environmentGroups, err
 	}
@@ -194,7 +188,6 @@ func readEnvGroupsFile(filePath string) (environmentgroups, error) {
 	defer jsonFile.Close()
 
 	byteValue, err := io.ReadAll(jsonFile)
-
 	if err != nil {
 		return environmentGroups, err
 	}

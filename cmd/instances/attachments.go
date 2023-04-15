@@ -28,7 +28,6 @@ var AttachCmd = &cobra.Command{
 var environment string
 
 func init() {
-
 	AttachCmd.PersistentFlags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
 

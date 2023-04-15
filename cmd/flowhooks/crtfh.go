@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to create flow hooks
+// CreateCmd to create flow hooks
 var CreateCmd = &cobra.Command{
 	Use:   "attach",
 	Short: "Attach a flowhook",
@@ -37,11 +37,12 @@ var CreateCmd = &cobra.Command{
 	},
 }
 
-var description, sharedflow string
-var continueOnErr bool
+var (
+	description, sharedflow string
+	continueOnErr           bool
+)
 
 func init() {
-
 	CreateCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Flowhook point")
 	CreateCmd.Flags().StringVarP(&description, "desc", "d",

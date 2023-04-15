@@ -37,7 +37,6 @@ var ListAttachCmd = &cobra.Command{
 }
 
 func init() {
-
 	ListAttachCmd.Flags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
 

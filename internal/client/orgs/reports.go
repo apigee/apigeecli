@@ -28,12 +28,11 @@ import (
 )
 
 func TotalAPICallsInMonth(month int, year int, envDetails bool, conn int) (total int, err error) {
-
 	var pwg sync.WaitGroup
 	var envListBytes []byte
 	var envList []string
 
-	//ensure the count is reset to zero before calculating the next set
+	// ensure the count is reset to zero before calculating the next set
 	defer env.ApiCalls.ResetCount()
 
 	apiclient.SetClientPrintHttpResponse(false)
@@ -53,7 +52,7 @@ func TotalAPICallsInMonth(month int, year int, envDetails bool, conn int) (total
 
 	numOfLoops, remaining := numEntities/conn, numEntities%conn
 
-	//ensure connections aren't greater than entities
+	// ensure connections aren't greater than entities
 	if conn > numEntities {
 		conn = numEntities
 	}
@@ -81,7 +80,7 @@ func TotalAPICallsInMonth(month int, year int, envDetails bool, conn int) (total
 
 func batchReport(envList []string, month int, year int, envDetails bool, pwg *sync.WaitGroup) {
 	defer pwg.Done()
-	//batch workgroup
+	// batch workgroup
 	var bwg sync.WaitGroup
 
 	bwg.Add(len(envList))
@@ -94,7 +93,6 @@ func batchReport(envList []string, month int, year int, envDetails bool, pwg *sy
 }
 
 func TotalAPICallsInYear(year int, envDetails bool, conn int) (total int, err error) {
-
 	var monthlyTotal int
 
 	t := time.Now()
@@ -106,14 +104,14 @@ func TotalAPICallsInYear(year int, envDetails bool, conn int) (total int, err er
 
 	if currentYear == year {
 		currentMonth := t.Month()
-		for i := 1; i <= int(currentMonth); i++ { //run the loop only till the current month
+		for i := 1; i <= int(currentMonth); i++ { // run the loop only till the current month
 			if monthlyTotal, err = TotalAPICallsInMonth(i, year, envDetails, conn); err != nil {
 				return -1, err
 			}
 			total = total + monthlyTotal
 		}
 	} else {
-		for i := 1; i <= 12; i++ { //run the loop for each month
+		for i := 1; i <= 12; i++ { // run the loop for each month
 			if monthlyTotal, err = TotalAPICallsInMonth(i, year, envDetails, conn); err != nil {
 				return -1, err
 			}

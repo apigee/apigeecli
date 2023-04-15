@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to manage tracing of apis
+// SetDebugCmd to set debug mas  on env
 var SetDebugCmd = &cobra.Command{
 	Use:   "set",
 	Short: "Set debugmasks for an Environment",
@@ -40,7 +40,6 @@ var SetDebugCmd = &cobra.Command{
 var payload string
 
 func init() {
-
 	SetDebugCmd.Flags().StringVarP(&payload, "mask", "m",
 		"", "Mask configuration is in JSON format")
 

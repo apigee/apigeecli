@@ -70,11 +70,12 @@ var MonthlyCmd = &cobra.Command{
 	},
 }
 
-var month, year int
-var envDetails bool
+var (
+	month, year int
+	envDetails  bool
+)
 
 func init() {
-
 	MonthlyCmd.Flags().IntVarP(&month, "month", "m",
 		-1, "Month")
 	MonthlyCmd.Flags().IntVarP(&year, "year", "y",

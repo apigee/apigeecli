@@ -28,7 +28,6 @@ var KeysCmd = &cobra.Command{
 var developerEmail, key, secret string
 
 func init() {
-
 	KeysCmd.PersistentFlags().StringVarP(&name, "name", "n",
 		"", "Developer App name")
 

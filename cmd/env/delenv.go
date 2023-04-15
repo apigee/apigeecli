@@ -38,7 +38,6 @@ var DelCmd = &cobra.Command{
 }
 
 func init() {
-
 	DelCmd.Flags().StringVarP(&environment, "env", "e",
 		"", "Apigee environment name")
 

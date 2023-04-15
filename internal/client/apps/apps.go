@@ -152,12 +152,11 @@ func Manage(appID string, developerEmail string, action string) (respBody []byte
 
 // SearchApp
 func SearchApp(name string) (respBody []byte, err error) {
-
 	apiclient.SetClientPrintHttpResponse(false)
 	defer apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
 
 	u, _ := url.Parse(apiclient.BaseURL)
-	//search by name is not implemented; use list and return the appropriate app
+	// search by name is not implemented; use list and return the appropriate app
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apps")
 	q := u.Query()
 	q.Set("expand", "true")
@@ -240,11 +239,10 @@ func GenerateKey(name string, developerID string, apiProducts []string, callback
 
 // Export
 func Export(conn int) (payload [][]byte, err error) {
-
 	apiclient.SetClientPrintHttpResponse(false)
 	defer apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
 
-	//parent workgroup
+	// parent workgroup
 	var pwg sync.WaitGroup
 	var mu sync.Mutex
 	const entityType = "apps"
@@ -257,7 +255,7 @@ func Export(conn int) (payload [][]byte, err error) {
 		return apiclient.GetEntityPayloadList(), err
 	}
 
-	var entities = apps{}
+	entities := apps{}
 	err = json.Unmarshal(respBody, &entities)
 	if err != nil {
 		return apiclient.GetEntityPayloadList(), err
@@ -269,7 +267,7 @@ func Export(conn int) (payload [][]byte, err error) {
 
 	numOfLoops, remaining := numEntities/conn, numEntities%conn
 
-	//ensure connections aren't greater than apps
+	// ensure connections aren't greater than apps
 	if conn > numEntities {
 		conn = numEntities
 	}
@@ -313,7 +311,7 @@ func Import(conn int, filePath string, developersFilePath string) error {
 
 	numOfLoops, remaining := numEntities/conn, numEntities%conn
 
-	//ensure connections aren't greater than entities
+	// ensure connections aren't greater than entities
 	if conn > numEntities {
 		conn = numEntities
 	}
@@ -340,7 +338,6 @@ func Import(conn int, filePath string, developersFilePath string) error {
 }
 
 func readAppsFile(filePath string, developersFilePath string) ([]application, developers.Appdevelopers, error) {
-
 	apps := []application{}
 	devs := developers.Appdevelopers{}
 
@@ -371,9 +368,8 @@ func readAppsFile(filePath string, developersFilePath string) ([]application, de
 
 // batch created a batch of apps to query
 func batchExport(entities []app, entityType string, pwg *sync.WaitGroup, mu *sync.Mutex) {
-
 	defer pwg.Done()
-	//batch workgroup
+	// batch workgroup
 	var bwg sync.WaitGroup
 
 	bwg.Add(len(entities))
@@ -388,9 +384,8 @@ func batchExport(entities []app, entityType string, pwg *sync.WaitGroup, mu *syn
 
 // batch creates a batch of apps to create
 func batchImport(entities []application, developerEntities developers.Appdevelopers, pwg *sync.WaitGroup) {
-
 	defer pwg.Done()
-	//batch workgroup
+	// batch workgroup
 	var bwg sync.WaitGroup
 
 	bwg.Add(len(entities))
@@ -404,15 +399,15 @@ func batchImport(entities []application, developerEntities developers.Appdevelop
 func createAsyncApp(app application, developerEntities developers.Appdevelopers, wg *sync.WaitGroup) {
 	defer wg.Done()
 
-	//importing an app will be a two step process.
-	//1. create the app without the credential
-	//2. create/import the credential
+	// importing an app will be a two step process.
+	// 1. create the app without the credential
+	// 2. create/import the credential
 	u, _ := url.Parse(apiclient.BaseURL)
 	if app.DeveloperID == nil {
 		clilog.Error.Println("developer id was not found")
 		return
 	}
-	//store the developer and the credential
+	// store the developer and the credential
 	developerEmail, developerID, err := getNewDeveloperId(*app.DeveloperID, developerEntities) //*app.DeveloperID
 	if err != nil {
 		clilog.Error.Println(err)
@@ -421,7 +416,7 @@ func createAsyncApp(app application, developerEntities developers.Appdevelopers,
 
 	credentials := *app.Credentials
 
-	//remove the developer id and credentials from the payload
+	// remove the developer id and credentials from the payload
 	app.DeveloperID = nil
 	app.Credentials = nil
 
@@ -438,7 +433,7 @@ func createAsyncApp(app application, developerEntities developers.Appdevelopers,
 		return
 	}
 
-	//get the new appId & keyId
+	// get the new appId & keyId
 	var newDeveloperApp map[string]interface{}
 	err = json.Unmarshal(appRespBody, &newDeveloperApp)
 	if err != nil {
@@ -446,7 +441,7 @@ func createAsyncApp(app application, developerEntities developers.Appdevelopers,
 		return
 	}
 
-	//delete the auto-generated key
+	// delete the auto-generated key
 	newAppCredentials := newDeveloperApp["credentials"].([]interface{})
 	temporaryCredential := newAppCredentials[0].(map[string]interface{})
 
@@ -462,7 +457,7 @@ func createAsyncApp(app application, developerEntities developers.Appdevelopers,
 	createDeveloperAppUrl.Path = path.Join(createDeveloperAppUrl.Path, apiclient.GetApigeeOrg(), "developers", developerID, "apps", app.Name, "keys")
 	for _, credential := range credentials {
 
-		//create a new credential
+		// create a new credential
 		importCred := importCredential{}
 		importCred.ConsumerKey = credential.ConsumerKey
 		importCred.ConsumerSecret = credential.ConsumerSecret
@@ -478,16 +473,16 @@ func createAsyncApp(app application, developerEntities developers.Appdevelopers,
 			return
 		}
 
-		//update credentials
+		// update credentials
 
-		//construct a []string for products
+		// construct a []string for products
 		var products []string
 		for _, apiProduct := range credential.APIProducts {
 			products = append(products, apiProduct.Name)
 		}
 
 		if len(products) > 0 {
-			//updateDeveloperApp
+			// updateDeveloperApp
 			updateDeveloperAppUrl, _ := url.Parse(apiclient.BaseURL)
 			updateDeveloperAppUrl.Path = path.Join(updateDeveloperAppUrl.Path, apiclient.GetApigeeOrg(), "developers", developerID, "apps", app.Name, "keys", credential.ConsumerKey)
 

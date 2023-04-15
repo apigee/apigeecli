@@ -36,12 +36,13 @@ var ListCmd = &cobra.Command{
 	},
 }
 
-var expand = false
-var includeCred = false
-var count int
+var (
+	expand      = false
+	includeCred = false
+	count       int
+)
 
 func init() {
-
 	ListCmd.Flags().IntVarP(&count, "count", "c",
 		-1, "Number of apps; limit is 1000")
 	ListCmd.Flags().BoolVarP(&expand, "expand", "x",

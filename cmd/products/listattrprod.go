@@ -37,5 +37,4 @@ var ListAttrCmd = &cobra.Command{
 }
 
 func init() {
-
 }

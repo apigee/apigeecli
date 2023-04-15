@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to get flow hooks
+// GetCmd to get flow hooks
 var GetCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Get a flowhook",
@@ -38,7 +38,6 @@ var GetCmd = &cobra.Command{
 }
 
 func init() {
-
 	GetCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Flowhook point")
 

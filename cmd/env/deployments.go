@@ -26,7 +26,6 @@ var DeployCmd = &cobra.Command{
 }
 
 func init() {
-
 	DeployCmd.PersistentFlags().StringVarP(&environment, "env", "e",
 		"", "Apigee environment name")
 

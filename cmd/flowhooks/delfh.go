@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to delete flow hooks
+// DelCmd to delete flow hooks
 var DelCmd = &cobra.Command{
 	Use:   "detach",
 	Short: "Detach a flowhook",
@@ -38,7 +38,6 @@ var DelCmd = &cobra.Command{
 }
 
 func init() {
-
 	DelCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Flowhook point")
 

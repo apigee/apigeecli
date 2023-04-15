@@ -2,16 +2,18 @@ package utils
 
 import (
 	"encoding/json"
-	"internal/clilog"
 	"io"
 	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
+
+	"internal/clilog"
 )
 
-func ListKVMFiles(folder string) (orgKVMFileList map[string]string, envKVMFileList map[string]string, proxyKVMFileList map[string]string, err error) {
-
+func ListKVMFiles(folder string) (orgKVMFileList map[string]string,
+	envKVMFileList map[string]string, proxyKVMFileList map[string]string, err error,
+) {
 	orgKVMFileList = map[string]string{}
 	envKVMFileList = map[string]string{}
 	proxyKVMFileList = map[string]string{}
@@ -26,19 +28,20 @@ func ListKVMFiles(folder string) (orgKVMFileList map[string]string, envKVMFileLi
 		}
 		if !info.IsDir() {
 			kvmFile := filepath.Base(path)
-			if renv.MatchString(kvmFile) {
+			switch {
+			case renv.MatchString(kvmFile):
 				envKVMFileSplit := strings.Split(kvmFile, "_")
 				if len(envKVMFileSplit) > 2 {
 					clilog.Info.Printf("Map name %s, path %s\n", envKVMFileSplit[2], kvmFile)
 					envKVMFileList[envKVMFileSplit[2]] = path
 				}
-			} else if rproxy.MatchString(kvmFile) {
+			case rproxy.MatchString(kvmFile):
 				proxyKVMFileSplit := strings.Split(kvmFile, "_")
 				if len(proxyKVMFileSplit) > 2 {
 					clilog.Info.Printf("Map name %s, path %s\n", proxyKVMFileSplit[2], kvmFile)
 					proxyKVMFileList[proxyKVMFileSplit[2]] = path
 				}
-			} else if rorg.MatchString(kvmFile) {
+			case rorg.MatchString(kvmFile):
 				orgKVMFileSplit := strings.Split(kvmFile, "_")
 				if len(orgKVMFileSplit) > 1 {
 					clilog.Info.Printf("Map name %s, path %s\n", orgKVMFileSplit[1], kvmFile)
@@ -52,7 +55,6 @@ func ListKVMFiles(folder string) (orgKVMFileList map[string]string, envKVMFileLi
 }
 
 func ReadEntityFile(filePath string) ([]string, error) {
-
 	entities := []string{}
 
 	jsonFile, err := os.Open(filePath)

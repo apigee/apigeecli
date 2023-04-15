@@ -28,7 +28,6 @@ var Cmd = &cobra.Command{
 var serviceAccount string
 
 func init() {
-
 	Cmd.AddCommand(GetCmd)
 	Cmd.AddCommand(CacheCmd)
 }

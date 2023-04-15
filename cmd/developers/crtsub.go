@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to create developer subscription
+// CreateSubCmd to create developer subscription
 var CreateSubCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a subcription for a developer",
@@ -39,7 +39,6 @@ var CreateSubCmd = &cobra.Command{
 var apiproduct, startTime, endTime string
 
 func init() {
-
 	CreateSubCmd.Flags().StringVarP(&email, "email", "e",
 		"", "The developer's email")
 	CreateSubCmd.Flags().StringVarP(&name, "name", "n",

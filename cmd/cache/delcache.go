@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to delete cache
+// DelCmd to delete cache
 var DelCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete a cache resource from the environment",
@@ -40,10 +40,8 @@ var DelCmd = &cobra.Command{
 var name string
 
 func init() {
-
 	DelCmd.Flags().StringVarP(&name, "name", "n",
 		"", "API proxy name")
 
 	_ = DelCmd.MarkFlagRequired("name")
-
 }

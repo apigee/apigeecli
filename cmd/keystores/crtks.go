@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to create key stores
+// CreateCmd to create key stores
 var CreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a Key Store",
@@ -38,7 +38,6 @@ var CreateCmd = &cobra.Command{
 }
 
 func init() {
-
 	CreateCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of the key store")
 

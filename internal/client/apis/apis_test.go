@@ -23,8 +23,10 @@ import (
 	"internal/apiclient"
 )
 
-const proxyName = "test"
-const testFolder = "test"
+const (
+	proxyName  = "test"
+	testFolder = "test"
+)
 
 func setup() (err error) {
 	org := os.Getenv("APIGEE_ORG")

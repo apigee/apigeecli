@@ -20,7 +20,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to get org details
+// CleanCmd to get org details
 var CleanCmd = &cobra.Command{
 	Use:   "remove",
 	Short: "Remove preferences file from the home dir",

@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to list products
+// ListCmd to list products
 var ListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "Returns a list of environment groups",
@@ -33,13 +33,10 @@ var ListCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		_, err = envgroups.List()
 		return
-
 	},
 }
 
 func init() {
-
 	ListCmd.Flags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
-
 }

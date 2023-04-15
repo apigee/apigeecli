@@ -15,18 +15,22 @@
 package main
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/apigee/apigeecli/cmd"
 )
 
-// Version
-var Version, Git string
+// https://goreleaser.com/cookbooks/using-main.version/?h=ldflags
+var (
+	version = "dev"
+	commit  = "none"
+	date    = "unknown"
+)
 
 func main() {
-
 	rootCmd := cmd.GetRootCmd()
-	rootCmd.Version = Version + ", Git: " + Git
+	rootCmd.Version = fmt.Sprintf("%s date: %s [commit: %.7s]", version, date, commit)
 
 	if err := rootCmd.Execute(); err != nil {
 		os.Exit(1)

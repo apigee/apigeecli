@@ -31,7 +31,7 @@ type overrides struct {
 }
 
 type gcp struct {
-	ProjectId string `yaml:"projectID,omitempty"`
+	ProjectID string `yaml:"projectID,omitempty"`
 	Region    string `yaml:"region,omitempty"`
 }
 

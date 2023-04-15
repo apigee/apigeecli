@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to enable AX obfuscation
+// ObCmd to enable AX obfuscation
 var ObCmd = &cobra.Command{
 	Use:   "enable-ax-obfuscation",
 	Short: "Obfuscate analytics fields",
@@ -36,7 +36,6 @@ var ObCmd = &cobra.Command{
 }
 
 func init() {
-
 	ObCmd.Flags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
 }

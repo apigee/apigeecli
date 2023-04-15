@@ -41,7 +41,6 @@ var FetCmd = &cobra.Command{
 }
 
 func init() {
-
 	FetCmd.Flags().StringVarP(&name, "name", "n",
 		"", "API Proxy Bundle Name")
 	FetCmd.Flags().IntVarP(&revision, "rev", "v",

@@ -77,7 +77,6 @@ func ImportTraceConfig(payload string) (respBody []byte, err error) {
 }
 
 func DisableTraceConfig() (respBody []byte, err error) {
-
 	var traceRespBody []byte
 	var payload []byte
 
@@ -96,7 +95,7 @@ func DisableTraceConfig() (respBody []byte, err error) {
 		return nil, fmt.Errorf("Distributed trace not configured for the environment")
 	}
 
-	//disable trace
+	// disable trace
 	traceResp.SamplingConfig.Sampler = "OFF"
 
 	if payload, err = json.Marshal(traceResp); err != nil {

@@ -30,13 +30,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// GhCreateCmd create an api from a github repo
 var GhCreateCmd = &cobra.Command{
 	Use:     "github",
 	Aliases: []string{"gh"},
 	Short:   "Creates an API proxy from a GitHub repo",
 	Long:    "Creates an API proxy from a GitHub repo",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		//(\w+)?\/apiproxy$
 		re := regexp.MustCompile(`(\w+)?\/apiproxy$`)
 		if ok := re.Match([]byte(ghPath)); !ok {
 			return fmt.Errorf("github path must end with /apiproxy")
@@ -76,5 +76,4 @@ func init() {
 	_ = GhCreateCmd.MarkFlagRequired("owner")
 	_ = GhCreateCmd.MarkFlagRequired("repo")
 	_ = GhCreateCmd.MarkFlagRequired("proxy-path")
-
 }

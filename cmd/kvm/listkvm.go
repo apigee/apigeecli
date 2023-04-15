@@ -24,7 +24,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to list kvms
+// ListCmd to list kvms
 var ListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "Returns a list of KVMs",
@@ -45,7 +45,6 @@ var ListCmd = &cobra.Command{
 }
 
 func init() {
-
 	ListCmd.Flags().StringVarP(&env, "env", "e",
 		"", "Environment name")
 	ListCmd.Flags().StringVarP(&proxyName, "proxy", "p",

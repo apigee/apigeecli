@@ -25,7 +25,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to manage tracing of apis
+// SetAxCmd to set role on env
 var SetAxCmd = &cobra.Command{
 	Use:   "setax",
 	Short: "Set Analytics Agent role for a member on an environment",
@@ -48,7 +48,6 @@ var SetAxCmd = &cobra.Command{
 }
 
 func init() {
-
 	SetAxCmd.Flags().StringVarP(&memberName, "name", "n",
 		"", "Member Name, example Service Account Name")
 	SetAxCmd.Flags().StringVarP(&memberType, "memberType", "m",

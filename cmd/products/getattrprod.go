@@ -37,7 +37,6 @@ var GetAttrCmd = &cobra.Command{
 }
 
 func init() {
-
 	GetAttrCmd.Flags().StringVarP(&attrName, "attr", "k",
 		"", "API Product attribute name")
 

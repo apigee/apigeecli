@@ -25,7 +25,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to list endpoint attachments
+// CreateCmd to list endpoint attachments
 var CreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a new service endpoint",
@@ -34,11 +34,12 @@ var CreateCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-
-		re := regexp.MustCompile(`projects\/([a-zA-Z0-9_-]+)\/regions\/([a-zA-Z0-9_-]+)\/serviceAttachments\/([a-zA-Z0-9_-]+)`)
+		re := regexp.MustCompile(`projects\/([a-zA-Z0-9_-]+)\/regions` +
+			`\/([a-zA-Z0-9_-]+)\/serviceAttachments\/([a-zA-Z0-9_-]+)`)
 		ok := re.Match([]byte(location))
 		if !ok {
-			return fmt.Errorf("disk encryption key must be of the format projects/{project-id}/regions/{location}/serviceAttachments/{sa-name}")
+			return fmt.Errorf("disk encryption key must be of the format " +
+				"projects/{project-id}/regions/{location}/serviceAttachments/{sa-name}")
 		}
 		_, err = eptattachment.Create(name, serviceAttachment, location)
 		return
@@ -48,7 +49,6 @@ var CreateCmd = &cobra.Command{
 var location, serviceAttachment string
 
 func init() {
-
 	CreateCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of the service endpoint")
 	CreateCmd.Flags().StringVarP(&location, "location", "l",

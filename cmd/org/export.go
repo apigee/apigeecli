@@ -53,7 +53,6 @@ var ExportCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-
 		var productResponse, appsResponse, targetServerResponse, referencesResponse [][]byte
 		var respBody, listKVMBytes []byte
 
@@ -71,7 +70,9 @@ var ExportCmd = &cobra.Command{
 			return err
 		}
 
-		clilog.Warning.Println("Calls to Apigee APIs have a quota of 6000 per min. Running this tool against large list of entities can exhaust that quota and impact the usage of the platform.")
+		clilog.Warning.Println("Calls to Apigee APIs have a quota of 6000 per min. " +
+			"Running this tool against large list of entities can exhaust that quota and " +
+			"impact the usage of the platform.")
 
 		clilog.Info.Println("Exporting API Proxies...")
 		if err = apis.ExportProxies(conn, proxiesFolderName, allRevisions); proceedOnError(err) != nil {
@@ -87,7 +88,9 @@ var ExportCmd = &cobra.Command{
 		if productResponse, err = products.Export(conn); proceedOnError(err) != nil {
 			return err
 		}
-		if err = apiclient.WriteArrayByteArrayToFile(productsFileName, false, productResponse); proceedOnError(err) != nil {
+		if err = apiclient.WriteArrayByteArrayToFile(
+			productsFileName,
+			false, productResponse); proceedOnError(err) != nil {
 			return err
 		}
 
@@ -95,7 +98,9 @@ var ExportCmd = &cobra.Command{
 		if listKVMBytes, err = kvm.List(""); proceedOnError(err) != nil {
 			return err
 		}
-		if err = apiclient.WriteByteArrayToFile(org+"_"+kVMFileName, false, listKVMBytes); proceedOnError(err) != nil {
+		if err = apiclient.WriteByteArrayToFile(
+			org+"_"+kvmFileName,
+			false, listKVMBytes); proceedOnError(err) != nil {
 			return err
 		}
 
@@ -109,7 +114,9 @@ var ExportCmd = &cobra.Command{
 		if respBody, err = developers.Export(); proceedOnError(err) != nil {
 			return err
 		}
-		if err = apiclient.WriteByteArrayToFile(developersFileName, false, respBody); proceedOnError(err) != nil {
+		if err = apiclient.WriteByteArrayToFile(
+			developersFileName,
+			false, respBody); proceedOnError(err) != nil {
 			return err
 		}
 
@@ -117,7 +124,9 @@ var ExportCmd = &cobra.Command{
 		if appsResponse, err = apps.Export(conn); proceedOnError(err) != nil {
 			return err
 		}
-		if err = apiclient.WriteArrayByteArrayToFile(appsFileName, false, appsResponse); proceedOnError(err) != nil {
+		if err = apiclient.WriteArrayByteArrayToFile(
+			appsFileName,
+			false, appsResponse); proceedOnError(err) != nil {
 			return err
 		}
 
@@ -125,7 +134,9 @@ var ExportCmd = &cobra.Command{
 		if respBody, err = envgroups.List(); proceedOnError(err) != nil {
 			return err
 		}
-		if err = apiclient.WriteByteArrayToFile(envGroupsFileName, false, respBody); proceedOnError(err) != nil {
+		if err = apiclient.WriteByteArrayToFile(
+			envGroupsFileName,
+			false, respBody); proceedOnError(err) != nil {
 			return err
 		}
 
@@ -133,7 +144,9 @@ var ExportCmd = &cobra.Command{
 		if respBody, err = datacollectors.List(); proceedOnError(err) != nil {
 			return err
 		}
-		if err = apiclient.WriteByteArrayToFile(dataCollFileName, false, respBody); proceedOnError(err) != nil {
+		if err = apiclient.WriteByteArrayToFile(
+			dataCollFileName,
+			false, respBody); proceedOnError(err) != nil {
 			return err
 		}
 
@@ -142,7 +155,9 @@ var ExportCmd = &cobra.Command{
 			if respBody, err = sync.Get(); err != nil {
 				return err
 			}
-			if err = apiclient.WriteByteArrayToFile(syncAuthFileName, false, respBody); proceedOnError(err) != nil {
+			if err = apiclient.WriteByteArrayToFile(
+				syncAuthFileName,
+				false, respBody); proceedOnError(err) != nil {
 				return err
 			}
 		}
@@ -155,7 +170,6 @@ var ExportCmd = &cobra.Command{
 		environments := []string{}
 		if err = json.Unmarshal(envRespBody, &environments); proceedOnError(err) != nil {
 			return err
-
 		}
 
 		for _, environment := range environments {
@@ -165,7 +179,10 @@ var ExportCmd = &cobra.Command{
 			if targetServerResponse, err = targetservers.Export(conn); proceedOnError(err) != nil {
 				return err
 			}
-			if err = apiclient.WriteArrayByteArrayToFile(environment+"_"+targetServerFileName, false, targetServerResponse); proceedOnError(err) != nil {
+			if err = apiclient.WriteArrayByteArrayToFile(
+				environment+"_"+targetServerFileName,
+				false,
+				targetServerResponse); proceedOnError(err) != nil {
 				return err
 			}
 
@@ -173,7 +190,10 @@ var ExportCmd = &cobra.Command{
 			if listKVMBytes, err = kvm.List(""); err != nil {
 				return err
 			}
-			if err = apiclient.WriteByteArrayToFile(environment+"_"+kVMFileName, false, listKVMBytes); proceedOnError(err) != nil {
+			if err = apiclient.WriteByteArrayToFile(
+				environment+"_"+kvmFileName,
+				false,
+				listKVMBytes); proceedOnError(err) != nil {
 				return err
 			}
 
@@ -187,7 +207,10 @@ var ExportCmd = &cobra.Command{
 			if respBody, err = keystores.List(); proceedOnError(err) != nil {
 				return err
 			}
-			if err = apiclient.WriteByteArrayToFile(environment+"_"+keyStoresFileName, false, respBody); proceedOnError(err) != nil {
+			if err = apiclient.WriteByteArrayToFile(
+				environment+"_"+keyStoresFileName,
+				false,
+				respBody); proceedOnError(err) != nil {
 				return err
 			}
 
@@ -195,7 +218,10 @@ var ExportCmd = &cobra.Command{
 			if respBody, err = env.GetDebug(); err != nil {
 				return err
 			}
-			if err = apiclient.WriteByteArrayToFile(environment+debugmaskFileName, false, respBody); proceedOnError(err) != nil {
+			if err = apiclient.WriteByteArrayToFile(
+				environment+debugmaskFileName,
+				false,
+				respBody); proceedOnError(err) != nil {
 				return err
 			}
 
@@ -203,7 +229,10 @@ var ExportCmd = &cobra.Command{
 			if respBody, err = env.GetTraceConfig(); err != nil {
 				return err
 			}
-			if err = apiclient.WriteByteArrayToFile(environment+tracecfgFileName, false, respBody); proceedOnError(err) != nil {
+			if err = apiclient.WriteByteArrayToFile(
+				environment+tracecfgFileName,
+				false,
+				respBody); proceedOnError(err) != nil {
 				return err
 			}
 
@@ -211,7 +240,10 @@ var ExportCmd = &cobra.Command{
 			if referencesResponse, err = references.Export(conn); proceedOnError(err) != nil {
 				return err
 			}
-			if err = apiclient.WriteArrayByteArrayToFile(environment+"_"+referencesFileName, false, referencesResponse); proceedOnError(err) != nil {
+			if err = apiclient.WriteArrayByteArrayToFile(
+				environment+"_"+referencesFileName,
+				false,
+				referencesResponse); proceedOnError(err) != nil {
 				return err
 			}
 
@@ -224,7 +256,6 @@ var ExportCmd = &cobra.Command{
 var allRevisions, continueOnErr, cleanPath, exportEntries bool
 
 func init() {
-
 	ExportCmd.Flags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
 	ExportCmd.Flags().IntVarP(&conn, "conn", "c",
@@ -242,17 +273,14 @@ func init() {
 }
 
 func createFolders() (err error) {
-	if err = os.Mkdir(proxiesFolderName, 0755); err != nil {
+	if err = os.Mkdir(proxiesFolderName, 0o755); err != nil {
 		return err
 	}
-	if err = os.Mkdir(sharedFlowsFolderName, 0755); err != nil {
-		return err
-	}
-	return nil
+	err = os.Mkdir(sharedFlowsFolderName, 0o755)
+	return err
 }
 
 func exportKVMEntries(scope string, env string, listKVMBytes []byte) (err error) {
-
 	var kvmEntries [][]byte
 	var listKVM []string
 	var fileName string
@@ -276,7 +304,10 @@ func exportKVMEntries(scope string, env string, listKVMBytes []byte) (err error)
 
 		if len(kvmEntries) > 0 {
 			for i := range kvmEntries {
-				if err = apiclient.WriteByteArrayToFile(fileName+"_"+strconv.Itoa(i)+".json", false, kvmEntries[i]); err != nil {
+				if err = apiclient.WriteByteArrayToFile(
+					fileName+"_"+strconv.Itoa(i)+".json",
+					false,
+					kvmEntries[i]); err != nil {
 					return err
 				}
 			}

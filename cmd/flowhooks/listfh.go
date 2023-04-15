@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to list flow hooks
+// ListCmd to list flow hooks
 var ListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List Flowhooks",

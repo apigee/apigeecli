@@ -30,7 +30,6 @@ var ListDepCmd = &cobra.Command{
 	Short: "Lists all deployments of an API proxy",
 	Long:  "Lists all deployments of an API proxy",
 	Args: func(cmd *cobra.Command, args []string) error {
-
 		apiclient.SetApigeeEnv(env)
 		if apiclient.GetApigeeEnv() == "" && name == "" {
 			return fmt.Errorf("proxy name or environment must be supplied")

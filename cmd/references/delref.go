@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to delete reference
+// DelCmd to delete reference
 var DelCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete a reference in an environment",
@@ -38,7 +38,6 @@ var DelCmd = &cobra.Command{
 }
 
 func init() {
-
 	DelCmd.PersistentFlags().StringVarP(&name, "name", "n",
 		"", "Reference name")
 

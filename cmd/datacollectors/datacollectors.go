@@ -29,7 +29,6 @@ var Cmd = &cobra.Command{
 var org, name string
 
 func init() {
-
 	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
 

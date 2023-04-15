@@ -26,9 +26,11 @@ import (
 	"internal/clilog"
 )
 
-var analyticsRegions = [...]string{"asia-east1", "asia-east1", "asia-northeast1", "asia-southeast1",
+var analyticsRegions = [...]string{
+	"asia-east1", "asia-east1", "asia-northeast1", "asia-southeast1",
 	"europe-west1", "us-central1", "us-east1", "us-east4", "us-west1", "australia-southeast1",
-	"europe-west2"}
+	"europe-west2",
+}
 
 // OrgProperty contains an individual org flag or property
 type orgProperty struct {
@@ -85,7 +87,7 @@ func validRegion(region string) bool {
 // Create
 func Create(region string, network string, runtimeType string, databaseKey string, billingType string, disablePortal bool) (respBody []byte, err error) {
 	const baseURL = "https://apigee.googleapis.com/v1/organizations"
-	var stageBaseURL = "https://staging-apigee.sandbox.googleapis.com/v1/organizations/"
+	stageBaseURL := "https://staging-apigee.sandbox.googleapis.com/v1/organizations/"
 
 	if !validRegion(region) {
 		return respBody, fmt.Errorf("invalid analytics region."+
@@ -185,10 +187,9 @@ func GetDeployedIngressConfig(view bool) (respBody []byte, err error) {
 
 // SetOrgProperty is used to set org properties
 func SetOrgProperty(name string, value string) (err error) {
-
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg())
-	//get org details
+	// get org details
 	apiclient.SetClientPrintHttpResponse(false)
 	orgBody, err := apiclient.HttpClient(u.String())
 	apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
@@ -202,7 +203,7 @@ func SetOrgProperty(name string, value string) (err error) {
 		return err
 	}
 
-	//check if the property exists
+	// check if the property exists
 	found := false
 	for i, properties := range org.Properties.Property {
 		if properties.Name == name {
@@ -214,7 +215,7 @@ func SetOrgProperty(name string, value string) (err error) {
 	}
 
 	if !found {
-		//set the property
+		// set the property
 		newProp := orgProperty{}
 		newProp.Name = name
 		newProp.Value = value
@@ -236,7 +237,6 @@ func SetOrgProperty(name string, value string) (err error) {
 
 // Update
 func Update(description string, displayName string, region string, network string, runtimeType string, databaseKey string) (respBody []byte, err error) {
-
 	apiclient.SetClientPrintHttpResponse(false)
 	orgBody, err := Get()
 	if err != nil {
@@ -288,7 +288,6 @@ func Update(description string, displayName string, region string, network strin
 
 // SetAddons
 func SetAddons(advancedApiOpsConfig bool, integrationConfig bool, monetizationConfig bool, connectorsConfig bool, apiSecurityConfig bool) (respBody []byte, err error) {
-
 	apiclient.SetClientPrintHttpResponse(false)
 
 	orgRespBody, err := Get()

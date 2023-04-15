@@ -51,7 +51,6 @@ var ImportCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-
 		var kvmList []string
 
 		if stat, err := os.Stat(folder); err == nil && !stat.IsDir() {
@@ -59,7 +58,9 @@ var ImportCmd = &cobra.Command{
 		}
 
 		apiclient.DisableCmdPrintHttpResponse()
-		clilog.Warning.Println("Calls to Apigee APIs have a quota of 6000 per min. Running this tool against large list of entities can exhaust that quota and impact the usage of the platform.")
+		clilog.Warning.Println("Calls to Apigee APIs have a quota of 6000 per min. " +
+			"Running this tool against large list of entities can exhaust " +
+			"that quota and impact the usage of the platform.")
 
 		clilog.Info.Println("Importing API Proxies...")
 		if err = apis.ImportProxies(conn, path.Join(folder, proxiesFolderName)); err != nil {
@@ -74,13 +75,13 @@ var ImportCmd = &cobra.Command{
 		clilog.Info.Println("Check for files with KVM Entries")
 		orgKVMFileList, envKVMFileList, _, _ := utils.ListKVMFiles(folder)
 
-		if utils.FileExists(path.Join(folder, "org_"+org+"_"+kVMFileName)) {
+		if utils.FileExists(path.Join(folder, "org_"+org+"_"+kvmFileName)) {
 			clilog.Info.Println("Importing Org scoped KVMs...")
-			if kvmList, err = utils.ReadEntityFile(path.Join(folder, "org_"+org+"_"+kVMFileName)); err != nil {
+			if kvmList, err = utils.ReadEntityFile(path.Join(folder, "org_"+org+"_"+kvmFileName)); err != nil {
 				return err
 			}
 			for _, kvmName := range kvmList {
-				//create only encrypted KVMs
+				// create only encrypted KVMs
 				if _, err = kvm.Create("", kvmName, true); err != nil {
 					return err
 				}
@@ -106,7 +107,9 @@ var ImportCmd = &cobra.Command{
 			}
 
 			clilog.Info.Println("Importing Apps...")
-			if err = apps.Import(conn, path.Join(folder, appsFileName), path.Join(folder, developersFileName)); err != nil {
+			if err = apps.Import(conn,
+				path.Join(folder, appsFileName),
+				path.Join(folder, developersFileName)); err != nil {
 				return err
 			}
 		}
@@ -163,13 +166,13 @@ var ImportCmd = &cobra.Command{
 				}
 			}
 
-			if utils.FileExists(path.Join(folder, "env_"+environment+"_"+kVMFileName)) {
+			if utils.FileExists(path.Join(folder, "env_"+environment+"_"+kvmFileName)) {
 				clilog.Info.Println("\tImporting KVM Names only...")
-				if kvmList, err = utils.ReadEntityFile(path.Join(folder, "env_"+environment+"_"+kVMFileName)); err != nil {
+				if kvmList, err = utils.ReadEntityFile(path.Join(folder, "env_"+environment+"_"+kvmFileName)); err != nil {
 					return err
 				}
 				for _, kvmName := range kvmList {
-					//create only encrypted KVMs
+					// create only encrypted KVMs
 					if _, err = kvm.Create("", kvmName, true); err != nil {
 						return err
 					}
@@ -206,11 +209,12 @@ var ImportCmd = &cobra.Command{
 	},
 }
 
-var importTrace, importDebugmask bool
-var folder string
+var (
+	importTrace, importDebugmask bool
+	folder                       string
+)
 
 func init() {
-
 	ImportCmd.Flags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
 	ImportCmd.Flags().IntVarP(&conn, "conn", "c",
@@ -238,5 +242,5 @@ func readEntityFileAsString(filePath string) (string, error) {
 		return "", err
 	}
 
-	return string(byteValue[:]), nil
+	return string(byteValue), nil
 }

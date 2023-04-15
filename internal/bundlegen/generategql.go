@@ -30,8 +30,8 @@ func GenerateAPIProxyDefFromGQL(name string,
 	skipPolicy bool,
 	addCORS bool,
 	targetUrlRef string,
-	targetUrl string) (err error) {
-
+	targetUrl string,
+) (err error) {
 	apiproxy.SetDisplayName(name)
 	apiproxy.SetCreatedAt()
 	apiproxy.SetLastModifiedAt()
@@ -53,17 +53,17 @@ func GenerateAPIProxyDefFromGQL(name string,
 		apiproxy.AddPolicy("Add-CORS")
 	}
 
-	//if target is not set, add a default/fake endpoint
+	// if target is not set, add a default/fake endpoint
 	if targetUrl == "" {
 		targets.NewTargetEndpoint(NoAuthTargetName, "https://api.example.com", "", "", "")
-	} else { //an explicit target url is set
+	} else { // an explicit target url is set
 		if _, err = url.Parse(targetUrl); err != nil {
 			return fmt.Errorf("invalid target url: %v", err)
 		}
 		targets.NewTargetEndpoint(NoAuthTargetName, targetUrl, "", "", "")
 	}
 
-	//set a dynamic target url
+	// set a dynamic target url
 	if targetUrlRef != "" {
 		targets.AddStepToPreFlowRequest("Set-Target-1", NoAuthTargetName)
 		apiproxy.AddPolicy("Set-Target-1")

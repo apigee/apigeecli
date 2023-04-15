@@ -38,7 +38,6 @@ var ImpCmd = &cobra.Command{
 var filePath, developersFilePath string
 
 func init() {
-
 	ImpCmd.Flags().StringVarP(&filePath, "file", "f",
 		"", "File containing Developer Apps")
 	ImpCmd.Flags().StringVarP(&developersFilePath, "dev-file", "d",

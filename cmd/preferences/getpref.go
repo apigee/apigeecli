@@ -20,17 +20,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to get org details
+// GetCmd to get org details
 var GetCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Get preferences for apigeecli",
 	Long:  "Get preferences for apigeecli",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-
-		if err = apiclient.GetPreferences(); err != nil {
-			return err
-		}
-
-		return nil
+		err = apiclient.GetPreferences()
+		return err
 	},
 }

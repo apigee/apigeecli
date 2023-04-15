@@ -32,22 +32,21 @@ var UpdateTraceConfigCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = environments.UpdateTraceConfig(exporter, endpoint, sampler, sample_rate)
+		_, err = environments.UpdateTraceConfig(exporter, endpoint, sampler, sampleRate)
 		return
 	},
 }
 
-var exporter, endpoint, sampler, sample_rate string
+var exporter, endpoint, sampler, sampleRate string
 
 func init() {
-
 	UpdateTraceConfigCmd.Flags().StringVarP(&exporter, "exporter", "x",
 		"", "Trace exporter can be JAEGER or CLOUD_TRACE")
 	UpdateTraceConfigCmd.Flags().StringVarP(&endpoint, "endpoint", "p",
 		"", "Trace endpoint, used only with JAEGER")
 	UpdateTraceConfigCmd.Flags().StringVarP(&sampler, "sampler", "s",
 		"PROBABILITY", "Sampler can be set to PROBABILITY or OFF")
-	UpdateTraceConfigCmd.Flags().StringVarP(&sample_rate, "rate", "r",
+	UpdateTraceConfigCmd.Flags().StringVarP(&sampleRate, "rate", "r",
 		"", "Sampler Rate")
 
 	_ = UpdateTraceConfigCmd.MarkFlagRequired("exporter")

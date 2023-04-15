@@ -28,6 +28,5 @@ var Cmd = &cobra.Command{
 var projectID string
 
 func init() {
-
 	Cmd.AddCommand(TestCmd)
 }

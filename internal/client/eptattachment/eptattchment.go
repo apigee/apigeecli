@@ -24,7 +24,6 @@ import (
 
 // Create
 func Create(name string, serviceAttachment string, location string) (respBody []byte, err error) {
-
 	endpointAttachment := []string{}
 
 	endpointAttachment = append(endpointAttachment, "\"serviceAttachment\":\""+serviceAttachment+"\"")

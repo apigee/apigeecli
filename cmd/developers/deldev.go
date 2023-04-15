@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to delete developer
+// DelCmd to delete developer
 var DelCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Deletes an App Developer from an organization",
@@ -37,7 +37,6 @@ var DelCmd = &cobra.Command{
 }
 
 func init() {
-
 	DelCmd.Flags().StringVarP(&email, "email", "n",
 		"", "The developer's email")
 

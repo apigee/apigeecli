@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to get key stores
+// GetCmd to get key stores
 var GetCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Get a Key Store",
@@ -38,7 +38,6 @@ var GetCmd = &cobra.Command{
 }
 
 func init() {
-
 	GetCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of the key store")
 

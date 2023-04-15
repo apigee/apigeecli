@@ -25,11 +25,12 @@ var Cmd = &cobra.Command{
 	Long:  "Manage Apigee shared flows in an org",
 }
 
-var name, org, env string
-var conn, revision int
+var (
+	name, org, env string
+	conn, revision int
+)
 
 func init() {
-
 	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
 

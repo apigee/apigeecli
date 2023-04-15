@@ -36,7 +36,7 @@ var OasCreateCmd = &cobra.Command{
 		if oasFile == "" && oasURI == "" {
 			return fmt.Errorf("either oasfile or oasuri must be passed")
 		}
-		if targetUrl != "" && targetUrlRef != "" {
+		if targetURL != "" && targetURLRef != "" {
 			return fmt.Errorf("either target-url or target-url-ref must be passed, not both")
 		}
 		return apiclient.SetApigeeOrg(org)
@@ -54,32 +54,32 @@ var OasCreateCmd = &cobra.Command{
 			return err
 		}
 
-		//Generate the apiproxy struct
+		// Generate the apiproxy struct
 		err = bundle.GenerateAPIProxyDefFromOAS(name,
 			oasDocName,
 			skipPolicy,
 			addCORS,
 			oasGoogleAcessTokenScopeLiteral,
-			oasGoogleIdTokenAudLiteral,
-			oasGoogleIdTokenAudRef,
-			targetUrlRef,
-			targetUrl)
+			oasGoogleIDTokenAudLiteral,
+			oasGoogleIDTokenAudRef,
+			targetURLRef,
+			targetURL)
 
 		if err != nil {
 			return err
 		}
 
-		//Create the API proxy bundle
+		// Create the API proxy bundle
 		err = proxybundle.GenerateAPIProxyBundleFromOAS(name,
 			string(content),
 			oasDocName,
 			skipPolicy,
 			addCORS,
 			oasGoogleAcessTokenScopeLiteral,
-			oasGoogleIdTokenAudLiteral,
-			oasGoogleIdTokenAudRef,
-			targetUrlRef,
-			targetUrl)
+			oasGoogleIDTokenAudLiteral,
+			oasGoogleIDTokenAudRef,
+			targetURLRef,
+			targetURL)
 
 		if err != nil {
 			return err
@@ -93,9 +93,11 @@ var OasCreateCmd = &cobra.Command{
 	},
 }
 
-var oasFile, oasURI, targetUrl string
-var oasGoogleAcessTokenScopeLiteral, oasGoogleIdTokenAudLiteral, oasGoogleIdTokenAudRef string
-var validateSpec, formatValidation bool
+var (
+	oasFile, oasURI, targetURL                                                          string
+	oasGoogleAcessTokenScopeLiteral, oasGoogleIDTokenAudLiteral, oasGoogleIDTokenAudRef string
+	validateSpec, formatValidation                                                      bool
+)
 
 func init() {
 	OasCreateCmd.Flags().StringVarP(&name, "name", "n",
@@ -106,13 +108,13 @@ func init() {
 		"", "Open API 3.0 Specification URI location")
 	OasCreateCmd.Flags().StringVarP(&oasGoogleAcessTokenScopeLiteral, "google-accesstoken-scope-literal", "",
 		"", "Generate Google Access token with target endpoint and set scope")
-	OasCreateCmd.Flags().StringVarP(&oasGoogleIdTokenAudLiteral, "google-idtoken-aud-literal", "",
+	OasCreateCmd.Flags().StringVarP(&oasGoogleIDTokenAudLiteral, "google-idtoken-aud-literal", "",
 		"", "Generate Google ID token with target endpoint and set audience")
-	OasCreateCmd.Flags().StringVarP(&oasGoogleIdTokenAudRef, "google-idtoken-aud-ref", "",
+	OasCreateCmd.Flags().StringVarP(&oasGoogleIDTokenAudRef, "google-idtoken-aud-ref", "",
 		"", "Generate Google ID token token with target endpoint and set audience reference")
-	OasCreateCmd.Flags().StringVarP(&targetUrlRef, "target-url-ref", "",
+	OasCreateCmd.Flags().StringVarP(&targetURLRef, "target-url-ref", "",
 		"", "Set a reference variable containing the target endpoint")
-	OasCreateCmd.Flags().StringVarP(&targetUrl, "target-url", "",
+	OasCreateCmd.Flags().StringVarP(&targetURL, "target-url", "",
 		"", "Set a target URL for the target endpoint")
 	OasCreateCmd.Flags().BoolVarP(&importProxy, "import", "",
 		true, "Import API Proxy after generation from spec")

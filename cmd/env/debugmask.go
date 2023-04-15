@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to manage tracing of apis
+// DebugCmd to manage debug masks
 var DebugCmd = &cobra.Command{
 	Use:   "debugmask",
 	Short: "Manage debugmasks for the environment",
@@ -26,7 +26,6 @@ var DebugCmd = &cobra.Command{
 }
 
 func init() {
-
 	DebugCmd.PersistentFlags().StringVarP(&environment, "env", "e",
 		"", "Apigee environment name")
 

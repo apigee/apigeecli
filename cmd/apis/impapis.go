@@ -44,7 +44,6 @@ var ImpCmd = &cobra.Command{
 var folder string
 
 func init() {
-
 	ImpCmd.Flags().StringVarP(&folder, "folder", "f",
 		"", "folder containing one or more API proxy bundles in a zip format.")
 	ImpCmd.Flags().IntVarP(&conn, "conn", "c",

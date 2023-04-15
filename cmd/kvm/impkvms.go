@@ -27,7 +27,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const kVMFileName = "kvms.json"
+const kvmFileName = "kvms.json"
 
 // ImpCmd to import kvm entries from files
 var ImpCmd = &cobra.Command{
@@ -38,7 +38,6 @@ var ImpCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-
 		var kvmList []string
 
 		apiclient.DisableCmdPrintHttpResponse()
@@ -48,13 +47,13 @@ var ImpCmd = &cobra.Command{
 			return err
 		}
 
-		if utils.FileExists(path.Join(folder, "org_"+org+"_"+kVMFileName)) {
+		if utils.FileExists(path.Join(folder, "org_"+org+"_"+kvmFileName)) {
 			clilog.Info.Println("Importing Org scoped KVMs...")
-			if kvmList, err = utils.ReadEntityFile(path.Join(folder, "org_"+org+"_"+kVMFileName)); err != nil {
+			if kvmList, err = utils.ReadEntityFile(path.Join(folder, "org_"+org+"_"+kvmFileName)); err != nil {
 				return err
 			}
 			for _, kvmName := range kvmList {
-				//create only encrypted KVMs
+				// create only encrypted KVMs
 				clilog.Info.Printf("\tCreating KVM %s\n", kvmName)
 				if _, err = kvm.Create("", kvmName, true); err != nil {
 					return err
@@ -106,7 +105,6 @@ var ImpCmd = &cobra.Command{
 var folder string
 
 func init() {
-
 	ImpCmd.Flags().StringVarP(&folder, "folder", "f",
 		"", "The absolute path to the folder containing KVM entries")
 	ImpCmd.Flags().IntVarP(&conn, "conn", "c",

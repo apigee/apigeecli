@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to set identities
+// ResetCmd to set identities
 var ResetCmd = &cobra.Command{
 	Use:   "reset",
 	Short: "Reset identities with access to control plane resources",

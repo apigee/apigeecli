@@ -41,5 +41,4 @@ func init() {
 		"", "API Proxy name")
 
 	_ = ListKvmCmd.MarkFlagRequired("proxy")
-
 }

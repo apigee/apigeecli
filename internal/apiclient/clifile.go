@@ -24,8 +24,10 @@ import (
 	"internal/clilog"
 )
 
-const apigeecliFile = "config.json"
-const apigeecliPath = ".apigeecli"
+const (
+	apigeecliFile = "config.json"
+	apigeecliPath = ".apigeecli"
+)
 
 var usr *user.User
 
@@ -41,7 +43,6 @@ type apigeeCLI struct {
 var cliPref *apigeeCLI //= apigeeCLI{}
 
 func ReadPreferencesFile() (err error) {
-
 	cliPref = new(apigeeCLI)
 
 	usr, err = user.Current()
@@ -225,7 +226,7 @@ func WritePerferencesFile(payload []byte) (err error) {
 	if err == nil {
 		return WriteByteArrayToFile(path.Join(usr.HomeDir, apigeecliPath, apigeecliFile), false, payload)
 	} else if os.IsNotExist(err) {
-		if err = os.MkdirAll(path.Join(usr.HomeDir, apigeecliPath), 0755); err != nil {
+		if err = os.MkdirAll(path.Join(usr.HomeDir, apigeecliPath), 0o755); err != nil {
 			return err
 		}
 		return WriteByteArrayToFile(path.Join(usr.HomeDir, apigeecliPath, apigeecliFile), false, payload)

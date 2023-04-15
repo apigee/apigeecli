@@ -37,7 +37,6 @@ var GetCmd = &cobra.Command{
 }
 
 func init() {
-
 	GetCmd.Flags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
 

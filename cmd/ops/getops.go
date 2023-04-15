@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to get ops details
+// GetCmd to get ops details
 var GetCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Get operation of an org",
@@ -39,7 +39,6 @@ var GetCmd = &cobra.Command{
 var name string
 
 func init() {
-
 	GetCmd.Flags().StringVarP(&name, "name", "n",
 		"", "operation name")
 

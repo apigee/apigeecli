@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to create a new product
+// CreateCmd to create a new product
 var CreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create an API product",
@@ -31,7 +31,6 @@ var CreateCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-
 		p := products.APIProduct{}
 
 		p.Name = name
@@ -71,7 +70,6 @@ var CreateCmd = &cobra.Command{
 var operationGroupFile, gqlOperationGroupFile, grpcOperationGroupFile string
 
 func init() {
-
 	CreateCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of the API Product")
 	CreateCmd.Flags().StringVarP(&displayName, "displayname", "m",
@@ -100,7 +98,7 @@ func init() {
 		"", "File containing GraphQL Operation Group JSON. See samples for how to create the file")
 	CreateCmd.Flags().StringVarP(&grpcOperationGroupFile, "grpcopgrp", "",
 		"", "File containing gRPC Operation Group JSON. See samples for how to create the file")
-	//TODO: apiresource -r later
+	// TODO: apiresource -r later
 
 	_ = CreateCmd.MarkFlagRequired("name")
 	_ = CreateCmd.MarkFlagRequired("approval")

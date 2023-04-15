@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to create a new instance
+// GetAttachCmd to create a new instance
 var GetAttachCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Get attachment details for an instance",
@@ -38,7 +38,6 @@ var GetAttachCmd = &cobra.Command{
 }
 
 func init() {
-
 	GetAttachCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of the Instance")
 	GetAttachCmd.Flags().StringVarP(&environment, "env", "e",

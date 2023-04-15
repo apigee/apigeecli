@@ -23,7 +23,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to get org details
+// CallCmd to get org details
 var CallCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a new IAM Service Account with permissions for Apigee Runtime",
@@ -33,7 +33,7 @@ var CallCmd = &cobra.Command{
 			return fmt.Errorf("provide a service account name or allow the tool to generate one")
 		}
 		if !ValidateRoleType(roleType) {
-			return fmt.Errorf("The role type %s is not a valid type. Please use one of %s", roleType, roles)
+			return fmt.Errorf("the role type %s is not a valid type. Please use one of %s", roleType, roles)
 		}
 		apiclient.SetProjectID(projectID)
 		return nil
@@ -47,7 +47,6 @@ var CallCmd = &cobra.Command{
 }
 
 func init() {
-
 	CallCmd.Flags().StringVarP(&projectID, "prj", "p",
 		"", "GCP Project ID")
 	CallCmd.Flags().StringVarP(&name, "name", "n",

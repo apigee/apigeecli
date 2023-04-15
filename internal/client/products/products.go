@@ -145,7 +145,7 @@ func Delete(name string) (respBody []byte, err error) {
 func upsert(p APIProduct, a Action) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 
-	var createNew bool //default false
+	var createNew bool // default false
 
 	switch a {
 	case CREATE:
@@ -156,7 +156,7 @@ func upsert(p APIProduct, a Action) (respBody []byte, err error) {
 		apiclient.SetClientPrintHttpResponse(false)
 		_, err = Get(p.Name)
 		if err != nil {
-			createNew = true //product does not exist
+			createNew = true // product does not exist
 		}
 		apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
 	}
@@ -213,7 +213,6 @@ func ListAttributes(name string) (respBody []byte, err error) {
 
 // List
 func List(count int, startKey string, expand bool) (respBody []byte, err error) {
-
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts")
 	q := u.Query()
@@ -238,7 +237,6 @@ func List(count int, startKey string, expand bool) (respBody []byte, err error) 
 
 // ListFilter
 func ListFilter(filter map[string]string) (respBody []byte, err error) {
-
 	maxProducts := 1000
 	nextPage := true
 	startKey := ""
@@ -307,14 +305,14 @@ func ListFilter(filter map[string]string) (respBody []byte, err error) {
 
 // Export
 func Export(conn int) (payload [][]byte, err error) {
-	//parent workgroup
+	// parent workgroup
 	var pwg sync.WaitGroup
 	var mu sync.Mutex
 	const entityType = "apiproducts"
 
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), entityType)
-	//don't print to sysout
+	// don't print to sysout
 	apiclient.SetClientPrintHttpResponse(false)
 	respBody, err := apiclient.HttpClient(u.String())
 	apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
@@ -322,7 +320,7 @@ func Export(conn int) (payload [][]byte, err error) {
 		return apiclient.GetEntityPayloadList(), err
 	}
 
-	var products = apiProducts{}
+	products := apiProducts{}
 	err = json.Unmarshal(respBody, &products)
 	if err != nil {
 		return apiclient.GetEntityPayloadList(), err
@@ -334,7 +332,7 @@ func Export(conn int) (payload [][]byte, err error) {
 
 	numOfLoops, remaining := numProd/conn, numProd%conn
 
-	//ensure connections aren't greater than products
+	// ensure connections aren't greater than products
 	if conn > numProd {
 		conn = numProd
 	}
@@ -381,7 +379,7 @@ func Import(conn int, filePath string, upsert bool) (err error) {
 
 	numOfLoops, remaining := numEntities/conn, numEntities%conn
 
-	//ensure connections aren't greater than entities
+	// ensure connections aren't greater than entities
 	if conn > numEntities {
 		conn = numEntities
 	}
@@ -410,7 +408,7 @@ func Import(conn int, filePath string, upsert bool) (err error) {
 // batch created a batch of products to query
 func batchExport(entities []APIProduct, entityType string, pwg *sync.WaitGroup, mu *sync.Mutex) {
 	defer pwg.Done()
-	//batch workgroup
+	// batch workgroup
 	var bwg sync.WaitGroup
 
 	bwg.Add(len(entities))
@@ -425,9 +423,8 @@ func batchExport(entities []APIProduct, entityType string, pwg *sync.WaitGroup, 
 
 // batch creates a batch of products to create
 func batchImport(url string, entities []APIProduct, upsert bool, pwg *sync.WaitGroup) {
-
 	defer pwg.Done()
-	//batch workgroup
+	// batch workgroup
 	var bwg sync.WaitGroup
 
 	bwg.Add(len(entities))
@@ -458,11 +455,9 @@ func createAsyncProduct(url string, entity APIProduct, createOrUpdate bool, wg *
 }
 
 func readProductsFile(filePath string) ([]APIProduct, error) {
-
 	products := []APIProduct{}
 
 	jsonFile, err := os.Open(filePath)
-
 	if err != nil {
 		return products, err
 	}
@@ -470,7 +465,6 @@ func readProductsFile(filePath string) ([]APIProduct, error) {
 	defer jsonFile.Close()
 
 	byteValue, err := io.ReadAll(jsonFile)
-
 	if err != nil {
 		return products, err
 	}

@@ -25,7 +25,6 @@ import (
 
 // Create
 func Create(name string, location string, diskEncryptionKeyName string, ipRange string, consumerAcceptList []string) (respBody []byte, err error) {
-
 	instance := []string{}
 
 	instance = append(instance, "\"name\":\""+name+"\"")

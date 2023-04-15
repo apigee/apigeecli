@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to list endpoint attachments
+// ListCmd to list endpoint attachments
 var ListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List of service endpoints",

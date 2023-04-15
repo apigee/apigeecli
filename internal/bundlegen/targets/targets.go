@@ -145,7 +145,6 @@ func IsExists(endpointName string) bool {
 }
 
 func AddTargetEndpointProperty(endpointName string, propertyName string, propertyValue string) {
-
 	property := property{}
 	property.Name = propertyName
 	property.Value = propertyValue

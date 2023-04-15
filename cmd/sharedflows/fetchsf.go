@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to download shared flow
+// FetCmd to download shared flow
 var FetCmd = &cobra.Command{
 	Use:   "fetch",
 	Short: "Returns a zip-formatted shared flow bundle ",
@@ -42,7 +42,6 @@ var FetCmd = &cobra.Command{
 }
 
 func init() {
-
 	FetCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Shared flow Bundle Name")
 	FetCmd.Flags().IntVarP(&revision, "rev", "v",

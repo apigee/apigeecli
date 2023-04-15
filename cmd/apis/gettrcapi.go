@@ -40,7 +40,6 @@ var GetTrcCmd = &cobra.Command{
 var sessionID, messageID string
 
 func init() {
-
 	GetTrcCmd.Flags().StringVarP(&name, "name", "n",
 		"", "API proxy name")
 	GetTrcCmd.Flags().IntVarP(&revision, "rev", "v",

@@ -44,8 +44,6 @@ var ExpCmd = &cobra.Command{
 var conn int
 
 func init() {
-
 	ExpCmd.Flags().IntVarP(&conn, "conn", "c",
 		4, "Number of connections")
-
 }

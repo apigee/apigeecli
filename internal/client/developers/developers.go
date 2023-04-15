@@ -80,7 +80,7 @@ func Create(email string, firstName string, lastName string, username string, at
 // Delete
 func Delete(email string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
-	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", url.QueryEscape(email)) //since developer emails can have +
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", url.QueryEscape(email)) // since developer emails can have +
 	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
 	return respBody, err
 }
@@ -88,7 +88,7 @@ func Delete(email string) (respBody []byte, err error) {
 // Get
 func Get(email string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
-	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", url.QueryEscape(email)) //since developer emails can have +
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", url.QueryEscape(email)) // since developer emails can have +
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
@@ -99,7 +99,7 @@ func GetDeveloperId(email string) (developerId string, err error) {
 	defer apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
 	var developerMap map[string]interface{}
 	u, _ := url.Parse(apiclient.BaseURL)
-	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", url.QueryEscape(email)) //since developer emails can have +
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", url.QueryEscape(email)) // since developer emails can have +
 	respBody, err := apiclient.HttpClient(u.String())
 	if err != nil {
 		return "", err
@@ -158,7 +158,7 @@ func Export() (respBody []byte, err error) {
 	q.Set("expand", "true")
 
 	u.RawQuery = q.Encode()
-	//don't print to sysout
+	// don't print to sysout
 	apiclient.SetClientPrintHttpResponse(false)
 	defer apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
 	respBody, err = apiclient.HttpClient(u.String())
@@ -167,7 +167,6 @@ func Export() (respBody []byte, err error) {
 
 // Import
 func Import(conn int, filePath string) error {
-
 	var pwg sync.WaitGroup
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers")
@@ -184,7 +183,7 @@ func Import(conn int, filePath string) error {
 
 	numOfLoops, remaining := numEntities/conn, numEntities%conn
 
-	//ensure connections aren't greater than entities
+	// ensure connections aren't greater than entities
 	if conn > numEntities {
 		conn = numEntities
 	}
@@ -228,9 +227,8 @@ func createAsyncDeveloper(url string, dev Appdeveloper, wg *sync.WaitGroup) {
 
 // batch creates a batch of developers to create
 func batchImport(url string, entities []Appdeveloper, pwg *sync.WaitGroup) {
-
 	defer pwg.Done()
-	//batch workgroup
+	// batch workgroup
 	var bwg sync.WaitGroup
 
 	bwg.Add(len(entities))
@@ -243,11 +241,9 @@ func batchImport(url string, entities []Appdeveloper, pwg *sync.WaitGroup) {
 
 // ReadDevelopersFile
 func ReadDevelopersFile(filePath string) (Appdevelopers, error) {
-
 	devs := Appdevelopers{}
 
 	jsonFile, err := os.Open(filePath)
-
 	if err != nil {
 		return devs, err
 	}
@@ -255,7 +251,6 @@ func ReadDevelopersFile(filePath string) (Appdevelopers, error) {
 	defer jsonFile.Close()
 
 	byteValue, err := io.ReadAll(jsonFile)
-
 	if err != nil {
 		return devs, err
 	}

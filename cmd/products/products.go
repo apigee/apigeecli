@@ -33,15 +33,18 @@ var Cmd = &cobra.Command{
 	Long:    "Manage Apigee API products and Rate Plans for Monetization",
 }
 
-var org, name string
-var conn int
+var (
+	org, name string
+	conn      int
+)
 
-var description, approval, displayName, quota, quotaInterval, quotaUnit string
-var environments, proxies, scopes []string
-var attrs map[string]string
+var (
+	description, approval, displayName, quota, quotaInterval, quotaUnit string
+	environments, proxies, scopes                                       []string
+	attrs                                                               map[string]string
+)
 
 func init() {
-
 	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
 
@@ -102,8 +105,8 @@ func getGrpcOperationGroup(grpcOperationGroupFile string) (*products.GrpcOperati
 
 	grpcOperationGrp := products.GrpcOperationGroup{}
 
-	if gqlOperationGroupFile != "" {
-		if grpcOperationGrpBytes, err = os.ReadFile(gqlOperationGroupFile); err != nil {
+	if grpcOperationGroupFile != "" {
+		if grpcOperationGrpBytes, err = os.ReadFile(grpcOperationGroupFile); err != nil {
 			clilog.Debug.Println(err)
 			return nil, err
 		}

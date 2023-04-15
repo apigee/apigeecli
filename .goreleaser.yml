@@ -31,8 +31,7 @@ builds:
        - amd64
     flags:
     - -trimpath
-    ldflags:
-    - -s -w -a -extldflags "-static" -X main.Version={{.Tag}} -X main.Git={{.Commit}}
+    - -buildvcs=true
     gcflags:
     - all="-l"
     env:
@@ -48,8 +47,7 @@ builds:
        - arm64
     flags:
     - -trimpath
-    ldflags:
-    - -s -w -a -extldflags "-static" -X main.Version={{.Tag}} -X main.Git={{.Commit}}
+    - -buildvcs=true
     gcflags:
     - all="-l"
     env:
@@ -64,6 +62,7 @@ builds:
        - amd64
     flags:
     - -trimpath
+    - -buildvcs=true
     ldflags:
     - -s -w -a -extldflags "-static" -X main.Version={{.Tag}} -X main.Git={{.Commit}}
     gcflags:
@@ -81,6 +80,7 @@ archives:
       amd64: x86_64
       windows: Windows
     wrap_in_directory: true
+    rlcp: true
     files:
       - LICENSE.txt
     builds:
@@ -103,6 +103,13 @@ signs:
         "--detach-sign",
         "${artifact}",
       ]
+
+changelog:
+  sort: asc
+  use: github
+  groups:
+    - title: 'Change Log'
+      order: 0
 
 release:
   draft: true

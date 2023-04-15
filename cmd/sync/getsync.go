@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to get list of identities
+// GetCmd to get list of identities
 var GetCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Show the list of identities with access to control plane resources",
@@ -37,5 +37,4 @@ var GetCmd = &cobra.Command{
 }
 
 func init() {
-
 }

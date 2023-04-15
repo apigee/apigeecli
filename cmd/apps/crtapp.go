@@ -36,9 +36,11 @@ var CreateCmd = &cobra.Command{
 	},
 }
 
-var email, expires, callback string
-var apiProducts, scopes []string
-var attrs map[string]string
+var (
+	email, expires, callback string
+	apiProducts, scopes      []string
+	attrs                    map[string]string
+)
 
 func init() {
 	CreateCmd.Flags().StringVarP(&name, "name", "n",

@@ -30,21 +30,21 @@ var WidCmd = &cobra.Command{
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		return apiclient.AddWid(projectID, namespace, kServiceAccount, gServiceAccount)
+		return apiclient.AddWid(projectID, namespace,
+			kubernetesServiceAccount, googleServiceAccount)
 	},
 }
 
-var namespace, kServiceAccount, gServiceAccount string
+var namespace, kubernetesServiceAccount, googleServiceAccount string
 
 func init() {
-
 	WidCmd.Flags().StringVarP(&projectID, "prj", "p",
 		"", "GCP Project ID")
 	WidCmd.Flags().StringVarP(&namespace, "namespace", "n",
 		"apigee", "Apigee runtime namespace")
-	WidCmd.Flags().StringVarP(&gServiceAccount, "gsa", "g",
+	WidCmd.Flags().StringVarP(&googleServiceAccount, "gsa", "g",
 		"", "Google Service Account Name")
-	WidCmd.Flags().StringVarP(&kServiceAccount, "ksa", "k",
+	WidCmd.Flags().StringVarP(&kubernetesServiceAccount, "ksa", "k",
 		"", "Kubernetes Service Account Name")
 
 	_ = WidCmd.MarkFlagRequired("prj")

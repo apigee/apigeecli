@@ -46,12 +46,12 @@ var ApigeeAPIClient *RateLimitedHTTPClient
 // allow 1 every 100 milliseconds
 var apigeeAPIRateLimit = rate.NewLimiter(rate.Every(100*time.Millisecond), 1)
 
-//source: https://cloud.google.com/apigee/docs/api-platform/reference/limits#apigee-apis
+// source: https://cloud.google.com/apigee/docs/api-platform/reference/limits#apigee-apis
 
 // allow 1 every 1 second
 var apigeeAnalyticsAPIRateLimit = rate.NewLimiter(rate.Every(time.Second), 1)
 
-//source: https://cloud.google.com/apigee/docs/api-platform/reference/limits#analytics-apis
+// source: https://cloud.google.com/apigee/docs/api-platform/reference/limits#analytics-apis
 
 // disable rate limit
 var noAPIRateLimit = rate.NewLimiter(rate.Inf, 1)
@@ -340,7 +340,7 @@ func PrettyPrint(body []byte) error {
 // Do the HTTP request
 func (c *RateLimitedHTTPClient) Do(req *http.Request) (*http.Response, error) {
 	ctx := context.Background()
-	//Wait until the rate is below Apigee limits
+	// Wait until the rate is below Apigee limits
 	err := c.Ratelimiter.Wait(ctx)
 	if err != nil {
 		return nil, err

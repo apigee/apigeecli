@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to manage tracing of apis
+// ArchiveCmd to deploy apis via archives
 var ArchiveCmd = &cobra.Command{
 	Use:   "archives",
 	Short: "Manage archive deployments for the environment",
@@ -28,7 +28,6 @@ var ArchiveCmd = &cobra.Command{
 var name string
 
 func init() {
-
 	ArchiveCmd.PersistentFlags().StringVarP(&environment, "env", "e",
 		"", "Apigee environment name")
 

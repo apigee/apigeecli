@@ -59,7 +59,6 @@ func Reset() (respBody []byte, err error) {
 
 // Set
 func Set(identity interface{}) (respBody []byte, err error) {
-
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg()+":getSyncAuthorization")
 	apiclient.SetClientPrintHttpResponse(false)

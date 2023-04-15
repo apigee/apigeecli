@@ -37,7 +37,6 @@ var GetKeyCmd = &cobra.Command{
 }
 
 func init() {
-
 	GetKeyCmd.Flags().StringVarP(&key, "key", "k",
 		"", "developer app consumer key")
 

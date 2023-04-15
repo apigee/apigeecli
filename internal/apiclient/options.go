@@ -22,23 +22,25 @@ import (
 )
 
 // BaseURL is the Apigee control plane endpoint
-var BaseURL = "https://apigee.googleapis.com/v1/organizations/"
-var StageBaseURL = "https://staging-apigee.sandbox.googleapis.com/v1/organizations/"
+var (
+	BaseURL      = "https://apigee.googleapis.com/v1/organizations/"
+	StageBaseURL = "https://staging-apigee.sandbox.googleapis.com/v1/organizations/"
+)
 
 // ApigeeClientOptions is the base struct to hold all command arguments
 type ApigeeClientOptions struct {
-	Org            string //Apigee org
-	Env            string //Apigee environment
-	Token          string //Google OAuth access token
-	ServiceAccount string //Google service account json
-	ProjectID      string //GCP Project ID
-	DebugLog       bool   //Enable debug logs
-	TokenCheck     bool   //Check access token expiry
-	SkipCache      bool   //skip writing access token to file
-	PrintOutput    bool   //prints output from http calls
-	NoOutput       bool   //Disable all statements to stdout
-	ProxyUrl       string //use a proxy url
-	APIRate        Rate   //throttle api calls to Apigee
+	Org            string // Apigee org
+	Env            string // Apigee environment
+	Token          string // Google OAuth access token
+	ServiceAccount string // Google service account json
+	ProjectID      string // GCP Project ID
+	DebugLog       bool   // Enable debug logs
+	TokenCheck     bool   // Check access token expiry
+	SkipCache      bool   // skip writing access token to file
+	PrintOutput    bool   // prints output from http calls
+	NoOutput       bool   // Disable all statements to stdout
+	ProxyUrl       string // use a proxy url
+	APIRate        Rate   // throttle api calls to Apigee
 }
 
 var options *ApigeeClientOptions
@@ -53,8 +55,10 @@ const (
 
 var apiRate Rate
 
-var cmdPrintHttpResponses = true
-var clientPrintHttpResponses = true
+var (
+	cmdPrintHttpResponses    = true
+	clientPrintHttpResponses = true
+)
 
 // NewApigeeClient sets up options to invoke Apigee APIs
 func NewApigeeClient(o ApigeeClientOptions) {
@@ -84,12 +88,11 @@ func NewApigeeClient(o ApigeeClientOptions) {
 	options.PrintOutput = o.PrintOutput
 	options.NoOutput = o.NoOutput
 
-	//initialize logs
+	// initialize logs
 	clilog.Init(options.DebugLog, options.PrintOutput, options.NoOutput)
 
-	//read preference file
+	// read preference file
 	_ = ReadPreferencesFile()
-
 }
 
 // UseStaging

@@ -348,7 +348,6 @@ func ExportProxies(conn int, folder string, allRevisions bool) (err error) {
 	defer apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
 
 	respBody, err := apiclient.HttpClient(u.String())
-
 	if err != nil {
 		return err
 	}

@@ -19,16 +19,18 @@ import (
 	"time"
 )
 
+// GenerateName
 func GenerateName(prefix string) string {
 	const letterBytes = "abcdefghijklmnopqrstuvwxyz0123456789"
 	r := rand.New(rand.NewSource(time.Now().UTC().UnixNano()))
-	b := make([]byte, 7) //7 random chars
+	b := make([]byte, 7) // 7 random chars
 	for i := range b {
 		b[i] = letterBytes[r.Intn(len(letterBytes))]
 	}
 	return prefix + string(b)
 }
 
+// ValidateRoleType
 func ValidateRoleType(role string) bool {
 	for _, r := range roles {
 		if role == r {

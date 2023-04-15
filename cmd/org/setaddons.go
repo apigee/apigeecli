@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to set mart endpoint
+// SetAddonCmd to set mart endpoint
 var SetAddonCmd = &cobra.Command{
 	Use:   "setaddons",
 	Short: "Enable addons for an Apigee organization",
@@ -31,18 +31,18 @@ var SetAddonCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = orgs.SetAddons(advancedApiOpsConfig, integrationConfig, monetizationConfig, connectorsConfig, apiSecurityConfig)
+		_, err = orgs.SetAddons(advancedAPIOpsConfig, integrationConfig,
+			monetizationConfig, connectorsConfig, apiSecurityConfig)
 		return
 	},
 }
 
-var advancedApiOpsConfig, integrationConfig, monetizationConfig, connectorsConfig, apiSecurityConfig bool
+var advancedAPIOpsConfig, integrationConfig, monetizationConfig, connectorsConfig, apiSecurityConfig bool
 
 func init() {
-
 	SetAddonCmd.Flags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
-	SetAddonCmd.Flags().BoolVarP(&advancedApiOpsConfig, "advapiops", "",
+	SetAddonCmd.Flags().BoolVarP(&advancedAPIOpsConfig, "advapiops", "",
 		false, "Enable Apigee Advanced API OPs")
 	SetAddonCmd.Flags().BoolVarP(&integrationConfig, "integration", "",
 		false, "Enable Apigee Integration")
@@ -52,5 +52,4 @@ func init() {
 		false, "Enable Apigee Connectors")
 	SetAddonCmd.Flags().BoolVarP(&apiSecurityConfig, "advapisec", "",
 		false, "Enable Apigee Advanced API Security")
-
 }

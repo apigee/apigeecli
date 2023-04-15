@@ -71,7 +71,6 @@ var YearlyCmd = &cobra.Command{
 }
 
 func init() {
-
 	YearlyCmd.Flags().IntVarP(&year, "year", "y",
 		-1, "Year")
 	YearlyCmd.Flags().BoolVarP(&envDetails, "env-details", "",

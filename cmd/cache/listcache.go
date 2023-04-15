@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to list caches
+// ListCmd to list caches
 var ListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List all caches in your environment",
@@ -34,10 +34,8 @@ var ListCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		_, err = cache.List()
 		return
-
 	},
 }
 
 func init() {
-
 }

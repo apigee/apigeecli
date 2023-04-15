@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to get reference
+// GetCmd to get reference
 var GetCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Get a reference in an environment",
@@ -38,7 +38,6 @@ var GetCmd = &cobra.Command{
 }
 
 func init() {
-
 	GetCmd.PersistentFlags().StringVarP(&name, "name", "n",
 		"", "Reference name")
 

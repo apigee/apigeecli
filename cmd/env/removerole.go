@@ -43,7 +43,6 @@ var RemoveRoleCmd = &cobra.Command{
 }
 
 func init() {
-
 	RemoveRoleCmd.Flags().StringVarP(&memberName, "name", "n",
 		"", "Member name. Prefix the member role as role:name. Ex: user:foo@acme.com")
 	RemoveRoleCmd.Flags().StringVarP(&role, "role", "r",

@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to delete key aliases
+// DelCmd to delete key aliases
 var DelCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete a Key Alias",

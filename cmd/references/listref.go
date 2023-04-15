@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to get reference
+// ListCmd to get reference
 var ListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List all references in an environment",

@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to get developer
+// GetAppCmd to get developer aps
 var GetAppCmd = &cobra.Command{
 	Use:   "getapps",
 	Short: "Returns the apps owned by a developer by email address",
@@ -39,7 +39,6 @@ var GetAppCmd = &cobra.Command{
 var name string
 
 func init() {
-
 	GetAppCmd.Flags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
 

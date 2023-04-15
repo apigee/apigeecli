@@ -21,7 +21,7 @@ const (
 	targetServerFileName = "targetservers.json"
 	envGroupsFileName    = "envgroups.json"
 	dataCollFileName     = "datacollectors.json"
-	kVMFileName          = "kvms.json"
+	kvmFileName          = "kvms.json"
 	keyStoresFileName    = "keystores.json"
 	syncAuthFileName     = "syncauth.json"
 	debugmaskFileName    = "_debugmask.json"

@@ -24,7 +24,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to enable AX obfuscation
+// ObCmd to enable AX obfuscation
 var ObCmd = &cobra.Command{
 	Use:   "ax-obfuscation",
 	Short: "Obfuscate analytics fields",
@@ -41,7 +41,6 @@ var ObCmd = &cobra.Command{
 var enable bool
 
 func init() {
-
 	ObCmd.Flags().StringVarP(&environment, "env", "e",
 		"", "Apigee environment name")
 	ObCmd.Flags().BoolVarP(&enable, "enable", "x",

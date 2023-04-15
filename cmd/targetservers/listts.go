@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to list target servers
+// ListCmd to list target servers
 var ListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List Target Servers",
@@ -38,5 +38,4 @@ var ListCmd = &cobra.Command{
 }
 
 func init() {
-
 }

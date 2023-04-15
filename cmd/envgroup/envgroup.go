@@ -25,11 +25,12 @@ var Cmd = &cobra.Command{
 	Long:  "Manage Apigee environment groups",
 }
 
-var org, name, environment string
-var hostnames []string
+var (
+	org, name, environment string
+	hostnames              []string
+)
 
 func init() {
-
 	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
 

@@ -52,7 +52,7 @@ func RemoveIAM(memberName string, role string) (err error) {
 
 // TestIAM
 func TestIAM(resource string, verb string) (respBody []byte, err error) {
-	var permission = "apigee." + resource + "." + verb
+	permission := "apigee." + resource + "." + verb
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv()+":testIamPermissions")
 	payload := "{\"permissions\":[\"" + permission + "\"]}"

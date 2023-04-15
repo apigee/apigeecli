@@ -36,13 +36,12 @@ func CreateSubscription(email string, name string, apiproduct string, startTime 
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", url.QueryEscape(email), "subscriptions")
 	respBody, err = apiclient.HttpClient(u.String(), payload)
 	return respBody, err
-
 }
 
 // ExpireSubscriptions
 func ExpireSubscriptions(email string, subscription string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
-	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", url.QueryEscape(email), "subscriptions", subscription, ":expire") //since developer emails can have +
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", url.QueryEscape(email), "subscriptions", subscription, ":expire") // since developer emails can have +
 	respBody, err = apiclient.HttpClient(u.String(), "")
 	return respBody, err
 }
@@ -50,7 +49,7 @@ func ExpireSubscriptions(email string, subscription string) (respBody []byte, er
 // GetSubscriptions
 func GetSubscriptions(email string, subscription string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
-	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", url.QueryEscape(email), "subscriptions", subscription) //since developer emails can have +
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", url.QueryEscape(email), "subscriptions", subscription) // since developer emails can have +
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
@@ -58,7 +57,7 @@ func GetSubscriptions(email string, subscription string) (respBody []byte, err e
 // ListSubscriptions
 func ListSubscriptions(email string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
-	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", url.QueryEscape(email), "subscriptions") //since developer emails can have +
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", url.QueryEscape(email), "subscriptions") // since developer emails can have +
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
@@ -68,7 +67,7 @@ func ExportSubscriptions(email string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", url.QueryEscape(email), "subscriptions")
 
-	//don't print to sysout
+	// don't print to sysout
 	apiclient.SetClientPrintHttpResponse(false)
 	defer apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
 	respBody, err = apiclient.HttpClient(u.String())

@@ -15,6 +15,7 @@
 package cmd
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -70,7 +71,8 @@ var RootCmd = &cobra.Command{
 				if cmd.Version == "" {
 					clilog.Debug.Println("apigeecli wasn't built with a valid Version tag.")
 				} else if latestVersion != "" && cmd.Version != latestVersion {
-					clilog.Info.Printf("You are using %s, the latest version %s is available for download\n", cmd.Version, latestVersion)
+					clilog.Info.Printf("You are using %s, the latest version %s "+
+						"is available for download\n", cmd.Version, latestVersion)
 				}
 			}
 		}
@@ -89,8 +91,12 @@ func Execute() {
 	}
 }
 
-var accessToken, serviceAccount string
-var disableCheck, printOutput, noOutput bool
+var (
+	accessToken, serviceAccount         string
+	disableCheck, printOutput, noOutput bool
+)
+
+const ENABLED = "true"
 
 func init() {
 	cobra.OnInitialize(initConfig)
@@ -136,14 +142,13 @@ func init() {
 	RootCmd.AddCommand(preferences.Cmd)
 	RootCmd.AddCommand(overrides.Cmd)
 	RootCmd.AddCommand(eptattachment.Cmd)
-
 }
 
 func initConfig() {
-	var debug = false
+	debug := false
 	var skipCache bool
 
-	if os.Getenv("APIGEECLI_DEBUG") == "true" {
+	if os.Getenv("APIGEECLI_DEBUG") == ENABLED {
 		debug = true
 	}
 
@@ -161,7 +166,7 @@ func initConfig() {
 		SkipCache:   skipCache,
 	})
 
-	if os.Getenv("APIGEECLI_ENABLE_RATELIMIT") == "true" {
+	if os.Getenv("APIGEECLI_ENABLE_RATELIMIT") == ENABLED {
 		clilog.Debug.Println("APIGEECLI_RATELIMIT is enabled")
 		apiclient.SetRate(apiclient.ApigeeAPI)
 	}
@@ -179,7 +184,8 @@ func getLatestVersion() (version string, err error) {
 	client := &http.Client{}
 	contentType := "application/json"
 
-	req, err = http.NewRequest("GET", endpoint, nil)
+	ctx := context.Background()
+	req, err = http.NewRequestWithContext(ctx, http.MethodGet, endpoint, nil)
 	if err != nil {
 		return "", err
 	}
@@ -194,6 +200,11 @@ func getLatestVersion() (version string, err error) {
 	if err != nil {
 		return "", err
 	}
+
+	if resp != nil {
+		defer resp.Body.Close()
+	}
+
 	var result map[string]interface{}
 	err = json.Unmarshal(respBody, &result)
 	if err != nil {
@@ -203,17 +214,16 @@ func getLatestVersion() (version string, err error) {
 	if result["tag_name"] == "" {
 		clilog.Debug.Println("Unable to determine latest tag, skipping this information")
 		return "", nil
-	} else {
-		return fmt.Sprintf("%s", result["tag_name"]), nil
 	}
+	return fmt.Sprintf("%s", result["tag_name"]), nil
 }
 
 // getUsageFlag
 func getUsageFlag() bool {
-	return os.Getenv("APIGEECLI_NO_USAGE") == "true"
+	return os.Getenv("APIGEECLI_NO_USAGE") == ENABLED
 }
 
 // getErrorsFlag
 func getErrorsFlag() bool {
-	return os.Getenv("APIGEECLI_NO_ERRORS") == "true"
+	return os.Getenv("APIGEECLI_NO_ERRORS") == ENABLED
 }

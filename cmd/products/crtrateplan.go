@@ -26,7 +26,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to create a rate plane for an api product
+// CreateRateplanCmd to create a rate plane for an api product
 var CreateRateplanCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a rate plan for an API product",
@@ -44,11 +44,12 @@ var CreateRateplanCmd = &cobra.Command{
 	},
 }
 
-var apiproduct, rateplanFile string
-var rateplanData []byte
+var (
+	apiproduct, rateplanFile string
+	rateplanData             []byte
+)
 
 func init() {
-
 	CreateRateplanCmd.Flags().StringVarP(&apiproduct, "product", "p",
 		"", "Name of the API Product")
 	CreateRateplanCmd.Flags().StringVarP(&rateplanFile, "rateplan", "",

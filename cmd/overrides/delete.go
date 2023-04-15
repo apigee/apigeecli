@@ -41,10 +41,10 @@ var DeleteCmd = &cobra.Command{
 		apiclient.DisableCmdPrintHttpResponse()
 		_ = apiclient.SetApigeeOrg(getOrg())
 
-		//delete environments
+		// delete environments
 		environmentList := getEnvs()
 		for _, environment := range environmentList {
-			//check if env exists
+			// check if env exists
 			apiclient.SetApigeeEnv(environment)
 			if _, err = env.Get(false); err != nil {
 				if _, err = env.Delete(); err != nil {
@@ -56,10 +56,10 @@ var DeleteCmd = &cobra.Command{
 			}
 		}
 
-		//create environment groups
+		// create environment groups
 		environmentGroupList := getEnvGroups()
 		for _, environmentGroup := range environmentGroupList {
-			//check if env group exists
+			// check if env group exists
 			if _, err = envgroups.Get(environmentGroup); err != nil {
 				if _, err = envgroups.Delete(environmentGroup); err != nil {
 					return err
@@ -75,7 +75,6 @@ var DeleteCmd = &cobra.Command{
 }
 
 func init() {
-
 	DeleteCmd.Flags().StringVarP(&overridesFile, "overrides", "f",
 		"overrides.yaml", "overrides file path")
 

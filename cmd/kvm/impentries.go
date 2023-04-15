@@ -43,11 +43,12 @@ var ImpEntryCmd = &cobra.Command{
 	},
 }
 
-var conn int
-var filePath string
+var (
+	conn     int
+	filePath string
+)
 
 func init() {
-
 	ImpEntryCmd.Flags().StringVarP(&filePath, "file", "f",
 		"", "File containing KVM entries")
 	ImpEntryCmd.Flags().StringVarP(&mapName, "map", "m",

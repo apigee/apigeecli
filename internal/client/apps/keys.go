@@ -56,7 +56,7 @@ func CreateKey(developerEmail string, appID string, consumerKey string, consumer
 		return respBody, err
 	}
 
-	//since the API does not support adding products when creating a key, use a second API call to add products
+	// since the API does not support adding products when creating a key, use a second API call to add products
 	if len(apiProducts) > 0 {
 		apiclient.SetClientPrintHttpResponse(false)
 		respBody, err = UpdateKeyProducts(developerEmail, appID, consumerKey, apiProducts)
@@ -134,7 +134,6 @@ func UpdateKeyProducts(developerEmail string, appID string, consumerKey string, 
 }
 
 func ManageKey(developerEmail string, appID string, consumerKey string, action string) (respBody []byte, err error) {
-
 	if action != "revoke" && action != "approve" {
 		return nil, fmt.Errorf("invalid action. action must be revoke or approve")
 	}

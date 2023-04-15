@@ -57,13 +57,12 @@ var CreateArchiveCmd = &cobra.Command{
 	Long:  "Create a new revision of archive in the environment",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		if zipfile != "" && folder != "" {
-			return fmt.Errorf("Both zipfile and folder path cannot be passed")
+			return fmt.Errorf("both zipfile and folder path cannot be passed")
 		}
 		apiclient.SetApigeeEnv(environment)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-
 		if folder != "" {
 			zipfile = name + ".zip"
 			if err = proxybundle.GenerateArchiveBundle(folder, zipfile); err != nil {
@@ -79,9 +78,9 @@ var CreateArchiveCmd = &cobra.Command{
 			}
 
 			s := strings.Split(archiveResponse.Name, "/")
-			operationId := s[len(s)-1]
+			operationID := s[len(s)-1]
 
-			clilog.Info.Printf("Deployment operation id is %s\n", operationId)
+			clilog.Info.Printf("Deployment operation id is %s\n", operationID)
 			clilog.Info.Printf("Checking deployment status in %d seconds\n", interval)
 
 			apiclient.DisableCmdPrintHttpResponse()
@@ -89,7 +88,7 @@ var CreateArchiveCmd = &cobra.Command{
 			stop := apiclient.Every(interval*time.Second, func(time.Time) bool {
 				var respOpsBody []byte
 				respMap := op{}
-				if respOpsBody, err = operations.Get(operationId); err != nil {
+				if respOpsBody, err = operations.Get(operationID); err != nil {
 					return true
 				}
 
@@ -120,8 +119,10 @@ var CreateArchiveCmd = &cobra.Command{
 	},
 }
 
-var zipfile, folder string
-var wait bool
+var (
+	zipfile, folder string
+	wait            bool
+)
 
 const interval = 10
 

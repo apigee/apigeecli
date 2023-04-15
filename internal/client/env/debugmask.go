@@ -32,7 +32,7 @@ func GetDebug() (respBody []byte, err error) {
 
 // SetDebug
 func SetDebug(maskConfig string) (respBody []byte, err error) {
-	//the following steps will validate json
+	// the following steps will validate json
 	m := map[string]string{}
 	err = json.Unmarshal([]byte(maskConfig), &m)
 	if err != nil {

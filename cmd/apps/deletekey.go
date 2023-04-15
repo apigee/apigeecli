@@ -37,7 +37,6 @@ var DeleteKeyCmd = &cobra.Command{
 }
 
 func init() {
-
 	DeleteKeyCmd.Flags().StringVarP(&key, "key", "k",
 		"", "developer app consumer key")
 

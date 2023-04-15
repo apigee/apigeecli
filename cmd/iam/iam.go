@@ -26,11 +26,15 @@ var Cmd = &cobra.Command{
 		"Create Service Accounts and Service Account Key Admin roles",
 }
 
-var name, projectID, roleType string
-var generateName bool
+var (
+	name, projectID, roleType string
+	generateName              bool
+)
 
-var roles = []string{"mart", "analytics", "all", "logger", "connect", "cassandra", "watcher",
-	"sync", "admin", "api-admin", "env-admin", "dev-admin", "readonly-admin"}
+var roles = []string{
+	"mart", "analytics", "all", "logger", "connect", "cassandra", "watcher",
+	"sync", "admin", "api-admin", "env-admin", "dev-admin", "readonly-admin",
+}
 
 func init() {
 	Cmd.AddCommand(CallCmd)

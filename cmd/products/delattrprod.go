@@ -37,7 +37,6 @@ var DelAttrCmd = &cobra.Command{
 }
 
 func init() {
-
 	DelAttrCmd.Flags().StringVarP(&attrName, "attr", "k",
 		"", "API Product attribute name")
 

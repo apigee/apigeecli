@@ -27,7 +27,6 @@ import (
 
 // Create
 func Create(deploymentType string, apiProxyType string) (respBody []byte, err error) {
-
 	environment := []string{}
 	environment = append(environment, "\"name\":\""+apiclient.GetApigeeEnv()+"\"")
 
@@ -95,7 +94,6 @@ func GetDeployments(sharedflows bool) (respBody []byte, err error) {
 }
 
 func GetAllDeployments() (respBody []byte, err error) {
-
 	apiclient.SetClientPrintHttpResponse(false)
 	proxiesResponse, err := GetDeployments(false)
 	if err != nil {
@@ -128,17 +126,17 @@ func GetDeployedConfig() (respBody []byte, err error) {
 
 // SetEnvProperty is used to set env properties
 func SetEnvProperty(name string, value string) (err error) {
-	//EnvProperty contains an individual org flag or property
+	// EnvProperty contains an individual org flag or property
 	type envProperty struct {
 		Name  string `json:"name,omitempty"`
 		Value string `json:"value,omitempty"`
 	}
-	//EnvProperties stores all the org feature flags and properties
+	// EnvProperties stores all the org feature flags and properties
 	type envProperties struct {
 		Property []envProperty `json:"property,omitempty"`
 	}
 
-	//Env structure
+	// Env structure
 	type environment struct {
 		Name           string        `json:"name,omitempty"`
 		Description    string        `json:"description,omitempty"`
@@ -149,7 +147,7 @@ func SetEnvProperty(name string, value string) (err error) {
 
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv())
-	//get env details
+	// get env details
 	apiclient.SetClientPrintHttpResponse(false)
 	envBody, err := apiclient.HttpClient(u.String())
 	apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
@@ -163,7 +161,7 @@ func SetEnvProperty(name string, value string) (err error) {
 		return err
 	}
 
-	//check if the property exists
+	// check if the property exists
 	found := false
 	for i, properties := range env.Properties.Property {
 		if properties.Name == name {
@@ -175,7 +173,7 @@ func SetEnvProperty(name string, value string) (err error) {
 	}
 
 	if !found {
-		//set the property
+		// set the property
 		newProp := envProperty{}
 		newProp.Name = name
 		newProp.Value = value
@@ -197,17 +195,17 @@ func SetEnvProperty(name string, value string) (err error) {
 
 // ClearEnvProperties is used to set env properties
 func ClearEnvProperties() (err error) {
-	//EnvProperty contains an individual org flag or property
+	// EnvProperty contains an individual org flag or property
 	type envProperty struct {
 		Name  string `json:"name,omitempty"`
 		Value string `json:"value,omitempty"`
 	}
-	//EnvProperties stores all the org feature flags and properties
+	// EnvProperties stores all the org feature flags and properties
 	type envProperties struct {
 		Property []envProperty `json:"property,omitempty"`
 	}
 
-	//Env structure
+	// Env structure
 	type environment struct {
 		Name           string        `json:"name,omitempty"`
 		Description    string        `json:"description,omitempty"`
@@ -218,7 +216,7 @@ func ClearEnvProperties() (err error) {
 
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv())
-	//get env details
+	// get env details
 	apiclient.SetClientPrintHttpResponse(false)
 	envBody, err := apiclient.HttpClient(u.String())
 	apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())

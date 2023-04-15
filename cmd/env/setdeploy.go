@@ -23,7 +23,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to manage tracing of apis
+// SetDepCmd to set deployer role on env
 var SetDepCmd = &cobra.Command{
 	Use:   "setdeploy",
 	Short: "Set Apigee Deployer role for a member on an environment",
@@ -43,7 +43,6 @@ var SetDepCmd = &cobra.Command{
 }
 
 func init() {
-
 	SetDepCmd.Flags().StringVarP(&memberName, "name", "n",
 		"", "Member Name, example Service Account Name")
 	SetDepCmd.Flags().StringVarP(&memberType, "memberType", "m",

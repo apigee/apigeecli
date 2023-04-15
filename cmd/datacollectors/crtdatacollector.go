@@ -24,7 +24,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to create a new data collector
+// CreateCmd to create a new data collector
 var CreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a Data Collector",
@@ -41,11 +41,12 @@ var CreateCmd = &cobra.Command{
 	},
 }
 
-var description, collectorType string
-var allowedTypes [6]string = [6]string{"STRING", "INTEGER", "FLOAT", "LONG", "DOUBLE", "BOOLEAN"}
+var (
+	description, collectorType string
+	allowedTypes               = [6]string{"STRING", "INTEGER", "FLOAT", "LONG", "DOUBLE", "BOOLEAN"}
+)
 
 func init() {
-
 	CreateCmd.Flags().StringVarP(&description, "description", "d",
 		"", "Description of the data collector")
 	CreateCmd.Flags().StringVarP(&collectorType, "type", "p",

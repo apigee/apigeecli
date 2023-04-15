@@ -39,7 +39,6 @@ var ManageKeyCmd = &cobra.Command{
 var action string
 
 func init() {
-
 	ManageKeyCmd.Flags().StringVarP(&key, "key", "k",
 		"", "Developer app consumer key")
 	ManageKeyCmd.Flags().StringVarP(&action, "action", "x",

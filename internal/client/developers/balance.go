@@ -38,7 +38,6 @@ type transaction struct {
 }
 
 func Adjust(email string, adjust string) (respBody []byte, err error) {
-
 	dAdjustment := developerAdjustment{}
 	if err = json.Unmarshal([]byte(adjust), &dAdjustment); err != nil {
 		return nil, err
@@ -51,7 +50,6 @@ func Adjust(email string, adjust string) (respBody []byte, err error) {
 }
 
 func Credit(email string, transact string) (respBody []byte, err error) {
-
 	txn := transaction{}
 	if err = json.Unmarshal([]byte(transact), &txn); err != nil {
 		return nil, err

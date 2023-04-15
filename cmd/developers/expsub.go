@@ -31,7 +31,7 @@ var ExportSubCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		var exportFileName = "subscription_" + email + ".json"
+		exportFileName := "subscription_" + email + ".json"
 
 		respBody, err := developers.ExportSubscriptions(email)
 		if err != nil {

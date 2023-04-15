@@ -30,7 +30,8 @@ import (
 var DepCmd = &cobra.Command{
 	Use:   "deploy",
 	Short: "Deploys a revision of an existing API proxy",
-	Long:  "Deploys a revision of an existing API proxy to an environment in an organization, optionally waits for deployment",
+	Long: "Deploys a revision of an existing API proxy to an environment " +
+		"in an organization, optionally waits for deployment",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetApigeeEnv(env)
 		return apiclient.SetApigeeOrg(org)
@@ -80,13 +81,14 @@ var DepCmd = &cobra.Command{
 	},
 }
 
-var overrides, wait bool
-var serviceAccountName string
+var (
+	overrides, wait    bool
+	serviceAccountName string
+)
 
 const interval = 10
 
 func init() {
-
 	DepCmd.Flags().StringVarP(&name, "name", "n",
 		"", "API proxy name")
 	DepCmd.Flags().StringVarP(&env, "env", "e",

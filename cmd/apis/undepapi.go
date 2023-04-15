@@ -43,7 +43,6 @@ var UndepCmd = &cobra.Command{
 }
 
 func init() {
-
 	UndepCmd.Flags().StringVarP(&name, "name", "n",
 		"", "API proxy name")
 	UndepCmd.Flags().StringVarP(&env, "env", "e",

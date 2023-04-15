@@ -51,13 +51,13 @@ var UpdateCmd = &cobra.Command{
 }
 
 func init() {
-
 	UpdateCmd.Flags().StringVarP(&region, "reg", "r",
 		"", "Analytics region name")
 	UpdateCmd.Flags().StringVarP(&description, "desc", "d",
 		"", "Apigee org description")
 	UpdateCmd.Flags().StringVarP(&network, "net", "n",
-		"default", "Authorized network; if using a shared VPC format is projects/{host-project-id}/{location}/networks/{network-name}")
+		"default", "Authorized network; if using a shared VPC format is "+
+			"projects/{host-project-id}/{location}/networks/{network-name}")
 	UpdateCmd.Flags().StringVarP(&databaseKey, "key", "k",
 		"", "Runtime Database Encryption Key")
 	UpdateCmd.Flags().StringVarP(&runtimeType, "runtime-type", "",

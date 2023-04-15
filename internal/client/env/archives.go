@@ -36,7 +36,6 @@ func generateUploadURL() (respBody []byte, err error) {
 
 // CreatetArchive
 func CreateArchive(name string, zipfile string) (respBody []byte, err error) {
-
 	genUrlJson := make(map[string]interface{})
 
 	genUrlResp, err := generateUploadURL()

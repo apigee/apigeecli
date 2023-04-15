@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to manage tracing of apis
+// GetIamCmd to get env iam details
 var GetIamCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Gets the IAM policy on an Environment",

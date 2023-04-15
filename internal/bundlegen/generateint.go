@@ -7,8 +7,8 @@ import (
 
 func GenerateIntegrationAPIProxy(name string,
 	integration string,
-	apitrigger string) (err error) {
-
+	apitrigger string,
+) (err error) {
 	apiproxy.SetDisplayName(name)
 	apiproxy.SetCreatedAt()
 	apiproxy.SetLastModifiedAt()

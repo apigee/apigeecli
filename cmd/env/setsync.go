@@ -23,7 +23,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to manage tracing of apis
+// SetSyncCmd to manage tracing of apis
 var SetSyncCmd = &cobra.Command{
 	Use:   "setsync",
 	Short: "Set Synchronization Manager role for a member on an environment",
@@ -43,7 +43,6 @@ var SetSyncCmd = &cobra.Command{
 }
 
 func init() {
-
 	SetSyncCmd.Flags().StringVarP(&memberName, "name", "n",
 		"", "Member Name, example Service Account Name")
 	SetSyncCmd.Flags().StringVarP(&memberType, "memberType", "m",

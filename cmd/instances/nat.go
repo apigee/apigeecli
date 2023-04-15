@@ -28,7 +28,6 @@ var NatCmd = &cobra.Command{
 var natid string
 
 func init() {
-
 	NatCmd.PersistentFlags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
 

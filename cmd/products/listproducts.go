@@ -16,6 +16,7 @@ package products
 
 import (
 	"fmt"
+
 	"internal/apiclient"
 
 	"internal/client/products"
@@ -23,7 +24,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to list products
+// ListCmd to list products
 var ListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "Returns a list of API products",
@@ -33,7 +34,8 @@ var ListCmd = &cobra.Command{
 			return fmt.Errorf("invalid filter options. Only proxies are supported")
 		}
 		if len(filter) == 1 && (filter["proxy"] == "") {
-			return fmt.Errorf("invalid filter options. Filter option must be proxies, expand must be set to true and count cannot be set")
+			return fmt.Errorf("invalid filter options. Filter option must be proxies, " +
+				"expand must be set to true and count cannot be set")
 		}
 		return apiclient.SetApigeeOrg(org)
 	},
@@ -44,17 +46,17 @@ var ListCmd = &cobra.Command{
 			_, err = products.List(count, startKey, expand)
 		}
 		return
-
 	},
 }
 
-var expand = false
-var count int
-var filter map[string]string
-var startKey string
+var (
+	expand   = false
+	count    int
+	filter   map[string]string
+	startKey string
+)
 
 func init() {
-
 	ListCmd.Flags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
 
@@ -69,5 +71,4 @@ func init() {
 
 	ListCmd.Flags().BoolVarP(&expand, "expand", "x",
 		false, "Expand Details")
-
 }

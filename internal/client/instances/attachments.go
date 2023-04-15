@@ -26,7 +26,6 @@ import (
 
 // Attach
 func Attach(name string, environment string) (respBody []byte, err error) {
-
 	envgroup := []string{}
 	envgroup = append(envgroup, "\"environment\":\""+environment+"\"")
 	payload := "{" + strings.Join(envgroup, ",") + "}"
@@ -39,7 +38,6 @@ func Attach(name string, environment string) (respBody []byte, err error) {
 
 // DetachEnv
 func DetachEnv(instance string) (respBody []byte, err error) {
-
 	var attachmentName string
 	u, _ := url.Parse(apiclient.BaseURL)
 
@@ -100,7 +98,6 @@ func ListAttach(name string) (respBody []byte, err error) {
 
 // getAttachmentName
 func getAttachmentName(instance string) (attachmentName string, err error) {
-
 	type instanceAttachment struct {
 		Name        string `json:"name,omitempty"`
 		Environment string `json:"environment,omitempty"`

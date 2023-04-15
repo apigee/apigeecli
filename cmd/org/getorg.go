@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to get org details
+// GetCmd to get org details
 var GetCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Show details of an Apigee Org",
@@ -37,7 +37,6 @@ var GetCmd = &cobra.Command{
 }
 
 func init() {
-
 	GetCmd.Flags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
 }

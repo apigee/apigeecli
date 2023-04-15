@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to deploy shared flow
+// DepCmd to deploy shared flow
 var DepCmd = &cobra.Command{
 	Use:   "deploy",
 	Short: "Deploys a revision of an existing Sharedflow",
@@ -42,11 +42,12 @@ var DepCmd = &cobra.Command{
 	},
 }
 
-var overrides bool
-var serviceAccountName string
+var (
+	overrides          bool
+	serviceAccountName string
+)
 
 func init() {
-
 	DepCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Sharedflow name")
 	DepCmd.Flags().StringVarP(&env, "env", "e",

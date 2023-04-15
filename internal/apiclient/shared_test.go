@@ -66,7 +66,7 @@ func TestHttpInvalidNumberOfParams(t *testing.T) {
 }
 
 func TestDownloadResource(t *testing.T) {
-	//download 1000 bytes
+	// download 1000 bytes
 	clilog.Init(true, true, true)
 	err := DownloadResource("https://httpbin.org/stream-bytes/1000", "test", ".zip", false)
 	if err != nil {
@@ -76,7 +76,7 @@ func TestDownloadResource(t *testing.T) {
 
 func TestWriteJSONArrayToFile(t *testing.T) {
 	clilog.Init(true, true, true)
-	var entityPayloadList = []byte{'g', 'o', 'l', 'a', 'n', 'g'}
+	entityPayloadList := []byte{'g', 'o', 'l', 'a', 'n', 'g'}
 	err := WriteByteArrayToFile("test.json", false, entityPayloadList)
 	if err != nil {
 		t.Fatal(err)

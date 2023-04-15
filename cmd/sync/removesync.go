@@ -25,9 +25,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//{"identities":["serviceAccount:srinandans-apigee@srinandans-apigee.iam.gserviceaccount.com"]}
-
-// Cmd to set identities
+// RemoveCmd to set identities
 var RemoveCmd = &cobra.Command{
 	Use:   "remove",
 	Short: "Remove identity with access to control plane resources",
@@ -42,12 +40,10 @@ var RemoveCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		_, err = sync.Remove(identity)
 		return
-
 	},
 }
 
 func init() {
-
 	RemoveCmd.Flags().StringVarP(&identity, "ity", "i",
 		"", "IAM Identity")
 
