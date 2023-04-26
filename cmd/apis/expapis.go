@@ -41,7 +41,6 @@ var ExpCmd = &cobra.Command{
 var allRevisions bool
 
 func init() {
-
 	ExpCmd.Flags().IntVarP(&conn, "conn", "c",
 		4, "Number of connections")
 	ExpCmd.Flags().StringVarP(&folder, "folder", "f",

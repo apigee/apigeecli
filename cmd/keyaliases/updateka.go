@@ -52,11 +52,29 @@ var UpdateCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		switch format {
 		case "selfsignedcert":
-			_, err = keyaliases.CreateOrUpdateSelfSigned(keystoreName, name, true, ignoreExpiry, ignoreNewLine, selfFile)
+			_, err = keyaliases.CreateOrUpdateSelfSigned(keystoreName,
+				name,
+				true,
+				ignoreExpiry,
+				ignoreNewLine,
+				selfFile)
 		case "pem":
-			_, err = keyaliases.CreateOrUpdateKeyCert(keystoreName, name, true, ignoreExpiry, ignoreNewLine, certFile, keyFile, password)
+			_, err = keyaliases.CreateOrUpdateKeyCert(keystoreName,
+				name,
+				true,
+				ignoreExpiry,
+				ignoreNewLine,
+				certFile,
+				keyFile,
+				password)
 		case "pkcs12":
-			_, err = keyaliases.CreateOrUpdatePfx(keystoreName, name, true, ignoreExpiry, ignoreNewLine, pfxFile, password)
+			_, err = keyaliases.CreateOrUpdatePfx(keystoreName,
+				name,
+				true,
+				ignoreExpiry,
+				ignoreNewLine,
+				pfxFile,
+				password)
 		default:
 			return fmt.Errorf("invalid format key alias for %s", format)
 		}
@@ -65,7 +83,6 @@ var UpdateCmd = &cobra.Command{
 }
 
 func init() {
-
 	UpdateCmd.Flags().StringVarP(&keystoreName, "key", "k",
 		"", "Name of the key store")
 	UpdateCmd.Flags().StringVarP(&name, "alias", "s",

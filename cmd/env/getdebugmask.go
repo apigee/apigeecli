@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to manage tracing of apis
+// GetDebugCmd to get debug masks
 var GetDebugCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Get debugmasks for an Environment",

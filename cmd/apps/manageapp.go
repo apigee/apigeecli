@@ -37,7 +37,6 @@ var ManageCmd = &cobra.Command{
 }
 
 func init() {
-
 	ManageCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Developer app name")
 	ManageCmd.Flags().StringVarP(&developerEmail, "email", "d",

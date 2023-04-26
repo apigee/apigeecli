@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//ReportCmd to manage org reprots
+// ReportCmd to manage org reprots
 var ReportCmd = &cobra.Command{
 	Use:     "reports",
 	Aliases: []string{"orgs"},

@@ -40,7 +40,6 @@ var CreateTrcCmd = &cobra.Command{
 var filter map[string]string
 
 func init() {
-
 	CreateTrcCmd.Flags().StringVarP(&name, "name", "n",
 		"", "API proxy name")
 	CreateTrcCmd.Flags().IntVarP(&revision, "rev", "v",

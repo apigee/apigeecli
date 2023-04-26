@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to del a resource
+// DelCmd to del a resource
 var DelCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete a resource file",
@@ -38,7 +38,6 @@ var DelCmd = &cobra.Command{
 }
 
 func init() {
-
 	DelCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of the resource file")
 	DelCmd.Flags().StringVarP(&resType, "type", "p",

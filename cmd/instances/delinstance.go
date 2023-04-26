@@ -37,7 +37,6 @@ var DeleteCmd = &cobra.Command{
 }
 
 func init() {
-
 	DeleteCmd.Flags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
 

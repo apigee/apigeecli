@@ -43,7 +43,6 @@ var UpdateCmd = &cobra.Command{
 }
 
 func init() {
-
 	UpdateCmd.PersistentFlags().StringVarP(&name, "name", "n",
 		"", "Reference name")
 	UpdateCmd.Flags().StringVarP(&description, "desc", "d",

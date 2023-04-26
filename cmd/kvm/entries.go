@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//EntryCmd to manage kvm entries
+// EntryCmd to manage kvm entries
 var EntryCmd = &cobra.Command{
 	Use:   "entries",
 	Short: "Manage Key Value Map Entries",

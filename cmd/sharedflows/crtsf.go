@@ -28,7 +28,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to create shared flow
+// CreateCmd to create shared flow
 var CreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Creates a sharedflow in an Apigee Org",
@@ -78,7 +78,6 @@ var CreateCmd = &cobra.Command{
 var sfZip, sfFolder string
 
 func init() {
-
 	CreateCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Sharedflow name")
 	CreateCmd.Flags().StringVarP(&sfZip, "sf-zip", "p",

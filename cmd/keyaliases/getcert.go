@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to get key aliases
+// GetctCmd to get key aliases
 var GetctCmd = &cobra.Command{
 	Use:   "getcert",
 	Short: "Get a Key alias certificate",

@@ -34,19 +34,26 @@ var UpdateCmd = &cobra.Command{
 		apiclient.SetApigeeEnv(env)
 		if sslinfo != "" {
 			if _, err = strconv.ParseBool(sslinfo); err != nil {
-				return fmt.Errorf("Invalid value for sslinfo. Must be set to true or false")
+				return fmt.Errorf("invalid value for sslinfo. Must be set to true or false")
 			}
 		}
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = targetservers.Update(name, description, host, port, enable, grpc, keyStore, keyAlias, trustStore, sslinfo, tlsenabled, clientAuthEnabled, ignoreValidationErrors)
+		_, err = targetservers.Update(name,
+			description,
+			host,
+			port,
+			enable,
+			grpc,
+			keyStore, keyAlias, trustStore,
+			sslinfo, tlsenabled, clientAuthEnabled,
+			ignoreValidationErrors)
 		return
 	},
 }
 
 func init() {
-
 	UpdateCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of the targetserver")
 	UpdateCmd.Flags().StringVarP(&description, "desc", "d",
@@ -77,5 +84,4 @@ func init() {
 		-1, "port number")
 
 	_ = UpdateCmd.MarkFlagRequired("name")
-
 }

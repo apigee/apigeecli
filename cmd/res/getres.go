@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to get a resource
+// GetCmd to get a resource
 var GetCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Get a resource file",
@@ -37,7 +37,6 @@ var GetCmd = &cobra.Command{
 }
 
 func init() {
-
 	GetCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of the resource file")
 	GetCmd.Flags().StringVarP(&resType, "type", "p",

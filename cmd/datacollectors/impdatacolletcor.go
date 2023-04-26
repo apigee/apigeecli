@@ -38,7 +38,6 @@ var ImpCmd = &cobra.Command{
 var filePath string
 
 func init() {
-
 	ImpCmd.Flags().StringVarP(&filePath, "file", "f",
 		"", "File containing Data Collectors")
 

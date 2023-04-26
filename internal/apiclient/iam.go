@@ -28,8 +28,10 @@ import (
 )
 
 // CrmURL is the endpoint for cloud resource manager
-const CrmURL = "https://cloudresourcemanager.googleapis.com/v1/projects/"
-const crmBetaURL = "https://cloudresourcemanager.googleapis.com/v1beta1/projects/"
+const (
+	CrmURL     = "https://cloudresourcemanager.googleapis.com/v1/projects/"
+	crmBetaURL = "https://cloudresourcemanager.googleapis.com/v1beta1/projects/"
+)
 
 // binding for IAM Roles
 type roleBinding struct {
@@ -110,7 +112,10 @@ func CreateIAMServiceAccount(name string, iamRole string) (err error) {
 		return fmt.Errorf("invalid service account role")
 	}
 
-	//Step 1: create a new service account
+	SetClientPrintHttpResponse(false)
+	defer SetClientPrintHttpResponse(GetCmdPrintHttpResponseSetting())
+
+	// Step 1: create a new service account
 	u, _ := url.Parse(iamURL)
 	u.Path = path.Join(u.Path, GetProjectID(), "serviceAccounts")
 
@@ -120,40 +125,39 @@ func CreateIAMServiceAccount(name string, iamRole string) (err error) {
 
 	payload := "{" + strings.Join(iamPayload, ",") + "}"
 
-	_, err = HttpClient(false, u.String(), payload)
+	_, err = HttpClient(u.String(), payload)
 
 	if err != nil {
 		clilog.Error.Println(err)
 		return err
 	}
 
-	//Step 2: create a new service account key
+	// Step 2: create a new service account key
 	u, _ = url.Parse(iamURL)
 	u.Path = path.Join(u.Path, GetProjectID(), "serviceAccounts",
 		serviceAccountName, "keys")
 
-	respKeyBody, err := HttpClient(false, u.String(), "")
-
+	respKeyBody, err := HttpClient(u.String(), "")
 	if err != nil {
 		clilog.Error.Println(err)
 		return err
 	}
 
-	//Step 3: read the response
+	// Step 3: read the response
 	keyResponse := KeyResponse{}
 	err = json.Unmarshal(respKeyBody, &keyResponse)
 	if err != nil {
 		return err
 	}
 
-	//Step 4: base64 decode the response to get the private key.json
+	// Step 4: base64 decode the response to get the private key.json
 	privateKey, err := base64.StdEncoding.DecodeString(keyResponse.PrivateKeyData)
 	if err != nil {
 		clilog.Error.Println(err)
 		return err
 	}
 
-	//Step 5: Write the data to a file
+	// Step 5: Write the data to a file
 	file, err := os.Create(GetProjectID() + "-" + name + ".json")
 	if err != nil {
 		clilog.Error.Println("cannot open private key file: ", err)
@@ -168,15 +172,15 @@ func CreateIAMServiceAccount(name string, iamRole string) (err error) {
 		return err
 	}
 
-	//mart doesn't need any roles, return here.
+	// mart doesn't need any roles, return here.
 	if iamRole == "mart" {
 		return err
 	}
 
-	//Step 6: get the current IAM policies for the project
+	// Step 6: get the current IAM policies for the project
 	u, _ = url.Parse(CrmURL)
 	u.Path = path.Join(u.Path, GetProjectID()+":getIamPolicy")
-	respBody, err := HttpClient(false, u.String(), "")
+	respBody, err := HttpClient(u.String(), "")
 
 	iamPolicy := iamPolicy{}
 
@@ -186,7 +190,7 @@ func CreateIAMServiceAccount(name string, iamRole string) (err error) {
 		return err
 	}
 
-	//Step 7: create a new policy binding for apigee
+	// Step 7: create a new policy binding for apigee
 	if iamRole == "all" {
 		bindings := createAllRoleBindings(serviceAccountName)
 		iamPolicy.Bindings = append(iamPolicy.Bindings, bindings...)
@@ -202,19 +206,21 @@ func CreateIAMServiceAccount(name string, iamRole string) (err error) {
 	setIamPolicy.Policy = iamPolicy
 	setIamPolicyBody, err := json.Marshal(setIamPolicy)
 
-	//Step 8: set the iam policy
+	// Step 8: set the iam policy
 	u, _ = url.Parse(crmBetaURL)
 	u.Path = path.Join(u.Path, GetProjectID()+":setIamPolicy")
 
-	_, err = HttpClient(false, u.String(), string(setIamPolicyBody))
+	_, err = HttpClient(u.String(), string(setIamPolicyBody))
 
 	return err
 }
 
 func createAllRoleBindings(name string) []roleBinding {
-	var roles = [...]string{"roles/apigee.synchronizerManager", "roles/apigee.analyticsAgent",
+	roles := [...]string{
+		"roles/apigee.synchronizerManager", "roles/apigee.analyticsAgent",
 		"roles/monitoring.metricWriter", "roles/logging.logWriter", "roles/storage.objectAdmin",
-		"roles/apigeeconnect.Agent", "roles/apigee.runtimeAgent"}
+		"roles/apigeeconnect.Agent", "roles/apigee.runtimeAgent",
+	}
 
 	bindings := []roleBinding{}
 
@@ -243,7 +249,7 @@ func SetIAMPermission(memberName string, iamRole string, memberType string) (err
 		role = "roles/apigee.analyticsAgent"
 	case "deploy":
 		role = "roles/apigee.deployer"
-	default: //assume this is a custom role definition
+	default: // assume this is a custom role definition
 		re := regexp.MustCompile(`projects\/([a-zA-Z0-9_-]+)\/roles\/([a-zA-Z0-9_-]+)`)
 		result := re.FindString(iamRole)
 		if result == "" {
@@ -252,9 +258,12 @@ func SetIAMPermission(memberName string, iamRole string, memberType string) (err
 		role = iamRole
 	}
 
+	SetClientPrintHttpResponse(false)
+	defer SetClientPrintHttpResponse(GetCmdPrintHttpResponseSetting())
+
 	u, _ := url.Parse(BaseURL)
 	u.Path = path.Join(u.Path, GetApigeeOrg(), "environments", GetApigeeEnv()+":getIamPolicy")
-	getIamPolicyBody, err := HttpClient(false, u.String())
+	getIamPolicyBody, err := HttpClient(u.String())
 	if err != nil {
 		clilog.Error.Println(err)
 		return err
@@ -271,13 +280,13 @@ func SetIAMPermission(memberName string, iamRole string, memberType string) (err
 	foundRole := false
 	for i, binding := range getIamPolicy.Bindings {
 		if binding.Role == role {
-			//found members with the role already, add the new SA to the role
+			// found members with the role already, add the new SA to the role
 			getIamPolicy.Bindings[i].Members = append(binding.Members, memberType+":"+memberName)
 			foundRole = true
 		}
 	}
 
-	//no members with the role, add a new one
+	// no members with the role, add a new one
 	if !foundRole {
 		binding := roleBinding{}
 		binding.Role = role
@@ -297,17 +306,20 @@ func SetIAMPermission(memberName string, iamRole string, memberType string) (err
 		return err
 	}
 
-	_, err = HttpClient(false, u.String(), string(setIamPolicyBody))
+	_, err = HttpClient(u.String(), string(setIamPolicyBody))
 
 	return err
 }
 
 // RemoveIAMPermission removes/unbinds IAM permission from all roles for an Apigee Env
 func RemoveIAMPermission(memberName string, iamRole string) (err error) {
+	SetClientPrintHttpResponse(false)
+	defer SetClientPrintHttpResponse(GetCmdPrintHttpResponseSetting())
+
 	u, _ := url.Parse(BaseURL)
 	u.Path = path.Join(u.Path, GetApigeeOrg(), "environments", GetApigeeEnv()+":getIamPolicy")
-	getIamPolicyBody, err := HttpClient(false, u.String())
-	clilog.Info.Println(string(getIamPolicyBody))
+	getIamPolicyBody, err := HttpClient(u.String())
+	clilog.Debug.Println(string(getIamPolicyBody))
 	if err != nil {
 		clilog.Error.Println(err)
 		return err
@@ -329,22 +341,22 @@ func RemoveIAMPermission(memberName string, iamRole string) (err error) {
 
 	if numBindings < 1 {
 		return fmt.Errorf("role %s not found for environment %s", iamRole, GetApigeeEnv())
-	} else if numBindings == 1 { //there is only 1 binding
-		clilog.Info.Printf("comparing %s and %s\n", getIamPolicy.Bindings[0].Role, iamRole)
+	} else if numBindings == 1 { // there is only 1 binding
+		clilog.Debug.Printf("comparing %s and %s\n", getIamPolicy.Bindings[0].Role, iamRole)
 		if getIamPolicy.Bindings[0].Role == iamRole {
-			if len(getIamPolicy.Bindings[0].Members) > 1 { //more than one member in the role
+			if len(getIamPolicy.Bindings[0].Members) > 1 { // more than one member in the role
 				removeIamPolicy.Policy.Etag = getIamPolicy.Etag
-				//create a new role binding
+				// create a new role binding
 				removeIamPolicy.Policy.Bindings = append(removeIamPolicy.Policy.Bindings, roleBinding{})
-				//copy the role
+				// copy the role
 				removeIamPolicy.Policy.Bindings[0].Role = getIamPolicy.Bindings[0].Role
-				//copy other members
+				// copy other members
 				for _, member := range getIamPolicy.Bindings[0].Members {
-					clilog.Info.Printf("comparing %s and %s\n", memberName, member)
+					clilog.Debug.Printf("comparing %s and %s\n", memberName, member)
 					if member == memberName {
-						clilog.Info.Println("found member")
+						clilog.Debug.Println("found member")
 						foundMember = true
-						//don't include this member
+						// don't include this member
 					} else {
 						removeIamPolicy.Policy.Bindings[0].Members = append(removeIamPolicy.Policy.Bindings[0].Members, member)
 					}
@@ -352,9 +364,9 @@ func RemoveIAMPermission(memberName string, iamRole string) (err error) {
 				if !foundMember {
 					return fmt.Errorf("member %s not set for role %s in environment %s", memberName, iamRole, GetApigeeEnv())
 				}
-			} else { //there is one member, one role
+			} else { // there is one member, one role
 				if getIamPolicy.Bindings[0].Members[0] == memberName {
-					clilog.Info.Printf("comparing %s and %s\n", getIamPolicy.Bindings[0].Members[0], memberName)
+					clilog.Debug.Printf("comparing %s and %s\n", getIamPolicy.Bindings[0].Members[0], memberName)
 					removeIamPolicy.Policy.Etag = getIamPolicy.Etag
 				} else {
 					return fmt.Errorf("member %s not set for role %s in environment %s", memberName, iamRole, GetApigeeEnv())
@@ -363,16 +375,16 @@ func RemoveIAMPermission(memberName string, iamRole string) (err error) {
 		} else {
 			return fmt.Errorf("role %s not found for environment %s", iamRole, GetApigeeEnv())
 		}
-	} else { //there are many bindings, loop through them
+	} else { // there are many bindings, loop through them
 		removeIamPolicy.Policy.Etag = getIamPolicy.Etag
 		for _, binding := range getIamPolicy.Bindings {
 			members := []string{}
-			clilog.Info.Printf("comparing %s and %s\n", binding.Role, iamRole)
+			clilog.Debug.Printf("comparing %s and %s\n", binding.Role, iamRole)
 			if binding.Role == iamRole {
-				if len(binding.Members) > 1 { //there is more than one member in the role
+				if len(binding.Members) > 1 { // there is more than one member in the role
 					for _, member := range binding.Members {
-						clilog.Info.Printf("comparing %s and %s\n", member, memberName)
-						if member == memberName { //remove the member
+						clilog.Debug.Printf("comparing %s and %s\n", member, memberName)
+						if member == memberName { // remove the member
 							foundMember = true
 						} else {
 							members = append(members, member)
@@ -381,7 +393,7 @@ func RemoveIAMPermission(memberName string, iamRole string) (err error) {
 					if !foundMember {
 						return fmt.Errorf("member %s not set for role %s in environment %s", memberName, iamRole, GetApigeeEnv())
 					}
-				} else { //there is only one member in the role
+				} else { // there is only one member in the role
 					if binding.Members[0] == memberName {
 						foundMember = true
 					} else {
@@ -393,7 +405,7 @@ func RemoveIAMPermission(memberName string, iamRole string) (err error) {
 				copyRoleBinding.Members = members
 				removeIamPolicy.Policy.Bindings = append(removeIamPolicy.Policy.Bindings, copyRoleBinding)
 				foundRole = true
-			} else { //copy the binding as-is
+			} else { // copy the binding as-is
 				removeIamPolicy.Policy.Bindings = append(removeIamPolicy.Policy.Bindings, binding)
 			}
 		}
@@ -412,8 +424,7 @@ func RemoveIAMPermission(memberName string, iamRole string) (err error) {
 		return err
 	}
 
-	_, err = HttpClient(false, u.String(), string(removeIamPolicyBody))
-
+	_, err = HttpClient(u.String(), string(removeIamPolicyBody))
 	return err
 }
 
@@ -438,7 +449,9 @@ func AddWid(projectID string, namespace string, kServiceAccount string, gService
 	u, _ := url.Parse(crmBetaURL)
 	u.Path = path.Join(u.Path, GetProjectID()+":setIamPolicy")
 
-	_, err = HttpClient(false, u.String(), string(setIamPolicyBody))
+	SetClientPrintHttpResponse(false)
+	defer SetClientPrintHttpResponse(GetCmdPrintHttpResponseSetting())
+	_, err = HttpClient(u.String(), string(setIamPolicyBody))
 
 	return err
 }

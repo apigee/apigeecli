@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to list envs
+// ListCmd to list envs
 var ListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List environments in an Apigee Org",
@@ -37,5 +37,4 @@ var ListCmd = &cobra.Command{
 }
 
 func init() {
-
 }

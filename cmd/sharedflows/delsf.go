@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to delete shared flow
+// DelCmd to delete shared flow
 var DelCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Deletes a shared flow",

@@ -43,7 +43,7 @@ func Attach(name string, description string, sharedflow string, continueOnErr bo
 
 	payload := "{" + strings.Join(flowhook, ",") + "}"
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "flowhooks", name)
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload, "PUT")
+	respBody, err = apiclient.HttpClient(u.String(), payload, "PUT")
 	return respBody, err
 }
 
@@ -51,7 +51,7 @@ func Attach(name string, description string, sharedflow string, continueOnErr bo
 func Detach(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "flowhooks", name)
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "", "DELETE")
+	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
 	return respBody, err
 }
 
@@ -59,7 +59,7 @@ func Detach(name string) (respBody []byte, err error) {
 func Get(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "flowhooks", name)
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
@@ -67,6 +67,6 @@ func Get(name string) (respBody []byte, err error) {
 func List() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "flowhooks")
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }

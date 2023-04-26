@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//Cmd to manage ops
+// Cmd to manage ops
 var Cmd = &cobra.Command{
 	Use:     "overrides",
 	Aliases: []string{"overrides"},

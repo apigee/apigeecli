@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//Cmd to manage ops
+// Cmd to manage ops
 var Cmd = &cobra.Command{
 	Use:     "operations",
 	Aliases: []string{"ops"},
@@ -29,7 +29,6 @@ var Cmd = &cobra.Command{
 var org string
 
 func init() {
-
 	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
 

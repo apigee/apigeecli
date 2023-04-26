@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to create a new instance
+// CreateAttachCmd to create a new instance
 var CreateAttachCmd = &cobra.Command{
 	Use:   "attach",
 	Short: "Attach an environment to an instance",
@@ -38,7 +38,6 @@ var CreateAttachCmd = &cobra.Command{
 }
 
 func init() {
-
 	CreateAttachCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of the Instance")
 	CreateAttachCmd.Flags().StringVarP(&environment, "env", "e",

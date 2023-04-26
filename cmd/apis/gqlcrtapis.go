@@ -44,7 +44,7 @@ var GqlCreateCmd = &cobra.Command{
 		if gqlFile == "" && gqlURI == "" {
 			return fmt.Errorf("either gqlfile or gqlurl must be passed")
 		}
-		if targetUrl != "" && targetUrlRef != "" {
+		if targetURL != "" && targetURLRef != "" {
 			return fmt.Errorf("either target-url or target-url-ref must be passed, not both")
 		}
 		return apiclient.SetApigeeOrg(org)
@@ -66,21 +66,21 @@ var GqlCreateCmd = &cobra.Command{
 			return err
 		}
 
-		//Generate the apiproxy struct
+		// Generate the apiproxy struct
 		err = bundle.GenerateAPIProxyDefFromGQL(name,
 			gqlDocName,
 			basePath,
 			apiKeyLocation,
 			skipPolicy,
 			addCORS,
-			targetUrlRef,
-			targetUrl)
+			targetURLRef,
+			targetURL)
 
 		if err != nil {
 			return err
 		}
 
-		//Create the API proxy bundle
+		// Create the API proxy bundle
 		err = proxybundle.GenerateAPIProxyBundleFromGQL(name,
 			string(content),
 			gqlDocName,
@@ -89,8 +89,8 @@ var GqlCreateCmd = &cobra.Command{
 			keyName,
 			skipPolicy,
 			addCORS,
-			targetUrlRef,
-			targetUrl)
+			targetURLRef,
+			targetURL)
 
 		if err != nil {
 			return err
@@ -117,9 +117,9 @@ func init() {
 		"", "Base Path of the API Proxy")
 	GqlCreateCmd.Flags().StringVarP(&action, "action", "",
 		"verify", "GraphQL policy action, must be oneOf parse, verify or parse_verify. Default is verify")
-	GqlCreateCmd.Flags().StringVarP(&targetUrlRef, "target-url-ref", "",
+	GqlCreateCmd.Flags().StringVarP(&targetURLRef, "target-url-ref", "",
 		"", "Set target.url variable from a reference variable containing the target endpoint")
-	GqlCreateCmd.Flags().StringVarP(&targetUrl, "target-url", "",
+	GqlCreateCmd.Flags().StringVarP(&targetURL, "target-url", "",
 		"", "Set a target URL for the target endpoint")
 	GqlCreateCmd.Flags().StringVarP(&apiKeyLocation, "apikey-location", "",
 		"", "Set the location of the API key, ex: request.header.x-api-key")

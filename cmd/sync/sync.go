@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//Cmd to manage identities
+// Cmd to manage identities
 var Cmd = &cobra.Command{
 	Use:   "sync",
 	Short: "Manage identities with grant access to control plane resources",
@@ -28,7 +28,6 @@ var Cmd = &cobra.Command{
 var org, identity string
 
 func init() {
-
 	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
 

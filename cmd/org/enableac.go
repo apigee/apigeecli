@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to set mart endpoint
+// AcCmd to set mart endpoint
 var AcCmd = &cobra.Command{
 	Use:   "enable-apigee-connect",
 	Short: "Enable Apigee Connect for an Apigee Org",
@@ -36,7 +36,6 @@ var AcCmd = &cobra.Command{
 }
 
 func init() {
-
 	AcCmd.Flags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
 }

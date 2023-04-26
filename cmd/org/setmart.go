@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to set mart endpoint
+// MartCmd to set mart endpoint
 var MartCmd = &cobra.Command{
 	Use:   "setmart",
 	Short: "Set MART endpoint for an Apigee Org",
@@ -38,7 +38,6 @@ var MartCmd = &cobra.Command{
 var mart string
 
 func init() {
-
 	MartCmd.Flags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
 	MartCmd.Flags().StringVarP(&mart, "mart", "m",

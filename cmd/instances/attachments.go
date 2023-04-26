@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//AttachCmd to manage instances
+// AttachCmd to manage instances
 var AttachCmd = &cobra.Command{
 	Use:   "attachments",
 	Short: "Manage environments to instances",
@@ -28,7 +28,6 @@ var AttachCmd = &cobra.Command{
 var environment string
 
 func init() {
-
 	AttachCmd.PersistentFlags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
 

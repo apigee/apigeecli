@@ -44,8 +44,10 @@ var ListEntryCmd = &cobra.Command{
 	},
 }
 
-var pageToken string
-var pageSize int
+var (
+	pageToken string
+	pageSize  int
+)
 
 func init() {
 	ListEntryCmd.Flags().StringVarP(&mapName, "map", "m",

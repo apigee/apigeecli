@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to delete products
+// DelCmd to delete products
 var DelCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Deletes an API product from an organization",
@@ -37,7 +37,6 @@ var DelCmd = &cobra.Command{
 }
 
 func init() {
-
 	DelCmd.Flags().StringVarP(&name, "name", "n",
 		"", "name of the API Product")
 

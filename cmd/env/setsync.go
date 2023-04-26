@@ -15,16 +15,15 @@
 package env
 
 import (
-	"fmt"
-
 	"internal/apiclient"
+	"internal/clilog"
 
 	environments "internal/client/env"
 
 	"github.com/spf13/cobra"
 )
 
-// Cmd to manage tracing of apis
+// SetSyncCmd to manage tracing of apis
 var SetSyncCmd = &cobra.Command{
 	Use:   "setsync",
 	Short: "Set Synchronization Manager role for a member on an environment",
@@ -38,13 +37,12 @@ var SetSyncCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		fmt.Printf("Member %s granted access to Apigee Synchronizer Manager role\n", memberName)
+		clilog.Info.Printf("Member %s granted access to Apigee Synchronizer Manager role\n", memberName)
 		return nil
 	},
 }
 
 func init() {
-
 	SetSyncCmd.Flags().StringVarP(&memberName, "name", "n",
 		"", "Member Name, example Service Account Name")
 	SetSyncCmd.Flags().StringVarP(&memberType, "memberType", "m",

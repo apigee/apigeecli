@@ -24,21 +24,28 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to get org details
+const (
+	HYBRID       = "HYBRID"
+	CLOUD        = "CLOUD"
+	SUBSCRIPTION = "SUBSCRIPTION"
+	EVALUATION   = "EVALUATION"
+)
+
+// CreateCmd to get org details
 var CreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a new Apigee Org",
 	Long:  "Create a new Apigee Org",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		if runtimeType != "HYBRID" && runtimeType != "CLOUD" {
-			return fmt.Errorf("runtime type must be CLOUD or HYBRID")
+		if runtimeType != HYBRID && runtimeType != CLOUD {
+			return fmt.Errorf("runtime type must be %s or %s", CLOUD, HYBRID)
 		}
 
-		if billingType != "SUBSCRIPTION" && billingType != "EVALUATION" {
-			return fmt.Errorf("Billing type must be SUBSCRIPTION or EVALUATION")
+		if billingType != SUBSCRIPTION && billingType != EVALUATION {
+			return fmt.Errorf("billing type must be %s or %s", SUBSCRIPTION, EVALUATION)
 		}
 
-		if runtimeType == "CLOUD" {
+		if runtimeType == CLOUD {
 			if network == "" {
 				return fmt.Errorf("authorized network must be supplied")
 			}
@@ -55,11 +62,12 @@ var CreateCmd = &cobra.Command{
 	},
 }
 
-var region, projectID, network, runtimeType, description, databaseKey, billingType string
-var disablePortal bool
+var (
+	region, projectID, network, runtimeType, description, databaseKey, billingType string
+	disablePortal                                                                  bool
+)
 
 func init() {
-
 	CreateCmd.Flags().StringVarP(&region, "reg", "r",
 		"", "Analytics region name")
 	CreateCmd.Flags().StringVarP(&projectID, "prj", "p",
@@ -67,11 +75,12 @@ func init() {
 	CreateCmd.Flags().StringVarP(&description, "desc", "d",
 		"", "Apigee org description")
 	CreateCmd.Flags().StringVarP(&network, "net", "n",
-		"default", "Authorized network; if using a shared VPC format is projects/{host-project-id}/{location}/networks/{network-name}")
+		"default", "Authorized network; if using a shared VPC format is "+
+			"projects/{host-project-id}/{location}/networks/{network-name}")
 	CreateCmd.Flags().StringVarP(&databaseKey, "key", "k",
 		"", "Runtime Database Encryption Key")
 	CreateCmd.Flags().StringVarP(&runtimeType, "runtime-type", "",
-		"HYBRID", "Runtime type: CLOUD or HYBRID")
+		HYBRID, "Runtime type: CLOUD or HYBRID")
 	CreateCmd.Flags().StringVarP(&runtimeType, "billing-type", "",
 		"", "Billing type: SUBSCRIPTION or EVALUATION")
 	CreateCmd.Flags().BoolVarP(&disablePortal, "disable-portal", "",

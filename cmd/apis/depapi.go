@@ -16,10 +16,10 @@ package apis
 
 import (
 	"encoding/json"
-	"fmt"
 	"time"
 
 	"internal/apiclient"
+	"internal/clilog"
 
 	"internal/client/apis"
 
@@ -30,7 +30,8 @@ import (
 var DepCmd = &cobra.Command{
 	Use:   "deploy",
 	Short: "Deploys a revision of an existing API proxy",
-	Long:  "Deploys a revision of an existing API proxy to an environment in an organization, optionally waits for deployment",
+	Long: "Deploys a revision of an existing API proxy to an environment " +
+		"in an organization, optionally waits for deployment",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetApigeeEnv(env)
 		return apiclient.SetApigeeOrg(org)
@@ -45,10 +46,10 @@ var DepCmd = &cobra.Command{
 			return
 		}
 
-		if wait {
-			fmt.Printf("Checking deployment status in %d seconds\n", interval)
+		apiclient.DisableCmdPrintHttpResponse()
 
-			apiclient.SetPrintOutput(false)
+		if wait {
+			clilog.Info.Printf("Checking deployment status in %d seconds\n", interval)
 
 			stop := apiclient.Every(interval*time.Second, func(time.Time) bool {
 				var respBody []byte
@@ -62,13 +63,13 @@ var DepCmd = &cobra.Command{
 				}
 
 				if respMap["state"] == "PROGRESSING" {
-					fmt.Printf("Proxy deployment status is: %s. Waiting %d seconds.\n", respMap["state"], interval)
+					clilog.Info.Printf("Proxy deployment status is: %s. Waiting %d seconds.\n", respMap["state"], interval)
 					return true
 				} else if respMap["state"] == "READY" {
-					fmt.Println("Proxy deployment completed with status: ", respMap["state"])
+					clilog.Info.Println("Proxy deployment completed with status: ", respMap["state"])
 					return false
 				} else {
-					fmt.Println("Proxy deployment failed with status: ", respMap["state"])
+					clilog.Info.Println("Proxy deployment failed with status: ", respMap["state"])
 					return false
 				}
 			})
@@ -80,13 +81,14 @@ var DepCmd = &cobra.Command{
 	},
 }
 
-var overrides, wait bool
-var serviceAccountName string
+var (
+	overrides, wait    bool
+	serviceAccountName string
+)
 
 const interval = 10
 
 func init() {
-
 	DepCmd.Flags().StringVarP(&name, "name", "n",
 		"", "API proxy name")
 	DepCmd.Flags().StringVarP(&env, "env", "e",

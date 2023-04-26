@@ -38,7 +38,7 @@ var SwaggerCreateCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		//var content []byte
+		// var content []byte
 		var oasDocName string
 
 		if swaggerURI != "" {
@@ -53,7 +53,7 @@ var SwaggerCreateCmd = &cobra.Command{
 			}
 		}
 
-		//Generate the apiproxy struct
+		// Generate the apiproxy struct
 		name, err = bundle.GenerateAPIProxyFromSwagger(name,
 			oasDocName,
 			basePath,
@@ -63,7 +63,7 @@ var SwaggerCreateCmd = &cobra.Command{
 			return err
 		}
 
-		//Create the API proxy bundle
+		// Create the API proxy bundle
 		err = proxybundle.GenerateAPIProxyBundleFromSwagger(name,
 			skipPolicy,
 			addCORS)

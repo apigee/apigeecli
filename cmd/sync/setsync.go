@@ -25,9 +25,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//{"identities":["serviceAccount:srinandans-apigee@srinandans-apigee.iam.gserviceaccount.com"]}
-
-// Cmd to set identities
+// SetCmd to set identities
 var SetCmd = &cobra.Command{
 	Use:   "set",
 	Short: "Set identity with access to control plane resources",
@@ -42,12 +40,10 @@ var SetCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		_, err = sync.Set(identity)
 		return
-
 	},
 }
 
 func init() {
-
 	SetCmd.Flags().StringVarP(&identity, "ity", "i",
 		"", "IAM Identity")
 

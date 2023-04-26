@@ -25,7 +25,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to import shared flow
+// ImpCmd to import shared flow
 var ImpCmd = &cobra.Command{
 	Use:   "import",
 	Short: "Import a folder containing sharedflow bundles",

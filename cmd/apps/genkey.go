@@ -39,7 +39,6 @@ var GenKeyCmd = &cobra.Command{
 var devID string
 
 func init() {
-
 	GenKeyCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of the developer app")
 	GenKeyCmd.Flags().StringVarP(&devID, "devid", "d",

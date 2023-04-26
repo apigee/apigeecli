@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//Cmd to manage references
+// Cmd to manage references
 var Cmd = &cobra.Command{
 	Use:     "references",
 	Aliases: []string{"refs"},
@@ -29,7 +29,6 @@ var Cmd = &cobra.Command{
 var org, env, name, description, refers, resourceType string
 
 func init() {
-
 	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
 

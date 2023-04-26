@@ -70,12 +70,12 @@ func Create(name string, description string, host string, port int, enable bool,
 
 // Update
 func Update(name string, description string, host string, port int, enable bool, grpc bool, keyStore string, keyAlias string, trustStore string, sslinfo string, tlsenabled bool, clientAuthEnabled bool, ignoreValidationErrors bool) (respBody []byte, err error) {
-	apiclient.SetPrintOutput(false)
+	apiclient.SetClientPrintHttpResponse(false)
 	targetRespBody, err := Get(name)
 	if err != nil {
 		return nil, err
 	}
-	apiclient.SetPrintOutput(true)
+	apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
 
 	targetsvr := targetserver{}
 	if err = json.Unmarshal(targetRespBody, &targetsvr); err != nil {
@@ -114,10 +114,10 @@ func createOrUpdate(action string, targetsvr targetserver, name string, descript
 	u, _ := url.Parse(apiclient.BaseURL)
 	if action == "create" {
 		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "targetservers")
-		respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), string(reqBody))
+		respBody, err = apiclient.HttpClient(u.String(), string(reqBody))
 	} else {
 		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "targetservers", name)
-		respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), string(reqBody), "PUT")
+		respBody, err = apiclient.HttpClient(u.String(), string(reqBody), "PUT")
 	}
 
 	return respBody, err
@@ -127,7 +127,7 @@ func createOrUpdate(action string, targetsvr targetserver, name string, descript
 func Get(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "targetservers", name)
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
@@ -135,7 +135,7 @@ func Get(name string) (respBody []byte, err error) {
 func Delete(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "targetservers", name)
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "", "DELETE")
+	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
 	return respBody, err
 }
 
@@ -143,7 +143,7 @@ func Delete(name string) (respBody []byte, err error) {
 func List() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "targetservers")
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
@@ -152,7 +152,9 @@ func Export(conn int) (payload [][]byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "targetservers")
 	// don't print to sysout
-	respBody, err := apiclient.HttpClient(false, u.String())
+	apiclient.SetClientPrintHttpResponse(false)
+	respBody, err := apiclient.HttpClient(u.String())
+	apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
 	if err != nil {
 		return nil, err
 	}
@@ -163,8 +165,8 @@ func Export(conn int) (payload [][]byte, err error) {
 		return nil, err
 	}
 
-	clilog.Info.Printf("Found %d targetservers in the org\n", len(targetservers))
-	clilog.Info.Printf("Exporting targetservers with %d parallel connections\n", conn)
+	clilog.Debug.Printf("Found %d targetservers in the org\n", len(targetservers))
+	clilog.Debug.Printf("Exporting targetservers with %d parallel connections\n", conn)
 
 	jobChan := make(chan string)
 	resultChan := make(chan []byte)
@@ -221,6 +223,8 @@ func Export(conn int) (payload [][]byte, err error) {
 
 func exportServers(wg *sync.WaitGroup, jobs <-chan string, results chan<- []byte, errs chan<- error) {
 	defer wg.Done()
+	defer apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
+	apiclient.SetClientPrintHttpResponse(false)
 	for {
 		job, ok := <-jobs
 		if !ok {
@@ -228,7 +232,7 @@ func exportServers(wg *sync.WaitGroup, jobs <-chan string, results chan<- []byte
 		}
 		u, _ := url.Parse(apiclient.BaseURL)
 		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "targetservers", job)
-		respBody, err := apiclient.HttpClient(false, u.String())
+		respBody, err := apiclient.HttpClient(u.String())
 		if err != nil {
 			errs <- err
 		} else {
@@ -245,8 +249,8 @@ func Import(conn int, filePath string) (err error) {
 		return err
 	}
 
-	clilog.Info.Printf("Found %d target servers in the file\n", len(targetservers))
-	clilog.Info.Printf("Create target servers with %d connections\n", conn)
+	clilog.Debug.Printf("Found %d target servers in the file\n", len(targetservers))
+	clilog.Debug.Printf("Create target servers with %d connections\n", conn)
 
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "targetservers")
@@ -379,9 +383,8 @@ func importServers(knownServers map[string]bool, wg *sync.WaitGroup, jobs <-chan
 			if err = json.Indent(out, bytes.TrimSpace(b), "", "  "); err != nil {
 				errs <- fmt.Errorf("apigee returned invalid json: %w", err)
 			}
-			fmt.Println(out.String())
 		}
-		clilog.Info.Printf("Completed targetserver: %s", job.Name)
+		clilog.Debug.Printf("Completed targetserver: %s", job.Name)
 	}
 }
 

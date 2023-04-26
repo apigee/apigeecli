@@ -15,16 +15,15 @@
 package env
 
 import (
-	"fmt"
-
 	"internal/apiclient"
+	"internal/clilog"
 
 	environments "internal/client/env"
 
 	"github.com/spf13/cobra"
 )
 
-// Cmd to manage tracing of apis
+// SetDepCmd to set deployer role on env
 var SetDepCmd = &cobra.Command{
 	Use:   "setdeploy",
 	Short: "Set Apigee Deployer role for a member on an environment",
@@ -38,13 +37,12 @@ var SetDepCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		fmt.Printf("Member %s granted access to Apigee Deployer role\n", memberName)
+		clilog.Info.Printf("Member %s granted access to Apigee Deployer role\n", memberName)
 		return nil
 	},
 }
 
 func init() {
-
 	SetDepCmd.Flags().StringVarP(&memberName, "name", "n",
 		"", "Member Name, example Service Account Name")
 	SetDepCmd.Flags().StringVarP(&memberType, "memberType", "m",

@@ -47,7 +47,7 @@ func CreateTraceSession(name string, revision int, filter map[string]string) (re
 	} else {
 		payload = "{}"
 	}
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload)
+	respBody, err = apiclient.HttpClient(u.String(), payload)
 	return respBody, err
 }
 
@@ -65,7 +65,7 @@ func GetTraceSession(name string, revision int, sessionID string, messageID stri
 			"apis", name, "revisions", strconv.Itoa(revision), "debugsessions", sessionID, "data", messageID)
 	}
 
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
@@ -74,6 +74,6 @@ func ListTracceSession(name string, revision int) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(),
 		"apis", name, "revisions", strconv.Itoa(revision), "debugsessions")
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }

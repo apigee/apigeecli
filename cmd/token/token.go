@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//Cmd to manage token to interact with apigee.googleapis.com
+// Cmd to manage token to interact with apigee.googleapis.com
 var Cmd = &cobra.Command{
 	Use:   "token",
 	Short: "Manage OAuth 2.0 access tokens",
@@ -28,7 +28,6 @@ var Cmd = &cobra.Command{
 var serviceAccount string
 
 func init() {
-
 	Cmd.AddCommand(GetCmd)
 	Cmd.AddCommand(CacheCmd)
 }

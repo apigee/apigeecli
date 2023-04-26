@@ -30,7 +30,6 @@ var ListDepCmd = &cobra.Command{
 	Short: "Lists all deployments of a Sharedflow",
 	Long:  "Lists all deployments of a Sharedflow",
 	Args: func(cmd *cobra.Command, args []string) error {
-
 		apiclient.SetApigeeEnv(env)
 		if apiclient.GetApigeeEnv() == "" && name == "" {
 			return fmt.Errorf("sharedflow name or environment must be supplied")

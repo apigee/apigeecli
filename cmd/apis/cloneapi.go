@@ -57,15 +57,10 @@ var CloneCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-
 		if proxyZip != "" {
-			//extract the zip to a tmp folder and assign to proxyFolder
+			// extract the zip to a tmp folder and assign to proxyFolder
 			if proxyFolder, err = unzipBundle(); err != nil {
 				return err
-			}
-			if true {
-				fmt.Println(proxyFolder)
-				return nil
 			}
 		}
 
@@ -114,7 +109,6 @@ func init() {
 }
 
 func copyDirectory() (tmpDir string, err error) {
-
 	if strings.Contains(runtime.GOOS, "windows") {
 		return "", fmt.Errorf("this operation is not supported on windows at the moment")
 	}
@@ -132,8 +126,7 @@ func copyDirectory() (tmpDir string, err error) {
 }
 
 func renameProxy(tmpDir string) (err error) {
-
-	//1. rename the file in the apiproxy folder
+	// 1. rename the file in the apiproxy folder
 	apiproxyFolder := path.Join(tmpDir, "apiproxy")
 	re := regexp.MustCompile(`apiproxy\/\w+\.xml`)
 
@@ -145,19 +138,19 @@ func renameProxy(tmpDir string) (err error) {
 		if !info.IsDir() {
 			oldFileName := filepath.Base(path)
 
-			if re.MatchString(path) { //this is the proxy xml
-				//1. rename the file based on the new proxy name
+			if re.MatchString(path) { // this is the proxy xml
+				// 1. rename the file based on the new proxy name
 				newFilePath := strings.Replace(path, oldFileName, name+".xml", 1)
 				if err = os.Rename(path, newFilePath); err != nil {
 					return err
 				}
 
-				//2. set the name
+				// 2. set the name
 				if err = setParam(newFilePath, "proxy"); err != nil {
 					return err
 				}
 
-				//3. set the basePath
+				// 3. set the basePath
 				if err = setParam(newFilePath, "basePath"); err != nil {
 					return err
 				}
@@ -170,10 +163,9 @@ func renameProxy(tmpDir string) (err error) {
 }
 
 func setParam(filePath string, paramType string) (err error) {
-
 	var proxyFile *os.File
 
-	proxyFile, err = os.OpenFile(filePath, os.O_RDONLY, 0644)
+	proxyFile, err = os.OpenFile(filePath, os.O_RDONLY, 0o644)
 	if err != nil {
 		return err
 	}
@@ -198,7 +190,7 @@ func setParam(filePath string, paramType string) (err error) {
 		stringValue = re.ReplaceAllString(stringValue, replaceBasePath)
 	}
 
-	proxyFile, err = os.OpenFile(filePath, os.O_WRONLY|os.O_TRUNC, 0644)
+	proxyFile, err = os.OpenFile(filePath, os.O_WRONLY|os.O_TRUNC, 0o644)
 	if err != nil {
 		return err
 	}
@@ -214,7 +206,6 @@ func setParam(filePath string, paramType string) (err error) {
 }
 
 func unzipBundle() (tmpDir string, err error) {
-
 	tmpDir, err = os.MkdirTemp("", "proxy")
 	if err != nil {
 		return tmpDir, err
@@ -241,7 +232,7 @@ func unzipBundle() (tmpDir string, err error) {
 				return tmpDir, err
 			}
 
-			bundleFile, err := os.OpenFile(bundlePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
+			bundleFile, err := os.OpenFile(bundlePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0o644)
 			if err != nil {
 				return tmpDir, err
 			}

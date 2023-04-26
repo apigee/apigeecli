@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//Cmd to manage tracing of apis
+// TraceConfigCmd to manage tracing of apis
 var TraceConfigCmd = &cobra.Command{
 	Use:   "traceconfig",
 	Short: "Manage Distributed Trace config for the environment",
@@ -26,7 +26,6 @@ var TraceConfigCmd = &cobra.Command{
 }
 
 func init() {
-
 	TraceConfigCmd.PersistentFlags().StringVarP(&environment, "env", "e",
 		"", "Apigee environment name")
 

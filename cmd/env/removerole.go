@@ -15,9 +15,8 @@
 package env
 
 import (
-	"fmt"
-
 	"internal/apiclient"
+	"internal/clilog"
 
 	environments "internal/client/env"
 
@@ -38,13 +37,12 @@ var RemoveRoleCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		fmt.Printf("Member %s removed access to role %s\n", memberName, role)
+		clilog.Info.Printf("Member %s removed access to role %s\n", memberName, role)
 		return nil
 	},
 }
 
 func init() {
-
 	RemoveRoleCmd.Flags().StringVarP(&memberName, "name", "n",
 		"", "Member name. Prefix the member role as role:name. Ex: user:foo@acme.com")
 	RemoveRoleCmd.Flags().StringVarP(&role, "role", "r",

@@ -46,18 +46,18 @@ var ApigeeAPIClient *RateLimitedHTTPClient
 // allow 1 every 100 milliseconds
 var apigeeAPIRateLimit = rate.NewLimiter(rate.Every(100*time.Millisecond), 1)
 
-//source: https://cloud.google.com/apigee/docs/api-platform/reference/limits#apigee-apis
+// source: https://cloud.google.com/apigee/docs/api-platform/reference/limits#apigee-apis
 
 // allow 1 every 1 second
 var apigeeAnalyticsAPIRateLimit = rate.NewLimiter(rate.Every(time.Second), 1)
 
-//source: https://cloud.google.com/apigee/docs/api-platform/reference/limits#analytics-apis
+// source: https://cloud.google.com/apigee/docs/api-platform/reference/limits#analytics-apis
 
 // disable rate limit
 var noAPIRateLimit = rate.NewLimiter(rate.Inf, 1)
 
 // PostHttpZip method is used to send resources, proxy bundles, shared flows etc.
-func PostHttpZip(print bool, auth bool, method string, url string, headers map[string]string, zipfile string) (err error) {
+func PostHttpZip(auth bool, method string, url string, headers map[string]string, zipfile string) (err error) {
 	var req *http.Request
 
 	payload, err := os.ReadFile(zipfile)
@@ -74,7 +74,7 @@ func PostHttpZip(print bool, auth bool, method string, url string, headers map[s
 		return nil
 	}
 
-	clilog.Info.Println("Connecting to : ", url)
+	clilog.Debug.Println("Connecting to : ", url)
 	req, err = http.NewRequest(method, url, bytes.NewBuffer(payload))
 	if err != nil {
 		clilog.Error.Println("error in client: ", err)
@@ -82,7 +82,7 @@ func PostHttpZip(print bool, auth bool, method string, url string, headers map[s
 	}
 
 	for headerName, headerValue := range headers {
-		clilog.Info.Printf("%s : %s\n", headerName, headerValue)
+		clilog.Debug.Printf("%s : %s\n", headerName, headerValue)
 		req.Header.Set(headerName, headerValue)
 	}
 
@@ -107,7 +107,7 @@ func PostHttpZip(print bool, auth bool, method string, url string, headers map[s
 }
 
 // PostHttpOctet method is used to send resources, proxy bundles, shared flows etc.
-func PostHttpOctet(print bool, update bool, url string, formParams map[string]string) (respBody []byte, err error) {
+func PostHttpOctet(update bool, url string, formParams map[string]string) (respBody []byte, err error) {
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
@@ -152,7 +152,7 @@ func PostHttpOctet(print bool, update bool, url string, formParams map[string]st
 		return nil, err
 	}
 
-	clilog.Info.Println("Connecting to : ", url)
+	clilog.Debug.Println("Connecting to : ", url)
 	if !update {
 		req, err = http.NewRequest("POST", url, body)
 	} else {
@@ -176,7 +176,7 @@ func PostHttpOctet(print bool, update bool, url string, formParams map[string]st
 		return nil, err
 	}
 
-	return handleResponse(print, resp)
+	return handleResponse(resp)
 }
 
 func DownloadFile(url string, auth bool) (resp *http.Response, err error) {
@@ -189,7 +189,7 @@ func DownloadFile(url string, auth bool) (resp *http.Response, err error) {
 		return nil, nil
 	}
 
-	clilog.Info.Println("Connecting to : ", url)
+	clilog.Debug.Println("Connecting to : ", url)
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		clilog.Error.Println("error in client: ", err)
@@ -256,12 +256,12 @@ func DownloadResource(url string, name string, resType string, auth bool) error 
 		return err
 	}
 
-	fmt.Println("Resource " + filename + " completed")
+	clilog.Info.Println("Resource " + filename + " completed")
 	return nil
 }
 
 // HttpClient method is used to GET,POST,PUT or DELETE JSON data
-func HttpClient(print bool, params ...string) (respBody []byte, err error) {
+func HttpClient(params ...string) (respBody []byte, err error) {
 	// The first parameter instructs whether the output should be printed
 	// The second parameter is url. If only one parameter is sent, assume GET
 	// The third parameter is the payload. The two parameters are sent, assume POST
@@ -279,13 +279,13 @@ func HttpClient(print bool, params ...string) (respBody []byte, err error) {
 		return nil, nil
 	}
 
-	clilog.Info.Println("Connecting to: ", params[0])
+	clilog.Debug.Println("Connecting to: ", params[0])
 
 	switch paramLen := len(params); paramLen {
 	case 1:
 		req, err = http.NewRequest("GET", params[0], nil)
 	case 2:
-		clilog.Info.Println("Payload: ", params[1])
+		clilog.Debug.Println("Payload: ", params[1])
 		req, err = http.NewRequest("POST", params[0], bytes.NewBuffer([]byte(params[1])))
 	case 3:
 		if req, err = getRequest(params); err != nil {
@@ -310,7 +310,7 @@ func HttpClient(print bool, params ...string) (respBody []byte, err error) {
 		return nil, err
 	}
 
-	clilog.Info.Println("Content-Type : ", contentType)
+	clilog.Debug.Println("Content-Type : ", contentType)
 	req.Header.Set("Content-Type", contentType)
 
 	resp, err := ApigeeAPIClient.Do(req)
@@ -319,12 +319,12 @@ func HttpClient(print bool, params ...string) (respBody []byte, err error) {
 		return nil, err
 	}
 
-	return handleResponse(print, resp)
+	return handleResponse(resp)
 }
 
 // PrettyPrint method prints formatted json
 func PrettyPrint(body []byte) error {
-	if !options.NoOutput {
+	if GetCmdPrintHttpResponseSetting() && GetClientPrintHttpResponseSetting() {
 		var prettyJSON bytes.Buffer
 		err := json.Indent(&prettyJSON, body, "", "\t")
 		if err != nil {
@@ -332,7 +332,7 @@ func PrettyPrint(body []byte) error {
 			return err
 		}
 
-		fmt.Println(prettyJSON.String())
+		clilog.HttpResponse.Println(prettyJSON.String())
 	}
 	return nil
 }
@@ -340,7 +340,7 @@ func PrettyPrint(body []byte) error {
 // Do the HTTP request
 func (c *RateLimitedHTTPClient) Do(req *http.Request) (*http.Response, error) {
 	ctx := context.Background()
-	//Wait until the rate is below Apigee limits
+	// Wait until the rate is below Apigee limits
 	err := c.Ratelimiter.Wait(ctx)
 	if err != nil {
 		return nil, err
@@ -393,13 +393,13 @@ func getRequest(params []string) (req *http.Request, err error) {
 	if params[2] == "DELETE" {
 		req, err = http.NewRequest("DELETE", params[0], nil)
 	} else if params[2] == "PUT" {
-		clilog.Info.Println("Payload: ", params[1])
+		clilog.Debug.Println("Payload: ", params[1])
 		req, err = http.NewRequest("PUT", params[0], bytes.NewBuffer([]byte(params[1])))
 	} else if params[2] == "PATCH" {
-		clilog.Info.Println("Payload: ", params[1])
+		clilog.Debug.Println("Payload: ", params[1])
 		req, err = http.NewRequest("PATCH", params[0], bytes.NewBuffer([]byte(params[1])))
 	} else if params[2] == "POST" {
-		clilog.Info.Println("Payload: ", params[1])
+		clilog.Debug.Println("Payload: ", params[1])
 		req, err = http.NewRequest("POST", params[0], bytes.NewBuffer([]byte(params[1])))
 	} else {
 		return nil, errors.New("unsupported method")
@@ -413,12 +413,12 @@ func SetAuthHeader(req *http.Request) (*http.Request, error) {
 			return nil, err
 		}
 	}
-	clilog.Info.Println("Setting token : ", GetApigeeToken())
+	clilog.Debug.Println("Setting token : ", GetApigeeToken())
 	req.Header.Add("Authorization", "Bearer "+GetApigeeToken())
 	return req, nil
 }
 
-func handleResponse(print bool, resp *http.Response) (respBody []byte, err error) {
+func handleResponse(resp *http.Response) (respBody []byte, err error) {
 	if resp != nil {
 		defer resp.Body.Close()
 	}
@@ -433,12 +433,41 @@ func handleResponse(print bool, resp *http.Response) (respBody []byte, err error
 		clilog.Error.Println("error in response: ", err)
 		return nil, err
 	} else if resp.StatusCode > 399 {
-		clilog.Error.Printf("status code %d, error in response: %s\n", resp.StatusCode, string(respBody))
-		return nil, errors.New("error in response")
-	}
-	if print {
-		return respBody, PrettyPrint(respBody)
+		clilog.Debug.Printf("status code %d, error in response: %s\n", resp.StatusCode, string(respBody))
+		clilog.HttpError.Println(string(respBody))
+		return nil, errors.New(getErrorMessage(resp.StatusCode))
 	}
 
-	return respBody, nil
+	return respBody, PrettyPrint(respBody)
+}
+
+func getErrorMessage(statusCode int) string {
+	switch statusCode {
+	case 400:
+		return "Bad Request - malformed request syntax"
+	case 401:
+		return "Unauthorized - the client must authenticate itself"
+	case 403:
+		return "Forbidden - the client does not have access rights"
+	case 404:
+		return "Not found - the server cannot find the requested resource"
+	case 405:
+		return "Method Not Allowed - the request method is not supported by the target resource"
+	case 409:
+		return "Conflict - request conflicts with the current state of the server"
+	case 415:
+		return "Unsupported media type - media format of the requested data is not supported by the server"
+	case 429:
+		return "Too Many Request - user has sent too many requests"
+	case 500:
+		return "Internal server error"
+	case 501:
+		return "Not Implemented - request method is not supported by the server"
+	case 502:
+		return "Bad Gateway"
+	case 503:
+		return "Service Unavaliable - the server is not ready to handle the request"
+	default:
+		return "unknown error"
+	}
 }

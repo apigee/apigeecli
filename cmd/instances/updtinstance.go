@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to create a new instance
+// UpdateCmd to create a new instance
 var UpdateCmd = &cobra.Command{
 	Use:   "update",
 	Short: "Update an Instance",
@@ -37,11 +37,11 @@ var UpdateCmd = &cobra.Command{
 }
 
 func init() {
-
 	UpdateCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of the Instance")
 	UpdateCmd.Flags().StringArrayVarP(&consumerAcceptList, "consumer-accept-list", "c",
-		[]string{}, "Customer accept list represents the list of projects (id/number) that can connect to the service attachment")
+		[]string{}, "Customer accept list represents the list of "+
+			"projects (id/number) that can connect to the service attachment")
 
 	_ = UpdateCmd.MarkFlagRequired("name")
 	_ = UpdateCmd.MarkFlagRequired("consumer-accept-list")

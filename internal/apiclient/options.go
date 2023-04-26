@@ -22,23 +22,25 @@ import (
 )
 
 // BaseURL is the Apigee control plane endpoint
-var BaseURL = "https://apigee.googleapis.com/v1/organizations/"
-var StageBaseURL = "https://staging-apigee.sandbox.googleapis.com/v1/organizations/"
+var (
+	BaseURL      = "https://apigee.googleapis.com/v1/organizations/"
+	StageBaseURL = "https://staging-apigee.sandbox.googleapis.com/v1/organizations/"
+)
 
 // ApigeeClientOptions is the base struct to hold all command arguments
 type ApigeeClientOptions struct {
-	Org            string //Apigee org
-	Env            string //Apigee environment
-	Token          string //Google OAuth access token
-	ServiceAccount string //Google service account json
-	ProjectID      string //GCP Project ID
-	SkipLogInfo    bool   //LogInfo controls the log level
-	SkipCheck      bool   //skip checking access token expiry
-	SkipCache      bool   //skip writing access token to file
-	PrintOutput    bool   //prints output from http calls
-	NoOutput       bool   //disables printing API responses
-	ProxyUrl       string //use a proxy url
-	APIRate        Rate   //throttle api calls to Apigee
+	Org            string // Apigee org
+	Env            string // Apigee environment
+	Token          string // Google OAuth access token
+	ServiceAccount string // Google service account json
+	ProjectID      string // GCP Project ID
+	DebugLog       bool   // Enable debug logs
+	TokenCheck     bool   // Check access token expiry
+	SkipCache      bool   // skip writing access token to file
+	PrintOutput    bool   // prints output from http calls
+	NoOutput       bool   // Disable all statements to stdout
+	ProxyUrl       string // use a proxy url
+	APIRate        Rate   // throttle api calls to Apigee
 }
 
 var options *ApigeeClientOptions
@@ -52,6 +54,11 @@ const (
 )
 
 var apiRate Rate
+
+var (
+	cmdPrintHttpResponses    = true
+	clientPrintHttpResponses = true
+)
 
 // NewApigeeClient sets up options to invoke Apigee APIs
 func NewApigeeClient(o ApigeeClientOptions) {
@@ -74,39 +81,18 @@ func NewApigeeClient(o ApigeeClientOptions) {
 	if o.Env != "" {
 		options.Env = o.Env
 	}
-	if o.SkipCheck {
-		options.SkipCheck = true
-	} else {
-		options.SkipCheck = false
-	}
-	if o.SkipCache {
-		options.SkipCache = true
-	} else {
-		options.SkipCache = false
-	}
-	if o.SkipLogInfo {
-		options.SkipLogInfo = true
-		clilog.Init(true)
-	} else {
-		options.SkipLogInfo = false
-		clilog.Init(false)
-	}
-	if o.PrintOutput {
-		options.PrintOutput = true
-	} else {
-		options.PrintOutput = false
-	}
-	if o.NoOutput {
-		options.NoOutput = true
-	} else {
-		options.NoOutput = false
-	}
 
-	o.APIRate = options.APIRate
+	options.TokenCheck = o.TokenCheck
+	options.SkipCache = o.SkipCache
+	options.DebugLog = o.DebugLog
+	options.PrintOutput = o.PrintOutput
+	options.NoOutput = o.NoOutput
 
-	//read preference file
+	// initialize logs
+	clilog.Init(options.DebugLog, options.PrintOutput, options.NoOutput)
+
+	// read preference file
 	_ = ReadPreferencesFile()
-
 }
 
 // UseStaging
@@ -118,7 +104,7 @@ func UseStaging() {
 func SetApigeeOrg(org string) (err error) {
 	if org == "" {
 		if GetApigeeOrg() == "" {
-			return fmt.Errorf("An org name was not set in preferences or supplied in the command")
+			return fmt.Errorf("an org name was not set in preferences or supplied in the command")
 		}
 		return nil
 	}
@@ -177,9 +163,9 @@ func GetServiceAccount() string {
 	return options.ServiceAccount
 }
 
-// IsSkipCheck
-func IsSkipCheck() bool {
-	return options.SkipCheck
+// TokenCheckEnabled
+func TokenCheckEnabled() bool {
+	return options.TokenCheck
 }
 
 // IsSkipCache
@@ -187,15 +173,9 @@ func IsSkipCache() bool {
 	return options.SkipCache
 }
 
-// IsSkipLogInfo
-func IsSkipLogInfo() bool {
-	return options.SkipLogInfo
-}
-
-// SetSkipLogIngo
-func SetSkipLogInfo(l bool) {
-	options.SkipLogInfo = l
-	clilog.Init(l)
+// DebugEnabled
+func DebugEnabled() bool {
+	return options.DebugLog
 }
 
 // PrintOutput
@@ -206,6 +186,31 @@ func SetPrintOutput(output bool) {
 // GetPrintOutput
 func GetPrintOutput() bool {
 	return options.PrintOutput
+}
+
+// DisableCmdPrintHttpResponse
+func DisableCmdPrintHttpResponse() {
+	cmdPrintHttpResponses = false
+}
+
+// EnableCmdPrintHttpResponse
+func EnableCmdPrintHttpResponse() {
+	cmdPrintHttpResponses = true
+}
+
+// GetPrintHttpResponseSetting
+func GetCmdPrintHttpResponseSetting() bool {
+	return cmdPrintHttpResponses
+}
+
+// SetClientPrintHttpResponse
+func SetClientPrintHttpResponse(b bool) {
+	clientPrintHttpResponses = b
+}
+
+// GetPrintHttpResponseSetting
+func GetClientPrintHttpResponseSetting() bool {
+	return clientPrintHttpResponses
 }
 
 // GetProxyURL
@@ -225,6 +230,16 @@ func DryRun() bool {
 		return true
 	}
 	return false
+}
+
+// SetNoOutput
+func SetNoOutput(b bool) {
+	options.NoOutput = b
+}
+
+// GetNoOutput
+func GetNoOutput() bool {
+	return options.NoOutput
 }
 
 // SetRate

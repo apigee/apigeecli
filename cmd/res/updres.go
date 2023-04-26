@@ -37,7 +37,6 @@ var UpdateCmd = &cobra.Command{
 }
 
 func init() {
-
 	UpdateCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of the resource file")
 	UpdateCmd.Flags().StringVarP(&resType, "type", "p",

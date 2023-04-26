@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to list shared flow
+// ListCmd to list shared flow
 var ListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "Lists all shared flows in the organization.",
@@ -40,10 +40,8 @@ var ListCmd = &cobra.Command{
 var includeRevisions bool
 
 func init() {
-
 	ListCmd.Flags().StringVarP(&env, "env", "e",
 		"", "Apigee environment name")
 	ListCmd.Flags().BoolVarP(&includeRevisions, "rev", "r",
 		false, "Include revisions")
-
 }

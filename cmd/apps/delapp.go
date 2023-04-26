@@ -39,7 +39,6 @@ var DelCmd = &cobra.Command{
 var id string
 
 func init() {
-
 	DelCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of the developer app")
 	DelCmd.Flags().StringVarP(&id, "id", "i",

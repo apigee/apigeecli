@@ -30,13 +30,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// GhCreateCmd create an api from a github repo
 var GhCreateCmd = &cobra.Command{
 	Use:     "github",
 	Aliases: []string{"gh"},
 	Short:   "Creates an API proxy from a GitHub repo",
 	Long:    "Creates an API proxy from a GitHub repo",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		//(\w+)?\/apiproxy$
 		re := regexp.MustCompile(`(\w+)?\/apiproxy$`)
 		if ok := re.Match([]byte(ghPath)); !ok {
 			return fmt.Errorf("github path must end with /apiproxy")
@@ -46,7 +46,7 @@ var GhCreateCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		if os.Getenv("GITHUB_TOKEN") == "" {
-			clilog.Info.Println("github token is not set as an env var. Running unauthenticated")
+			clilog.Debug.Println("github token is not set as an env var. Running unauthenticated")
 		}
 		if err = proxybundle.GitHubImportBundle(ghOwner, ghRepo, ghPath); err != nil {
 			proxybundle.CleanUp()
@@ -76,5 +76,4 @@ func init() {
 	_ = GhCreateCmd.MarkFlagRequired("owner")
 	_ = GhCreateCmd.MarkFlagRequired("repo")
 	_ = GhCreateCmd.MarkFlagRequired("proxy-path")
-
 }

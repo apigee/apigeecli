@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to delete key stores
+// DelCmd to delete key stores
 var DelCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete a Key Store",
@@ -38,7 +38,6 @@ var DelCmd = &cobra.Command{
 }
 
 func init() {
-
 	DelCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of the key store")
 

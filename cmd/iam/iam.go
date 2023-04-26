@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//Cmd to manage orgs
+// Cmd to manage orgs
 var Cmd = &cobra.Command{
 	Use:   "iam",
 	Short: "Manage IAM permissions for Apigee",
@@ -26,11 +26,15 @@ var Cmd = &cobra.Command{
 		"Create Service Accounts and Service Account Key Admin roles",
 }
 
-var name, projectID, roleType string
-var generateName bool
+var (
+	name, projectID, roleType string
+	generateName              bool
+)
 
-var roles = []string{"mart", "analytics", "all", "logger", "connect", "cassandra", "watcher",
-	"sync", "admin", "api-admin", "env-admin", "dev-admin", "readonly-admin"}
+var roles = []string{
+	"mart", "analytics", "all", "logger", "connect", "cassandra", "watcher",
+	"sync", "admin", "api-admin", "env-admin", "dev-admin", "readonly-admin",
+}
 
 func init() {
 	Cmd.AddCommand(CallCmd)

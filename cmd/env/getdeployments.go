@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// DeployCmd to get deployed apis in an env
+// GetDeployCmd to get deployed apis in an env
 var GetDeployCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Get deployments for an Environment",
@@ -44,7 +44,6 @@ var GetDeployCmd = &cobra.Command{
 var sharedflows, all bool
 
 func init() {
-
 	GetDeployCmd.Flags().BoolVarP(&sharedflows, "sharedflows", "s",
 		false, "Return sharedflow deployments")
 	GetDeployCmd.Flags().BoolVarP(&all, "all", "",

@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//AttributesCmd to manage tracing of apis
+// AttributesCmd to manage tracing of apis
 var AttributesCmd = &cobra.Command{
 	Use:     "attributes",
 	Aliases: []string{"attrs"},
@@ -29,7 +29,6 @@ var AttributesCmd = &cobra.Command{
 var attrName string
 
 func init() {
-
 	AttributesCmd.PersistentFlags().StringVarP(&name, "name", "n",
 		"", "API Product name")
 

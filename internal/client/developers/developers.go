@@ -73,38 +73,38 @@ func Create(email string, firstName string, lastName string, username string, at
 
 	payload := "{" + strings.Join(developer, ",") + "}"
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers")
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload)
+	respBody, err = apiclient.HttpClient(u.String(), payload)
 	return respBody, err
 }
 
 // Delete
 func Delete(email string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
-	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", url.QueryEscape(email)) //since developer emails can have +
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "", "DELETE")
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", url.QueryEscape(email)) // since developer emails can have +
+	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
 	return respBody, err
 }
 
 // Get
 func Get(email string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
-	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", url.QueryEscape(email)) //since developer emails can have +
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", url.QueryEscape(email)) // since developer emails can have +
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
 // GetDeveloperId
 func GetDeveloperId(email string) (developerId string, err error) {
-	apiclient.SetPrintOutput(false)
+	apiclient.SetClientPrintHttpResponse(false)
+	defer apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
 	var developerMap map[string]interface{}
 	u, _ := url.Parse(apiclient.BaseURL)
-	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", url.QueryEscape(email)) //since developer emails can have +
-	respBody, err := apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", url.QueryEscape(email)) // since developer emails can have +
+	respBody, err := apiclient.HttpClient(u.String())
 	if err != nil {
 		return "", err
 	}
 
-	apiclient.SetPrintOutput(true)
 	err = json.Unmarshal(respBody, &developerMap)
 	if err != nil {
 		return "", err
@@ -123,7 +123,7 @@ func GetApps(name string, expand bool) (respBody []byte, err error) {
 	} else {
 		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", name, "apps")
 	}
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
@@ -145,7 +145,7 @@ func List(count int, expand bool, ids string) (respBody []byte, err error) {
 	}
 
 	u.RawQuery = q.Encode()
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
@@ -158,14 +158,15 @@ func Export() (respBody []byte, err error) {
 	q.Set("expand", "true")
 
 	u.RawQuery = q.Encode()
-	//don't print to sysout
-	respBody, err = apiclient.HttpClient(false, u.String())
+	// don't print to sysout
+	apiclient.SetClientPrintHttpResponse(false)
+	defer apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
 // Import
 func Import(conn int, filePath string) error {
-
 	var pwg sync.WaitGroup
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers")
@@ -177,12 +178,12 @@ func Import(conn int, filePath string) error {
 	}
 
 	numEntities := len(entities.Developer)
-	clilog.Info.Printf("Found %d developers in the file\n", numEntities)
-	clilog.Info.Printf("Create developers with %d connections\n", conn)
+	clilog.Debug.Printf("Found %d developers in the file\n", numEntities)
+	clilog.Debug.Printf("Create developers with %d connections\n", conn)
 
 	numOfLoops, remaining := numEntities/conn, numEntities%conn
 
-	//ensure connections aren't greater than entities
+	// ensure connections aren't greater than entities
 	if conn > numEntities {
 		conn = numEntities
 	}
@@ -192,7 +193,7 @@ func Import(conn int, filePath string) error {
 	for i, end := 0, 0; i < numOfLoops; i++ {
 		pwg.Add(1)
 		end = (i * conn) + conn
-		clilog.Info.Printf("Creating batch %d of developers\n", (i + 1))
+		clilog.Debug.Printf("Creating batch %d of developers\n", (i + 1))
 		go batchImport(u.String(), entities.Developer[start:end], &pwg)
 		start = end
 		pwg.Wait()
@@ -200,7 +201,7 @@ func Import(conn int, filePath string) error {
 
 	if remaining > 0 {
 		pwg.Add(1)
-		clilog.Info.Printf("Creating remaining %d developers\n", remaining)
+		clilog.Debug.Printf("Creating remaining %d developers\n", remaining)
 		go batchImport(u.String(), entities.Developer[start:numEntities], &pwg)
 		pwg.Wait()
 	}
@@ -215,20 +216,19 @@ func createAsyncDeveloper(url string, dev Appdeveloper, wg *sync.WaitGroup) {
 		clilog.Error.Println(err)
 		return
 	}
-	_, err = apiclient.HttpClient(apiclient.GetPrintOutput(), url, string(out))
+	_, err = apiclient.HttpClient(url, string(out))
 	if err != nil {
 		clilog.Error.Println(err)
 		return
 	}
 
-	clilog.Info.Printf("Completed entity: %s", dev.EMail)
+	clilog.Debug.Printf("Completed entity: %s", dev.EMail)
 }
 
 // batch creates a batch of developers to create
 func batchImport(url string, entities []Appdeveloper, pwg *sync.WaitGroup) {
-
 	defer pwg.Done()
-	//batch workgroup
+	// batch workgroup
 	var bwg sync.WaitGroup
 
 	bwg.Add(len(entities))
@@ -241,11 +241,9 @@ func batchImport(url string, entities []Appdeveloper, pwg *sync.WaitGroup) {
 
 // ReadDevelopersFile
 func ReadDevelopersFile(filePath string) (Appdevelopers, error) {
-
 	devs := Appdevelopers{}
 
 	jsonFile, err := os.Open(filePath)
-
 	if err != nil {
 		return devs, err
 	}
@@ -253,7 +251,6 @@ func ReadDevelopersFile(filePath string) (Appdevelopers, error) {
 	defer jsonFile.Close()
 
 	byteValue, err := io.ReadAll(jsonFile)
-
 	if err != nil {
 		return devs, err
 	}

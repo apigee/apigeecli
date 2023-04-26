@@ -24,7 +24,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to list envs
+// ListCmd to list envs
 var ListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List operations in an Apigee Org",
@@ -53,11 +53,12 @@ var ListCmd = &cobra.Command{
 	},
 }
 
-var state string
-var completeState string
+var (
+	state         string
+	completeState string
+)
 
 func init() {
-
 	ListCmd.Flags().StringVarP(&state, "state", "s",
 		"", "filter by operation state: FINISHED, ERROR, IN_PROGRESS")
 	ListCmd.Flags().StringVarP(&completeState, "completeState", "c",

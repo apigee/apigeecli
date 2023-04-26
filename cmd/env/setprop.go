@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to set mart endpoint
+// PropCmd to set env prop
 var PropCmd = &cobra.Command{
 	Use:   "set",
 	Short: "Set environment property",
@@ -39,7 +39,6 @@ var PropCmd = &cobra.Command{
 var propName, propValue string
 
 func init() {
-
 	PropCmd.Flags().StringVarP(&environment, "env", "e",
 		"", "Apigee environment name")
 	PropCmd.Flags().StringVarP(&propName, "name", "n",

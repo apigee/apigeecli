@@ -24,7 +24,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to delete kvm
+// DelCmd to delete kvm
 var DelCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete a KV map",
@@ -45,7 +45,6 @@ var DelCmd = &cobra.Command{
 }
 
 func init() {
-
 	DelCmd.Flags().StringVarP(&env, "env", "e",
 		"", "Environment name")
 	DelCmd.Flags().StringVarP(&proxyName, "proxy", "p",

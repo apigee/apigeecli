@@ -25,11 +25,12 @@ var Cmd = &cobra.Command{
 	Long:  "Manage Apigee API proxies in an org",
 }
 
-var org, env, name string
-var conn, revision int
+var (
+	org, env, name string
+	conn, revision int
+)
 
 func init() {
-
 	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
 

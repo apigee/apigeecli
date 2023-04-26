@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to list orgs
+// ListCmd to list orgs
 var ListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List the Apigee organizations",
@@ -37,5 +37,4 @@ var ListCmd = &cobra.Command{
 }
 
 func init() {
-
 }

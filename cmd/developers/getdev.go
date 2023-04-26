@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to get developer
+// GetCmd to get developer
 var GetCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Returns the profile for a developer by email address or ID",
@@ -37,7 +37,6 @@ var GetCmd = &cobra.Command{
 }
 
 func init() {
-
 	GetCmd.Flags().StringVarP(&email, "email", "n",
 		"", "The developer's email")
 

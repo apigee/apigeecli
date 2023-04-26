@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to list endpoint attachments
+// GetCmd to list endpoint attachments
 var GetCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Get a service endpoint",
@@ -37,7 +37,6 @@ var GetCmd = &cobra.Command{
 }
 
 func init() {
-
 	GetCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of the service endpoint")
 

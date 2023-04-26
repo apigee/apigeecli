@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to create a new instance
+// ListAttachCmd to create a new instance
 var ListAttachCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List attachment details for an instance",
@@ -38,7 +38,6 @@ var ListAttachCmd = &cobra.Command{
 }
 
 func init() {
-
 	ListAttachCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of the Instance")
 

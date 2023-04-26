@@ -24,7 +24,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to create kvms
+// CreateCmd to create kvms
 var CreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a KV Map",
@@ -45,7 +45,6 @@ var CreateCmd = &cobra.Command{
 }
 
 func init() {
-
 	CreateCmd.Flags().StringVarP(&env, "env", "e",
 		"", "Environment name")
 	CreateCmd.Flags().StringVarP(&proxyName, "proxy", "p",

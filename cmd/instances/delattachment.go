@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to create a new instance
+// DeleteAttachCmd to create a new instance
 var DeleteAttachCmd = &cobra.Command{
 	Use:   "detach",
 	Short: "Detach an environment from an instance",
@@ -38,7 +38,6 @@ var DeleteAttachCmd = &cobra.Command{
 }
 
 func init() {
-
 	DeleteAttachCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of the Instance")
 	DeleteAttachCmd.Flags().StringVarP(&environment, "env", "e",

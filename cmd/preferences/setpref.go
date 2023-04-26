@@ -20,7 +20,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to get org details
+// SetCmd to get org details
 var SetCmd = &cobra.Command{
 	Use:   "set",
 	Short: "Set default preferences for apigeecli",
@@ -30,7 +30,7 @@ var SetCmd = &cobra.Command{
 			return err
 		}
 
-		if err = apiclient.SetProxy(proxyUrl); err != nil {
+		if err = apiclient.SetProxy(proxyURL); err != nil {
 			return err
 		}
 
@@ -44,18 +44,19 @@ var SetCmd = &cobra.Command{
 	},
 }
 
-var org, proxyUrl string
-var usestage, nocheck bool
+var (
+	org, proxyURL     string
+	usestage, nocheck bool
+)
 
 func init() {
-
 	SetCmd.Flags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
 
 	SetCmd.Flags().BoolVarP(&usestage, "staging", "s",
 		false, "Use Apigee staging; format: -s=true")
 
-	SetCmd.Flags().StringVarP(&proxyUrl, "proxy", "p",
+	SetCmd.Flags().StringVarP(&proxyURL, "proxy", "p",
 		"", "Use http proxy before contacting the control plane")
 
 	SetCmd.Flags().BoolVarP(&nocheck, "nocheck", "",

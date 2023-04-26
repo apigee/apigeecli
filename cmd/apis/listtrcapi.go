@@ -38,7 +38,6 @@ var ListTrcCmd = &cobra.Command{
 }
 
 func init() {
-
 	ListTrcCmd.Flags().StringVarP(&name, "name", "n",
 		"", "API proxy name")
 	ListTrcCmd.Flags().IntVarP(&revision, "rev", "v",
@@ -46,5 +45,4 @@ func init() {
 
 	_ = ListTrcCmd.MarkFlagRequired("name")
 	_ = ListTrcCmd.MarkFlagRequired("rev")
-
 }

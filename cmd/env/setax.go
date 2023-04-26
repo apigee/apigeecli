@@ -18,13 +18,14 @@ import (
 	"fmt"
 
 	"internal/apiclient"
+	"internal/clilog"
 
 	environments "internal/client/env"
 
 	"github.com/spf13/cobra"
 )
 
-// Cmd to manage tracing of apis
+// SetAxCmd to set role on env
 var SetAxCmd = &cobra.Command{
 	Use:   "setax",
 	Short: "Set Analytics Agent role for a member on an environment",
@@ -41,13 +42,12 @@ var SetAxCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		fmt.Printf("Member %s granted access to %s role\n", memberName, role)
+		clilog.Info.Printf("Member %s granted access to %s role\n", memberName, role)
 		return nil
 	},
 }
 
 func init() {
-
 	SetAxCmd.Flags().StringVarP(&memberName, "name", "n",
 		"", "Member Name, example Service Account Name")
 	SetAxCmd.Flags().StringVarP(&memberType, "memberType", "m",

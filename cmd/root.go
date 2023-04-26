@@ -15,6 +15,7 @@
 package cmd
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -68,9 +69,10 @@ var RootCmd = &cobra.Command{
 			if ok, _ := apiclient.TestAndUpdateLastCheck(); !ok {
 				latestVersion, _ := getLatestVersion()
 				if cmd.Version == "" {
-					clilog.Info.Println("apigeecli wasn't built with a valid Version tag.")
+					clilog.Debug.Println("apigeecli wasn't built with a valid Version tag.")
 				} else if latestVersion != "" && cmd.Version != latestVersion {
-					fmt.Printf("You are using %s, the latest version %s is available for download\n", cmd.Version, latestVersion)
+					clilog.Info.Printf("You are using %s, the latest version %s "+
+						"is available for download\n", cmd.Version, latestVersion)
 				}
 			}
 		}
@@ -79,17 +81,22 @@ var RootCmd = &cobra.Command{
 
 		return nil
 	},
+	SilenceUsage:  getUsageFlag(),
+	SilenceErrors: getErrorsFlag(),
 }
 
 func Execute() {
 	if err := RootCmd.Execute(); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		clilog.Error.Println(err)
 	}
 }
 
-var accessToken, serviceAccount string
-var disableCheck, noOutput bool
+var (
+	accessToken, serviceAccount         string
+	disableCheck, printOutput, noOutput bool
+)
+
+const ENABLED = "true"
 
 func init() {
 	cobra.OnInitialize(initConfig)
@@ -103,8 +110,11 @@ func init() {
 	RootCmd.PersistentFlags().BoolVarP(&disableCheck, "disable-check", "",
 		false, "Disable check for newer versions")
 
+	RootCmd.PersistentFlags().BoolVarP(&printOutput, "print-output", "",
+		true, "Control printing of info log statements")
+
 	RootCmd.PersistentFlags().BoolVarP(&noOutput, "no-output", "",
-		false, "Disable printing API responses from the control plane")
+		false, "Disable printing all statements to stdout")
 
 	RootCmd.AddCommand(apis.Cmd)
 	RootCmd.AddCommand(org.Cmd)
@@ -135,25 +145,29 @@ func init() {
 }
 
 func initConfig() {
-	var skipLogInfo = true
+	debug := false
 	var skipCache bool
 
-	if os.Getenv("APIGEECLI_SKIPLOG") == "false" {
-		skipLogInfo = false
+	if os.Getenv("APIGEECLI_DEBUG") == ENABLED {
+		debug = true
 	}
 
 	skipCache, _ = strconv.ParseBool(os.Getenv("APIGEECLI_SKIPCACHE"))
 
+	if noOutput {
+		printOutput = noOutput
+	}
+
 	apiclient.NewApigeeClient(apiclient.ApigeeClientOptions{
-		SkipCheck:   true,
-		PrintOutput: true,
-		SkipLogInfo: skipLogInfo,
-		SkipCache:   skipCache,
+		TokenCheck:  true,
+		PrintOutput: printOutput,
 		NoOutput:    noOutput,
+		DebugLog:    debug,
+		SkipCache:   skipCache,
 	})
 
-	if os.Getenv("APIGEECLI_ENABLE_RATELIMIT") == "true" {
-		clilog.Info.Println("APIGEECLI_RATELIMIT is enabled")
+	if os.Getenv("APIGEECLI_ENABLE_RATELIMIT") == ENABLED {
+		clilog.Debug.Println("APIGEECLI_RATELIMIT is enabled")
 		apiclient.SetRate(apiclient.ApigeeAPI)
 	}
 }
@@ -170,7 +184,8 @@ func getLatestVersion() (version string, err error) {
 	client := &http.Client{}
 	contentType := "application/json"
 
-	req, err = http.NewRequest("GET", endpoint, nil)
+	ctx := context.Background()
+	req, err = http.NewRequestWithContext(ctx, http.MethodGet, endpoint, nil)
 	if err != nil {
 		return "", err
 	}
@@ -185,6 +200,11 @@ func getLatestVersion() (version string, err error) {
 	if err != nil {
 		return "", err
 	}
+
+	if resp != nil {
+		defer resp.Body.Close()
+	}
+
 	var result map[string]interface{}
 	err = json.Unmarshal(respBody, &result)
 	if err != nil {
@@ -192,9 +212,18 @@ func getLatestVersion() (version string, err error) {
 	}
 
 	if result["tag_name"] == "" {
-		clilog.Info.Println("Unable to determine latest tag, skipping this information")
+		clilog.Debug.Println("Unable to determine latest tag, skipping this information")
 		return "", nil
-	} else {
-		return fmt.Sprintf("%s", result["tag_name"]), nil
 	}
+	return fmt.Sprintf("%s", result["tag_name"]), nil
+}
+
+// getUsageFlag
+func getUsageFlag() bool {
+	return os.Getenv("APIGEECLI_NO_USAGE") == ENABLED
+}
+
+// getErrorsFlag
+func getErrorsFlag() bool {
+	return os.Getenv("APIGEECLI_NO_ERRORS") == ENABLED
 }

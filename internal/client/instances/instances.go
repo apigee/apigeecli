@@ -25,7 +25,6 @@ import (
 
 // Create
 func Create(name string, location string, diskEncryptionKeyName string, ipRange string, consumerAcceptList []string) (respBody []byte, err error) {
-
 	instance := []string{}
 
 	instance = append(instance, "\"name\":\""+name+"\"")
@@ -50,7 +49,7 @@ func Create(name string, location string, diskEncryptionKeyName string, ipRange 
 
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "instances")
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload)
+	respBody, err = apiclient.HttpClient(u.String(), payload)
 	return respBody, err
 }
 
@@ -58,7 +57,7 @@ func Create(name string, location string, diskEncryptionKeyName string, ipRange 
 func Get(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "instances", name)
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
@@ -66,7 +65,7 @@ func Get(name string) (respBody []byte, err error) {
 func Delete(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "instances", name)
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "", "DELETE")
+	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
 	return respBody, err
 }
 
@@ -74,7 +73,7 @@ func Delete(name string) (respBody []byte, err error) {
 func List() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "instances")
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
@@ -95,7 +94,7 @@ func Update(name string, consumerAcceptList []string) (respBody []byte, err erro
 		q.Set("updateMask", "consumerAcceptList")
 
 		payload := "{" + strings.Join(instance, ",") + "}"
-		respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload, "PATCH")
+		respBody, err = apiclient.HttpClient(u.String(), payload, "PATCH")
 	}
 	return respBody, err
 }

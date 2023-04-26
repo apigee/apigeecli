@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to get key aliases
+// CsrCmd to get key aliases
 var CsrCmd = &cobra.Command{
 	Use:   "csr",
 	Short: "Generates a csr for the private key in an alias",

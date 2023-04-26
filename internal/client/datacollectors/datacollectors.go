@@ -51,7 +51,7 @@ func Create(name string, description string, collectorType string) (respBody []b
 
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "datacollectors")
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload)
+	respBody, err = apiclient.HttpClient(u.String(), payload)
 	return respBody, err
 }
 
@@ -59,7 +59,7 @@ func Create(name string, description string, collectorType string) (respBody []b
 func Get(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "datacollectors", name)
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
@@ -67,7 +67,7 @@ func Get(name string) (respBody []byte, err error) {
 func Delete(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "datacollectors", name)
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "", "DELETE")
+	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
 	return respBody, err
 }
 
@@ -75,13 +75,12 @@ func Delete(name string) (respBody []byte, err error) {
 func List() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "datacollectors")
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
 // Import
 func Import(filePath string) (err error) {
-
 	var dCollectors dcollectors
 
 	if dCollectors, err = readDataCollectorsFile(filePath); err != nil {
@@ -101,11 +100,9 @@ func Import(filePath string) (err error) {
 }
 
 func readDataCollectorsFile(filePath string) (dcollectors, error) {
-
 	dCollectors := dcollectors{}
 
 	jsonFile, err := os.Open(filePath)
-
 	if err != nil {
 		return dCollectors, err
 	}
@@ -113,7 +110,6 @@ func readDataCollectorsFile(filePath string) (dcollectors, error) {
 	defer jsonFile.Close()
 
 	byteValue, err := io.ReadAll(jsonFile)
-
 	if err != nil {
 		return dCollectors, err
 	}

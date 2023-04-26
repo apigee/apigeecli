@@ -28,15 +28,15 @@ import (
 )
 
 func TotalAPICallsInMonth(month int, year int, envDetails bool, conn int) (total int, err error) {
-
 	var pwg sync.WaitGroup
 	var envListBytes []byte
 	var envList []string
 
-	//ensure the count is reset to zero before calculating the next set
+	// ensure the count is reset to zero before calculating the next set
 	defer env.ApiCalls.ResetCount()
 
-	apiclient.SetPrintOutput(false)
+	apiclient.SetClientPrintHttpResponse(false)
+	defer apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
 
 	if envListBytes, err = env.List(); err != nil {
 		return -1, err
@@ -47,12 +47,12 @@ func TotalAPICallsInMonth(month int, year int, envDetails bool, conn int) (total
 	}
 
 	numEntities := len(envList)
-	clilog.Info.Printf("Found %d environments\n", numEntities)
-	clilog.Info.Printf("Generate report with %d connections\n", conn)
+	clilog.Debug.Printf("Found %d environments\n", numEntities)
+	clilog.Debug.Printf("Generate report with %d connections\n", conn)
 
 	numOfLoops, remaining := numEntities/conn, numEntities%conn
 
-	//ensure connections aren't greater than entities
+	// ensure connections aren't greater than entities
 	if conn > numEntities {
 		conn = numEntities
 	}
@@ -62,7 +62,7 @@ func TotalAPICallsInMonth(month int, year int, envDetails bool, conn int) (total
 	for i, end := 0, 0; i < numOfLoops; i++ {
 		pwg.Add(1)
 		end = (i * conn) + conn
-		clilog.Info.Printf("Creating reports for a batch %d of environments\n", (i + 1))
+		clilog.Debug.Printf("Creating reports for a batch %d of environments\n", (i + 1))
 		go batchReport(envList[start:end], month, year, envDetails, &pwg)
 		start = end
 		pwg.Wait()
@@ -70,19 +70,17 @@ func TotalAPICallsInMonth(month int, year int, envDetails bool, conn int) (total
 
 	if remaining > 0 {
 		pwg.Add(1)
-		clilog.Info.Printf("Creating reports for remaining %d environments\n", remaining)
+		clilog.Debug.Printf("Creating reports for remaining %d environments\n", remaining)
 		go batchReport(envList[start:numEntities], month, year, envDetails, &pwg)
 		pwg.Wait()
 	}
-
-	apiclient.SetPrintOutput(true)
 
 	return env.ApiCalls.GetCount(), nil
 }
 
 func batchReport(envList []string, month int, year int, envDetails bool, pwg *sync.WaitGroup) {
 	defer pwg.Done()
-	//batch workgroup
+	// batch workgroup
 	var bwg sync.WaitGroup
 
 	bwg.Add(len(envList))
@@ -95,7 +93,6 @@ func batchReport(envList []string, month int, year int, envDetails bool, pwg *sy
 }
 
 func TotalAPICallsInYear(year int, envDetails bool, conn int) (total int, err error) {
-
 	var monthlyTotal int
 
 	t := time.Now()
@@ -107,14 +104,14 @@ func TotalAPICallsInYear(year int, envDetails bool, conn int) (total int, err er
 
 	if currentYear == year {
 		currentMonth := t.Month()
-		for i := 1; i <= int(currentMonth); i++ { //run the loop only till the current month
+		for i := 1; i <= int(currentMonth); i++ { // run the loop only till the current month
 			if monthlyTotal, err = TotalAPICallsInMonth(i, year, envDetails, conn); err != nil {
 				return -1, err
 			}
 			total = total + monthlyTotal
 		}
 	} else {
-		for i := 1; i <= 12; i++ { //run the loop for each month
+		for i := 1; i <= 12; i++ { // run the loop for each month
 			if monthlyTotal, err = TotalAPICallsInMonth(i, year, envDetails, conn); err != nil {
 				return -1, err
 			}

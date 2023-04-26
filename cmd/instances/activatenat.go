@@ -38,7 +38,6 @@ var ActivateNatCmd = &cobra.Command{
 }
 
 func init() {
-
 	ActivateNatCmd.Flags().StringVarP(&natid, "natid", "i",
 		"", "NAT identifier")
 

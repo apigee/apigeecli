@@ -18,18 +18,19 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//Cmd to manage envs
+// Cmd to manage envs
 var Cmd = &cobra.Command{
 	Use:   "envgroups",
 	Short: "Manage Apigee environment groups",
 	Long:  "Manage Apigee environment groups",
 }
 
-var org, name, environment string
-var hostnames []string
+var (
+	org, name, environment string
+	hostnames              []string
+)
 
 func init() {
-
 	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
 

@@ -33,15 +33,18 @@ var Cmd = &cobra.Command{
 	Long:    "Manage Apigee API products and Rate Plans for Monetization",
 }
 
-var org, name string
-var conn int
+var (
+	org, name string
+	conn      int
+)
 
-var description, approval, displayName, quota, quotaInterval, quotaUnit string
-var environments, proxies, scopes []string
-var attrs map[string]string
+var (
+	description, approval, displayName, quota, quotaInterval, quotaUnit string
+	environments, proxies, scopes                                       []string
+	attrs                                                               map[string]string
+)
 
 func init() {
-
 	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
 
@@ -64,11 +67,11 @@ func getOperationGroup(operationGroupFile string) (*products.OperationGroup, err
 
 	if operationGroupFile != "" {
 		if operationGrpBytes, err = os.ReadFile(operationGroupFile); err != nil {
-			clilog.Info.Println(err)
+			clilog.Debug.Println(err)
 			return nil, err
 		}
 		if err = json.Unmarshal(operationGrpBytes, &operationGrp); err != nil {
-			clilog.Info.Println(err)
+			clilog.Debug.Println(err)
 			return nil, err
 		}
 		return &operationGrp, nil
@@ -84,11 +87,11 @@ func getGqlOperationGroup(gqlOperationGroupFile string) (*products.GraphqlOperat
 
 	if gqlOperationGroupFile != "" {
 		if gqlOperationGrpBytes, err = os.ReadFile(gqlOperationGroupFile); err != nil {
-			clilog.Info.Println(err)
+			clilog.Debug.Println(err)
 			return nil, err
 		}
 		if err = json.Unmarshal(gqlOperationGrpBytes, &gqlOperationGrp); err != nil {
-			clilog.Info.Println(err)
+			clilog.Debug.Println(err)
 			return nil, err
 		}
 		return &gqlOperationGrp, nil
@@ -102,13 +105,13 @@ func getGrpcOperationGroup(grpcOperationGroupFile string) (*products.GrpcOperati
 
 	grpcOperationGrp := products.GrpcOperationGroup{}
 
-	if gqlOperationGroupFile != "" {
-		if grpcOperationGrpBytes, err = os.ReadFile(gqlOperationGroupFile); err != nil {
-			clilog.Info.Println(err)
+	if grpcOperationGroupFile != "" {
+		if grpcOperationGrpBytes, err = os.ReadFile(grpcOperationGroupFile); err != nil {
+			clilog.Debug.Println(err)
 			return nil, err
 		}
 		if err = json.Unmarshal(grpcOperationGrpBytes, &grpcOperationGrp); err != nil {
-			clilog.Info.Println(err)
+			clilog.Debug.Println(err)
 			return nil, err
 		}
 		return &grpcOperationGrp, nil

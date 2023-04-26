@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//Cmd to manage tracing of apis
+// IamCmd to manage manage env iam permissions
 var IamCmd = &cobra.Command{
 	Use:   "iam",
 	Short: "Manage IAM permissions for the environment",
@@ -28,7 +28,6 @@ var IamCmd = &cobra.Command{
 var memberName, role, memberType string
 
 func init() {
-
 	IamCmd.PersistentFlags().StringVarP(&environment, "env", "e",
 		"", "Apigee environment name")
 

@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//Cmd to manage flow hooks
+// Cmd to manage flow hooks
 var Cmd = &cobra.Command{
 	Use:     "flowhooks",
 	Aliases: []string{"fs"},
@@ -29,7 +29,6 @@ var Cmd = &cobra.Command{
 var org, env, name string
 
 func init() {
-
 	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
 	Cmd.PersistentFlags().StringVarP(&env, "env", "e",

@@ -64,19 +64,17 @@ func getPrivateKey(privateKey string) (interface{}, error) {
 }
 
 func generateJWT(privateKey string) (string, error) {
-
 	const scope = "https://www.googleapis.com/auth/cloud-platform"
 
 	privKey, err := getPrivateKey(privateKey)
-
 	if err != nil {
 		return "", err
 	}
 
 	now := time.Now()
 
-	//Google OAuth takes aud as a string, not array
-	//ref: https://github.com/lestrrat-go/jwx/releases/tag/v2.0.7
+	// Google OAuth takes aud as a string, not array
+	// ref: https://github.com/lestrrat-go/jwx/releases/tag/v2.0.7
 	jwt.Settings(jwt.WithFlattenAudience(true))
 	token := jwt.New()
 	token.Options().IsEnabled(jwt.FlattenAudience)
@@ -92,17 +90,16 @@ func generateJWT(privateKey string) (string, error) {
 		clilog.Error.Println("error parsing Private Key: ", err)
 		return "", err
 	}
-	clilog.Info.Println("jwt token : ", string(payload))
+	clilog.Debug.Println("jwt token : ", string(payload))
 	return string(payload), nil
 }
 
 // generateAccessToken generates a Google OAuth access token from a service account
 func generateAccessToken(privateKey string) (string, error) {
-
 	const grantType = "urn:ietf:params:oauth:grant-type:jwt-bearer"
 	var respBody []byte
 
-	//oAuthAccessToken is a structure to hold OAuth response
+	// oAuthAccessToken is a structure to hold OAuth response
 	type oAuthAccessToken struct {
 		AccessToken string `json:"access_token,omitempty"`
 		ExpiresIn   int    `json:"expires_in,omitempty"`
@@ -110,7 +107,6 @@ func generateAccessToken(privateKey string) (string, error) {
 	}
 
 	token, err := generateJWT(privateKey)
-
 	if err != nil {
 		return "", nil
 	}
@@ -129,7 +125,6 @@ func generateAccessToken(privateKey string) (string, error) {
 	req.Header.Add("Content-Length", strconv.Itoa(len(form.Encode())))
 
 	resp, err := client.Do(req)
-
 	if err != nil {
 		clilog.Error.Println("failed to generate oauth token: ", err)
 		return "", err
@@ -145,7 +140,7 @@ func generateAccessToken(privateKey string) (string, error) {
 	}
 
 	respBody, err = io.ReadAll(resp.Body)
-	clilog.Info.Printf("Response: %s\n", string(respBody))
+	clilog.Debug.Printf("Response: %s\n", string(respBody))
 
 	if err != nil {
 		clilog.Error.Println("error in response: ", err)
@@ -160,7 +155,7 @@ func generateAccessToken(privateKey string) (string, error) {
 		return "", err
 	}
 
-	clilog.Info.Println("access token : ", accessToken)
+	clilog.Debug.Println("access token : ", accessToken)
 
 	SetApigeeToken(accessToken.AccessToken)
 	_ = WriteToken(accessToken.AccessToken)
@@ -187,8 +182,8 @@ func getServiceAccountProperty(key string) (value string) {
 }
 
 func checkAccessToken() bool {
-	if IsSkipCheck() {
-		clilog.Info.Println("skipping token validity")
+	if TokenCheckEnabled() {
+		clilog.Debug.Println("skipping token validity")
 		return true
 	}
 
@@ -200,7 +195,7 @@ func checkAccessToken() bool {
 
 	client := &http.Client{}
 
-	clilog.Info.Println("Connecting to : ", u.String())
+	clilog.Debug.Println("Connecting to : ", u.String())
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
 		clilog.Error.Println("error in client:", err)
@@ -221,25 +216,25 @@ func checkAccessToken() bool {
 		clilog.Error.Println("token expired: ", string(body))
 		return false
 	}
-	clilog.Info.Println("Response: ", string(body))
-	clilog.Info.Println("Reusing the cached token: ", GetApigeeToken())
+	clilog.Debug.Println("Response: ", string(body))
+	clilog.Debug.Println("Reusing the cached token: ", GetApigeeToken())
 	return true
 }
 
 // SetAccessToken read from cache or if not found or expired will generate a new one
 func SetAccessToken() error {
 	if GetApigeeToken() == "" && GetServiceAccount() == "" {
-		SetApigeeToken(GetToken()) //read from configuration
+		SetApigeeToken(GetToken()) // read from configuration
 		if GetApigeeToken() == "" {
 			return fmt.Errorf("either token or service account must be provided")
 		}
-		if checkAccessToken() { //check if the token is still valid
+		if checkAccessToken() { // check if the token is still valid
 			return nil
 		}
 		return fmt.Errorf("token expired: request a new access token or pass the service account")
 	}
 	if GetApigeeToken() != "" {
-		//a token was passed, cache it
+		// a token was passed, cache it
 		if checkAccessToken() {
 			_ = WriteToken(GetApigeeToken())
 			return nil

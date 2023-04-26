@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//Cmd to manage envs
+// Cmd to manage envs
 var Cmd = &cobra.Command{
 	Use:     "environments",
 	Aliases: []string{"envs"},
@@ -29,7 +29,6 @@ var Cmd = &cobra.Command{
 var org, environment string
 
 func init() {
-
 	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
 

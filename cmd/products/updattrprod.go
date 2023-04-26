@@ -39,7 +39,6 @@ var UpdAttrCmd = &cobra.Command{
 var attrValue string
 
 func init() {
-
 	UpdAttrCmd.Flags().StringVarP(&attrName, "attr", "k",
 		"", "API Product attribute name")
 	UpdAttrCmd.Flags().StringVarP(&attrValue, "value", "v",

@@ -37,7 +37,6 @@ var UpdateCmd = &cobra.Command{
 }
 
 func init() {
-
 	UpdateCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of the Environment Group")
 	UpdateCmd.Flags().StringArrayVarP(&hostnames, "hosts", "d",

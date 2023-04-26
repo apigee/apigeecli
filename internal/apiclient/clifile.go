@@ -24,8 +24,10 @@ import (
 	"internal/clilog"
 )
 
-const apigeecliFile = "config.json"
-const apigeecliPath = ".apigeecli"
+const (
+	apigeecliFile = "config.json"
+	apigeecliPath = ".apigeecli"
+)
 
 var usr *user.User
 
@@ -41,26 +43,25 @@ type apigeeCLI struct {
 var cliPref *apigeeCLI //= apigeeCLI{}
 
 func ReadPreferencesFile() (err error) {
-
 	cliPref = new(apigeeCLI)
 
 	usr, err = user.Current()
 	if err != nil {
-		clilog.Info.Println(err)
+		clilog.Debug.Println(err)
 		return err
 	}
 
 	prefFile, err := os.ReadFile(path.Join(usr.HomeDir, apigeecliPath, apigeecliFile))
 	if err != nil {
-		clilog.Info.Println("Cached preferences was not found")
+		clilog.Debug.Println("Cached preferences was not found")
 		return err
 	}
 
 	err = json.Unmarshal(prefFile, &cliPref)
-	clilog.Info.Printf("Token %s, lastCheck: %s", cliPref.Token, cliPref.LastCheck)
-	clilog.Info.Printf("DefaultOrg %s", cliPref.Org)
+	clilog.Debug.Printf("Token %s, lastCheck: %s", cliPref.Token, cliPref.LastCheck)
+	clilog.Debug.Printf("DefaultOrg %s", cliPref.Org)
 	if err != nil {
-		clilog.Info.Printf("Error marshalling: %v\n", err)
+		clilog.Debug.Printf("Error marshalling: %v\n", err)
 		return DeletePreferencesFile()
 	}
 
@@ -81,11 +82,11 @@ func ReadPreferencesFile() (err error) {
 func DeletePreferencesFile() (err error) {
 	usr, err = user.Current()
 	if err != nil {
-		clilog.Info.Println(err)
+		clilog.Debug.Println(err)
 		return err
 	}
 	if _, err := os.Stat(path.Join(usr.HomeDir, apigeecliPath, apigeecliFile)); os.IsNotExist(err) {
-		clilog.Info.Println(err)
+		clilog.Debug.Println(err)
 		return err
 	}
 	return os.Remove(path.Join(usr.HomeDir, apigeecliPath, apigeecliFile))
@@ -96,15 +97,15 @@ func WriteToken(token string) (err error) {
 		return nil
 	}
 
-	clilog.Info.Println("Cache access token: ", token)
+	clilog.Debug.Println("Cache access token: ", token)
 	cliPref.Token = token
 
 	data, err := json.Marshal(&cliPref)
 	if err != nil {
-		clilog.Info.Printf("Error marshalling: %v\n", err)
+		clilog.Debug.Printf("Error marshalling: %v\n", err)
 		return err
 	}
-	clilog.Info.Println("Writing ", string(data))
+	clilog.Debug.Println("Writing ", string(data))
 	return WritePerferencesFile(data)
 }
 
@@ -121,15 +122,15 @@ func GetNoCheck() bool {
 }
 
 func SetNoCheck(nocheck bool) (err error) {
-	clilog.Info.Println("Nocheck set to: ", nocheck)
+	clilog.Debug.Println("Nocheck set to: ", nocheck)
 	cliPref.Nocheck = nocheck
 
 	data, err := json.Marshal(&cliPref)
 	if err != nil {
-		clilog.Info.Printf("Error marshalling: %v\n", err)
+		clilog.Debug.Printf("Error marshalling: %v\n", err)
 		return err
 	}
-	clilog.Info.Println("Writing ", string(data))
+	clilog.Debug.Println("Writing ", string(data))
 	return WritePerferencesFile(data)
 }
 
@@ -147,7 +148,7 @@ func TestAndUpdateLastCheck() (updated bool, err error) {
 		clilog.Warning.Printf("Error marshalling: %v\n", err)
 		return false, err
 	}
-	clilog.Info.Println("Writing ", string(data))
+	clilog.Debug.Println("Writing ", string(data))
 	if err = WritePerferencesFile(data); err != nil {
 		return false, err
 	}
@@ -160,14 +161,14 @@ func GetDefaultOrg() (org string) {
 }
 
 func WriteDefaultOrg(org string) (err error) {
-	clilog.Info.Println("Default org: ", org)
+	clilog.Debug.Println("Default org: ", org)
 	cliPref.Org = org
 	data, err := json.Marshal(&cliPref)
 	if err != nil {
-		clilog.Info.Printf("Error marshalling: %v\n", err)
+		clilog.Debug.Printf("Error marshalling: %v\n", err)
 		return err
 	}
-	clilog.Info.Println("Writing ", string(data))
+	clilog.Debug.Println("Writing ", string(data))
 	return WritePerferencesFile(data)
 }
 
@@ -178,10 +179,10 @@ func SetStaging(usestage bool) (err error) {
 	cliPref.Staging = usestage
 	data, err := json.Marshal(&cliPref)
 	if err != nil {
-		clilog.Info.Printf("Error marshalling: %v\n", err)
+		clilog.Debug.Printf("Error marshalling: %v\n", err)
 		return err
 	}
-	clilog.Info.Println("Writing ", string(data))
+	clilog.Debug.Println("Writing ", string(data))
 	return WritePerferencesFile(data)
 }
 
@@ -197,10 +198,10 @@ func SetProxy(url string) (err error) {
 	cliPref.ProxyUrl = url
 	data, err := json.Marshal(&cliPref)
 	if err != nil {
-		clilog.Info.Printf("Error marshalling: %v\n", err)
+		clilog.Debug.Printf("Error marshalling: %v\n", err)
 		return err
 	}
-	clilog.Info.Println("Writing ", string(data))
+	clilog.Debug.Println("Writing ", string(data))
 	return WritePerferencesFile(data)
 }
 
@@ -225,7 +226,7 @@ func WritePerferencesFile(payload []byte) (err error) {
 	if err == nil {
 		return WriteByteArrayToFile(path.Join(usr.HomeDir, apigeecliPath, apigeecliFile), false, payload)
 	} else if os.IsNotExist(err) {
-		if err = os.MkdirAll(path.Join(usr.HomeDir, apigeecliPath), 0755); err != nil {
+		if err = os.MkdirAll(path.Join(usr.HomeDir, apigeecliPath), 0o755); err != nil {
 			return err
 		}
 		return WriteByteArrayToFile(path.Join(usr.HomeDir, apigeecliPath, apigeecliFile), false, payload)

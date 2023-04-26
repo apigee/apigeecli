@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to list envs
+// ListArchiveCmd to list archives in env
 var ListArchiveCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List archives deployed to the environment",
@@ -38,5 +38,4 @@ var ListArchiveCmd = &cobra.Command{
 }
 
 func init() {
-
 }

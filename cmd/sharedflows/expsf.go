@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to export shared flows
+// ExpCmd to export shared flows
 var ExpCmd = &cobra.Command{
 	Use:   "export",
 	Short: "export Sharedflow bundles from an org",
@@ -42,7 +42,6 @@ var ExpCmd = &cobra.Command{
 var allRevisions bool
 
 func init() {
-
 	ExpCmd.Flags().IntVarP(&conn, "conn", "c",
 		4, "Number of connections")
 	ExpCmd.Flags().StringVarP(&folder, "folder", "f",

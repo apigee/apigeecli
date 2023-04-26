@@ -37,7 +37,6 @@ var DetachCmd = &cobra.Command{
 }
 
 func init() {
-
 	DetachCmd.Flags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
 

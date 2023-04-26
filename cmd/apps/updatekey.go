@@ -37,7 +37,6 @@ var UpdateKeyCmd = &cobra.Command{
 }
 
 func init() {
-
 	UpdateKeyCmd.Flags().StringVarP(&key, "key", "k",
 		"", "Developer app consumer key")
 	UpdateKeyCmd.Flags().StringVarP(&secret, "secret", "r",

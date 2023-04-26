@@ -21,15 +21,16 @@ import (
 )
 
 func TestInit(t *testing.T) {
-	clilog.Init(true)
+	clilog.Init(true, true, true)
+	clilog.Debug.Println("Printing Debug")
 	clilog.Info.Println("Printing Information")
 	clilog.Warning.Println("Printing Warning")
 	clilog.Error.Println("Printing Error")
 }
 
 func TestHttpGet(t *testing.T) {
-	clilog.Init(true)
-	_, err := HttpClient(true, "https://httpbin.org/get")
+	clilog.Init(true, true, true)
+	_, err := HttpClient("https://httpbin.org/get")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -37,36 +38,36 @@ func TestHttpGet(t *testing.T) {
 
 func TestHttpPost(t *testing.T) {
 	payload := "test"
-	_, err := HttpClient(true, "https://httpbin.org/post", payload)
+	_, err := HttpClient("https://httpbin.org/post", payload)
 	if err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestHttpDelete(t *testing.T) {
-	_, err := HttpClient(true, "https://httpbin.org/delete", "", "DELETE")
+	_, err := HttpClient("https://httpbin.org/delete", "", "DELETE")
 	if err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestHttpInvalidParam(t *testing.T) {
-	_, err := HttpClient(true, "https://httpbin.org/delete", "", "DELTE")
+	_, err := HttpClient("https://httpbin.org/delete", "", "DELTE")
 	if err == nil {
 		t.Fatal(err)
 	}
 }
 
 func TestHttpInvalidNumberOfParams(t *testing.T) {
-	_, err := HttpClient(true, "https://httpbin.org/delete", "", "DELETE", "SOMETHING ELSE")
+	_, err := HttpClient("https://httpbin.org/delete", "", "DELETE", "SOMETHING ELSE")
 	if err == nil {
 		t.Fatal(err)
 	}
 }
 
 func TestDownloadResource(t *testing.T) {
-	//download 1000 bytes
-	clilog.Init(true)
+	// download 1000 bytes
+	clilog.Init(true, true, true)
 	err := DownloadResource("https://httpbin.org/stream-bytes/1000", "test", ".zip", false)
 	if err != nil {
 		t.Fatal(err)
@@ -74,8 +75,8 @@ func TestDownloadResource(t *testing.T) {
 }
 
 func TestWriteJSONArrayToFile(t *testing.T) {
-	clilog.Init(true)
-	var entityPayloadList = []byte{'g', 'o', 'l', 'a', 'n', 'g'}
+	clilog.Init(true, true, true)
+	entityPayloadList := []byte{'g', 'o', 'l', 'a', 'n', 'g'}
 	err := WriteByteArrayToFile("test.json", false, entityPayloadList)
 	if err != nil {
 		t.Fatal(err)

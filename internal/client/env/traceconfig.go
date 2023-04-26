@@ -39,7 +39,7 @@ type samplingCfg struct {
 func GetTraceConfig() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "traceConfig")
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
@@ -65,27 +65,26 @@ func UpdateTraceConfig(exporter string, endpoint string, sampler string, sample_
 
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "traceConfig")
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload, "PATCH")
+	respBody, err = apiclient.HttpClient(u.String(), payload, "PATCH")
 	return respBody, err
 }
 
 func ImportTraceConfig(payload string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "traceConfig")
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload, "PATCH")
+	respBody, err = apiclient.HttpClient(u.String(), payload, "PATCH")
 	return respBody, err
 }
 
 func DisableTraceConfig() (respBody []byte, err error) {
-
 	var traceRespBody []byte
 	var payload []byte
 
-	apiclient.SetPrintOutput(false)
+	apiclient.SetClientPrintHttpResponse(false)
 	if traceRespBody, err = GetTraceConfig(); err != nil {
 		return nil, err
 	}
-	apiclient.SetPrintOutput(true)
+	apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
 
 	traceResp := traceCfg{}
 	if err = json.Unmarshal(traceRespBody, &traceResp); err != nil {
@@ -96,7 +95,7 @@ func DisableTraceConfig() (respBody []byte, err error) {
 		return nil, fmt.Errorf("Distributed trace not configured for the environment")
 	}
 
-	//disable trace
+	// disable trace
 	traceResp.SamplingConfig.Sampler = "OFF"
 
 	if payload, err = json.Marshal(traceResp); err != nil {
@@ -105,7 +104,7 @@ func DisableTraceConfig() (respBody []byte, err error) {
 
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "traceConfig")
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), string(payload), "PATCH")
+	respBody, err = apiclient.HttpClient(u.String(), string(payload), "PATCH")
 	return respBody, err
 }
 

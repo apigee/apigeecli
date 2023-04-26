@@ -49,7 +49,7 @@ func CreateEntry(proxyName string, mapName string, keyName string, value string)
 		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "keyvaluemaps", mapName, "entries")
 	}
 	payload := "{\"name\":\"" + keyName + "\",\"value\":\"" + value + "\"}"
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload)
+	respBody, err = apiclient.HttpClient(u.String(), payload)
 	return respBody, err
 }
 
@@ -63,7 +63,7 @@ func DeleteEntry(proxyName string, mapName string, keyName string) (respBody []b
 	} else {
 		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "keyvaluemaps", mapName, "entries", keyName)
 	}
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "", "DELETE")
+	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
 	return respBody, err
 }
 
@@ -77,7 +77,7 @@ func GetEntry(proxyName string, mapName string, keyName string) (respBody []byte
 	} else {
 		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "keyvaluemaps", mapName, "entries", keyName)
 	}
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
@@ -103,7 +103,7 @@ func ListEntries(proxyName string, mapName string, pageSize int, pageToken strin
 	} else {
 		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "keyvaluemaps", mapName, "entries")
 	}
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
@@ -112,15 +112,17 @@ func ExportEntries(proxyName string, mapName string) (payload [][]byte, err erro
 	var respBody []byte
 	count := 1
 
-	apiclient.SetPrintOutput(false)
+	apiclient.SetClientPrintHttpResponse(false)
+	defer apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
+
 	if respBody, err = ListEntries(proxyName, mapName, -1, ""); err != nil {
 		return nil, err
 	}
 
-	clilog.Info.Printf("Exporting batch 1 of KVM entries for map %s\n", mapName)
+	clilog.Debug.Printf("Exporting batch 1 of KVM entries for map %s\n", mapName)
 	payload = append(payload, respBody)
 
-	var keyValueEntries = keyvalueentries{}
+	keyValueEntries := keyvalueentries{}
 	if err = json.Unmarshal(respBody, &keyValueEntries); err != nil {
 		return nil, err
 	}
@@ -134,17 +136,15 @@ func ExportEntries(proxyName string, mapName string) (payload [][]byte, err erro
 			return nil, err
 		}
 		count++
-		clilog.Info.Printf("Exporting batch %d of KVM entries for map %s\n", count, mapName)
+		clilog.Debug.Printf("Exporting batch %d of KVM entries for map %s\n", count, mapName)
 		payload = append(payload, respBody)
 	}
 
-	apiclient.SetPrintOutput(true)
 	return payload, nil
 }
 
 // ImportEntries
 func ImportEntries(proxyName string, mapName string, conn int, filePath string) (err error) {
-
 	var pwg sync.WaitGroup
 
 	u, _ := url.Parse(apiclient.BaseURL)
@@ -163,12 +163,12 @@ func ImportEntries(proxyName string, mapName string, conn int, filePath string) 
 	}
 
 	numEntities := len(kvmEntries.KeyValueEntries)
-	clilog.Info.Printf("Found %d entries in the file\n", numEntities)
-	clilog.Info.Printf("Create KVM entries with %d connections\n", conn)
+	clilog.Debug.Printf("Found %d entries in the file\n", numEntities)
+	clilog.Debug.Printf("Create KVM entries with %d connections\n", conn)
 
 	numOfLoops, remaining := numEntities/conn, numEntities%conn
 
-	//ensure connections aren't greater than entities
+	// ensure connections aren't greater than entities
 	if conn > numEntities {
 		conn = numEntities
 	}
@@ -178,7 +178,7 @@ func ImportEntries(proxyName string, mapName string, conn int, filePath string) 
 	for i, end := 0, 0; i < numOfLoops; i++ {
 		pwg.Add(1)
 		end = (i * conn) + conn
-		clilog.Info.Printf("Creating batch %d of entries\n", (i + 1))
+		clilog.Debug.Printf("Creating batch %d of entries\n", (i + 1))
 		go batchImport(u.String(), kvmEntries.KeyValueEntries[start:end], &pwg)
 		start = end
 		pwg.Wait()
@@ -186,7 +186,7 @@ func ImportEntries(proxyName string, mapName string, conn int, filePath string) 
 
 	if remaining > 0 {
 		pwg.Add(1)
-		clilog.Info.Printf("Creating remaining %d entries\n", remaining)
+		clilog.Debug.Printf("Creating remaining %d entries\n", remaining)
 		go batchImport(u.String(), kvmEntries.KeyValueEntries[start:numEntities], &pwg)
 		pwg.Wait()
 	}
@@ -196,7 +196,7 @@ func ImportEntries(proxyName string, mapName string, conn int, filePath string) 
 
 func batchImport(url string, entities []keyvalueentry, pwg *sync.WaitGroup) {
 	defer pwg.Done()
-	//batch workgroup
+	// batch workgroup
 	var bwg sync.WaitGroup
 
 	bwg.Add(len(entities))
@@ -214,7 +214,7 @@ func createAsyncEntry(url string, kvEntry keyvalueentry, wg *sync.WaitGroup) {
 		clilog.Error.Println(err)
 		return
 	}
-	_, err = apiclient.HttpClient(apiclient.GetPrintOutput(), url, string(out))
+	_, err = apiclient.HttpClient(url, string(out))
 	if err != nil {
 		clilog.Error.Println(err)
 		return
@@ -225,7 +225,6 @@ func readKVMfile(filePath string) (kvmEntries keyvalueentries, err error) {
 	kvmEntries = keyvalueentries{}
 
 	jsonFile, err := os.Open(filePath)
-
 	if err != nil {
 		return kvmEntries, err
 	}
@@ -233,7 +232,6 @@ func readKVMfile(filePath string) (kvmEntries keyvalueentries, err error) {
 	defer jsonFile.Close()
 
 	byteValue, err := io.ReadAll(jsonFile)
-
 	if err != nil {
 		return kvmEntries, err
 	}

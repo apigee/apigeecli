@@ -48,7 +48,6 @@ var BundleCreateCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-
 		if proxyZip != "" {
 			_, err = apis.CreateProxy(name, proxyZip)
 		} else if proxyFolder != "" {

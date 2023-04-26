@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to get env details
+// GetCmd to get env details
 var GetCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Get properties of an environment",
@@ -40,7 +40,6 @@ var GetCmd = &cobra.Command{
 var config = false
 
 func init() {
-
 	GetCmd.Flags().StringVarP(&environment, "env", "e",
 		"", "Apigee environment name")
 	GetCmd.Flags().BoolVarP(&config, "config", "c",

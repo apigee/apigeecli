@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to get key aliases
+// GetCmd to get key aliases
 var GetCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Get a Key Alias",
@@ -38,7 +38,6 @@ var GetCmd = &cobra.Command{
 }
 
 func init() {
-
 	GetCmd.Flags().StringVarP(&keystoreName, "key", "k",
 		"", "Name of the key store")
 

@@ -31,7 +31,7 @@ var ExpRateplanCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		var exportFileName = "rateplan_" + name + ".json"
+		exportFileName := "rateplan_" + name + ".json"
 		respBody, err := products.ExportRateplan(name)
 		if err != nil {
 			return

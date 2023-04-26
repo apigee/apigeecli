@@ -267,7 +267,8 @@ func AddQuotaPolicy(policyName string, useQuotaConfigStepName string,
 	allowRef string, allowLiteral string,
 	intervalRef string, intervalLiteral string,
 	timeUnitRef string, timeUnitLiteral string,
-	identifierRef string, identifierLiteral string) string {
+	identifierRef string, identifierLiteral string,
+) string {
 	var policyString string
 
 	if useQuotaConfigStepName != "" {

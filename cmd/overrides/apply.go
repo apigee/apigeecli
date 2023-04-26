@@ -38,63 +38,63 @@ var ApplyCmd = &cobra.Command{
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-
 		if err = readOverrides(overridesFile); err != nil {
 			return err
 		}
 
 		apiclient.SetProjectID(getOrg())
+		apiclient.DisableCmdPrintHttpResponse()
 		_ = apiclient.SetApigeeOrg(getOrg())
-		apiclient.SetPrintOutput(false)
 
-		//check if the org exists
+		// check if the org exists
 		if _, err = orgs.Get(); err != nil {
 			if _, err = orgs.Create(getOrgRegion(), "", "HYBRID", "", "", false); err != nil {
 				return err
 			}
-			fmt.Printf("Org %s created\n", getOrg())
+			clilog.Info.Printf("Org %s created\n", getOrg())
 		} else {
-			fmt.Printf("Org %s already exists\n", getOrg())
+			clilog.Info.Printf("Org %s already exists\n", getOrg())
 		}
 
-		//check setSyncAuth
+		// check setSyncAuth
 		identities := getSyncServiceAccounts()
 		if len(identities) > 0 {
 			if _, err = sync.Set(identities); err != nil {
 				clilog.Warning.Println("Error setting identities: ", err)
 			} else {
-				fmt.Printf("Org setSync identities set: %v", identities)
+				clilog.Info.Printf("Org setSync identities set: %v", identities)
 			}
 		} else {
 			clilog.Warning.Println("No sync identities were set in overrides")
 		}
 
-		//create environments
+		// create environments
 		environmentList := getEnvs()
 		for _, environment := range environmentList {
-			//check if env exists
+			// check if env exists
 			apiclient.SetApigeeEnv(environment)
 			if _, err = env.Get(false); err != nil {
 				if _, err = env.Create("PROXY", "PROGRAMMABLE"); err != nil {
 					return err
 				}
-				fmt.Printf("Environment %s created", environment)
+				clilog.Info.Printf("Environment %s created", environment)
 			} else {
-				fmt.Printf("Environment %s already exists\n", environment)
+				clilog.Info.Printf("Environment %s already exists\n", environment)
 			}
 		}
 
-		//create environment groups
+		// create environment groups
 		environmentGroupList := getEnvGroups()
 		for i, environmentGroup := range environmentGroupList {
-			//check if env group exists
+			// check if env group exists
 			if _, err = envgroups.Get(environmentGroup); err != nil {
 				if _, err = envgroups.Create(environmentGroup, getDomainName(i)); err != nil {
 					return err
 				}
-				fmt.Printf("Environment Group %s provisioned with a temporary domain name %s\n", environmentGroup, getDomainName(i))
+				clilog.Info.Printf("Environment Group %s provisioned with a temporary domain name %s\n",
+					environmentGroup, getDomainName(i))
 			} else {
-				fmt.Printf("Environment Group %s already exists\n", environmentGroup)
+				clilog.Info.Printf("Environment Group %s already exists\n", environmentGroup)
 			}
 		}
 
@@ -105,7 +105,6 @@ var ApplyCmd = &cobra.Command{
 var overridesFile string
 
 func init() {
-
 	ApplyCmd.Flags().StringVarP(&overridesFile, "overrides", "f",
 		"overrides.yaml", "overrides file path")
 
@@ -113,7 +112,7 @@ func init() {
 }
 
 func getDomainName(index int) []string {
-	var domainNames = []string{}
+	domainNames := []string{}
 	domainName := fmt.Sprintf("api.acme%d.com", index)
 	domainNames = append(domainNames, domainName)
 	return domainNames

@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//Cmd to manage tracing of apis
+// Cmd to manage tracing of apis
 var Cmd = &cobra.Command{
 	Use:   "cache",
 	Short: "Manage caches within an Apigee environment",
@@ -28,7 +28,6 @@ var Cmd = &cobra.Command{
 var org, env string
 
 func init() {
-
 	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
 

@@ -39,7 +39,6 @@ var DelCmd = &cobra.Command{
 var retention string
 
 func init() {
-
 	DelCmd.Flags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
 	DelCmd.Flags().StringVarP(&retention, "retension", "r",

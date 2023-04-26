@@ -18,18 +18,19 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//Cmd to manage shared flows
+// Cmd to manage shared flows
 var Cmd = &cobra.Command{
 	Use:   "sharedflows",
 	Short: "Manage Apigee shared flows in an org",
 	Long:  "Manage Apigee shared flows in an org",
 }
 
-var name, org, env string
-var conn, revision int
+var (
+	name, org, env string
+	conn, revision int
+)
 
 func init() {
-
 	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
 

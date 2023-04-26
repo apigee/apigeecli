@@ -38,7 +38,6 @@ type transaction struct {
 }
 
 func Adjust(email string, adjust string) (respBody []byte, err error) {
-
 	dAdjustment := developerAdjustment{}
 	if err = json.Unmarshal([]byte(adjust), &dAdjustment); err != nil {
 		return nil, err
@@ -46,12 +45,11 @@ func Adjust(email string, adjust string) (respBody []byte, err error) {
 
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", url.QueryEscape(email), "balance:adjust")
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), adjust)
+	respBody, err = apiclient.HttpClient(u.String(), adjust)
 	return respBody, err
 }
 
 func Credit(email string, transact string) (respBody []byte, err error) {
-
 	txn := transaction{}
 	if err = json.Unmarshal([]byte(transact), &txn); err != nil {
 		return nil, err
@@ -59,6 +57,6 @@ func Credit(email string, transact string) (respBody []byte, err error) {
 
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", url.QueryEscape(email), "balance:credit")
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), transact)
+	respBody, err = apiclient.HttpClient(u.String(), transact)
 	return respBody, err
 }

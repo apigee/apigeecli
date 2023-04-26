@@ -30,7 +30,7 @@ import (
 )
 
 // entityPayloadList stores list of entities
-var entityPayloadList [][]byte //types.EntityPayloadList
+var entityPayloadList [][]byte // types.EntityPayloadList
 
 // ReadArchive confirms f the file format is zip and reads the contents are a byte[]
 func ReadArchive(filename string) ([]byte, error) {
@@ -102,7 +102,7 @@ func ReadBundle(filename string) error {
 
 // WriteByteArrayToFile accepts []bytes and writes to a file
 func WriteByteArrayToFile(exportFile string, fileAppend bool, payload []byte) error {
-	var fileFlags = os.O_CREATE | os.O_WRONLY
+	fileFlags := os.O_CREATE | os.O_WRONLY
 
 	if fileAppend {
 		fileFlags |= os.O_APPEND
@@ -110,7 +110,7 @@ func WriteByteArrayToFile(exportFile string, fileAppend bool, payload []byte) er
 		fileFlags |= os.O_TRUNC
 	}
 
-	f, err := os.OpenFile(exportFile, fileFlags, 0644)
+	f, err := os.OpenFile(exportFile, fileFlags, 0o644)
 	if err != nil {
 		return err
 	}
@@ -127,20 +127,20 @@ func WriteByteArrayToFile(exportFile string, fileAppend bool, payload []byte) er
 
 // WriteArrayByteArrayToFile accepts [][]bytes and writes to a file
 func WriteArrayByteArrayToFile(exportFile string, fileAppend bool, payload [][]byte) error {
-	var fileFlags = os.O_CREATE | os.O_WRONLY
+	fileFlags := os.O_CREATE | os.O_WRONLY
 
 	if fileAppend {
 		fileFlags |= os.O_APPEND
 	}
 
-	f, err := os.OpenFile(exportFile, fileFlags, 0644)
+	f, err := os.OpenFile(exportFile, fileFlags, 0o644)
 	if err != nil {
 		return err
 	}
 
 	defer f.Close()
 
-	//begin json array
+	// begin json array
 	_, err = f.Write([]byte("["))
 	if err != nil {
 		clilog.Error.Println("error writing to file ", err)
@@ -148,7 +148,7 @@ func WriteArrayByteArrayToFile(exportFile string, fileAppend bool, payload [][]b
 	}
 
 	payloadFromArray := bytes.Join(payload, []byte(","))
-	//add json array terminate
+	// add json array terminate
 	payloadFromArray = append(payloadFromArray, byte(']'))
 
 	_, err = f.Write(payloadFromArray)
@@ -163,14 +163,15 @@ func WriteArrayByteArrayToFile(exportFile string, fileAppend bool, payload [][]b
 
 // GetAsyncEntity stores results for each entity in a list
 func GetAsyncEntity(entityURL string, wg *sync.WaitGroup, mu *sync.Mutex) {
-	//this is a two step process - 1) get entity details 2) store in byte[][]
+	// this is a two step process - 1) get entity details 2) store in byte[][]
 	defer wg.Done()
 
 	var respBody []byte
 
-	//don't print to sysout
-	respBody, err := HttpClient(false, entityURL)
-
+	// don't print to sysout
+	SetClientPrintHttpResponse(false)
+	defer SetClientPrintHttpResponse(GetCmdPrintHttpResponseSetting())
+	respBody, err := HttpClient(entityURL)
 	if err != nil {
 		clilog.Error.Fatalf("error with entity: %s", entityURL)
 		clilog.Error.Println(err)
@@ -181,7 +182,7 @@ func GetAsyncEntity(entityURL string, wg *sync.WaitGroup, mu *sync.Mutex) {
 	mu.Lock()
 	entityPayloadList = append(entityPayloadList, respBody)
 	mu.Unlock()
-	clilog.Info.Printf("Completed entity: %s", entityURL)
+	clilog.Debug.Printf("Completed entity: %s", entityURL)
 }
 
 func GetEntityPayloadList() [][]byte {
@@ -194,7 +195,7 @@ func ClearEntityPayloadList() {
 
 // FetchAsyncBundle can download a shared flow or a proxy bundle
 func FetchAsyncBundle(entityType string, folder string, name string, revision string, allRevisions bool, wg *sync.WaitGroup) {
-	//this method is meant to be called asynchronously
+	// this method is meant to be called asynchronously
 	defer wg.Done()
 
 	_ = FetchBundle(entityType, folder, name, revision, allRevisions)
@@ -245,7 +246,7 @@ func ImportBundle(entityType string, name string, bundlePath string) error {
 		return err
 	}
 
-	//when importing from a folder, proxy name = file name
+	// when importing from a folder, proxy name = file name
 	if name == "" {
 		_, fileName := filepath.Split(bundlePath)
 		names := strings.Split(fileName, ".")
@@ -264,13 +265,13 @@ func ImportBundle(entityType string, name string, bundlePath string) error {
 		"proxy": bundlePath,
 	}
 
-	_, err = PostHttpOctet(true, false, u.String(), formParams)
+	_, err = PostHttpOctet(false, u.String(), formParams)
 	if err != nil {
 		clilog.Error.Println(err)
 		return err
 	}
 
-	clilog.Info.Printf("Completed entity: %s", u.String())
+	clilog.Debug.Printf("Completed entity: %s", u.String())
 	return nil
 }
 

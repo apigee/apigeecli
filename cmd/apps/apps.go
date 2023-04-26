@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//Cmd to manage apps
+// Cmd to manage apps
 var Cmd = &cobra.Command{
 	Use:     "apps",
 	Aliases: []string{"applications"},
@@ -26,11 +26,12 @@ var Cmd = &cobra.Command{
 	Long:    "Manage Apigee Developer Applications",
 }
 
-var appID, name, org string
-var conn int
+var (
+	appID, name, org string
+	conn             int
+)
 
 func init() {
-
 	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
 

@@ -25,8 +25,10 @@ var CreateCmd = &cobra.Command{
 	Long:  "Creates an API proxy in an Apigee Org",
 }
 
-var targetUrlRef string
-var importProxy, skipPolicy, addCORS bool
+var (
+	targetURLRef                     string
+	importProxy, skipPolicy, addCORS bool
+)
 
 func init() {
 	CreateCmd.AddCommand(OasCreateCmd)

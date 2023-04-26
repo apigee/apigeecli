@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to undeploy shared flow
+// UndepCmd to undeploy shared flow
 var UndepCmd = &cobra.Command{
 	Use:   "undeploy",
 	Short: "Undeploys a revision of an existing API proxy",
@@ -38,7 +38,6 @@ var UndepCmd = &cobra.Command{
 }
 
 func init() {
-
 	UndepCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Sharedflow name")
 	UndepCmd.Flags().StringVarP(&env, "env", "e",
@@ -49,5 +48,4 @@ func init() {
 	_ = UndepCmd.MarkFlagRequired("env")
 	_ = UndepCmd.MarkFlagRequired("name")
 	_ = UndepCmd.MarkFlagRequired("rev")
-
 }

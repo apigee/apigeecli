@@ -30,7 +30,6 @@ var GetCmd = &cobra.Command{
 	Short: "Get App in an Organization by App ID",
 	Long:  "Returns the app profile for the specified app ID.",
 	Args: func(cmd *cobra.Command, args []string) error {
-
 		if appID == "" && name == "" && productName == "" {
 			return fmt.Errorf("pass either name or appId or productName")
 		}
@@ -50,7 +49,7 @@ var GetCmd = &cobra.Command{
 			if err != nil {
 				return err
 			}
-			//print the item
+			// print the item
 			return apiclient.PrettyPrint(outBytes)
 		}
 
@@ -62,7 +61,6 @@ var GetCmd = &cobra.Command{
 var productName string
 
 func init() {
-
 	GetCmd.Flags().StringVarP(&appID, "appId", "i",
 		"", "Developer app id")
 	GetCmd.Flags().StringVarP(&name, "name", "n",

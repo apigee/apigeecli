@@ -26,7 +26,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to create a new instance
+// CreateCmd to create a new instance
 var CreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create an Instance",
@@ -35,16 +35,19 @@ var CreateCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-
+		apiclient.SetClientPrintHttpResponse(false)
 		if billingType, err = orgs.GetOrgField("billingType"); err != nil {
 			return err
 		}
+		apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
 
 		if billingType != "EVALUATION" {
-			re := regexp.MustCompile(`projects\/([a-zA-Z0-9_-]+)\/locations\/([a-zA-Z0-9_-]+)\/keyRings\/([a-zA-Z0-9_-]+)\/cryptoKeys\/([a-zA-Z0-9_-]+)`)
+			re := regexp.MustCompile(`projects\/([a-zA-Z0-9_-]+)\/locations` +
+				`\/([a-zA-Z0-9_-]+)\/keyRings\/([a-zA-Z0-9_-]+)\/cryptoKeys\/([a-zA-Z0-9_-]+)`)
 			ok := re.Match([]byte(diskEncryptionKeyName))
 			if !ok {
-				return fmt.Errorf("disk encryption key must be of the format projects/{project-id}/locations/{location}/keyRings/{test}/cryptoKeys/{cryptoKey}")
+				return fmt.Errorf("disk encryption key must be of the format " +
+					"projects/{project-id}/locations/{location}/keyRings/{test}/cryptoKeys/{cryptoKey}")
 			}
 		}
 
@@ -62,11 +65,12 @@ var CreateCmd = &cobra.Command{
 	},
 }
 
-var diskEncryptionKeyName, ipRange, billingType string
-var consumerAcceptList []string
+var (
+	diskEncryptionKeyName, ipRange, billingType string
+	consumerAcceptList                          []string
+)
 
 func init() {
-
 	CreateCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of the Instance")
 	CreateCmd.Flags().StringVarP(&location, "location", "l",
@@ -76,7 +80,8 @@ func init() {
 	CreateCmd.Flags().StringVarP(&ipRange, "iprange", "",
 		"", "Peering CIDR Range; must be /22 range")
 	CreateCmd.Flags().StringArrayVarP(&consumerAcceptList, "consumer-accept-list", "c",
-		[]string{}, "Customer accept list represents the list of projects (id/number) that can connect to the service attachment")
+		[]string{}, "Customer accept list represents the list of "+
+			"projects (id/number) that can connect to the service attachment")
 
 	_ = CreateCmd.MarkFlagRequired("name")
 	_ = CreateCmd.MarkFlagRequired("location")

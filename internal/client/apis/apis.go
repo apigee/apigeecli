@@ -58,7 +58,7 @@ func CreateProxy(name string, proxy string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apis")
 	proxyName := "{\"name\":\"" + name + "\"}"
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), proxyName)
+	respBody, err = apiclient.HttpClient(u.String(), proxyName)
 	return respBody, err
 }
 
@@ -66,7 +66,7 @@ func CreateProxy(name string, proxy string) (respBody []byte, err error) {
 func DeleteProxy(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apis", name)
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "", "DELETE")
+	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
 	return respBody, err
 }
 
@@ -74,7 +74,7 @@ func DeleteProxy(name string) (respBody []byte, err error) {
 func DeleteProxyRevision(name string, revision int) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apis", name, "revisions", strconv.Itoa(revision))
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "", "DELETE")
+	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
 	return respBody, err
 }
 
@@ -95,7 +95,7 @@ func DeployProxy(name string, revision int, overrides bool, serviceAccountName s
 
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(),
 		"apis", name, "revisions", strconv.Itoa(revision), "deployments")
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "")
+	respBody, err = apiclient.HttpClient(u.String(), "")
 	return respBody, err
 }
 
@@ -112,17 +112,18 @@ func GetProxy(name string, revision int) (respBody []byte, err error) {
 	} else {
 		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apis", name)
 	}
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
 // GetHighestProxyRevision
 func GetHighestProxyRevision(name string) (version int, err error) {
-	apiclient.SetPrintOutput(false)
+	apiclient.SetClientPrintHttpResponse(false)
+	defer apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
+
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apis", name)
-	respBody, err := apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
-	apiclient.SetPrintOutput(true)
+	respBody, err := apiclient.HttpClient(u.String())
 	if err != nil {
 		return -1, err
 	}
@@ -155,7 +156,7 @@ func GenerateDeployChangeReport(name string, revision int, overrides bool) (resp
 
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "apis", name, "revisions",
 		strconv.Itoa(revision), "deployments:generateDeployChangeReport")
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
@@ -168,7 +169,7 @@ func ListProxies(includeRevisions bool) (respBody []byte, err error) {
 		u.RawQuery = q.Encode()
 	}
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apis")
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
@@ -179,7 +180,7 @@ func ListEnvDeployments() (respBody []byte, err error) {
 		return respBody, fmt.Errorf("environment name missing")
 	}
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "deployments")
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
@@ -187,7 +188,7 @@ func ListEnvDeployments() (respBody []byte, err error) {
 func ListProxyDeployments(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apis", name, "deployments")
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
@@ -199,7 +200,7 @@ func ListProxyRevisionDeployments(name string, revision int) (respBody []byte, e
 	}
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "apis", name, "revisions",
 		strconv.Itoa(revision), "deployments")
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
@@ -208,7 +209,7 @@ func UndeployProxy(name string, revision int) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(),
 		"apis", name, "revisions", strconv.Itoa(revision), "deployments")
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "", "DELETE")
+	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
 	return respBody, err
 }
 
@@ -225,10 +226,9 @@ func Update(name string, labels map[string]string) (respBody []byte, err error) 
 			labelsArr = append(labelsArr, "\""+key+"\":\""+value+"\"")
 		}
 		payload := "{\"labels\":{" + strings.Join(labelsArr, ",") + "}}"
-		fmt.Println(payload)
 
 		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apis", name)
-		respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload, "PATCH")
+		respBody, err = apiclient.HttpClient(u.String(), payload, "PATCH")
 	}
 
 	return respBody, err
@@ -270,7 +270,8 @@ func CleanProxy(name string, reportOnly bool, keepList []string) (err error) {
 	var revision int
 
 	// disable printing
-	apiclient.SetPrintOutput(false)
+	apiclient.SetClientPrintHttpResponse(false)
+	defer apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
 
 	// step 1. get a list of revisions that are deployed.
 	if proxyDeploymentsBytes, err = ListProxyDeployments(name); err != nil {
@@ -291,7 +292,7 @@ func CleanProxy(name string, reportOnly bool, keepList []string) (err error) {
 		}
 	}
 
-	fmt.Println("Revisions [" + getRevisions(deployedRevisions) + "] deployed for API Proxy " + name)
+	clilog.Info.Println("Revisions [" + getRevisions(deployedRevisions) + "] deployed for API Proxy " + name)
 
 	// step 2. get all the revisions for the proxy
 	if proxyRevisionsBytes, err = GetProxy(name, -1); err != nil {
@@ -301,9 +302,6 @@ func CleanProxy(name string, reportOnly bool, keepList []string) (err error) {
 	if err = json.Unmarshal(proxyRevisionsBytes, &proxyRevisions); err != nil {
 		return err
 	}
-
-	// enable printing
-	apiclient.SetPrintOutput(true)
 
 	for _, proxyRevision := range proxyRevisions.Revision {
 
@@ -321,7 +319,7 @@ func CleanProxy(name string, reportOnly bool, keepList []string) (err error) {
 					if revision, err = strconv.Atoi(proxyRevision); err != nil {
 						return err
 					}
-					fmt.Println("Deleting revision: " + proxyRevision)
+					clilog.Info.Println("Deleting revision: " + proxyRevision)
 					if _, err = DeleteProxyRevision(name, revision); err != nil {
 						return err
 					}
@@ -331,7 +329,7 @@ func CleanProxy(name string, reportOnly bool, keepList []string) (err error) {
 	}
 
 	if reportOnly && len(reportRevisions) > 0 {
-		fmt.Println("[REPORT]: API Proxy '" + name + "' revisions: " + getRevisions(reportRevisions) + " can be cleaned")
+		clilog.Info.Println("[REPORT]: API Proxy '" + name + "' revisions: " + getRevisions(reportRevisions) + " can be cleaned")
 	}
 
 	return nil
@@ -346,7 +344,10 @@ func ExportProxies(conn int, folder string, allRevisions bool) (err error) {
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apis")
 
 	// don't print to sysout
-	respBody, err := apiclient.HttpClient(false, u.String())
+	apiclient.SetClientPrintHttpResponse(false)
+	defer apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
+
+	respBody, err := apiclient.HttpClient(u.String())
 	if err != nil {
 		return err
 	}
@@ -356,8 +357,8 @@ func ExportProxies(conn int, folder string, allRevisions bool) (err error) {
 		return err
 	}
 
-	clilog.Info.Printf("Found %d API Proxies in the org\n", len(prxs.Proxies))
-	clilog.Info.Printf("Exporting bundles with parallel %d connections\n", conn)
+	clilog.Debug.Printf("Found %d API Proxies in the org\n", len(prxs.Proxies))
+	clilog.Debug.Printf("Exporting bundles with parallel %d connections\n", conn)
 
 	jobChan := make(chan revision)
 	errChan := make(chan error)
@@ -447,7 +448,7 @@ func exportAPIProxies(wg *sync.WaitGroup, jobs <-chan revision, folder string, e
 		_ = fd.Close()
 
 		fpath := filepath.Join(folder, fname+".zip")
-		if err = os.Rename(filepath.Join(os.TempDir(), fd.Name()), fpath); err != nil {
+		if err = os.Rename(filepath.Join(fd.Name()), fpath); err != nil {
 			errs <- err
 			continue
 		}
@@ -482,8 +483,8 @@ func ImportProxies(conn int, folder string) error {
 		return nil
 	}
 
-	clilog.Info.Printf("Found %d proxy bundles in the folder\n", len(bundles))
-	clilog.Info.Printf("Importing proxies with %d parallel connections\n", conn)
+	clilog.Debug.Printf("Found %d proxy bundles in the folder\n", len(bundles))
+	clilog.Debug.Printf("Importing proxies with %d parallel connections\n", conn)
 
 	jobChan := make(chan string)
 	errChan := make(chan error)
@@ -590,9 +591,8 @@ func importAPIProxies(wg *sync.WaitGroup, jobs <-chan string, errs chan<- error)
 			if err = json.Indent(out, bytes.TrimSpace(b), "", "  "); err != nil {
 				errs <- fmt.Errorf("apigee returned invalid json: %w", err)
 			}
-			fmt.Println(out.String())
 		}
-		clilog.Info.Printf("Completed bundle import: %s", job)
+		clilog.Debug.Printf("Completed bundle import: %s", job)
 	}
 }
 

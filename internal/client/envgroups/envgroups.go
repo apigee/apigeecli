@@ -40,7 +40,6 @@ type environmentgroup struct {
 
 // Create
 func Create(name string, hostnames []string) (respBody []byte, err error) {
-
 	envgroup := []string{}
 
 	envgroup = append(envgroup, "\"name\":\""+name+"\"")
@@ -50,7 +49,7 @@ func Create(name string, hostnames []string) (respBody []byte, err error) {
 
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "envgroups")
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload)
+	respBody, err = apiclient.HttpClient(u.String(), payload)
 	return respBody, err
 }
 
@@ -58,7 +57,7 @@ func Create(name string, hostnames []string) (respBody []byte, err error) {
 func Get(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "envgroups", name)
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
@@ -66,7 +65,7 @@ func Get(name string) (respBody []byte, err error) {
 func Delete(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "envgroups", name)
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "", "DELETE")
+	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
 	return respBody, err
 }
 
@@ -74,7 +73,7 @@ func Delete(name string) (respBody []byte, err error) {
 func List() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "envgroups")
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
@@ -90,26 +89,24 @@ func PatchHosts(name string, hostnames []string) (respBody []byte, err error) {
 	envgroup = append(envgroup, "\"hostnames\":[\""+getArrayStr(hostnames)+"\"]")
 	payload := "{" + strings.Join(envgroup, ",") + "}"
 
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload, "PATCH", "application/merge-patch+json")
+	respBody, err = apiclient.HttpClient(u.String(), payload, "PATCH", "application/merge-patch+json")
 	return respBody, err
 }
 
 // Attach
 func Attach(name string, environment string) (respBody []byte, err error) {
-
 	envgroup := []string{}
 	envgroup = append(envgroup, "\"environment\":\""+environment+"\"")
 	payload := "{" + strings.Join(envgroup, ",") + "}"
 
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "envgroups", name, "attachments")
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload)
+	respBody, err = apiclient.HttpClient(u.String(), payload)
 	return respBody, err
 }
 
 // DetachEnvironment
 func DetachEnvironment(name string, environment string) (respBody []byte, err error) {
-
 	type attachment struct {
 		Name        string `json:"name,omitempty"`
 		Environment string `json:"environment,omitempty"`
@@ -122,11 +119,11 @@ func DetachEnvironment(name string, environment string) (respBody []byte, err er
 
 	envGroupAttachments := attachments{}
 
-	apiclient.SetPrintOutput(false)
+	apiclient.SetClientPrintHttpResponse(false)
 	if respBody, err = ListAttach(name); err != nil {
 		return nil, err
 	}
-	apiclient.SetPrintOutput(true)
+	apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
 
 	if err := json.Unmarshal(respBody, &envGroupAttachments); err != nil {
 		return nil, err
@@ -146,7 +143,7 @@ func DetachEnvironment(name string, environment string) (respBody []byte, err er
 func Detach(name string, attachment string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "envgroups", name, "attachments", attachment)
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "", "DELETE")
+	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
 	return respBody, err
 }
 
@@ -154,7 +151,7 @@ func Detach(name string, attachment string) (respBody []byte, err error) {
 func ListAttach(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "envgroups", name, "attachments")
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
@@ -166,7 +163,6 @@ func getArrayStr(str []string) string {
 
 // Import
 func Import(filePath string) (err error) {
-
 	var environmentGroups environmentgroups
 
 	if environmentGroups, err = readEnvGroupsFile(filePath); err != nil {
@@ -182,11 +178,9 @@ func Import(filePath string) (err error) {
 }
 
 func readEnvGroupsFile(filePath string) (environmentgroups, error) {
-
 	environmentGroups := environmentgroups{}
 
 	jsonFile, err := os.Open(filePath)
-
 	if err != nil {
 		return environmentGroups, err
 	}
@@ -194,7 +188,6 @@ func readEnvGroupsFile(filePath string) (environmentgroups, error) {
 	defer jsonFile.Close()
 
 	byteValue, err := io.ReadAll(jsonFile)
-
 	if err != nil {
 		return environmentGroups, err
 	}

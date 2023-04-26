@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to get env details
+// CreateCmd to create env
 var CreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a new environment",
@@ -40,7 +40,6 @@ var CreateCmd = &cobra.Command{
 var deploymentType, apiProxyType string
 
 func init() {
-
 	CreateCmd.Flags().StringVarP(&environment, "env", "e",
 		"", "Apigee environment name")
 	CreateCmd.Flags().StringVarP(&deploymentType, "deptype", "d",

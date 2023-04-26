@@ -38,6 +38,9 @@ var YearlyCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		var apiCalls int
+		w := tabwriter.NewWriter(os.Stdout, 32, 4, 0, ' ', 0)
+
+		clilog.Warning.Println("This API is rate limited to 1 API Call per second")
 
 		clilog.Warning.Println("This API is rate limited to 1 API Call per second")
 
@@ -46,7 +49,6 @@ var YearlyCmd = &cobra.Command{
 		}
 
 		if envDetails {
-			w := tabwriter.NewWriter(os.Stdout, 32, 4, 0, ' ', 0)
 			fmt.Fprintln(w, "ENVIRONMENT\tMONTH\tAPI CALLS")
 			w.Flush()
 		}
@@ -59,7 +61,6 @@ var YearlyCmd = &cobra.Command{
 			fmt.Printf("\nSummary\n\n")
 		}
 
-		w := tabwriter.NewWriter(os.Stdout, 32, 4, 0, ' ', 0)
 		fmt.Fprintln(w, "ORGANIZATION\tYEAR\tAPI CALLS")
 		fmt.Fprintf(w, "%s\t%d\t%d\n", apiclient.GetApigeeOrg(), year, apiCalls)
 		fmt.Fprintln(w)
@@ -70,7 +71,6 @@ var YearlyCmd = &cobra.Command{
 }
 
 func init() {
-
 	YearlyCmd.Flags().IntVarP(&year, "year", "y",
 		-1, "Year")
 	YearlyCmd.Flags().BoolVarP(&envDetails, "env-details", "",

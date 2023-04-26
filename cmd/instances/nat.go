@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//NatCmd to manage instances
+// NatCmd to manage instances
 var NatCmd = &cobra.Command{
 	Use:   "nat",
 	Short: "Manage NAT IPs for Apigee instances",
@@ -28,7 +28,6 @@ var NatCmd = &cobra.Command{
 var natid string
 
 func init() {
-
 	NatCmd.PersistentFlags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
 

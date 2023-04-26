@@ -22,11 +22,11 @@ import (
 	"strings"
 
 	"internal/apiclient"
+	"internal/clilog"
 )
 
 // Create
 func Create(deploymentType string, apiProxyType string) (respBody []byte, err error) {
-
 	environment := []string{}
 	environment = append(environment, "\"name\":\""+apiclient.GetApigeeEnv()+"\"")
 
@@ -48,7 +48,7 @@ func Create(deploymentType string, apiProxyType string) (respBody []byte, err er
 
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments")
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload)
+	respBody, err = apiclient.HttpClient(u.String(), payload)
 	return respBody, err
 }
 
@@ -56,7 +56,7 @@ func Create(deploymentType string, apiProxyType string) (respBody []byte, err er
 func Delete() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv())
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "", "DELETE")
+	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
 	return respBody, err
 }
 
@@ -68,7 +68,7 @@ func Get(config bool) (respBody []byte, err error) {
 	} else {
 		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv())
 	}
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
@@ -76,7 +76,7 @@ func Get(config bool) (respBody []byte, err error) {
 func List() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments")
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
@@ -89,13 +89,12 @@ func GetDeployments(sharedflows bool) (respBody []byte, err error) {
 		u.RawQuery = q.Encode()
 	}
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "deployments")
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
 func GetAllDeployments() (respBody []byte, err error) {
-
-	apiclient.SetPrintOutput(false)
+	apiclient.SetClientPrintHttpResponse(false)
 	proxiesResponse, err := GetDeployments(false)
 	if err != nil {
 		return nil, err
@@ -112,9 +111,8 @@ func GetAllDeployments() (respBody []byte, err error) {
 	deployments = append(deployments, "\"sharedFlows\":"+string(sharedFlowsResponse))
 	payload := "{" + strings.Join(deployments, ",") + "}"
 
+	apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
 	err = apiclient.PrettyPrint([]byte(payload))
-	apiclient.SetPrintOutput(true)
-
 	return []byte(payload), err
 }
 
@@ -122,23 +120,23 @@ func GetAllDeployments() (respBody []byte, err error) {
 func GetDeployedConfig() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "deployedConfig")
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
 // SetEnvProperty is used to set env properties
 func SetEnvProperty(name string, value string) (err error) {
-	//EnvProperty contains an individual org flag or property
+	// EnvProperty contains an individual org flag or property
 	type envProperty struct {
 		Name  string `json:"name,omitempty"`
 		Value string `json:"value,omitempty"`
 	}
-	//EnvProperties stores all the org feature flags and properties
+	// EnvProperties stores all the org feature flags and properties
 	type envProperties struct {
 		Property []envProperty `json:"property,omitempty"`
 	}
 
-	//Env structure
+	// Env structure
 	type environment struct {
 		Name           string        `json:"name,omitempty"`
 		Description    string        `json:"description,omitempty"`
@@ -149,8 +147,10 @@ func SetEnvProperty(name string, value string) (err error) {
 
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv())
-	//get env details
-	envBody, err := apiclient.HttpClient(false, u.String())
+	// get env details
+	apiclient.SetClientPrintHttpResponse(false)
+	envBody, err := apiclient.HttpClient(u.String())
+	apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
 	if err != nil {
 		return err
 	}
@@ -161,11 +161,11 @@ func SetEnvProperty(name string, value string) (err error) {
 		return err
 	}
 
-	//check if the property exists
+	// check if the property exists
 	found := false
 	for i, properties := range env.Properties.Property {
 		if properties.Name == name {
-			fmt.Println("Property found, enabling property")
+			clilog.Info.Println("Property found, enabling property")
 			env.Properties.Property[i].Value = value
 			found = true
 			break
@@ -173,7 +173,7 @@ func SetEnvProperty(name string, value string) (err error) {
 	}
 
 	if !found {
-		//set the property
+		// set the property
 		newProp := envProperty{}
 		newProp.Name = name
 		newProp.Value = value
@@ -188,24 +188,24 @@ func SetEnvProperty(name string, value string) (err error) {
 
 	u, _ = url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv())
-	_, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), string(newEnvBody), "PUT")
+	_, err = apiclient.HttpClient(u.String(), string(newEnvBody), "PUT")
 
 	return err
 }
 
 // ClearEnvProperties is used to set env properties
 func ClearEnvProperties() (err error) {
-	//EnvProperty contains an individual org flag or property
+	// EnvProperty contains an individual org flag or property
 	type envProperty struct {
 		Name  string `json:"name,omitempty"`
 		Value string `json:"value,omitempty"`
 	}
-	//EnvProperties stores all the org feature flags and properties
+	// EnvProperties stores all the org feature flags and properties
 	type envProperties struct {
 		Property []envProperty `json:"property,omitempty"`
 	}
 
-	//Env structure
+	// Env structure
 	type environment struct {
 		Name           string        `json:"name,omitempty"`
 		Description    string        `json:"description,omitempty"`
@@ -216,8 +216,10 @@ func ClearEnvProperties() (err error) {
 
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv())
-	//get env details
-	envBody, err := apiclient.HttpClient(false, u.String())
+	// get env details
+	apiclient.SetClientPrintHttpResponse(false)
+	envBody, err := apiclient.HttpClient(u.String())
+	apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
 	if err != nil {
 		return err
 	}
@@ -238,7 +240,7 @@ func ClearEnvProperties() (err error) {
 
 	u, _ = url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv())
-	_, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), string(newEnvBody), "PUT")
+	_, err = apiclient.HttpClient(u.String(), string(newEnvBody), "PUT")
 
 	return err
 }

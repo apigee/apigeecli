@@ -30,8 +30,10 @@ import (
 	"internal/clilog"
 )
 
-const proxy_dimension = "apiproxy"
-const selection = "sum(message_count)"
+const (
+	proxy_dimension = "apiproxy"
+	selection       = "sum(message_count)"
+)
 
 type report struct {
 	Environments []environmentreport `json:"environments,omitempty"`
@@ -78,11 +80,10 @@ func TotalAPICallsInMonthAsync(environment string, month int, year int, envDetai
 }
 
 func TotalAPICallsInMonth(environment string, month int, year int) (total int, err error) {
-
 	var apiCalls int
 	var respBody []byte
 
-	//throttle API Calls
+	// throttle API Calls
 	getDefaultRate := apiclient.GetRate()
 	apiclient.SetRate(apiclient.ApigeeAnalyticsAPI)
 	defer apiclient.SetRate(getDefaultRate)
@@ -98,7 +99,7 @@ func TotalAPICallsInMonth(environment string, month int, year int) (total int, e
 	u.RawQuery = q.Encode()
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", environment, "stats", proxy_dimension)
 
-	if respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String()); err != nil {
+	if respBody, err = apiclient.HttpClient(u.String()); err != nil {
 		return -1, err
 	}
 

@@ -26,9 +26,11 @@ import (
 	"internal/clilog"
 )
 
-var analyticsRegions = [...]string{"asia-east1", "asia-east1", "asia-northeast1", "asia-southeast1",
+var analyticsRegions = [...]string{
+	"asia-east1", "asia-east1", "asia-northeast1", "asia-southeast1",
 	"europe-west1", "us-central1", "us-east1", "us-east4", "us-west1", "australia-southeast1",
-	"europe-west2"}
+	"europe-west2",
+}
 
 // OrgProperty contains an individual org flag or property
 type orgProperty struct {
@@ -85,7 +87,7 @@ func validRegion(region string) bool {
 // Create
 func Create(region string, network string, runtimeType string, databaseKey string, billingType string, disablePortal bool) (respBody []byte, err error) {
 	const baseURL = "https://apigee.googleapis.com/v1/organizations"
-	var stageBaseURL = "https://staging-apigee.sandbox.googleapis.com/v1/organizations/"
+	stageBaseURL := "https://staging-apigee.sandbox.googleapis.com/v1/organizations/"
 
 	if !validRegion(region) {
 		return respBody, fmt.Errorf("invalid analytics region."+
@@ -121,7 +123,7 @@ func Create(region string, network string, runtimeType string, databaseKey strin
 	}
 
 	payload := "{" + strings.Join(orgPayload, ",") + "}"
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload)
+	respBody, err = apiclient.HttpClient(u.String(), payload)
 	return respBody, err
 }
 
@@ -129,7 +131,7 @@ func Create(region string, network string, runtimeType string, databaseKey strin
 func Get() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg())
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
@@ -142,7 +144,7 @@ func Delete(retension string) (respBody []byte, err error) {
 		u.RawQuery = q.Encode()
 	}
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg())
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "", "DELETE")
+	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
 	return respBody, err
 }
 
@@ -150,12 +152,10 @@ func GetOrgField(key string) (value string, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg())
 
-	apiclient.SetPrintOutput(false)
-	orgBody, err := apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	orgBody, err := apiclient.HttpClient(u.String())
 	if err != nil {
 		return "", err
 	}
-	apiclient.SetPrintOutput(true)
 
 	var orgMap map[string]interface{}
 	err = json.Unmarshal(orgBody, &orgMap)
@@ -168,7 +168,7 @@ func GetOrgField(key string) (value string, err error) {
 // List
 func List() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
@@ -181,17 +181,18 @@ func GetDeployedIngressConfig(view bool) (respBody []byte, err error) {
 		u.RawQuery = q.Encode()
 	}
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "deployedIngressConfig")
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String())
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
 // SetOrgProperty is used to set org properties
 func SetOrgProperty(name string, value string) (err error) {
-
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg())
-	//get org details
-	orgBody, err := apiclient.HttpClient(false, u.String())
+	// get org details
+	apiclient.SetClientPrintHttpResponse(false)
+	orgBody, err := apiclient.HttpClient(u.String())
+	apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
 	if err != nil {
 		return err
 	}
@@ -202,11 +203,11 @@ func SetOrgProperty(name string, value string) (err error) {
 		return err
 	}
 
-	//check if the property exists
+	// check if the property exists
 	found := false
 	for i, properties := range org.Properties.Property {
 		if properties.Name == name {
-			fmt.Println("Property found, enabling property")
+			clilog.Info.Println("Property found, enabling property")
 			org.Properties.Property[i].Value = value
 			found = true
 			break
@@ -214,7 +215,7 @@ func SetOrgProperty(name string, value string) (err error) {
 	}
 
 	if !found {
-		//set the property
+		// set the property
 		newProp := orgProperty{}
 		newProp.Name = name
 		newProp.Value = value
@@ -229,20 +230,19 @@ func SetOrgProperty(name string, value string) (err error) {
 
 	u, _ = url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg())
-	_, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), string(newOrgBody), "PUT")
+	_, err = apiclient.HttpClient(u.String(), string(newOrgBody), "PUT")
 
 	return err
 }
 
 // Update
 func Update(description string, displayName string, region string, network string, runtimeType string, databaseKey string) (respBody []byte, err error) {
-
-	apiclient.SetPrintOutput(false)
+	apiclient.SetClientPrintHttpResponse(false)
 	orgBody, err := Get()
 	if err != nil {
 		return nil, err
 	}
-	apiclient.SetPrintOutput(true)
+	apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
 
 	org := organization{}
 	err = json.Unmarshal(orgBody, &org)
@@ -281,15 +281,14 @@ func Update(description string, displayName string, region string, network strin
 
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg())
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), string(newOrgBody), "PUT")
+	respBody, err = apiclient.HttpClient(u.String(), string(newOrgBody), "PUT")
 
 	return respBody, err
 }
 
 // SetAddons
 func SetAddons(advancedApiOpsConfig bool, integrationConfig bool, monetizationConfig bool, connectorsConfig bool, apiSecurityConfig bool) (respBody []byte, err error) {
-
-	apiclient.SetPrintOutput(false)
+	apiclient.SetClientPrintHttpResponse(false)
 
 	orgRespBody, err := Get()
 	if err != nil {
@@ -303,7 +302,7 @@ func SetAddons(advancedApiOpsConfig bool, integrationConfig bool, monetizationCo
 		return nil, err
 	}
 
-	apiclient.SetPrintOutput(true)
+	apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
 
 	addonPayload := []string{}
 
@@ -336,7 +335,7 @@ func SetAddons(advancedApiOpsConfig bool, integrationConfig bool, monetizationCo
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg()+":setAddons")
 
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload)
+	respBody, err = apiclient.HttpClient(u.String(), payload)
 
 	return respBody, err
 }

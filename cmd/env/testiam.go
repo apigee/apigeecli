@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to manage tracing of apis
+// TestIamCmd to manage tracing of apis
 var TestIamCmd = &cobra.Command{
 	Use:   "test",
 	Short: "Test IAM policy for an Environment",
@@ -40,7 +40,6 @@ var TestIamCmd = &cobra.Command{
 var verb, resource string
 
 func init() {
-
 	TestIamCmd.Flags().StringVarP(&verb, "verb", "v",
 		"get", "resource verb")
 	TestIamCmd.Flags().StringVarP(&resource, "res", "r",

@@ -44,7 +44,7 @@ func validate(i string) string {
 func Get() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg()+":getSyncAuthorization")
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "")
+	respBody, err = apiclient.HttpClient(u.String(), "")
 	return respBody, err
 }
 
@@ -53,17 +53,16 @@ func Reset() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg()+":setSyncAuthorization")
 	payload := "{\"identities\":[]}"
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), payload)
+	respBody, err = apiclient.HttpClient(u.String(), payload)
 	return respBody, err
 }
 
 // Set
 func Set(identity interface{}) (respBody []byte, err error) {
-
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg()+":getSyncAuthorization")
-	apiclient.SetPrintOutput(false)
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "")
+	apiclient.SetClientPrintHttpResponse(false)
+	respBody, err = apiclient.HttpClient(u.String(), "")
 	if err != nil {
 		return respBody, err
 	}
@@ -100,10 +99,10 @@ func Set(identity interface{}) (respBody []byte, err error) {
 		return respBody, err
 	}
 
-	apiclient.SetPrintOutput(true)
+	apiclient.SetClientPrintHttpResponse(apiclient.GetClientPrintHttpResponseSetting())
 	u, _ = url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg()+":setSyncAuthorization")
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), string(payload))
+	respBody, err = apiclient.HttpClient(u.String(), string(payload))
 
 	return respBody, err
 }
@@ -112,8 +111,8 @@ func Set(identity interface{}) (respBody []byte, err error) {
 func SetList(identities []string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg()+":getSyncAuthorization")
-	apiclient.SetPrintOutput(false)
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "")
+	apiclient.SetClientPrintHttpResponse(false)
+	respBody, err = apiclient.HttpClient(u.String(), "")
 	if err != nil {
 		return respBody, err
 	}
@@ -137,10 +136,10 @@ func SetList(identities []string) (respBody []byte, err error) {
 		return respBody, err
 	}
 
-	apiclient.SetPrintOutput(true)
+	apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
 	u, _ = url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg()+":setSyncAuthorization")
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), string(payload))
+	respBody, err = apiclient.HttpClient(u.String(), string(payload))
 
 	return respBody, err
 }
@@ -149,8 +148,8 @@ func SetList(identities []string) (respBody []byte, err error) {
 func Remove(identity string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg()+":getSyncAuthorization")
-	apiclient.SetPrintOutput(false)
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), "")
+	apiclient.SetClientPrintHttpResponse(false)
+	respBody, err = apiclient.HttpClient(u.String(), "")
 	if err != nil {
 		return respBody, err
 	}
@@ -189,10 +188,10 @@ func Remove(identity string) (respBody []byte, err error) {
 		return respBody, err
 	}
 
-	apiclient.SetPrintOutput(true)
+	apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
 	u, _ = url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg()+":setSyncAuthorization")
-	respBody, err = apiclient.HttpClient(apiclient.GetPrintOutput(), u.String(), string(payload))
+	respBody, err = apiclient.HttpClient(u.String(), string(payload))
 
 	return respBody, err
 }

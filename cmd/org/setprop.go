@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to set mart endpoint
+// PropCmd to set mart endpoint
 var PropCmd = &cobra.Command{
 	Use:   "set",
 	Short: "Set organization property",
@@ -38,7 +38,6 @@ var PropCmd = &cobra.Command{
 var propName, propValue string
 
 func init() {
-
 	PropCmd.Flags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
 	PropCmd.Flags().StringVarP(&propName, "name", "n",

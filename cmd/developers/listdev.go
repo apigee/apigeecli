@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to list developer
+// ListCmd to list developer
 var ListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "Returns a list of App Developers",
@@ -36,11 +36,12 @@ var ListCmd = &cobra.Command{
 	},
 }
 
-var count int
-var ids string
+var (
+	count int
+	ids   string
+)
 
 func init() {
-
 	ListCmd.Flags().IntVarP(&count, "count", "c",
 		-1, "Number of developers; limit is 1000")
 

@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to import products
+// ImpCmd to import products
 var ImpCmd = &cobra.Command{
 	Use:   "import",
 	Short: "Import a file containing API products",
@@ -35,11 +35,12 @@ var ImpCmd = &cobra.Command{
 	},
 }
 
-var upsert bool
-var filePath string
+var (
+	upsert   bool
+	filePath string
+)
 
 func init() {
-
 	ImpCmd.Flags().StringVarP(&filePath, "file", "f",
 		"", "File containing API Products")
 	ImpCmd.Flags().IntVarP(&conn, "conn", "c",

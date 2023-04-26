@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//Cmd to manage orgs
+// Cmd to manage orgs
 var Cmd = &cobra.Command{
 	Use:   "projects",
 	Short: "Manage GCP Projects that have Apigee enabled",
@@ -28,6 +28,5 @@ var Cmd = &cobra.Command{
 var projectID string
 
 func init() {
-
 	Cmd.AddCommand(TestCmd)
 }

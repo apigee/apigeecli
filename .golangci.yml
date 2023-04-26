@@ -1,0 +1,116 @@
+# Copyright 2023 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+run:
+  concurrency: 4
+  deadline: 20m
+  issues-exit-code: 1
+  tests: false
+  skip-dirs:
+    - cicd
+    - docs
+    - test
+    - third-party
+
+output:
+  format: tab
+  print-issued-lines: true
+  print-linter-name: true
+
+linters-settings:
+  errcheck:
+    check-type-assertions: false
+    check-blank: false
+  govet:
+    check-shadowing: true
+  golint:
+    min-confidence: 0.8
+  gofmt:
+    simplify: true
+  gocyclo:
+    min-complexity: 10
+  maligned:
+    suggest-new: true
+  goconst:
+    min-len: 3
+    min-occurrences: 3
+  depguard:
+    list-type: blacklist
+    include-go-root: false
+  misspell:
+    locale: US
+  lll:
+    line-length: 120
+    tab-width: 1
+  unused:
+    check-exported: false
+  unparam:
+    check-exported: false
+  nakedret:
+    max-func-lines: 30
+  prealloc:
+    simple: true
+    range-loops: true
+    for-loops: false
+  gosec:
+    includes:
+      - G401
+      - G402
+      - G404
+
+linters:
+  enable:
+    - errcheck
+    - exportloopref
+    - gocritic
+    - gofumpt
+    - revive
+    - gosimple
+    - govet
+    - lll
+    - stylecheck
+    - unconvert
+    - unparam
+    - ineffassign
+    - staticcheck
+    - typecheck
+    - unused
+    - bodyclose
+    - depguard
+    - goconst
+    - gofmt
+    - goimports
+    - gosec
+    - misspell
+    - nakedret
+    - prealloc
+    - unconvert
+  enable-all: false
+  disable-all: true
+  fast: false
+
+issues:
+  exclude-rules:
+    - linters:
+        - gosec
+      text: "G[105,202,401,505]"
+    - linters:
+        - goimports
+      text: "File is not `goimports`-ed"
+    - linters:
+        - govet
+      text: "shadows declaration"
+    - linters:
+        - staticcheck
+      text: "SA1019:"

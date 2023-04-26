@@ -32,7 +32,7 @@ var CrtTraceOverridesCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = environments.CreateTraceOverrides(apiProxy, exporter, endpoint, sampler, sample_rate)
+		_, err = environments.CreateTraceOverrides(apiProxy, exporter, endpoint, sampler, sampleRate)
 		return
 	},
 }
@@ -40,7 +40,6 @@ var CrtTraceOverridesCmd = &cobra.Command{
 var apiProxy string
 
 func init() {
-
 	CrtTraceOverridesCmd.Flags().StringVarP(&apiProxy, "name", "n",
 		"", "API Proxy name")
 	CrtTraceOverridesCmd.Flags().StringVarP(&exporter, "exporter", "x",
@@ -49,7 +48,7 @@ func init() {
 		"", "Trace endpoint, used only with JAEGER")
 	CrtTraceOverridesCmd.Flags().StringVarP(&sampler, "sampler", "s",
 		"PROBABILITY", "Sampler can be set to PROBABILITY or OFF")
-	CrtTraceOverridesCmd.Flags().StringVarP(&sample_rate, "rate", "r",
+	CrtTraceOverridesCmd.Flags().StringVarP(&sampleRate, "rate", "r",
 		"", "Sampler Rate")
 
 	_ = CrtTraceOverridesCmd.MarkFlagRequired("exporter")

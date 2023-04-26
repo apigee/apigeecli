@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to list key aliases
+// ListCmd to list key aliases
 var ListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List Key Aliases",

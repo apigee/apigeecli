@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to create a new product
+// CreateCmd to create a new product
 var CreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create an Environment Group",
@@ -37,7 +37,6 @@ var CreateCmd = &cobra.Command{
 }
 
 func init() {
-
 	CreateCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of the Environment Group")
 	CreateCmd.Flags().StringArrayVarP(&hostnames, "hosts", "d",

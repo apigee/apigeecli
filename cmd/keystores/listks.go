@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to list key stores
+// ListCmd to list key stores
 var ListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List Key Stores",
