@@ -337,9 +337,15 @@ func Export(conn int, folder string, allRevisions bool) (err error) {
 	}
 
 	for _, proxy := range shrdflows.Flows {
-		for _, rev := range proxy.Revision {
-			jobChan <- revision{name: proxy.Name, rev: rev}
+		if allRevisions {
+			for _, rev := range proxy.Revision {
+				jobChan <- revision{name: proxy.Name, rev: rev}
+			}
+		} else {
+			lastRevision := maxRevision(proxy.Revision)
+			jobChan <- revision{name: proxy.Name, rev: lastRevision}
 		}
+
 	}
 	close(jobChan)
 	fanOutWg.Wait()
@@ -400,7 +406,7 @@ func exportSharedFlows(wg *sync.WaitGroup, jobs <-chan revision, folder string, 
 		_ = fd.Close()
 
 		fpath := filepath.Join(folder, fname+".zip")
-		if err = os.Rename(filepath.Join(os.TempDir(), fd.Name()), fpath); err != nil {
+		if err = os.Rename(filepath.Join(fd.Name()), fpath); err != nil {
 			errs <- err
 			continue
 		}

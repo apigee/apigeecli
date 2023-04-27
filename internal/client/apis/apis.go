@@ -385,8 +385,13 @@ func ExportProxies(conn int, folder string, allRevisions bool) (err error) {
 	}
 
 	for _, proxy := range prxs.Proxies {
-		for _, rev := range proxy.Revision {
-			jobChan <- revision{name: proxy.Name, rev: rev}
+		if allRevisions {
+			for _, rev := range proxy.Revision {
+				jobChan <- revision{name: proxy.Name, rev: rev}
+			}
+		} else {
+			lastRevision := maxRevision(proxy.Revision)
+			jobChan <- revision{name: proxy.Name, rev: lastRevision}
 		}
 	}
 	close(jobChan)
