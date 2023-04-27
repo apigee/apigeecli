@@ -58,9 +58,6 @@ var ImportCmd = &cobra.Command{
 		}
 
 		apiclient.DisableCmdPrintHttpResponse()
-		clilog.Warning.Println("Calls to Apigee APIs have a quota of 6000 per min. " +
-			"Running this tool against large list of entities can exhaust " +
-			"that quota and impact the usage of the platform.")
 
 		clilog.Info.Println("Importing API Proxies...")
 		if err = apis.ImportProxies(conn, path.Join(folder, proxiesFolderName)); err != nil {

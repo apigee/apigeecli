@@ -42,8 +42,6 @@ var MonthlyCmd = &cobra.Command{
 
 		clilog.Warning.Println("This API is rate limited to 1 API Call per second")
 
-		clilog.Warning.Println("This API is rate limited to 1 API Call per second")
-
 		if _, err = time.Parse("1/2006", fmt.Sprintf("%d/%d", month, year)); err != nil {
 			return
 		}

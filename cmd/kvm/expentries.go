@@ -21,8 +21,6 @@ import (
 
 	"internal/apiclient"
 
-	"internal/clilog"
-
 	"internal/client/kvm"
 
 	"github.com/spf13/cobra"
@@ -45,8 +43,6 @@ var ExpEntryCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		var payload [][]byte
 		var fileName string
-
-		clilog.Warning.Println("Running this command against a large number of KVMs or entries can exhaust the API quota")
 
 		if payload, err = kvm.ExportEntries(proxyName, mapName); err != nil {
 			return
