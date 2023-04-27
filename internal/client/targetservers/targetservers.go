@@ -149,12 +149,11 @@ func List() (respBody []byte, err error) {
 
 // Export
 func Export(conn int) (payload [][]byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
-	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "targetservers")
 	// don't print to sysout
 	apiclient.SetClientPrintHttpResponse(false)
-	respBody, err := apiclient.HttpClient(u.String())
-	apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
+	defer apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
+
+	respBody, err := List()
 	if err != nil {
 		return nil, err
 	}
@@ -230,9 +229,7 @@ func exportServers(wg *sync.WaitGroup, jobs <-chan string, results chan<- []byte
 		if !ok {
 			return
 		}
-		u, _ := url.Parse(apiclient.BaseURL)
-		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "targetservers", job)
-		respBody, err := apiclient.HttpClient(u.String())
+		respBody, err := Get(job)
 		if err != nil {
 			errs <- err
 		} else {

@@ -113,12 +113,10 @@ func Update(name string, description string, resourceType string, refers string)
 
 // Export
 func Export(conn int) (payload [][]byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
-	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "references")
 	// don't print to sysout
 	apiclient.SetClientPrintHttpResponse(false)
-	respBody, err := apiclient.HttpClient(u.String())
-	apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
+	defer apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
+	respBody, err := List()
 	if err != nil {
 		return nil, err
 	}
@@ -194,9 +192,7 @@ func exportReferences(wg *sync.WaitGroup, jobs <-chan string, results chan<- []b
 		if !ok {
 			return
 		}
-		u, _ := url.Parse(apiclient.BaseURL)
-		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "targetservers", job)
-		respBody, err := apiclient.HttpClient(u.String())
+		respBody, err := Get(job)
 		if err != nil {
 			errs <- err
 		} else {

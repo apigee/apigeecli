@@ -33,6 +33,7 @@ var ExpCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		const exportFileName = "targetservers.json"
+		apiclient.DisableCmdPrintHttpResponse()
 		payload, err := targetservers.Export(conn)
 		if err != nil {
 			return
