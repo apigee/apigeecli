@@ -412,52 +412,8 @@ func exportAPIProxies(wg *sync.WaitGroup, jobs <-chan revision, folder string, e
 		if !ok {
 			return
 		}
-		u, _ := url.Parse(apiclient.BaseURL)
-		q := u.Query()
-		q.Set("format", "bundle")
-		u.RawQuery = q.Encode()
-		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apis", job.name, "revisions", job.rev)
-
-		fname := job.name + "_" + job.rev
-		fd, err := os.CreateTemp("", fname)
+		err := apiclient.FetchBundle("apis", folder, job.name, job.rev, false)
 		if err != nil {
-			errs <- err
-			continue
-		}
-
-		err = apiclient.GetHttpClient()
-		if err != nil {
-			errs <- err
-			continue
-		}
-		req, err := http.NewRequest(http.MethodGet, u.String(), nil)
-		if err != nil {
-			errs <- err
-			continue
-		}
-		req, err = apiclient.SetAuthHeader(req)
-		if err != nil {
-			errs <- err
-			continue
-		}
-
-		resp, err := apiclient.ApigeeAPIClient.Do(req)
-		if err != nil {
-			errs <- err
-			continue
-		}
-		if _, err = io.Copy(fd, resp.Body); err != nil {
-			errs <- err
-			continue
-		}
-		_ = fd.Close()
-
-		fpath := filepath.Join(folder, fname+".zip")
-		if err = os.Rename(filepath.Join(fd.Name()), fpath); err != nil {
-			errs <- err
-			continue
-		}
-		if err = os.Chmod(fpath, 0o644); err != nil {
 			errs <- err
 		}
 	}
