@@ -14,6 +14,9 @@
 
 FROM golang:1.20 as builder
 
+ARG TAG
+ARG COMMIT
+
 ADD ./internal /go/src/apigeecli/internal
 ADD ./cmd /go/src/apigeecli/cmd
 
@@ -25,7 +28,8 @@ WORKDIR /go/src/apigeecli
 ENV GO111MODULE=on
 RUN go mod tidy
 RUN go mod download
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -a -ldflags='-s -w -extldflags "-static"' -o /go/bin/apigeecli /go/src/apigeecli/main.go
+RUN date +%FT%H:%I:%M+%Z > /tmp/date
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -buildvcs=true -a -gcflags='all="-l"' -ldflags='-s -w -extldflags "-static" -X main.version='${TAG}' -X main.commit='${COMMIT}' -X main.date='$(cat /tmp/date) -o /go/bin/apigeecli /go/src/apigeecli/main.go
 
 FROM gcr.io/distroless/static-debian11
 COPY --from=builder /go/bin/apigeecli /
