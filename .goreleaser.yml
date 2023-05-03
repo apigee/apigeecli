@@ -48,7 +48,8 @@ builds:
         goarch: arm64
 
 archives:
-  - id: apigeecli_1
+  - id: apigeecli
+    format: zip
     name_template: >-
       {{ .ProjectName }}_
       {{- title .Os }}_
