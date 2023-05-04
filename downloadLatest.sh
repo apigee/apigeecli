@@ -65,7 +65,7 @@ tmp=$(mktemp -d /tmp/apigeecli.XXXXXX)
 NAME="apigeecli_$APIGEECLI_VERSION"
 
 cd "$tmp" || exit
-URL="https://github.com/apigee/apigeecli/releases/download/${APIGEECLI_VERSION}/apigeecli_${OSEXT}_${APIGEECLI_ARCH}.zip"
+URL="https://github.com/apigee/apigeecli/releases/download/${APIGEECLI_VERSION}/apigeecli_${APIGEECLI_VERSION}_${OSEXT}_${APIGEECLI_ARCH}.zip"
 
 download_cli() {
   printf "\nDownloading %s from %s ...\n" "$NAME" "$URL"
@@ -74,7 +74,7 @@ download_cli() {
     exit 1
   fi
   curl -fsLO "$URL"
-  filename="apigeecli_${OSEXT}_${APIGEECLI_ARCH}.zip"
+  filename="apigeecli_${APIGEECLI_VERSION}_${OSEXT}_${APIGEECLI_ARCH}.zip"
   unzip "${filename}"
   rm "${filename}"
 }
@@ -91,8 +91,8 @@ printf "\n"
 # setup apigeecli
 cd "$HOME" || exit
 mkdir -p "$HOME/.apigeecli/bin"
-mv "${tmp}/apigeecli_${OSEXT}_${APIGEECLI_ARCH}/apigeecli" "$HOME/.apigeecli/bin"
-mv "${tmp}/apigeecli_${OSEXT}_${APIGEECLI_ARCH}/LICENSE.txt" "$HOME/.apigeecli/LICENSE.txt"
+mv "${tmp}/apigeecli_${APIGEECLI_VERSION}_${OSEXT}_${APIGEECLI_ARCH}/apigeecli" "$HOME/.apigeecli/bin"
+mv "${tmp}/apigeecli_${APIGEECLI_VERSION}_${OSEXT}_${APIGEECLI_ARCH}/LICENSE.txt" "$HOME/.apigeecli/LICENSE.txt"
 
 printf "Copied apigeecli into the $HOME/.apigeecli/bin folder.\n"
 chmod +x "$HOME/.apigeecli/bin/apigeecli"

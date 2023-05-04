@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
 # .goreleaser.yml
 project_name: apigeecli
 
@@ -30,12 +29,12 @@ builds:
       - darwin
       - windows
     flags:
-    - -trimpath
-    - -buildvcs=true
+      - -trimpath
+      - -buildvcs=true
     ldflags:
       - -s -w -extldflags "-static" -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}}
     gcflags:
-    - all="-l"
+      - all="-l"
     env:
       - CGO_ENABLED=0
     goarch:
@@ -52,6 +51,7 @@ archives:
     format: zip
     name_template: >-
       {{ .ProjectName }}_
+      {{- .Tag }}_
       {{- title .Os }}_
       {{- if eq .Arch "amd64" }}x86_64
       {{- else if eq .Arch "linux" }}Linux
@@ -66,11 +66,10 @@ archives:
       - apigeecli
 
 checksum:
-  name_template: 'checksums.txt'
+  name_template: "checksums.txt"
 
 signs:
-  -
-    artifacts: all
+  - artifacts: all
     args:
       [
         "-u",
@@ -85,7 +84,7 @@ changelog:
   sort: asc
   use: github
   groups:
-    - title: 'Change Log'
+    - title: "Change Log"
       order: 0
 
 release:
