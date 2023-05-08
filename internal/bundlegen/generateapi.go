@@ -123,8 +123,10 @@ func LoadDocumentFromFile(filePath string, validate bool, formatValidation bool)
 	// add custom string definitions
 	openapi3.DefineStringFormat("uuid", openapi3.FormatOfStringForUUIDOfRFC4122)
 
-	if !formatValidation {
+	if formatValidation {
 		openapi3.EnableSchemaFormatValidation()
+	} else {
+		openapi3.DisableSchemaFormatValidation()
 	}
 
 	if validate {
