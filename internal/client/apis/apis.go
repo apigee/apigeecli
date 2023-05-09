@@ -79,19 +79,22 @@ func DeleteProxyRevision(name string, revision int) (respBody []byte, err error)
 }
 
 // DeployProxy
-func DeployProxy(name string, revision int, overrides bool, serviceAccountName string) (respBody []byte, err error) {
+func DeployProxy(name string, revision int, overrides bool, sequencedRollout bool, serviceAccountName string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 
+	q := u.Query()
+	q.Set("sequencedRollout", serviceAccountName)
+
 	if overrides || serviceAccountName != "" {
-		q := u.Query()
 		if overrides {
 			q.Set("override", "true")
 		}
 		if serviceAccountName != "" {
 			q.Set("serviceAccount", serviceAccountName)
 		}
-		u.RawQuery = q.Encode()
 	}
+
+	u.RawQuery = q.Encode()
 
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(),
 		"apis", name, "revisions", strconv.Itoa(revision), "deployments")
