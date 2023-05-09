@@ -115,7 +115,7 @@ func LoadDocumentFromFile(filePath string, validate bool, formatValidation bool)
 	var jsonContent []byte
 
 	// see ./test/circular-reference.json and https://github.com/apigee/apigeecli/issues/199
-	openapi3.CircularReferenceCounter = 10
+	openapi3.CircularReferenceCounter = 20
 
 	doc, err = openapi3.NewLoader().LoadFromFile(filePath)
 	if err != nil {
@@ -161,6 +161,9 @@ func LoadDocumentFromURI(uri string, validate bool, formatValidation bool) (stri
 		clilog.Error.Println(err)
 		return "", nil, err
 	}
+
+	// see ./test/circular-reference.json and https://github.com/apigee/apigeecli/issues/199
+	openapi3.CircularReferenceCounter = 20
 
 	doc, err = openapi3.NewLoader().LoadFromURI(u)
 	if err != nil {
