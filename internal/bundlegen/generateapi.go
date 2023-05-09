@@ -114,6 +114,9 @@ func LoadDocumentFromFile(filePath string, validate bool, formatValidation bool)
 	var err error
 	var jsonContent []byte
 
+	// see ./test/circular-reference.json and https://github.com/apigee/apigeecli/issues/199
+	openapi3.CircularReferenceCounter = 10
+
 	doc, err = openapi3.NewLoader().LoadFromFile(filePath)
 	if err != nil {
 		clilog.Error.Println(err)
