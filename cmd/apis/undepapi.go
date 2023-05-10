@@ -51,7 +51,7 @@ func init() {
 		"", "Apigee environment name")
 	UndepCmd.Flags().IntVarP(&revision, "rev", "v",
 		-1, "API Proxy revision")
-	UndepCmd.Flags().BoolVarP(&safeDeploy, "safedeploy", "",
+	UndepCmd.Flags().BoolVarP(&safeUndeploy, "safeundeploy", "",
 		true, "When set to true, generateUndeployChangeReport will be executed and "+
 			"deployment will proceed if there are no conflicts; default is true")
 
