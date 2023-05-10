@@ -1,0 +1,151 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "CLMBasicApi",
+    "description": "An endpoint to access a group of apis",
+    "contact": {
+      "name": "Developer Team",
+      "url": "https://smartbygep.atlassian.net/",
+      "email": "dm.teamabc@gep.com"
+    },
+    "version": "v1"
+  },
+  "servers": [
+    {
+      "url": "http://api-leoaksdev.gep.com/leo-clm-basic"
+    }
+  ],
+"tags":[
+    {"name": "BasicDetails"}
+],
+  "paths": {
+    "/api/v1/BasicDetails/BasicDetails": {
+      "post": {
+        "tags": [
+          "BasicDetails"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Assembly"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "oauth2": [ ]
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Assembly": {
+        "type": "object",
+        "properties": {
+          "definedTypes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TypeInfo"
+            },
+            "nullable": true,
+            "readOnly": true
+          },
+          "fullName": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TypeInfo": {
+        "type": "object",
+        "properties": {
+          "genericTypeParameters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Type"
+            },
+            "nullable": true,
+            "readOnly": true
+          },
+          "fullName": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Type": {
+        "type": "object",
+        "properties": {
+          "fullName": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "assembly": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Assembly"
+              }
+            ],
+            "nullable": true,
+            "readOnly": true
+          },
+          "declaringType": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Type"
+              }
+            ],
+            "nullable": true,
+            "readOnly": true
+          },
+          "genericTypeArguments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Type"
+            },
+            "nullable": true,
+            "readOnly": true
+          },
+          "baseType": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Type"
+              }
+            ],
+            "nullable": true,
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "securitySchemes": {
+      "oauth2": {
+        "type": "apiKey",
+        "description": "Standard Authorization header using the Bearer scheme. Example: \"Bearer {token}\"",
+        "name": "Authorization",
+        "in": "header"
+      }
+    }
+  }
+}

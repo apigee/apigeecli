@@ -114,6 +114,9 @@ func LoadDocumentFromFile(filePath string, validate bool, formatValidation bool)
 	var err error
 	var jsonContent []byte
 
+	// see ./test/circular-reference.json and https://github.com/apigee/apigeecli/issues/199
+	openapi3.CircularReferenceCounter = 20
+
 	doc, err = openapi3.NewLoader().LoadFromFile(filePath)
 	if err != nil {
 		clilog.Error.Println(err)
@@ -123,8 +126,10 @@ func LoadDocumentFromFile(filePath string, validate bool, formatValidation bool)
 	// add custom string definitions
 	openapi3.DefineStringFormat("uuid", openapi3.FormatOfStringForUUIDOfRFC4122)
 
-	if !formatValidation {
+	if formatValidation {
 		openapi3.EnableSchemaFormatValidation()
+	} else {
+		openapi3.DisableSchemaFormatValidation()
 	}
 
 	if validate {
@@ -156,6 +161,9 @@ func LoadDocumentFromURI(uri string, validate bool, formatValidation bool) (stri
 		clilog.Error.Println(err)
 		return "", nil, err
 	}
+
+	// see ./test/circular-reference.json and https://github.com/apigee/apigeecli/issues/199
+	openapi3.CircularReferenceCounter = 20
 
 	doc, err = openapi3.NewLoader().LoadFromURI(u)
 	if err != nil {
