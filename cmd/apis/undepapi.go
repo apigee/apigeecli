@@ -37,10 +37,12 @@ var UndepCmd = &cobra.Command{
 				return
 			}
 		}
-		_, err = apis.UndeployProxy(name, revision)
+		_, err = apis.UndeployProxy(name, revision, safeUndeploy)
 		return
 	},
 }
+
+var safeUndeploy bool
 
 func init() {
 	UndepCmd.Flags().StringVarP(&name, "name", "n",
@@ -49,6 +51,9 @@ func init() {
 		"", "Apigee environment name")
 	UndepCmd.Flags().IntVarP(&revision, "rev", "v",
 		-1, "API Proxy revision")
+	UndepCmd.Flags().BoolVarP(&safeUndeploy, "safeundeploy", "",
+		true, "When set to true, generateUndeployChangeReport will be executed and "+
+			"undeployment will proceed if there are no conflicts; default is true")
 
 	_ = UndepCmd.MarkFlagRequired("env")
 	_ = UndepCmd.MarkFlagRequired("name")

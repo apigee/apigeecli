@@ -49,6 +49,38 @@ type revision struct {
 	rev  string
 }
 
+type deploychangereport struct {
+	ValidationErrors validationerrors   `json:"validationErrors,omitempty"`
+	RoutingChanges   []routingchanges   `json:"routingChanges,omitempty"`
+	RoutingConflicts []routingconflicts `json:"routingConflicts,omitempty"`
+}
+
+type validationerrors struct {
+	Violations []violation `json:"violation,omitempty"`
+}
+
+type violation struct {
+	Type        string `json:"type,omitempty"`
+	Subject     string `json:"subject,omitempty"`
+	Description string `json:"description,omitempty"`
+}
+
+type routingchanges struct {
+}
+
+type routingconflicts struct {
+	EnvironmentGroup      string                `json:"environmentGroup,omitempty"`
+	ConflictingDeployment conflictingdeployment `json:"conflictingDeployment,omitempty"`
+	Description           string                `json:"description,omitempty"`
+}
+
+type conflictingdeployment struct {
+	Basepath    string `json:"basePath,omitempty"`
+	Environment string `json:"environment,omitempty"`
+	ApiProxy    string `json:"apiProxy,omitempty"`
+	Revision    string `json:"revision,omitempty"`
+}
+
 // CreateProxy
 func CreateProxy(name string, proxy string) (respBody []byte, err error) {
 	if proxy != "" {
@@ -79,19 +111,39 @@ func DeleteProxyRevision(name string, revision int) (respBody []byte, err error)
 }
 
 // DeployProxy
-func DeployProxy(name string, revision int, overrides bool, serviceAccountName string) (respBody []byte, err error) {
+func DeployProxy(name string, revision int, overrides bool, sequencedRollout bool, safeDeploy bool, serviceAccountName string) (respBody []byte, err error) {
+
+	if safeDeploy {
+		var safeResp []byte
+		d := deploychangereport{}
+		apiclient.SetClientPrintHttpResponse(false)
+		if safeResp, err = GenerateDeployChangeReport(name, revision, overrides); err != nil {
+			return nil, err
+		}
+		apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
+		if err = json.Unmarshal(safeResp, &d); err != nil {
+			return nil, err
+		}
+		if len(d.ValidationErrors.Violations) > 0 || len(d.RoutingConflicts) > 0 {
+			return nil, fmt.Errorf("Deployment conflicts detected. Here are the conflicts: %s", string(safeResp))
+		}
+	}
+
 	u, _ := url.Parse(apiclient.BaseURL)
 
+	q := u.Query()
+	q.Set("sequencedRollout", strconv.FormatBool(sequencedRollout))
+
 	if overrides || serviceAccountName != "" {
-		q := u.Query()
 		if overrides {
 			q.Set("override", "true")
 		}
 		if serviceAccountName != "" {
 			q.Set("serviceAccount", serviceAccountName)
 		}
-		u.RawQuery = q.Encode()
 	}
+
+	u.RawQuery = q.Encode()
 
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(),
 		"apis", name, "revisions", strconv.Itoa(revision), "deployments")
@@ -156,7 +208,20 @@ func GenerateDeployChangeReport(name string, revision int, overrides bool) (resp
 
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "apis", name, "revisions",
 		strconv.Itoa(revision), "deployments:generateDeployChangeReport")
-	respBody, err = apiclient.HttpClient(u.String())
+	respBody, err = apiclient.HttpClient(u.String(), "")
+	return respBody, err
+}
+
+// GenerateUndeployChangeReport
+func GenerateUndeployChangeReport(name string, revision int) (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.BaseURL)
+	if apiclient.GetApigeeEnv() == "" {
+		return respBody, fmt.Errorf("environment name missing")
+	}
+
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "apis", name, "revisions",
+		strconv.Itoa(revision), "deployments:generateUndeployChangeReport")
+	respBody, err = apiclient.HttpClient(u.String(), "")
 	return respBody, err
 }
 
@@ -205,7 +270,22 @@ func ListProxyRevisionDeployments(name string, revision int) (respBody []byte, e
 }
 
 // Undeployproxy
-func UndeployProxy(name string, revision int) (respBody []byte, err error) {
+func UndeployProxy(name string, revision int, safeUndeploy bool) (respBody []byte, err error) {
+	if safeUndeploy {
+		var safeResp []byte
+		apiclient.SetClientPrintHttpResponse(false)
+		if safeResp, err = GenerateUndeployChangeReport(name, revision); err != nil {
+			return nil, err
+		}
+		apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
+		d := deploychangereport{}
+		if err = json.Unmarshal(safeResp, &d); err != nil {
+			return nil, err
+		}
+		if len(d.ValidationErrors.Violations) > 0 || len(d.RoutingConflicts) > 0 {
+			return nil, fmt.Errorf("Undeployment conflicts detected. Here are the conflicts: %s", string(safeResp))
+		}
+	}
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(),
 		"apis", name, "revisions", strconv.Itoa(revision), "deployments")
