@@ -42,7 +42,7 @@ var DepCmd = &cobra.Command{
 				return
 			}
 		}
-		if _, err = apis.DeployProxy(name, revision, overrides, sequencedRollout, serviceAccountName); err != nil {
+		if _, err = apis.DeployProxy(name, revision, overrides, sequencedRollout, safeDeploy, serviceAccountName); err != nil {
 			return
 		}
 
@@ -82,8 +82,8 @@ var DepCmd = &cobra.Command{
 }
 
 var (
-	overrides, wait, sequencedRollout bool
-	serviceAccountName                string
+	overrides, wait, sequencedRollout, safeDeploy bool
+	serviceAccountName                            string
 )
 
 const interval = 10
@@ -100,7 +100,9 @@ func init() {
 	DepCmd.Flags().BoolVarP(&wait, "wait", "",
 		false, "Waits for the deployment to finish, with success or error")
 	DepCmd.Flags().BoolVarP(&sequencedRollout, "sequencedRollout", "",
-		false, "If set to true, the routing rules will be rolled out in a safe order; default is false")
+		true, "If set to true, the routing rules will be rolled out in a safe order; default is true")
+	DepCmd.Flags().BoolVarP(&safeDeploy, "safedeploy", "",
+		false, "If set to true, generateDeployChangeReport will executed and deployment will proceed if there are no conflicts; default is false")
 	DepCmd.Flags().StringVarP(&serviceAccountName, "sa", "s",
 		"", "The format must be {ACCOUNT_ID}@{PROJECT}.iam.gserviceaccount.com.")
 
