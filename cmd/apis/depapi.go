@@ -107,7 +107,7 @@ func init() {
 	DepCmd.Flags().BoolVarP(&sequencedRollout, "sequencedRollout", "",
 		true, "If set to true, the routing rules will be rolled out in a safe order; default is true")
 	DepCmd.Flags().BoolVarP(&safeDeploy, "safedeploy", "",
-		false, "If set to true, generateDeployChangeReport will executed and "+
+		false, "If set to true, generateDeployChangeReport will be executed and "+
 			"deployment will proceed if there are no conflicts; default is false")
 	DepCmd.Flags().StringVarP(&serviceAccountName, "sa", "s",
 		"", "The format must be {ACCOUNT_ID}@{PROJECT}.iam.gserviceaccount.com.")
