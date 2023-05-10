@@ -104,7 +104,7 @@ func init() {
 		false, "Forces deployment of the new revision")
 	DepCmd.Flags().BoolVarP(&wait, "wait", "",
 		false, "Waits for the deployment to finish, with success or error")
-	DepCmd.Flags().BoolVarP(&sequencedRollout, "sequencedRollout", "",
+	DepCmd.Flags().BoolVarP(&sequencedRollout, "sequencedrollout", "",
 		false, "If set to true, the routing rules will be rolled out in a safe order; default is false")
 	DepCmd.Flags().BoolVarP(&safeDeploy, "safedeploy", "",
 		true, "When set to true, generateDeployChangeReport will be executed and "+
