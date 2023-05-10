@@ -53,7 +53,7 @@ func init() {
 		-1, "API Proxy revision")
 	UndepCmd.Flags().BoolVarP(&safeUndeploy, "safeundeploy", "",
 		true, "When set to true, generateUndeployChangeReport will be executed and "+
-			"deployment will proceed if there are no conflicts; default is true")
+			"undeployment will proceed if there are no conflicts; default is true")
 
 	_ = UndepCmd.MarkFlagRequired("env")
 	_ = UndepCmd.MarkFlagRequired("name")
