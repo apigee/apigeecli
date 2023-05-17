@@ -35,8 +35,8 @@ func TotalAPICallsInMonth(month int, year int, envDetails bool, conn int) (total
 	// ensure the count is reset to zero before calculating the next set
 	defer env.ApiCalls.ResetCount()
 
-	apiclient.SetClientPrintHttpResponse(false)
-	defer apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
+	apiclient.ClientPrintHttpResponse.Set(false)
+	defer apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
 
 	if envListBytes, err = env.List(); err != nil {
 		return -1, err

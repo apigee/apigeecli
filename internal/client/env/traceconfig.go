@@ -80,11 +80,11 @@ func DisableTraceConfig() (respBody []byte, err error) {
 	var traceRespBody []byte
 	var payload []byte
 
-	apiclient.SetClientPrintHttpResponse(false)
+	apiclient.ClientPrintHttpResponse.Set(false)
 	if traceRespBody, err = GetTraceConfig(); err != nil {
 		return nil, err
 	}
-	apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
+	apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
 
 	traceResp := traceCfg{}
 	if err = json.Unmarshal(traceRespBody, &traceResp); err != nil {

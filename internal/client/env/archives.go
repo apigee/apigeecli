@@ -26,8 +26,8 @@ import (
 
 // generateUploadURL
 func generateUploadURL() (respBody []byte, err error) {
-	apiclient.SetClientPrintHttpResponse(false)
-	defer apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
+	apiclient.ClientPrintHttpResponse.Set(false)
+	defer apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "archiveDeployments:generateUploadUrl")
 	respBody, err = apiclient.HttpClient(u.String(), "")

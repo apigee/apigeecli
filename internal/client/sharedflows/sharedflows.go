@@ -76,11 +76,11 @@ func Get(name string, revision int) (respBody []byte, err error) {
 
 // GetHighestSfRevision
 func GetHighestSfRevision(name string) (version int, err error) {
-	apiclient.SetClientPrintHttpResponse(false)
+	apiclient.ClientPrintHttpResponse.Set(false)
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sharedflows", name)
 	respBody, err := apiclient.HttpClient(u.String())
-	apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
+	apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
 	if err != nil {
 		return -1, err
 	}
@@ -213,7 +213,7 @@ func Clean(name string, reportOnly bool) (err error) {
 	var revision int
 
 	// disable printing
-	apiclient.SetClientPrintHttpResponse(false)
+	apiclient.ClientPrintHttpResponse.Set(false)
 
 	// step 1. get a list of revisions that are deployed.
 	if sfDeploymentsBytes, err = ListDeployments(name); err != nil {
@@ -246,7 +246,7 @@ func Clean(name string, reportOnly bool) (err error) {
 	}
 
 	// enable printing
-	apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
+	apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
 
 	for _, sfRevision := range sfRevisions.Revision {
 		if !isRevisionDeployed(deployedRevisions, sfRevision) {
@@ -297,9 +297,9 @@ func Export(conn int, folder string, allRevisions bool) (err error) {
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sharedflows")
 
 	// don't print to sysout
-	apiclient.SetClientPrintHttpResponse(false)
+	apiclient.ClientPrintHttpResponse.Set(false)
 	respBody, err := apiclient.HttpClient(u.String())
-	apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
+	apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
 	if err != nil {
 		return err
 	}

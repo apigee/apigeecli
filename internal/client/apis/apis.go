@@ -116,11 +116,11 @@ func DeployProxy(name string, revision int, overrides bool, sequencedRollout boo
 	if safeDeploy {
 		var safeResp []byte
 		d := deploychangereport{}
-		apiclient.SetClientPrintHttpResponse(false)
+		apiclient.ClientPrintHttpResponse.Set(false)
 		if safeResp, err = GenerateDeployChangeReport(name, revision, overrides); err != nil {
 			return nil, err
 		}
-		apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
+		apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
 		if err = json.Unmarshal(safeResp, &d); err != nil {
 			return nil, err
 		}
@@ -170,8 +170,8 @@ func GetProxy(name string, revision int) (respBody []byte, err error) {
 
 // GetHighestProxyRevision
 func GetHighestProxyRevision(name string) (version int, err error) {
-	apiclient.SetClientPrintHttpResponse(false)
-	defer apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
+	apiclient.ClientPrintHttpResponse.Set(false)
+	defer apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
 
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apis", name)
@@ -273,11 +273,11 @@ func ListProxyRevisionDeployments(name string, revision int) (respBody []byte, e
 func UndeployProxy(name string, revision int, safeUndeploy bool) (respBody []byte, err error) {
 	if safeUndeploy {
 		var safeResp []byte
-		apiclient.SetClientPrintHttpResponse(false)
+		apiclient.ClientPrintHttpResponse.Set(false)
 		if safeResp, err = GenerateUndeployChangeReport(name, revision); err != nil {
 			return nil, err
 		}
-		apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
+		apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
 		d := deploychangereport{}
 		if err = json.Unmarshal(safeResp, &d); err != nil {
 			return nil, err
@@ -350,8 +350,8 @@ func CleanProxy(name string, reportOnly bool, keepList []string) (err error) {
 	var revision int
 
 	// disable printing
-	apiclient.SetClientPrintHttpResponse(false)
-	defer apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
+	apiclient.ClientPrintHttpResponse.Set(false)
+	defer apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
 
 	// step 1. get a list of revisions that are deployed.
 	if proxyDeploymentsBytes, err = ListProxyDeployments(name); err != nil {
@@ -424,8 +424,8 @@ func ExportProxies(conn int, folder string, allRevisions bool) (err error) {
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apis")
 
 	// don't print to sysout
-	apiclient.SetClientPrintHttpResponse(false)
-	defer apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
+	apiclient.ClientPrintHttpResponse.Set(false)
+	defer apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
 
 	respBody, err := apiclient.HttpClient(u.String())
 	if err != nil {

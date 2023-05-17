@@ -153,12 +153,12 @@ func upsert(p APIProduct, a Action) (respBody []byte, err error) {
 	case UPDATE:
 		createNew = false
 	case UPSERT:
-		apiclient.SetClientPrintHttpResponse(false)
+		apiclient.ClientPrintHttpResponse.Set(false)
 		_, err = Get(p.Name)
 		if err != nil {
 			createNew = true // product does not exist
 		}
-		apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
+		apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
 	}
 
 	payload, err := json.Marshal(p)
@@ -243,7 +243,7 @@ func ListFilter(filter map[string]string) (respBody []byte, err error) {
 	allprds := apiProducts{}
 	outprds := apiProducts{}
 
-	apiclient.SetClientPrintHttpResponse(false)
+	apiclient.ClientPrintHttpResponse.Set(false)
 
 	for nextPage {
 		pageResp, err := List(maxProducts, startKey, true)
@@ -297,7 +297,7 @@ func ListFilter(filter map[string]string) (respBody []byte, err error) {
 	}
 
 	respBody, err = json.Marshal(outprds)
-	apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
+	apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
 	_ = apiclient.PrettyPrint(respBody)
 
 	return respBody, err
@@ -313,9 +313,9 @@ func Export(conn int) (payload [][]byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), entityType)
 	// don't print to sysout
-	apiclient.SetClientPrintHttpResponse(false)
+	apiclient.ClientPrintHttpResponse.Set(false)
 	respBody, err := apiclient.HttpClient(u.String())
-	apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
+	apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
 	if err != nil {
 		return apiclient.GetEntityPayloadList(), err
 	}

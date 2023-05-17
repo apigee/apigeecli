@@ -110,12 +110,12 @@ func getAttachmentName(instance string) (attachmentName string, err error) {
 
 	instAttach := instanceAttachments{}
 
-	apiclient.SetClientPrintHttpResponse(false)
+	apiclient.ClientPrintHttpResponse.Set(false)
 	listAttachments, err := ListAttach(instance)
 	if err != nil {
 		return "", err
 	}
-	apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
+	apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
 
 	err = json.Unmarshal(listAttachments, &instAttach)
 	if err != nil {

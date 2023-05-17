@@ -35,11 +35,11 @@ var CreateCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetClientPrintHttpResponse(false)
+		apiclient.ClientPrintHttpResponse.Set(false)
 		if billingType, err = orgs.GetOrgField("billingType"); err != nil {
 			return err
 		}
-		apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
+		apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
 
 		if billingType != "EVALUATION" {
 			re := regexp.MustCompile(`projects\/([a-zA-Z0-9_-]+)\/locations` +

@@ -119,11 +119,11 @@ func DetachEnvironment(name string, environment string) (respBody []byte, err er
 
 	envGroupAttachments := attachments{}
 
-	apiclient.SetClientPrintHttpResponse(false)
+	apiclient.ClientPrintHttpResponse.Set(false)
 	if respBody, err = ListAttach(name); err != nil {
 		return nil, err
 	}
-	apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
+	apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
 
 	if err := json.Unmarshal(respBody, &envGroupAttachments); err != nil {
 		return nil, err

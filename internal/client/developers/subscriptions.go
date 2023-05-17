@@ -68,8 +68,8 @@ func ExportSubscriptions(email string) (respBody []byte, err error) {
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", url.QueryEscape(email), "subscriptions")
 
 	// don't print to sysout
-	apiclient.SetClientPrintHttpResponse(false)
-	defer apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
+	apiclient.ClientPrintHttpResponse.Set(false)
+	defer apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }

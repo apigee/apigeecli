@@ -114,8 +114,8 @@ func Update(name string, description string, resourceType string, refers string)
 // Export
 func Export(conn int) (payload [][]byte, err error) {
 	// don't print to sysout
-	apiclient.SetClientPrintHttpResponse(false)
-	defer apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
+	apiclient.ClientPrintHttpResponse.Set(false)
+	defer apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
 	respBody, err := List()
 	if err != nil {
 		return nil, err
@@ -185,8 +185,8 @@ func Export(conn int) (payload [][]byte, err error) {
 
 func exportReferences(wg *sync.WaitGroup, jobs <-chan string, results chan<- []byte, errs chan<- error) {
 	defer wg.Done()
-	defer apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
-	apiclient.SetClientPrintHttpResponse(false)
+	defer apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
+	apiclient.ClientPrintHttpResponse.Set(false)
 	for {
 		job, ok := <-jobs
 		if !ok {

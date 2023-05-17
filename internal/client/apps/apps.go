@@ -152,8 +152,8 @@ func Manage(appID string, developerEmail string, action string) (respBody []byte
 
 // SearchApp
 func SearchApp(name string) (respBody []byte, err error) {
-	apiclient.SetClientPrintHttpResponse(false)
-	defer apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
+	apiclient.ClientPrintHttpResponse.Set(false)
+	defer apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
 
 	u, _ := url.Parse(apiclient.BaseURL)
 	// search by name is not implemented; use list and return the appropriate app
@@ -239,8 +239,8 @@ func GenerateKey(name string, developerID string, apiProducts []string, callback
 
 // Export
 func Export(conn int) (payload [][]byte, err error) {
-	apiclient.SetClientPrintHttpResponse(false)
-	defer apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
+	apiclient.ClientPrintHttpResponse.Set(false)
+	defer apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
 
 	// parent workgroup
 	var pwg sync.WaitGroup
@@ -445,9 +445,9 @@ func createAsyncApp(app application, developerEntities developers.Appdevelopers,
 	newAppCredentials := newDeveloperApp["credentials"].([]interface{})
 	temporaryCredential := newAppCredentials[0].(map[string]interface{})
 
-	apiclient.SetClientPrintHttpResponse(false)
+	apiclient.ClientPrintHttpResponse.Set(false)
 	_, err = DeleteKey(developerEmail, newDeveloperApp["name"].(string), temporaryCredential["consumerKey"].(string))
-	apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
+	apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
 	if err != nil {
 		clilog.Error.Println(err)
 		return
