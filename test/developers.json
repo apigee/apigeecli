@@ -1,0 +1,22 @@
+{
+        "developer": [
+                {
+                        "email": "test1@user.com",
+                        "firstName": "Test1",
+                        "lastName": "User",
+                        "userName": "test1"
+                },
+                {
+                        "email": "test2@user.com",
+                        "firstName": "Test2",
+                        "lastName": "User",
+                        "userName": "test2"
+                },
+                {
+                        "email": "test3@user.com",
+                        "firstName": "Test3",
+                        "lastName": "User",
+                        "userName": "test3"
+                }
+        ]
+}
