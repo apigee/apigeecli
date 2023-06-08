@@ -36,7 +36,7 @@ var ExpCmd = &cobra.Command{
 		apiclient.DisableCmdPrintHttpResponse()
 		payload, err := targetservers.Export(conn)
 		if err != nil {
-			return
+			return err
 		}
 		return apiclient.WriteArrayByteArrayToFile(exportFileName, false, payload)
 	},

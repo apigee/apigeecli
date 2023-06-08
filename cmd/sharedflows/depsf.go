@@ -34,11 +34,11 @@ var DepCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		if revision == -1 {
 			if revision, err = sharedflows.GetHighestSfRevision(name); err != nil {
-				return
+				return err
 			}
 		}
 		_, err = sharedflows.Deploy(name, revision, overrides, serviceAccountName)
-		return
+		return err
 	},
 }
 

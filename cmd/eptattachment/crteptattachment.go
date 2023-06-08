@@ -42,7 +42,7 @@ var CreateCmd = &cobra.Command{
 				"projects/{project-id}/regions/{location}/serviceAttachments/{sa-name}")
 		}
 		_, err = eptattachment.Create(name, serviceAttachment, location)
-		return
+		return err
 	},
 }
 

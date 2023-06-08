@@ -39,7 +39,7 @@ var DepCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		if revision == -1 {
 			if revision, err = apis.GetHighestProxyRevision(name); err != nil {
-				return
+				return err
 			}
 		}
 		if _, err = apis.DeployProxy(name,
@@ -48,7 +48,7 @@ var DepCmd = &cobra.Command{
 			sequencedRollout,
 			safeDeploy,
 			serviceAccountName); err != nil {
-			return
+			return err
 		}
 
 		apiclient.DisableCmdPrintHttpResponse()
@@ -82,7 +82,7 @@ var DepCmd = &cobra.Command{
 			<-stop
 		}
 
-		return
+		return err
 	},
 }
 

@@ -43,7 +43,7 @@ var MonthlyCmd = &cobra.Command{
 		clilog.Warning.Println("This API is rate limited to 1 API Call per second")
 
 		if _, err = time.Parse("1/2006", fmt.Sprintf("%d/%d", month, year)); err != nil {
-			return
+			return err
 		}
 
 		if envDetails {
@@ -52,7 +52,7 @@ var MonthlyCmd = &cobra.Command{
 		}
 
 		if apiCalls, err = orgs.TotalAPICallsInMonth(month, year, envDetails, conn); err != nil {
-			return
+			return err
 		}
 
 		if envDetails {
@@ -64,7 +64,7 @@ var MonthlyCmd = &cobra.Command{
 		fmt.Fprintln(w)
 		w.Flush()
 
-		return
+		return err
 	},
 }
 

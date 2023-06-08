@@ -34,11 +34,11 @@ var UndepCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		if revision == -1 {
 			if revision, err = apis.GetHighestProxyRevision(name); err != nil {
-				return
+				return err
 			}
 		}
 		_, err = apis.UndeployProxy(name, revision, safeUndeploy)
-		return
+		return err
 	},
 }
 

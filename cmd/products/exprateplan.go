@@ -34,7 +34,7 @@ var ExpRateplanCmd = &cobra.Command{
 		exportFileName := "rateplan_" + name + ".json"
 		respBody, err := products.ExportRateplan(name)
 		if err != nil {
-			return
+			return err
 		}
 		return apiclient.WriteByteArrayToFile(exportFileName, false, respBody)
 	},

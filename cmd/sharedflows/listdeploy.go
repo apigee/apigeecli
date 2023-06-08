@@ -52,7 +52,7 @@ var ListDepCmd = &cobra.Command{
 		} else {
 			_, err = sharedflows.ListDeployments(name)
 		}
-		return
+		return err
 	},
 }
 

@@ -98,7 +98,7 @@ var ApplyCmd = &cobra.Command{
 			}
 		}
 
-		return
+		return err
 	},
 }
 

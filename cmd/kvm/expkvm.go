@@ -59,7 +59,7 @@ var ExpCmd = &cobra.Command{
 
 		for _, mapName := range listKVM {
 			if payload, err = kvm.ExportEntries(proxyName, mapName); err != nil {
-				return
+				return err
 			}
 
 			if env != "" {
@@ -72,13 +72,13 @@ var ExpCmd = &cobra.Command{
 
 			for i := range payload {
 				if err = apiclient.WriteByteArrayToFile(fileName+"_"+strconv.Itoa(i)+".json", false, payload[i]); err != nil {
-					return
+					return err
 				}
 			}
 		}
 
 		clilog.Info.Println("KVMs exported successfully")
-		return
+		return err
 	},
 }
 

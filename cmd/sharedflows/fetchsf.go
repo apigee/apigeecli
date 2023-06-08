@@ -34,7 +34,7 @@ var FetCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		if revision == -1 {
 			if revision, err = sharedflows.GetHighestSfRevision(name); err != nil {
-				return
+				return err
 			}
 		}
 		return sharedflows.Fetch(name, revision)

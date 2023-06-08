@@ -34,7 +34,7 @@ var ExpCmd = &cobra.Command{
 		const exportFileName = "apps.json"
 		payload, err := apps.Export(conn)
 		if err != nil {
-			return
+			return err
 		}
 		return apiclient.WriteArrayByteArrayToFile(exportFileName, false, payload)
 	},

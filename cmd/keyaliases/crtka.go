@@ -78,7 +78,7 @@ var CreateCmd = &cobra.Command{
 		default:
 			return fmt.Errorf("invalid format key alias for %s", format)
 		}
-		return
+		return err
 	},
 }
 

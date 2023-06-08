@@ -45,7 +45,7 @@ var ListCmd = &cobra.Command{
 		} else {
 			_, err = products.List(count, startKey, expand)
 		}
-		return
+		return err
 	},
 }
 

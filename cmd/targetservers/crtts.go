@@ -49,7 +49,7 @@ var CreateCmd = &cobra.Command{
 			keyStore, keyAlias, trustStore, sslinfo,
 			tlsenabled, clientAuthEnabled,
 			ignoreValidationErrors)
-		return
+		return err
 	},
 }
 
