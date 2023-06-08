@@ -16,6 +16,7 @@ package developers
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/url"
@@ -167,9 +168,6 @@ func Export() (respBody []byte, err error) {
 
 // Import
 func Import(conn int, filePath string) error {
-	var pwg sync.WaitGroup
-	u, _ := url.Parse(apiclient.BaseURL)
-	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers")
 
 	entities, err := ReadDevelopersFile(filePath)
 	if err != nil {
@@ -181,62 +179,66 @@ func Import(conn int, filePath string) error {
 	clilog.Debug.Printf("Found %d developers in the file\n", numEntities)
 	clilog.Debug.Printf("Create developers with %d connections\n", conn)
 
-	numOfLoops, remaining := numEntities/conn, numEntities%conn
+	jobChan := make(chan Appdeveloper)
+	errChan := make(chan error)
 
-	// ensure connections aren't greater than entities
-	if conn > numEntities {
-		conn = numEntities
+	fanOutWg := sync.WaitGroup{}
+	fanInWg := sync.WaitGroup{}
+
+	errs := []string{}
+	fanInWg.Add(1)
+	go func() {
+		defer fanInWg.Done()
+		for {
+			newErr, ok := <-errChan
+			if !ok {
+				return
+			}
+			errs = append(errs, newErr.Error())
+		}
+	}()
+
+	for i := 0; i < conn; i++ {
+		fanOutWg.Add(1)
+		go createAsyncDeveloper(&fanOutWg, jobChan, errChan)
 	}
 
-	start := 0
-
-	for i, end := 0, 0; i < numOfLoops; i++ {
-		pwg.Add(1)
-		end = (i * conn) + conn
-		clilog.Debug.Printf("Creating batch %d of developers\n", (i + 1))
-		go batchImport(u.String(), entities.Developer[start:end], &pwg)
-		start = end
-		pwg.Wait()
+	for _, entity := range entities.Developer {
+		jobChan <- entity
 	}
+	close(jobChan)
+	fanOutWg.Wait()
+	close(errChan)
+	fanInWg.Wait()
 
-	if remaining > 0 {
-		pwg.Add(1)
-		clilog.Debug.Printf("Creating remaining %d developers\n", remaining)
-		go batchImport(u.String(), entities.Developer[start:numEntities], &pwg)
-		pwg.Wait()
+	if len(errs) > 0 {
+		return errors.New(strings.Join(errs, "\n"))
 	}
-
 	return nil
 }
 
-func createAsyncDeveloper(url string, dev Appdeveloper, wg *sync.WaitGroup) {
+func createAsyncDeveloper(wg *sync.WaitGroup, jobs <-chan Appdeveloper, errs chan<- error) {
 	defer wg.Done()
-	out, err := json.Marshal(dev)
-	if err != nil {
-		clilog.Error.Println(err)
-		return
+	u, _ := url.Parse(apiclient.BaseURL)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers")
+
+	for {
+		job, ok := <-jobs
+		if !ok {
+			return
+		}
+		dev, err := json.Marshal(job)
+		if err != nil {
+			errs <- err
+			continue
+		}
+		_, err = apiclient.HttpClient(u.String(), string(dev))
+		if err != nil {
+			errs <- err
+			continue
+		}
+		clilog.Debug.Printf("Completed entity: %s", job.EMail)
 	}
-	_, err = apiclient.HttpClient(url, string(out))
-	if err != nil {
-		clilog.Error.Println(err)
-		return
-	}
-
-	clilog.Debug.Printf("Completed entity: %s", dev.EMail)
-}
-
-// batch creates a batch of developers to create
-func batchImport(url string, entities []Appdeveloper, pwg *sync.WaitGroup) {
-	defer pwg.Done()
-	// batch workgroup
-	var bwg sync.WaitGroup
-
-	bwg.Add(len(entities))
-
-	for _, entity := range entities {
-		go createAsyncDeveloper(url, entity, &bwg)
-	}
-	bwg.Wait()
 }
 
 // ReadDevelopersFile
