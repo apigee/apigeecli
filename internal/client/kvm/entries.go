@@ -112,8 +112,8 @@ func ExportEntries(proxyName string, mapName string) (payload [][]byte, err erro
 	var respBody []byte
 	count := 1
 
-	apiclient.SetClientPrintHttpResponse(false)
-	defer apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
+	apiclient.ClientPrintHttpResponse.Set(false)
+	defer apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
 
 	if respBody, err = ListEntries(proxyName, mapName, -1, ""); err != nil {
 		return nil, err

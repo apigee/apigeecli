@@ -17,6 +17,7 @@ package apiclient
 import (
 	"fmt"
 	"os"
+	"sync"
 
 	"internal/clilog"
 )
@@ -55,10 +56,14 @@ const (
 
 var apiRate Rate
 
-var (
-	cmdPrintHttpResponses    = true
-	clientPrintHttpResponses = true
-)
+var cmdPrintHttpResponses = true
+
+type clientPrintHttpResponse struct {
+	enable bool
+	sync.Mutex
+}
+
+var ClientPrintHttpResponse = &clientPrintHttpResponse{enable: true}
 
 // NewApigeeClient sets up options to invoke Apigee APIs
 func NewApigeeClient(o ApigeeClientOptions) {
@@ -204,13 +209,17 @@ func GetCmdPrintHttpResponseSetting() bool {
 }
 
 // SetClientPrintHttpResponse
-func SetClientPrintHttpResponse(b bool) {
-	clientPrintHttpResponses = b
+func (c *clientPrintHttpResponse) Set(b bool) {
+	c.Lock()
+	defer c.Unlock()
+	c.enable = b
 }
 
 // GetPrintHttpResponseSetting
-func GetClientPrintHttpResponseSetting() bool {
-	return clientPrintHttpResponses
+func (c *clientPrintHttpResponse) Get() bool {
+	c.Lock()
+	defer c.Unlock()
+	return c.enable
 }
 
 // GetProxyURL

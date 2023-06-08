@@ -169,8 +169,8 @@ func GetAsyncEntity(entityURL string, wg *sync.WaitGroup, mu *sync.Mutex) {
 	var respBody []byte
 
 	// don't print to sysout
-	SetClientPrintHttpResponse(false)
-	defer SetClientPrintHttpResponse(GetCmdPrintHttpResponseSetting())
+	ClientPrintHttpResponse.Set(false)
+	defer ClientPrintHttpResponse.Set(GetCmdPrintHttpResponseSetting())
 	respBody, err := HttpClient(entityURL)
 	if err != nil {
 		clilog.Error.Fatalf("error with entity: %s", entityURL)

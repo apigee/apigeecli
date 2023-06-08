@@ -72,11 +72,11 @@ func List(state string, completeState OperationCompleteState) (respBody []byte, 
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "operations")
 	if state != "" {
-		apiclient.SetClientPrintHttpResponse(false)
+		apiclient.ClientPrintHttpResponse.Set(false)
 		if respBody, err = apiclient.HttpClient(u.String()); err != nil {
 			return nil, err
 		}
-		apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
+		apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
 		return filterOperation(respBody, state, completeState)
 	}
 

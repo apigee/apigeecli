@@ -112,8 +112,8 @@ func CreateIAMServiceAccount(name string, iamRole string) (err error) {
 		return fmt.Errorf("invalid service account role")
 	}
 
-	SetClientPrintHttpResponse(false)
-	defer SetClientPrintHttpResponse(GetCmdPrintHttpResponseSetting())
+	ClientPrintHttpResponse.Set(false)
+	defer ClientPrintHttpResponse.Set(GetCmdPrintHttpResponseSetting())
 
 	// Step 1: create a new service account
 	u, _ := url.Parse(iamURL)
@@ -258,8 +258,8 @@ func SetIAMPermission(memberName string, iamRole string, memberType string) (err
 		role = iamRole
 	}
 
-	SetClientPrintHttpResponse(false)
-	defer SetClientPrintHttpResponse(GetCmdPrintHttpResponseSetting())
+	ClientPrintHttpResponse.Set(false)
+	defer ClientPrintHttpResponse.Set(GetCmdPrintHttpResponseSetting())
 
 	u, _ := url.Parse(BaseURL)
 	u.Path = path.Join(u.Path, GetApigeeOrg(), "environments", GetApigeeEnv()+":getIamPolicy")
@@ -313,8 +313,8 @@ func SetIAMPermission(memberName string, iamRole string, memberType string) (err
 
 // RemoveIAMPermission removes/unbinds IAM permission from all roles for an Apigee Env
 func RemoveIAMPermission(memberName string, iamRole string) (err error) {
-	SetClientPrintHttpResponse(false)
-	defer SetClientPrintHttpResponse(GetCmdPrintHttpResponseSetting())
+	ClientPrintHttpResponse.Set(false)
+	defer ClientPrintHttpResponse.Set(GetCmdPrintHttpResponseSetting())
 
 	u, _ := url.Parse(BaseURL)
 	u.Path = path.Join(u.Path, GetApigeeOrg(), "environments", GetApigeeEnv()+":getIamPolicy")
@@ -449,8 +449,8 @@ func AddWid(projectID string, namespace string, kServiceAccount string, gService
 	u, _ := url.Parse(crmBetaURL)
 	u.Path = path.Join(u.Path, GetProjectID()+":setIamPolicy")
 
-	SetClientPrintHttpResponse(false)
-	defer SetClientPrintHttpResponse(GetCmdPrintHttpResponseSetting())
+	ClientPrintHttpResponse.Set(false)
+	defer ClientPrintHttpResponse.Set(GetCmdPrintHttpResponseSetting())
 	_, err = HttpClient(u.String(), string(setIamPolicyBody))
 
 	return err

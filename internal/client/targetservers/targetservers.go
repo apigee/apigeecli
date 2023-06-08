@@ -70,12 +70,12 @@ func Create(name string, description string, host string, port int, enable bool,
 
 // Update
 func Update(name string, description string, host string, port int, enable bool, grpc bool, keyStore string, keyAlias string, trustStore string, sslinfo string, tlsenabled bool, clientAuthEnabled bool, ignoreValidationErrors bool) (respBody []byte, err error) {
-	apiclient.SetClientPrintHttpResponse(false)
+	apiclient.ClientPrintHttpResponse.Set(false)
 	targetRespBody, err := Get(name)
 	if err != nil {
 		return nil, err
 	}
-	apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
+	apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
 
 	targetsvr := targetserver{}
 	if err = json.Unmarshal(targetRespBody, &targetsvr); err != nil {
@@ -150,8 +150,8 @@ func List() (respBody []byte, err error) {
 // Export
 func Export(conn int) (payload [][]byte, err error) {
 	// don't print to sysout
-	apiclient.SetClientPrintHttpResponse(false)
-	defer apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
+	apiclient.ClientPrintHttpResponse.Set(false)
+	defer apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
 
 	respBody, err := List()
 	if err != nil {
@@ -222,8 +222,8 @@ func Export(conn int) (payload [][]byte, err error) {
 
 func exportServers(wg *sync.WaitGroup, jobs <-chan string, results chan<- []byte, errs chan<- error) {
 	defer wg.Done()
-	defer apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
-	apiclient.SetClientPrintHttpResponse(false)
+	defer apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
+	apiclient.ClientPrintHttpResponse.Set(false)
 	for {
 		job, ok := <-jobs
 		if !ok {

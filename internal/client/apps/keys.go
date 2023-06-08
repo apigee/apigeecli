@@ -48,7 +48,7 @@ func CreateKey(developerEmail string, appID string, consumerKey string, consumer
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", developerEmail, "apps", appID, "keys")
 
 	if len(apiProducts) > 0 {
-		apiclient.SetClientPrintHttpResponse(false)
+		apiclient.ClientPrintHttpResponse.Set(false)
 	}
 	respBody, err = apiclient.HttpClient(u.String(), payload)
 
@@ -58,9 +58,9 @@ func CreateKey(developerEmail string, appID string, consumerKey string, consumer
 
 	// since the API does not support adding products when creating a key, use a second API call to add products
 	if len(apiProducts) > 0 {
-		apiclient.SetClientPrintHttpResponse(false)
+		apiclient.ClientPrintHttpResponse.Set(false)
 		respBody, err = UpdateKeyProducts(developerEmail, appID, consumerKey, apiProducts)
-		apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
+		apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
 	}
 
 	return respBody, err

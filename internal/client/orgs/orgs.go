@@ -190,9 +190,9 @@ func SetOrgProperty(name string, value string) (err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg())
 	// get org details
-	apiclient.SetClientPrintHttpResponse(false)
+	apiclient.ClientPrintHttpResponse.Set(false)
 	orgBody, err := apiclient.HttpClient(u.String())
-	apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
+	apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
 	if err != nil {
 		return err
 	}
@@ -237,12 +237,12 @@ func SetOrgProperty(name string, value string) (err error) {
 
 // Update
 func Update(description string, displayName string, region string, network string, runtimeType string, databaseKey string) (respBody []byte, err error) {
-	apiclient.SetClientPrintHttpResponse(false)
+	apiclient.ClientPrintHttpResponse.Set(false)
 	orgBody, err := Get()
 	if err != nil {
 		return nil, err
 	}
-	apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
+	apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
 
 	org := organization{}
 	err = json.Unmarshal(orgBody, &org)
@@ -288,7 +288,7 @@ func Update(description string, displayName string, region string, network strin
 
 // SetAddons
 func SetAddons(advancedApiOpsConfig bool, integrationConfig bool, monetizationConfig bool, connectorsConfig bool, apiSecurityConfig bool) (respBody []byte, err error) {
-	apiclient.SetClientPrintHttpResponse(false)
+	apiclient.ClientPrintHttpResponse.Set(false)
 
 	orgRespBody, err := Get()
 	if err != nil {
@@ -302,7 +302,7 @@ func SetAddons(advancedApiOpsConfig bool, integrationConfig bool, monetizationCo
 		return nil, err
 	}
 
-	apiclient.SetClientPrintHttpResponse(apiclient.GetCmdPrintHttpResponseSetting())
+	apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
 
 	addonPayload := []string{}
 
