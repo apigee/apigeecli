@@ -60,7 +60,7 @@ func readOverrides(filepath string) (err error) {
 	if err != nil {
 		return err
 	}
-	return
+	return err
 }
 
 func getOrg() string {

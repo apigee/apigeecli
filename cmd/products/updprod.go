@@ -63,7 +63,7 @@ var UpdateCmd = &cobra.Command{
 
 		_, err = products.Update(p)
 
-		return
+		return err
 	},
 }
 

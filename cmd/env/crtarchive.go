@@ -74,7 +74,7 @@ var CreateArchiveCmd = &cobra.Command{
 		if wait {
 			archiveResponse := op{}
 			if err = json.Unmarshal(respBody, &archiveResponse); err != nil {
-				return
+				return err
 			}
 
 			s := strings.Split(archiveResponse.Name, "/")
@@ -115,7 +115,7 @@ var CreateArchiveCmd = &cobra.Command{
 			<-stop
 
 		}
-		return
+		return err
 	},
 }
 

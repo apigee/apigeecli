@@ -71,7 +71,7 @@ var CreateCmd = &cobra.Command{
 			}
 			return os.Remove(sfBundlePath)
 		}
-		return
+		return err
 	},
 }
 

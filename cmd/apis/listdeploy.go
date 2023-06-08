@@ -56,7 +56,7 @@ var ListDepCmd = &cobra.Command{
 		} else {
 			_, err = apis.ListProxyDeployments(name)
 		}
-		return
+		return err
 	},
 }
 

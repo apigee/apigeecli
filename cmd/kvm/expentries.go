@@ -45,7 +45,7 @@ var ExpEntryCmd = &cobra.Command{
 		var fileName string
 
 		if payload, err = kvm.ExportEntries(proxyName, mapName); err != nil {
-			return
+			return err
 		}
 
 		if env != "" {
@@ -58,10 +58,10 @@ var ExpEntryCmd = &cobra.Command{
 
 		for i := range payload {
 			if err = apiclient.WriteByteArrayToFile(fileName+"_"+strconv.Itoa(i)+".json", false, payload[i]); err != nil {
-				return
+				return err
 			}
 		}
-		return
+		return err
 	},
 }
 

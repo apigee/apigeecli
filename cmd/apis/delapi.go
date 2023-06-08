@@ -37,7 +37,7 @@ var DelCmd = &cobra.Command{
 		} else {
 			_, err = apis.DeleteProxyRevision(name, revision)
 		}
-		return
+		return err
 	},
 }
 

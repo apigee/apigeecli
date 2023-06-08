@@ -61,7 +61,7 @@ var CreateCmd = &cobra.Command{
 
 		_, err = instances.Create(name, location, diskEncryptionKeyName, ipRange, consumerAcceptList)
 
-		return
+		return err
 	},
 }
 

@@ -63,7 +63,7 @@ var CreateCmd = &cobra.Command{
 
 		_, err = products.Create(p)
 
-		return
+		return err
 	},
 }
 

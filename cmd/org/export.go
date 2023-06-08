@@ -245,7 +245,7 @@ var ExportCmd = &cobra.Command{
 
 		}
 
-		return
+		return err
 	},
 }
 

@@ -87,7 +87,6 @@ linters:
     - typecheck
     - unused
     - bodyclose
-    - depguard
     - goconst
     - gofmt
     - goimports

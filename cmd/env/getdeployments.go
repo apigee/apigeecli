@@ -37,7 +37,7 @@ var GetDeployCmd = &cobra.Command{
 		} else {
 			_, err = environments.GetDeployments(sharedflows)
 		}
-		return
+		return err
 	},
 }
 

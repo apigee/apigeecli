@@ -70,7 +70,7 @@ var DeleteCmd = &cobra.Command{
 			}
 		}
 
-		return
+		return err
 	},
 }
 

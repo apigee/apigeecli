@@ -41,7 +41,7 @@ var GetCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		if appID != "" {
 			_, err = apps.Get(appID)
-			return
+			return err
 		}
 
 		if name != "" {
@@ -54,7 +54,7 @@ var GetCmd = &cobra.Command{
 		}
 
 		_, err = apps.ListApps(productName)
-		return
+		return err
 	},
 }
 

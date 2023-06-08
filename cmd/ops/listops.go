@@ -49,7 +49,7 @@ var ListCmd = &cobra.Command{
 		} else {
 			_, err = operations.List(state, operations.Both)
 		}
-		return
+		return err
 	},
 }
 
