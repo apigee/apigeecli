@@ -16,11 +16,13 @@ package products
 
 import (
 	"encoding/json"
+	"errors"
 	"io"
 	"net/url"
 	"os"
 	"path"
 	"strconv"
+	"strings"
 	"sync"
 
 	"internal/apiclient"
@@ -363,10 +365,6 @@ func Export(conn int) (payload [][]byte, err error) {
 
 // Import
 func Import(conn int, filePath string, upsert bool) (err error) {
-	var pwg sync.WaitGroup
-	u, _ := url.Parse(apiclient.BaseURL)
-	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts")
-
 	entities, err := readProductsFile(filePath)
 	if err != nil {
 		clilog.Error.Println("Error reading file: ", err)
@@ -377,31 +375,41 @@ func Import(conn int, filePath string, upsert bool) (err error) {
 	clilog.Debug.Printf("Found %d products in the file\n", numEntities)
 	clilog.Debug.Printf("Create products with %d connections\n", conn)
 
-	numOfLoops, remaining := numEntities/conn, numEntities%conn
+	jobChan := make(chan APIProduct)
+	errChan := make(chan error)
 
-	// ensure connections aren't greater than entities
-	if conn > numEntities {
-		conn = numEntities
+	fanOutWg := sync.WaitGroup{}
+	fanInWg := sync.WaitGroup{}
+
+	errs := []string{}
+	fanInWg.Add(1)
+	go func() {
+		defer fanInWg.Done()
+		for {
+			newErr, ok := <-errChan
+			if !ok {
+				return
+			}
+			errs = append(errs, newErr.Error())
+		}
+	}()
+
+	for i := 0; i < conn; i++ {
+		fanOutWg.Add(1)
+		go importAPIProduct(&fanOutWg, upsert, jobChan, errChan)
 	}
 
-	start := 0
-
-	for i, end := 0, 0; i < numOfLoops; i++ {
-		pwg.Add(1)
-		end = (i * conn) + conn
-		clilog.Debug.Printf("Creating batch %d of products\n", (i + 1))
-		go batchImport(u.String(), entities[start:end], upsert, &pwg)
-		start = end
-		pwg.Wait()
+	for _, entity := range entities {
+		jobChan <- entity
 	}
+	close(jobChan)
+	fanOutWg.Wait()
+	close(errChan)
+	fanInWg.Wait()
 
-	if remaining > 0 {
-		pwg.Add(1)
-		clilog.Debug.Printf("Creating remaining %d products\n", remaining)
-		go batchImport(u.String(), entities[start:numEntities], upsert, &pwg)
-		pwg.Wait()
+	if len(errs) > 0 {
+		return errors.New(strings.Join(errs, "\n"))
 	}
-
 	return nil
 }
 
@@ -421,37 +429,25 @@ func batchExport(entities []APIProduct, entityType string, pwg *sync.WaitGroup, 
 	bwg.Wait()
 }
 
-// batch creates a batch of products to create
-func batchImport(url string, entities []APIProduct, upsert bool, pwg *sync.WaitGroup) {
-	defer pwg.Done()
-	// batch workgroup
-	var bwg sync.WaitGroup
-
-	bwg.Add(len(entities))
-
-	for _, entity := range entities {
-		go createAsyncProduct(url, entity, upsert, &bwg)
-	}
-	bwg.Wait()
-}
-
-func createAsyncProduct(url string, entity APIProduct, createOrUpdate bool, wg *sync.WaitGroup) {
-	defer wg.Done()
+// importAPIProduct
+func importAPIProduct(wg *sync.WaitGroup, upsertAction bool, jobs <-chan APIProduct, errs chan<- error) {
 	var err error
-
-	if createOrUpdate {
-		if _, err = upsert(entity, UPSERT); err != nil {
-			clilog.Error.Println(err)
+	defer wg.Done()
+	for {
+		job, ok := <-jobs
+		if !ok {
 			return
 		}
-	} else {
-		if _, err = upsert(entity, CREATE); err != nil {
-			clilog.Error.Println(err)
-			return
+		if upsertAction {
+			_, err = upsert(job, UPSERT)
+		} else {
+			_, err = upsert(job, CREATE)
+		}
+		if err != nil {
+			errs <- err
+			continue
 		}
 	}
-
-	clilog.Debug.Printf("Completed entity: %s", entity.Name)
 }
 
 func readProductsFile(filePath string) ([]APIProduct, error) {

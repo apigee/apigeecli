@@ -1,0 +1,86 @@
+[
+  {
+    "name": "pingstatus-v1-product-test-legacy",
+    "displayName": "pingstatus-v1-product-test-legacy",
+    "approvalType": "auto",
+    "attributes": [
+      {
+        "name": "access",
+        "value": "internal"
+      },
+      {
+        "name": "custom.description",
+        "value": "Product to test pingstatus with custom attribute."
+      }
+    ],
+    "description": "Product to test pingstatus-v1 API in test env using legacy format",
+    "apiResources": [
+      "/",
+      "/**"
+    ],
+    "environments": [
+      "test"
+    ],
+    "proxies": [
+      "pingstatus-v1"
+    ],
+    "quota": "10000",
+    "quotaInterval": "1",
+    "quotaTimeUnit": "month"
+  },
+  {
+    "name": "pingstatus-v1-product-test-operations",
+    "displayName": "pingstatus-v1-product-test-operations",
+    "approvalType": "auto",
+    "attributes": [
+      {
+        "name": "access",
+        "value": "internal"
+      }
+    ],
+    "description": "Product to test pingstatus-v1 API in test env using operations format",
+    "environments": [
+      ""
+    ],
+    "quota": "20",
+    "quotaInterval": "2",
+    "quotaTimeUnit": "minute",
+    "operationGroup": {
+      "operationConfigs": [
+        {
+          "apiSource": "pingstatus-v1",
+          "operations": [
+            {
+              "resource": "/ping",
+              "methods": [
+                "GET"
+              ]
+            }
+          ],
+          "quota": {
+            "limit": "60",
+            "interval": "1",
+            "timeUnit": "minute"
+          }
+        },
+        {
+          "apiSource": "pingstatus-v1",
+          "operations": [
+            {
+              "resource": "/status",
+              "methods": [
+                "GET"
+              ]
+            }
+          ],
+          "quota": {
+            "limit": "10",
+            "interval": "1",
+            "timeUnit": "minute"
+          }
+        }
+      ],
+      "operationConfigType": "proxy"
+    }
+  }
+]
