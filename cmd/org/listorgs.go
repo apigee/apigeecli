@@ -15,8 +15,6 @@
 package org
 
 import (
-	"internal/apiclient"
-
 	"internal/client/orgs"
 
 	"github.com/spf13/cobra"
@@ -27,9 +25,6 @@ var ListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List the Apigee organizations",
 	Long:  "List the Apigee organizations, and the related projects that a user has permissions for",
-	Args: func(cmd *cobra.Command, args []string) (err error) {
-		return apiclient.SetApigeeOrg(org)
-	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		_, err = orgs.List()
 		return
