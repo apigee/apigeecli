@@ -566,6 +566,9 @@ func archiveBundle(pathToZip, destinationPath string) (err error) {
 		if err != nil {
 			return err
 		}
+		if strings.HasSuffix(filePath, "~") {
+			return nil
+		}
 		relPath := filepath.ToSlash(strings.TrimPrefix(filePath, filepath.Dir(pathToZip)))
 		zipEntry := strings.TrimPrefix(relPath, pathSep)
 		zipFile, err := myZip.Create(zipEntry)
