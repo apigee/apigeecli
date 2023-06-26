@@ -60,7 +60,8 @@ var DepCmd = &cobra.Command{
 				var respBody []byte
 				respMap := make(map[string]interface{})
 				if respBody, err = apis.ListProxyRevisionDeployments(name, revision); err != nil {
-					return true
+					clilog.Error.Printf("Error fetching proxy revision status: %v", err)
+					return false
 				}
 
 				if err = json.Unmarshal(respBody, &respMap); err != nil {
