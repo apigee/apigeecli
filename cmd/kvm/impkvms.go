@@ -26,8 +26,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const kvmFileName = "kvms.json"
-
 // ImpCmd to import kvm entries from files
 var ImpCmd = &cobra.Command{
 	Use:   "import",
@@ -104,4 +102,3 @@ func init() {
 
 	_ = ImpCmd.MarkFlagRequired("folder")
 }
-
