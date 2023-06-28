@@ -15,7 +15,6 @@
 package kvm
 
 import (
-	"path"
 	"strings"
 
 	"internal/apiclient"
@@ -27,8 +26,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const kvmFileName = "kvms.json"
-
 // ImpCmd to import kvm entries from files
 var ImpCmd = &cobra.Command{
 	Use:   "import",
@@ -38,8 +35,6 @@ var ImpCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		var kvmList []string
-
 		apiclient.DisableCmdPrintHttpResponse()
 
 		orgKVMFileList, envKVMFileList, proxyKVMFileList, err := utils.ListKVMFiles(folder)
@@ -47,22 +42,17 @@ var ImpCmd = &cobra.Command{
 			return err
 		}
 
-		if utils.FileExists(path.Join(folder, "org_"+org+"_"+kvmFileName)) {
-			clilog.Info.Println("Importing Org scoped KVMs...")
-			if kvmList, err = utils.ReadEntityFile(path.Join(folder, "org_"+org+"_"+kvmFileName)); err != nil {
-				return err
-			}
-			for _, kvmName := range kvmList {
-				// create only encrypted KVMs
-				clilog.Info.Printf("\tCreating KVM %s\n", kvmName)
-				if _, err = kvm.Create("", kvmName, true); err != nil {
+		if len(orgKVMFileList) > 0 {
+			clilog.Info.Println("Importing org scoped KVMs...")
+			for _, orgKVMFile := range orgKVMFileList {
+				kvmMetadata := strings.Split(orgKVMFile, "_")
+				clilog.Info.Printf("\tCreating KVM %s\n", orgKVMFile)
+				if _, err = kvm.Create("", kvmMetadata[1], true); err != nil {
 					return err
 				}
-				clilog.Info.Printf("\tImporting entries for %s\n", kvmName)
-				if orgKVMFileList[kvmName] != "" {
-					if err = kvm.ImportEntries("", kvmName, conn, orgKVMFileList[kvmName]); err != nil {
-						return err
-					}
+				clilog.Info.Printf("\tImporting entries for %s\n", orgKVMFile)
+				if err = kvm.ImportEntries("", kvmMetadata[1], conn, orgKVMFile); err != nil {
+					return err
 				}
 			}
 		}
