@@ -78,7 +78,7 @@ var ImpCmd = &cobra.Command{
 			for _, proxyKVMFile := range proxyKVMFileList {
 				kvmMetadata := strings.Split(proxyKVMFile, "_")
 				clilog.Info.Printf("\tCreating KVM %s\n", proxyKVMFile)
-				if _, err = kvm.Create(kvmMetadata[1], "", true); err != nil {
+				if _, err = kvm.Create(kvmMetadata[1], kvmMetadata[2], true); err != nil {
 					return err
 				}
 				clilog.Info.Printf("\tImporting entries for %s\n", proxyKVMFile)
