@@ -58,7 +58,8 @@ func ListKVMFiles(folder string) (orgKVMFileList map[string]string,
 						return err
 					}
 					if contains, _ := IfListContainsKVM(existingKVMListBytes, envKVMFileSplit[2]); contains {
-						clilog.Info.Printf("Skipping Map name %s having path %s as it already exists at the Apigee Environment level\n", envKVMFileSplit[2], kvmFile)
+						clilog.Info.Printf("Skipping Map name %s having path %s as it already exists at the Apigee Environment level\n",
+							envKVMFileSplit[2], kvmFile)
 					} else {
 						clilog.Info.Printf("Map name %s, path %s\n", envKVMFileSplit[2], kvmFile)
 						envKVMFileList[envKVMFileSplit[2]] = path
@@ -71,7 +72,8 @@ func ListKVMFiles(folder string) (orgKVMFileList map[string]string,
 						return err
 					}
 					if contains, _ := IfListContainsKVM(existingKVMListBytes, proxyKVMFileSplit[2]); contains {
-						clilog.Info.Printf("Skipping Map name %s having path %s as it already exists at the Apigee API Proxy level\n", proxyKVMFileSplit[2], kvmFile)
+						clilog.Info.Printf("Skipping Map name %s having path %s as it already exists at the Apigee API Proxy level\n",
+							proxyKVMFileSplit[2], kvmFile)
 					} else {
 						clilog.Info.Printf("Map name %s, path %s\n", proxyKVMFileSplit[2], kvmFile)
 						proxyKVMFileList[proxyKVMFileSplit[2]] = path
@@ -84,7 +86,8 @@ func ListKVMFiles(folder string) (orgKVMFileList map[string]string,
 						return err
 					}
 					if contains, _ := IfListContainsKVM(existingKVMListBytes, orgKVMFileSplit[1]); contains {
-						clilog.Info.Printf("Skipping Map name %s having path %s as it already exists at the Apigee Organization level\n", orgKVMFileSplit[1], kvmFile)
+						clilog.Info.Printf("Skipping Map name %s having path %s as it already exists at the Apigee Organization level\n",
+							orgKVMFileSplit[1], kvmFile)
 					} else {
 						clilog.Info.Printf("Map name %s, path %s\n", orgKVMFileSplit[1], kvmFile)
 						orgKVMFileList[orgKVMFileSplit[1]] = path
