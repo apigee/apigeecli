@@ -70,7 +70,7 @@ var ImportCmd = &cobra.Command{
 		}
 
 		clilog.Info.Println("Check for files with KVM Entries")
-		orgKVMFileList, envKVMFileList, _, _ := utils.ListKVMFiles(folder)
+		orgKVMFileList, envKVMFileList, _, _ := utils.ListKVMFiles(folder, skipExistingKVMs)
 
 		if utils.FileExists(path.Join(folder, "org_"+org+"_"+kvmFileName)) {
 			clilog.Info.Println("Importing Org scoped KVMs...")
@@ -207,8 +207,8 @@ var ImportCmd = &cobra.Command{
 }
 
 var (
-	importTrace, importDebugmask bool
-	folder                       string
+	importTrace, importDebugmask, skipExistingKVMs bool
+	folder                                         string
 )
 
 func init() {
@@ -222,6 +222,8 @@ func init() {
 		false, "Import distributed trace configuration; default false")
 	ImportCmd.Flags().BoolVarP(&importDebugmask, "importDebugmask", "",
 		false, "Import debugmask configuration; default false")
+	ImportCmd.Flags().BoolVarP(&skipExistingKVMs, "skip-existing-kvms", "",
+		false, "Skip import of existing KVM(s)")
 
 	_ = ImportCmd.MarkFlagRequired("folder")
 }

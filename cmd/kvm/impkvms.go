@@ -37,7 +37,7 @@ var ImpCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.DisableCmdPrintHttpResponse()
 
-		orgKVMFileList, envKVMFileList, proxyKVMFileList, err := utils.ListKVMFiles(folder)
+		orgKVMFileList, envKVMFileList, proxyKVMFileList, err := utils.ListKVMFiles(folder, skipExistingKVMs)
 		if err != nil {
 			return err
 		}
@@ -92,13 +92,18 @@ var ImpCmd = &cobra.Command{
 	},
 }
 
-var folder string
+var (
+	folder           string
+	skipExistingKVMs bool
+)
 
 func init() {
 	ImpCmd.Flags().StringVarP(&folder, "folder", "f",
 		"", "The absolute path to the folder containing KVM entries")
 	ImpCmd.Flags().IntVarP(&conn, "conn", "c",
 		4, "Number of connections")
+	ImpCmd.Flags().BoolVarP(&skipExistingKVMs, "skip-existing-kvms", "",
+		false, "Skip import of existing KVM(s)")
 
 	_ = ImpCmd.MarkFlagRequired("folder")
 }
