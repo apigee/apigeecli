@@ -222,8 +222,8 @@ func init() {
 		false, "Import distributed trace configuration; default false")
 	ImportCmd.Flags().BoolVarP(&importDebugmask, "importDebugmask", "",
 		false, "Import debugmask configuration; default false")
-	ImportCmd.Flags().BoolVarP(&skipExistingKVMs, "skip-existing-kvms", "",
-		false, "Skip import of existing KVM(s)")
+	ImportCmd.Flags().BoolVarP(&skipExistingKVMs, "skipExistingKVMs", "",
+		false, "Skip import of existing KVM(s); default false")
 
 	_ = ImportCmd.MarkFlagRequired("folder")
 }

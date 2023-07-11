@@ -102,8 +102,8 @@ func init() {
 		"", "The absolute path to the folder containing KVM entries")
 	ImpCmd.Flags().IntVarP(&conn, "conn", "c",
 		4, "Number of connections")
-	ImpCmd.Flags().BoolVarP(&skipExistingKVMs, "skip-existing-kvms", "",
-		false, "Skip import of existing KVM(s)")
+	ImpCmd.Flags().BoolVarP(&skipExistingKVMs, "skipExistingKVMs", "",
+		false, "Skip import of existing KVM(s); default false")
 
 	_ = ImpCmd.MarkFlagRequired("folder")
 }
