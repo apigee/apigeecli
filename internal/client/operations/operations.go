@@ -112,7 +112,7 @@ func filterOperation(respBody []byte, state string, completeState OperationCompl
 	}
 
 	if apiclient.GetPrintOutput() {
-		apiclient.PrettyPrint(operationsRespBody)
+		apiclient.PrettyPrint("json", operationsRespBody)
 	}
 	return operationsRespBody, nil
 }

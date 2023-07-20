@@ -50,7 +50,7 @@ var GetCmd = &cobra.Command{
 				return err
 			}
 			// print the item
-			return apiclient.PrettyPrint(outBytes)
+			return apiclient.PrettyPrint("json", outBytes)
 		}
 
 		_, err = apps.ListApps(productName)

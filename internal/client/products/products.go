@@ -300,7 +300,7 @@ func ListFilter(filter map[string]string) (respBody []byte, err error) {
 
 	respBody, err = json.Marshal(outprds)
 	apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
-	_ = apiclient.PrettyPrint(respBody)
+	_ = apiclient.PrettyPrint("json", respBody)
 
 	return respBody, err
 }
