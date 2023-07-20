@@ -39,6 +39,7 @@ type Appdeveloper struct {
 	Attributes  []Attribute `json:"attributes,omitempty"`
 	Username    string      `json:"userName,omitempty"`
 	DeveloperId string      `json:"developerId,omitempty"`
+	Status      *string     `json:"status,omitempty"`
 }
 
 // Appdevelopers hold an array of developers
@@ -91,6 +92,51 @@ func Get(email string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", url.QueryEscape(email)) // since developer emails can have +
 	respBody, err = apiclient.HttpClient(u.String())
+	return respBody, err
+}
+
+// Update
+func Update(email string, firstName string, lastName string, username string, status bool, attrs map[string]string) (respBody []byte, err error) {
+	apiclient.ClientPrintHttpResponse.Set(false)
+	devRespBody, err := Get(email)
+	if err != nil {
+		return nil, err
+	}
+	apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
+
+	d := Appdeveloper{}
+	if err = json.Unmarshal(devRespBody, &d); err != nil {
+		return nil, err
+	}
+
+	if firstName != "" {
+		d.FirstName = firstName
+	}
+
+	if lastName != "" {
+		d.LastName = lastName
+	}
+
+	if username != "" {
+		d.Username = username
+	}
+
+	d.Status = new(string)
+
+	if status {
+		*d.Status = "active"
+	} else {
+		*d.Status = "inactive"
+	}
+
+	reqBody, err := json.Marshal(d)
+	if err != nil {
+		return nil, err
+	}
+
+	u, _ := url.Parse(apiclient.BaseURL)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", url.QueryEscape(email))
+	respBody, err = apiclient.HttpClient(u.String(), string(reqBody), "PUT")
 	return respBody, err
 }
 
