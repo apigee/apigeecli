@@ -212,7 +212,7 @@ func GetPreferences() (err error) {
 		return err
 	}
 
-	return PrettyPrint(output)
+	return PrettyPrint("json", output)
 }
 
 // WritePreferencesFile

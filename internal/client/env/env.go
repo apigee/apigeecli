@@ -112,7 +112,7 @@ func GetAllDeployments() (respBody []byte, err error) {
 	payload := "{" + strings.Join(deployments, ",") + "}"
 
 	apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
-	err = apiclient.PrettyPrint([]byte(payload))
+	err = apiclient.PrettyPrint("json", []byte(payload))
 	return []byte(payload), err
 }
 

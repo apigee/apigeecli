@@ -323,16 +323,19 @@ func HttpClient(params ...string) (respBody []byte, err error) {
 }
 
 // PrettyPrint method prints formatted json
-func PrettyPrint(body []byte) error {
+func PrettyPrint(contentType string, body []byte) error {
 	if GetCmdPrintHttpResponseSetting() && ClientPrintHttpResponse.Get() {
 		var prettyJSON bytes.Buffer
-		err := json.Indent(&prettyJSON, body, "", "\t")
-		if err != nil {
-			clilog.Error.Println("error parsing response: ", err)
-			return err
-		}
+		//pretty print only json responses with body
+		if strings.Contains(contentType, "json") && len(body) > 0 {
+			err := json.Indent(&prettyJSON, body, "", "\t")
+			if err != nil {
+				clilog.Error.Println("error parsing response: ", err)
+				return err
+			}
 
-		clilog.HttpResponse.Println(prettyJSON.String())
+			clilog.HttpResponse.Println(prettyJSON.String())
+		}
 	}
 	return nil
 }
@@ -438,7 +441,7 @@ func handleResponse(resp *http.Response) (respBody []byte, err error) {
 		return nil, errors.New(getErrorMessage(resp.StatusCode))
 	}
 
-	return respBody, PrettyPrint(respBody)
+	return respBody, PrettyPrint(resp.Header.Get("Content-Type"), respBody)
 }
 
 func getErrorMessage(statusCode int) string {
