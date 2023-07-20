@@ -85,8 +85,13 @@ func Update(name string, description string, host string, port int, enable bool,
 }
 
 func createOrUpdate(action string, targetsvr targetserver, name string, description string, host string, port int, enable bool, grpc bool, keyStore string, keyAlias string, trustStore string, sslinfo string, tlsenabled bool, clientAuthEnabled bool, ignoreValidationErrors bool) (respBody []byte, err error) {
-	targetsvr.Description = description
-	targetsvr.Host = host
+	if description != "" {
+		targetsvr.Description = description
+	}
+	if host != "" {
+		targetsvr.Host = host
+	}
+
 	targetsvr.IsEnabled = enable
 
 	if port != -1 {
