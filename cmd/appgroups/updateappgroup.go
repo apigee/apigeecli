@@ -1,4 +1,4 @@
-// Copyright 2020 Google LLC
+// Copyright 2023 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,29 +21,31 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// ManageAppCmd to create developer keys
-var ManageAppCmd = &cobra.Command{
-	Use:   "manage",
-	Short: "Approve or revoke an app",
-	Long:  "Approve or revoke an app",
+// UpdateCmd to create appgroup
+var UpdateCmd = &cobra.Command{
+	Use:   "update",
+	Short: "Update an AppGroup",
+	Long:  "Update an AppGroup",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = appgroups.ManageApp(name, appName, action)
+		_, err = appgroups.Update(name, channelUri, channelId, displayName, attrs)
 		return
 	},
 }
 
 func init() {
-	ManageAppCmd.Flags().StringVarP(&name, "name", "n",
-		"", "Name of the app group")
-	ManageAppCmd.Flags().StringVarP(&appName, "app-name", "",
-		"", "Name of the app")
-	ManageAppCmd.Flags().StringVarP(&action, "action", "x",
-		"revoke", "Action to perform - revoke or approve")
+	UpdateCmd.Flags().StringVarP(&name, "name", "n",
+		"", "Name of the developer app")
+	UpdateCmd.Flags().StringVarP(&channelId, "channelid", "i",
+		"", "channel identifier identifies the owner maintaining this grouping")
+	UpdateCmd.Flags().StringVarP(&channelUri, "channelurl", "u",
+		"", "A reference to the associated storefront/marketplace")
+	UpdateCmd.Flags().StringVarP(&displayName, "display-name", "d",
+		"", "app group name displayed in the UI")
+	UpdateCmd.Flags().StringToStringVar(&attrs, "attrs",
+		nil, "Custom attributes")
 
-	_ = ManageAppCmd.MarkFlagRequired("name")
-	_ = ManageAppCmd.MarkFlagRequired("app-name")
-	_ = ManageAppCmd.MarkFlagRequired("action")
+	_ = UpdateCmd.MarkFlagRequired("name")
 }
