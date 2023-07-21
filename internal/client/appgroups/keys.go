@@ -111,3 +111,11 @@ func UpdateKeyProducts(name string, appName string, consumerKey string, apiProdu
 
 	return respBody, err
 }
+
+// DeleteKeyProduct
+func DeleteKeyProduct(name string, appName string, consumerKey string, productName string) (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.BaseURL)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "appgroups", name, "apps", appName, "keys", consumerKey, "apiproducts", productName)
+	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
+	return respBody, err
+}
