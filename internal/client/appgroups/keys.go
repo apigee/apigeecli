@@ -16,10 +16,11 @@ package appgroups
 
 import (
 	"fmt"
-	"internal/apiclient"
 	"net/url"
 	"path"
 	"strings"
+
+	"internal/apiclient"
 )
 
 // CreateKey

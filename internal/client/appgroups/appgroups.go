@@ -17,11 +17,12 @@ package appgroups
 import (
 	"encoding/json"
 	"fmt"
-	"internal/apiclient"
 	"net/url"
 	"path"
 	"strconv"
 	"strings"
+
+	"internal/apiclient"
 )
 
 type appgroups struct {
@@ -109,7 +110,7 @@ func Update(name string, channelUri string, channelId string, displayName string
 	}
 
 	if len(attrs) != 0 {
-		//TODO: attributes
+		// TODO: attributes
 	}
 
 	reqBody, err := json.Marshal(a)

@@ -17,11 +17,12 @@ package appgroups
 import (
 	"encoding/json"
 	"fmt"
-	"internal/apiclient"
 	"net/url"
 	"path"
 	"strconv"
 	"strings"
+
+	"internal/apiclient"
 )
 
 type appgroupapps struct {

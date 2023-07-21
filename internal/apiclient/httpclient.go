@@ -326,7 +326,7 @@ func HttpClient(params ...string) (respBody []byte, err error) {
 func PrettyPrint(contentType string, body []byte) error {
 	if GetCmdPrintHttpResponseSetting() && ClientPrintHttpResponse.Get() {
 		var prettyJSON bytes.Buffer
-		//pretty print only json responses with body
+		// pretty print only json responses with body
 		if strings.Contains(contentType, "json") && len(body) > 0 {
 			err := json.Indent(&prettyJSON, body, "", "\t")
 			if err != nil {

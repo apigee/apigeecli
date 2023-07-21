@@ -35,8 +35,10 @@ var CreateCmd = &cobra.Command{
 	},
 }
 
-var channelId, channelUri, displayName string
-var attrs map[string]string
+var (
+	channelId, channelUri, displayName string
+	attrs                              map[string]string
+)
 
 func init() {
 	CreateCmd.Flags().StringVarP(&name, "name", "n",
