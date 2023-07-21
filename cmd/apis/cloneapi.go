@@ -27,10 +27,9 @@ import (
 	"strings"
 
 	"internal/apiclient"
+	"internal/client/apis"
 
 	proxybundle "internal/bundlegen/proxybundle"
-
-	"internal/client/apis"
 
 	"github.com/spf13/cobra"
 )
@@ -79,14 +78,14 @@ var CloneCmd = &cobra.Command{
 
 			proxyBundlePath := path.Join(tmpDir, name+".zip")
 
-			if err = proxybundle.GenerateArchiveBundle(proxyFolder, proxyBundlePath); err != nil {
+			if err = proxybundle.GenerateArchiveBundle(path.Join(tmpDir, "apiproxy"), proxyBundlePath); err != nil {
 				return err
 			}
 			if _, err = apis.CreateProxy(name, proxyBundlePath); err != nil {
 				return err
 			}
 
-			return os.Remove(proxyBundlePath)
+			return err
 		}
 
 		return err
@@ -159,6 +158,10 @@ func renameProxy(tmpDir string) (err error) {
 		return nil
 	})
 
+	if err != nil {
+		return setBasePath(path.Join(tmpDir, "apiproxy", "proxies", "default.xml"))
+	}
+
 	return err
 }
 
@@ -179,16 +182,53 @@ func setParam(filePath string, paramType string) (err error) {
 
 	stringValue := string(byteValue)
 	replaceName := fmt.Sprintf("<APIProxy revision=\"1\" name=\"%s\">", name)
-	replaceBasePath := fmt.Sprintf("<BasePaths>%s</BasePaths>", basePath)
+	replaceBasePath := fmt.Sprintf("<Basepaths>%s</Basepaths>", basePath)
 
 	switch paramType {
 	case "proxy":
 		re := regexp.MustCompile(`\<APIProxy revision=\"\d+\" name=\"\S+\">`)
 		stringValue = re.ReplaceAllString(stringValue, replaceName)
 	case "basePath":
-		re := regexp.MustCompile(`\<Basepaths>\w+\<\\Basepaths>`)
+		re := regexp.MustCompile(`\<Basepaths>\/\w+\<\/Basepaths>`)
 		stringValue = re.ReplaceAllString(stringValue, replaceBasePath)
 	}
+
+	proxyFile, err = os.OpenFile(filePath, os.O_WRONLY|os.O_TRUNC, 0o644)
+	if err != nil {
+		return err
+	}
+
+	defer proxyFile.Close()
+
+	_, err = proxyFile.Write([]byte(stringValue))
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func setBasePath(filePath string) (err error) {
+	var proxyFile *os.File
+
+	replaceBasePath := fmt.Sprintf("<BasePath>%s</BasePath>", basePath)
+
+	proxyFile, err = os.OpenFile(filePath, os.O_RDONLY, 0o644)
+	if err != nil {
+		return err
+	}
+
+	byteValue, err := io.ReadAll(proxyFile)
+	if err != nil {
+		return err
+	}
+
+	proxyFile.Close()
+
+	stringValue := string(byteValue)
+
+	re := regexp.MustCompile(`\<BasePath>\/\w+\<\/BasePath>`)
+	stringValue = re.ReplaceAllString(stringValue, replaceBasePath)
 
 	proxyFile, err = os.OpenFile(filePath, os.O_WRONLY|os.O_TRUNC, 0o644)
 	if err != nil {
