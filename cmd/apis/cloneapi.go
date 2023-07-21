@@ -66,11 +66,14 @@ var CloneCmd = &cobra.Command{
 		if proxyFolder != "" {
 			var tmpDir string
 
-			if tmpDir, err = copyDirectory(); err != nil {
-				return err
+			if proxyZip != "" {
+				tmpDir = proxyFolder
+			} else {
+				if tmpDir, err = copyDirectory(); err != nil {
+					return err
+				}
+				defer os.RemoveAll(tmpDir)
 			}
-
-			defer os.RemoveAll(tmpDir)
 
 			if err = renameProxy(tmpDir); err != nil {
 				return err
@@ -158,7 +161,7 @@ func renameProxy(tmpDir string) (err error) {
 		return nil
 	})
 
-	if err != nil {
+	if err == nil {
 		return setBasePath(path.Join(tmpDir, "apiproxy", "proxies", "default.xml"))
 	}
 
