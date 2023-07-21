@@ -161,11 +161,11 @@ func renameProxy(tmpDir string) (err error) {
 		return nil
 	})
 
-	if err == nil {
-		return setBasePath(path.Join(tmpDir, "apiproxy", "proxies", "default.xml"))
+	if err != nil {
+		return err
 	}
 
-	return err
+	return setBasePath(path.Join(tmpDir, "apiproxy", "proxies", "default.xml"))
 }
 
 func setParam(filePath string, paramType string) (err error) {
