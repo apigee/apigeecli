@@ -15,12 +15,37 @@
 package appgroups
 
 import (
+	"encoding/json"
+	"fmt"
 	"internal/apiclient"
 	"net/url"
 	"path"
 	"strconv"
 	"strings"
 )
+
+type appgroups struct {
+	AppGroups     []appgroup `json:"appGroups,omitempty"`
+	NextPageToken string     `json:"nextPageToken,omitempty"`
+}
+
+type appgroup struct {
+	Name        string      `json:"name,omitempty"`
+	Status      *string     `json:"status,omitempty"`
+	AppGroupId  string      `json:"appGroupId,omitempty"`
+	ChannelUri  string      `json:"channelUri,omitempty"`
+	ChannelId   string      `json:"channelId,omitempty"`
+	Attributes  []attribute `json:"attributes,omitempty"`
+	DisplayName string      `json:"displayName,omitempty"`
+}
+
+// attribute to used to hold custom attributes for entities
+type attribute struct {
+	Name  string `json:"name,omitempty"`
+	Value string `json:"value,omitempty"`
+}
+
+var maxPageSize = 1000
 
 // Create
 func Create(name string, channelUri string, channelId string, displayName string, attrs map[string]string) (respBody []byte, err error) {
@@ -57,6 +82,47 @@ func Create(name string, channelUri string, channelId string, displayName string
 	return respBody, err
 }
 
+// Update
+func Update(name string, channelUri string, channelId string, displayName string, attrs map[string]string) (respBody []byte, err error) {
+	apiclient.ClientPrintHttpResponse.Set(false)
+	appGroupRespBody, err := Get(name)
+	if err != nil {
+		return nil, err
+	}
+	apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
+
+	a := appgroup{}
+	if err = json.Unmarshal(appGroupRespBody, &a); err != nil {
+		return nil, err
+	}
+
+	if channelUri != "" {
+		a.ChannelUri = channelUri
+	}
+
+	if channelId != "" {
+		a.ChannelId = channelId
+	}
+
+	if displayName != "" {
+		a.DisplayName = displayName
+	}
+
+	if len(attrs) != 0 {
+		//TODO: attributes
+	}
+
+	reqBody, err := json.Marshal(a)
+	if err != nil {
+		return nil, err
+	}
+
+	u, _ := url.Parse(apiclient.BaseURL)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "appgroups", name)
+	respBody, err = apiclient.HttpClient(u.String(), string(reqBody), "PUT")
+	return respBody, err
+}
+
 // Get
 func Get(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
@@ -70,6 +136,22 @@ func Delete(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "appgroups", name)
 	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
+	return respBody, err
+}
+
+// Manage
+func Manage(name string, action string) (respBody []byte, err error) {
+	if action != "revoke" && action != "approve" {
+		return nil, fmt.Errorf("invalid action. action must be revoke or approve")
+	}
+
+	u, _ := url.Parse(apiclient.BaseURL)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "appgroups", name)
+	q := u.Query()
+	q.Set("action", action)
+	u.RawQuery = q.Encode()
+
+	respBody, err = apiclient.HttpClient(u.String(), "", "POST", "application/octet-stream")
 	return respBody, err
 }
 
@@ -89,5 +171,36 @@ func List(pageSize int, pageToken string, filter string) (respBody []byte, err e
 	}
 	u.RawQuery = q.Encode()
 	respBody, err = apiclient.HttpClient(u.String())
+	return respBody, err
+}
+
+// Export
+func Export() (respBody []byte, err error) {
+	// don't print to sysout
+	apiclient.ClientPrintHttpResponse.Set(false)
+	defer apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
+
+	pageToken := ""
+	applist := appgroups{}
+
+	for {
+		a := appgroups{}
+		listRespBytes, err := List(maxPageSize, pageToken, "")
+		if err != nil {
+			return nil, err
+		}
+		err = json.Unmarshal(listRespBytes, &a)
+		if err != nil {
+			return nil, fmt.Errorf("failed to unmarshall: %w", err)
+		}
+		applist.AppGroups = append(applist.AppGroups, a.AppGroups...)
+		pageToken = a.NextPageToken
+		if a.NextPageToken == "" {
+			break
+		}
+	}
+
+	respBody, err = json.Marshal(applist.AppGroups)
+
 	return respBody, err
 }
