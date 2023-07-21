@@ -15,6 +15,7 @@
 package appgroups
 
 import (
+	"encoding/json"
 	"fmt"
 	"internal/apiclient"
 	"net/url"
@@ -22,6 +23,35 @@ import (
 	"strconv"
 	"strings"
 )
+
+type appgroupapps struct {
+	AppGroupApps  []appgroupapp `json:"appGroupApps,omitempty"`
+	NextPageToken string        `json:"nextPageToken,omitempty"`
+}
+
+type appgroupapp struct {
+	AppId          string       `json:"appId,omitempty"`
+	Name           string       `json:"name,omitempty"`
+	Status         string       `json:"status,omitempty"`
+	AppGroup       string       `json:"appGroup,omitempty"`
+	CreatedAt      string       `json:"createdAt,omitempty"`
+	LastModifiedAt string       `json:"lastModifiedAt,omitempty"`
+	Credentials    []credential `json:"credentials,omitempty"`
+}
+
+type credential struct {
+	APIProducts    []apiProduct `json:"apiProducts,omitempty"`
+	ConsumerKey    string       `json:"consumerKey,omitempty"`
+	ConsumerSecret string       `json:"consumerSecret,omitempty"`
+	ExpiresAt      string       `json:"expiresAt,omitempty"`
+	Status         string       `json:"status,omitempty"`
+	Scopes         []string     `json:"scopes,omitempty"`
+}
+
+type apiProduct struct {
+	ApiProduct string `json:"apiproduct,omitempty"`
+	Status     string `json:"status,omitempty"`
+}
 
 // CreateApp
 func CreateApp(name string, expires string, callback string, apiProducts []string, scopes []string, attrs map[string]string) (respBody []byte, err error) {
@@ -95,8 +125,8 @@ func ListApps(name string, pageSize int, pageToken string) (respBody []byte, err
 	return respBody, err
 }
 
-// Manage
-func Manage(name string, appName string, action string) (respBody []byte, err error) {
+// ManageApp
+func ManageApp(name string, appName string, action string) (respBody []byte, err error) {
 	if action != "revoke" && action != "approve" {
 		return nil, fmt.Errorf("invalid action. action must be revoke or approve")
 	}
@@ -108,6 +138,37 @@ func Manage(name string, appName string, action string) (respBody []byte, err er
 	u.RawQuery = q.Encode()
 
 	respBody, err = apiclient.HttpClient(u.String(), "", "POST", "application/octet-stream")
+	return respBody, err
+}
+
+// ExportApps
+func ExportApps(name string) (respBody []byte, err error) {
+	// don't print to sysout
+	apiclient.ClientPrintHttpResponse.Set(false)
+	defer apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
+
+	pageToken := ""
+	applist := appgroupapps{}
+
+	for {
+		a := appgroupapps{}
+		listRespBytes, err := ListApps(name, maxPageSize, pageToken)
+		if err != nil {
+			return nil, err
+		}
+		err = json.Unmarshal(listRespBytes, &a)
+		if err != nil {
+			return nil, fmt.Errorf("failed to unmarshall: %w", err)
+		}
+		applist.AppGroupApps = append(applist.AppGroupApps, a.AppGroupApps...)
+		pageToken = a.NextPageToken
+		if a.NextPageToken == "" {
+			break
+		}
+	}
+
+	respBody, err = json.Marshal(applist.AppGroupApps)
+
 	return respBody, err
 }
 
