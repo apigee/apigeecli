@@ -15,9 +15,11 @@
 package appgroups
 
 import (
+	"fmt"
 	"internal/apiclient"
 	"net/url"
 	"path"
+	"strconv"
 	"strings"
 )
 
@@ -57,6 +59,55 @@ func CreateApp(name string, expires string, callback string, apiProducts []strin
 	payload := "{" + strings.Join(app, ",") + "}"
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "appgroups", name, "apps")
 	respBody, err = apiclient.HttpClient(u.String(), payload)
+	return respBody, err
+}
+
+// DeleteApp
+func DeleteApp(name string, appName string) (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.BaseURL)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "appgroups", name, "apps", appName)
+	respBody, err = apiclient.HttpClient(u.String())
+	return respBody, err
+}
+
+// GetApp
+func GetApp(name string, appName string) (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.BaseURL)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "appgroups", name, "apps", appName)
+	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
+	return respBody, err
+}
+
+// ListApps
+func ListApps(name string, pageSize int, pageToken string) (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.BaseURL)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "appgroups", name, "apps")
+	q := u.Query()
+	if pageSize != -1 {
+		q.Set("pageSize", strconv.Itoa(pageSize))
+	}
+	if pageToken != "" {
+		q.Set("pageToken", pageToken)
+	}
+
+	u.RawQuery = q.Encode()
+	respBody, err = apiclient.HttpClient(u.String())
+	return respBody, err
+}
+
+// Manage
+func Manage(name string, appName string, action string) (respBody []byte, err error) {
+	if action != "revoke" && action != "approve" {
+		return nil, fmt.Errorf("invalid action. action must be revoke or approve")
+	}
+
+	u, _ := url.Parse(apiclient.BaseURL)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "appgroups", name, "apps", appName)
+	q := u.Query()
+	q.Set("action", action)
+	u.RawQuery = q.Encode()
+
+	respBody, err = apiclient.HttpClient(u.String(), "", "POST", "application/octet-stream")
 	return respBody, err
 }
 

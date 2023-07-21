@@ -22,31 +22,27 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// ListCmd to list apps
-var ListCmd = &cobra.Command{
+// ListAppCmd to list apps
+var ListAppCmd = &cobra.Command{
 	Use:   "list",
-	Short: "Returns a list of AppGroups",
-	Long:  "Returns a list of AppGroups",
+	Short: "Returns a list of Developer Applications",
+	Long:  "Returns a list of app IDs within an organization based on app status",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = appgroups.List(pageSize, pageToken, filter)
+		_, err = appgroups.ListApps(name, pageSize, pageToken)
 		return
 	},
 }
 
-var (
-	filter    string
-	pageToken string
-	pageSize  int
-)
-
 func init() {
-	ListCmd.Flags().IntVarP(&pageSize, "page-size", "s",
+	ListAppCmd.Flags().StringVarP(&name, "name", "n",
+		"", "Name of the app group")
+	ListAppCmd.Flags().IntVarP(&pageSize, "page-size", "s",
 		-1, "Number of appgroups; limit is 1000")
-	ListCmd.Flags().StringVarP(&pageToken, "page-token", "p",
+	ListAppCmd.Flags().StringVarP(&pageToken, "page-token", "p",
 		"", "Page token")
-	ListCmd.Flags().StringVarP(&filter, "filter", "f",
-		"", "List filter")
+
+	_ = ListAppCmd.MarkFlagRequired("name")
 }

@@ -27,4 +27,8 @@ var AppCmd = &cobra.Command{
 
 func init() {
 	AppCmd.AddCommand(CreateAppCmd)
+	AppCmd.AddCommand(ListAppCmd)
+	AppCmd.AddCommand(GetAppCmd)
+	AppCmd.AddCommand(DelAppCmd)
+	AppCmd.AddCommand(KeyCmd)
 }

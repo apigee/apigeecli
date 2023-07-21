@@ -1,4 +1,4 @@
-// Copyright 2023 Google LLC
+// Copyright 2020 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,37 +16,34 @@ package appgroups
 
 import (
 	"internal/apiclient"
-
 	"internal/client/appgroups"
 
 	"github.com/spf13/cobra"
 )
 
-// ListCmd to list apps
-var ListCmd = &cobra.Command{
-	Use:   "list",
-	Short: "Returns a list of AppGroups",
-	Long:  "Returns a list of AppGroups",
+// ManageCmd to create developer keys
+var ManageCmd = &cobra.Command{
+	Use:   "manage",
+	Short: "Approve or revoke an app",
+	Long:  "Approve or revoke an app",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = appgroups.List(pageSize, pageToken, filter)
+		_, err = appgroups.Manage(name, appName, action)
 		return
 	},
 }
 
-var (
-	filter    string
-	pageToken string
-	pageSize  int
-)
-
 func init() {
-	ListCmd.Flags().IntVarP(&pageSize, "page-size", "s",
-		-1, "Number of appgroups; limit is 1000")
-	ListCmd.Flags().StringVarP(&pageToken, "page-token", "p",
-		"", "Page token")
-	ListCmd.Flags().StringVarP(&filter, "filter", "f",
-		"", "List filter")
+	ManageCmd.Flags().StringVarP(&name, "name", "n",
+		"", "Name of the app group")
+	ManageCmd.Flags().StringVarP(&appName, "app-name", "",
+		"", "Name of the app")
+	ManageCmd.Flags().StringVarP(&action, "action", "x",
+		"revoke", "Action to perform - revoke or approve")
+
+	_ = ManageCmd.MarkFlagRequired("name")
+	_ = ManageCmd.MarkFlagRequired("app-name")
+	_ = ManageCmd.MarkFlagRequired("action")
 }

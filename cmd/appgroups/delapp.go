@@ -1,4 +1,4 @@
-// Copyright 2023 Google LLC
+// Copyright 2020 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,37 +16,31 @@ package appgroups
 
 import (
 	"internal/apiclient"
-
 	"internal/client/appgroups"
 
 	"github.com/spf13/cobra"
 )
 
-// ListCmd to list apps
-var ListCmd = &cobra.Command{
-	Use:   "list",
-	Short: "Returns a list of AppGroups",
-	Long:  "Returns a list of AppGroups",
-	Args: func(cmd *cobra.Command, args []string) (err error) {
+// DelAppCmd to get app
+var DelAppCmd = &cobra.Command{
+	Use:   "delete",
+	Short: "Delete an App in an AppGroup",
+	Long:  "Delete an in an AppGroup",
+	Args: func(cmd *cobra.Command, args []string) error {
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = appgroups.List(pageSize, pageToken, filter)
-		return
+		_, err = appgroups.DeleteApp(name, appName)
+		return err
 	},
 }
 
-var (
-	filter    string
-	pageToken string
-	pageSize  int
-)
-
 func init() {
-	ListCmd.Flags().IntVarP(&pageSize, "page-size", "s",
-		-1, "Number of appgroups; limit is 1000")
-	ListCmd.Flags().StringVarP(&pageToken, "page-token", "p",
-		"", "Page token")
-	ListCmd.Flags().StringVarP(&filter, "filter", "f",
-		"", "List filter")
+	DelAppCmd.Flags().StringVarP(&name, "name", "n",
+		"", "Name of the app group")
+	DelAppCmd.Flags().StringVarP(&appName, "app-name", "",
+		"", "Name of the app")
+
+	_ = DelAppCmd.MarkFlagRequired("name")
+	_ = DelAppCmd.MarkFlagRequired("app-name")
 }
