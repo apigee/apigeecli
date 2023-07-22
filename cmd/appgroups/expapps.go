@@ -15,6 +15,7 @@
 package appgroups
 
 import (
+	"fmt"
 	"internal/apiclient"
 
 	"internal/client/appgroups"
@@ -28,22 +29,42 @@ var ExpAppCmd = &cobra.Command{
 	Short: "Export Apps in an AppGroup to a file",
 	Long:  "Export Apps in an AppGroup to a file",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		if name == "" && !all {
+			return fmt.Errorf("either all must be set to true or a name must be passed")
+		}
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		const exportFileName = "apps.json"
-		payload, err := appgroups.ExportApps(name)
+
+		apiclient.DisableCmdPrintHttpResponse()
+
+		if name != "" {
+			payload, err := appgroups.ExportApps(name)
+			if err != nil {
+				return err
+			}
+			return apiclient.WriteByteArrayToFile(exportFileName, false, payload)
+		}
+
+		appGroupsList, err := appgroups.Export()
 		if err != nil {
 			return err
 		}
 
-		return apiclient.WriteByteArrayToFile(exportFileName, false, payload)
+		payload, err := appgroups.ExportAllApps(appGroupsList, 4)
+		if err != nil {
+			return err
+		}
+		return apiclient.WriteArrayByteArrayToFile(exportFileName, false, payload)
 	},
 }
+
+var all bool
 
 func init() {
 	ExpAppCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of the app group")
-
-	_ = GetAppCmd.MarkFlagRequired("name")
+	ExpAppCmd.Flags().BoolVarP(&all, "all", "",
+		false, "Export apps for all appgroups in the org")
 }

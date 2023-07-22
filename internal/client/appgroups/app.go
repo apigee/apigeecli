@@ -16,13 +16,16 @@ package appgroups
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/url"
 	"path"
 	"strconv"
 	"strings"
+	"sync"
 
 	"internal/apiclient"
+	"internal/clilog"
 )
 
 type appgroupapps struct {
@@ -171,6 +174,90 @@ func ExportApps(name string) (respBody []byte, err error) {
 	respBody, err = json.Marshal(applist.AppGroupApps)
 
 	return respBody, err
+}
+
+// ExportAllApps
+func ExportAllApps(appGroupListBytes []byte, conn int) (results [][]byte, err error) {
+
+	appGroupsList := []appgroup{}
+
+	err = json.Unmarshal(appGroupListBytes, &appGroupsList)
+	if err != nil {
+		return nil, fmt.Errorf("failed to unmarshall: %w", err)
+	}
+
+	clilog.Debug.Printf("Found %d appgroups in the org\n", len(appGroupsList))
+	clilog.Debug.Printf("Exporting appgroups with %d parallel connections\n", conn)
+
+	jobChan := make(chan appgroup)
+	resultChan := make(chan []byte)
+	errChan := make(chan error)
+
+	fanOutWg := sync.WaitGroup{}
+	fanInWg := sync.WaitGroup{}
+
+	errs := []string{}
+	fanInWg.Add(1)
+
+	go func() {
+		defer fanInWg.Done()
+		for {
+			newErr, ok := <-errChan
+			if !ok {
+				return
+			}
+			errs = append(errs, newErr.Error())
+		}
+	}()
+
+	fanInWg.Add(1)
+	go func() {
+		defer fanInWg.Done()
+		for {
+			newResult, ok := <-resultChan
+			if !ok {
+				return
+			}
+			results = append(results, newResult)
+		}
+	}()
+
+	for i := 0; i < conn; i++ {
+		fanOutWg.Add(1)
+		go exportApp(&fanOutWg, jobChan, resultChan, errChan)
+	}
+
+	for _, a := range appGroupsList {
+		jobChan <- a
+	}
+	close(jobChan)
+	fanOutWg.Wait()
+	close(errChan)
+	close(resultChan)
+	fanInWg.Wait()
+
+	if len(errs) > 0 {
+		return nil, errors.New(strings.Join(errs, "\n"))
+	}
+	return results, nil
+
+}
+
+func exportApp(wg *sync.WaitGroup, jobs <-chan appgroup, results chan<- []byte, errs chan<- error) {
+	defer wg.Done()
+	for {
+		job, ok := <-jobs
+		if !ok {
+			return
+		}
+		respBody, err := ExportApps(job.Name)
+		if err != nil {
+			errs <- err
+		} else {
+			results <- respBody
+			clilog.Debug.Printf("Completed Exporting app %s in appgroup %s\n", job.Name, job.AppGroupId)
+		}
+	}
 }
 
 func getArrayStr(str []string) string {
