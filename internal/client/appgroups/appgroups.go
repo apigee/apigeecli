@@ -17,12 +17,16 @@ package appgroups
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/url"
+	"os"
 	"path"
 	"strconv"
 	"strings"
+	"sync"
 
 	"internal/apiclient"
+	"internal/clilog"
 )
 
 type appgroups struct {
@@ -204,4 +208,110 @@ func Export() (respBody []byte, err error) {
 	respBody, err = json.Marshal(applist.AppGroups)
 
 	return respBody, err
+}
+
+// Import
+func Import(conn int, filePath string) error {
+	appgrps, err := readAppGroupssFile(filePath)
+	if err != nil {
+		clilog.Error.Println("Error reading file: ", err)
+		return err
+	}
+
+	clilog.Debug.Printf("Found %d target servers in the file\n", len(appgrps))
+	clilog.Debug.Printf("Create target servers with %d connections\n", conn)
+
+	knownAppGroupsBytes, err := Export()
+	if err != nil {
+		return err
+	}
+
+	var knownAppGroups []appgroup
+	if err = json.Unmarshal(knownAppGroupsBytes, &knownAppGroups); err != nil {
+		return err
+	}
+
+	knownAppGroupsList := map[string]bool{}
+	for _, name := range knownAppGroups {
+		knownAppGroupsList[name.Name] = true
+	}
+
+	jobChan := make(chan appgroup)
+	errChan := make(chan error)
+
+	fanOutWg := sync.WaitGroup{}
+	fanInWg := sync.WaitGroup{}
+
+	errs := []string{}
+	fanInWg.Add(1)
+	go func() {
+		defer fanInWg.Done()
+		for {
+			newErr, ok := <-errChan
+			if !ok {
+				return
+			}
+			errs = append(errs, newErr.Error())
+		}
+	}()
+
+	for i := 0; i < conn; i++ {
+		fanOutWg.Add(1)
+		go importAppGroup(knownAppGroupsList, &fanOutWg, jobChan, errChan)
+	}
+
+	for _, ag := range appgrps {
+		jobChan <- ag
+	}
+
+	return nil
+}
+
+func importAppGroup(knownAppGroupsList map[string]bool, wg *sync.WaitGroup, jobs <-chan appgroup, errs chan<- error) {
+	defer wg.Done()
+	var err error
+
+	for {
+		job, ok := <-jobs
+		if !ok {
+			return
+		}
+
+		if knownAppGroupsList[job.Name] {
+			//the appgroup already exists, perform an update
+			_, err = Update(job.Name, job.ChannelUri, job.ChannelId, job.DisplayName, nil)
+		} else {
+			_, err = Create(job.Name, job.ChannelUri, job.ChannelId, job.DisplayName, nil)
+		}
+
+		if err != nil {
+			errs <- err
+			continue
+		}
+
+		clilog.Debug.Printf("Completed appgroup: %s", job.Name)
+	}
+}
+
+func readAppGroupssFile(filePath string) ([]appgroup, error) {
+	a := []appgroup{}
+
+	jsonFile, err := os.Open(filePath)
+	if err != nil {
+		return a, err
+	}
+
+	defer jsonFile.Close()
+
+	byteValue, err := io.ReadAll(jsonFile)
+	if err != nil {
+		return a, err
+	}
+
+	err = json.Unmarshal(byteValue, &a)
+	if err != nil {
+		return a, err
+	}
+
+	return a, nil
 }

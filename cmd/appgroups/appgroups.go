@@ -38,4 +38,5 @@ func init() {
 	Cmd.AddCommand(ManageCmd)
 	Cmd.AddCommand(AppCmd)
 	Cmd.AddCommand(ExpCmd)
+	Cmd.AddCommand(ImpCmd)
 }
