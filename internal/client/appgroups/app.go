@@ -272,7 +272,7 @@ func importAppGroupApp(knownAppGroupsList map[string]bool, wg *sync.WaitGroup, j
 		}
 
 		if knownAppGroupsList[job.Name] {
-			//the appgroup already exists, perform an update
+			// the appgroup already exists, perform an update
 			clilog.Warning.Printf("App %s in AppGroup %s already exists. Updates to app is not currently supported", job.Name, name)
 		} else {
 			// 1. Create the app
@@ -296,7 +296,6 @@ func importAppGroupApp(knownAppGroupsList map[string]bool, wg *sync.WaitGroup, j
 
 // ExportAllApps
 func ExportAllApps(appGroupListBytes []byte, conn int) (results [][]byte, err error) {
-
 	appGroupsList := []appgroup{}
 
 	err = json.Unmarshal(appGroupListBytes, &appGroupsList)

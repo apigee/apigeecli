@@ -40,7 +40,7 @@ type appgroup struct {
 	Status      *string     `json:"status,omitempty"`
 	AppGroupId  string      `json:"appGroupId,omitempty"`
 	ChannelUri  string      `json:"channelUri,omitempty"`
-	ChannelId   string      `json:"channelId,omitempty"`
+	ChannelID   string      `json:"channelId,omitempty"`
 	Attributes  []attribute `json:"attributes,omitempty"`
 	DisplayName string      `json:"displayName,omitempty"`
 }
@@ -54,7 +54,7 @@ type attribute struct {
 var maxPageSize = 1000
 
 // Create
-func Create(name string, channelUri string, channelId string, displayName string, attrs map[string]string) (respBody []byte, err error) {
+func Create(name string, channelUri string, channelID string, displayName string, attrs map[string]string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 
 	app := []string{}
@@ -64,8 +64,8 @@ func Create(name string, channelUri string, channelId string, displayName string
 		app = append(app, "\"channelUri\":\""+channelUri+"\"")
 	}
 
-	if channelId != "" {
-		app = append(app, "\"channelId\":\""+channelId+"\"")
+	if channelID != "" {
+		app = append(app, "\"channelId\":\""+channelID+"\"")
 	}
 
 	if displayName != "" {
@@ -89,7 +89,7 @@ func Create(name string, channelUri string, channelId string, displayName string
 }
 
 // Update
-func Update(name string, channelUri string, channelId string, displayName string, attrs map[string]string) (respBody []byte, err error) {
+func Update(name string, channelUri string, channelID string, displayName string, attrs map[string]string) (respBody []byte, err error) {
 	apiclient.ClientPrintHttpResponse.Set(false)
 	appGroupRespBody, err := Get(name)
 	if err != nil {
@@ -106,8 +106,8 @@ func Update(name string, channelUri string, channelId string, displayName string
 		a.ChannelUri = channelUri
 	}
 
-	if channelId != "" {
-		a.ChannelId = channelId
+	if channelID != "" {
+		a.ChannelID = channelID
 	}
 
 	if displayName != "" {
@@ -288,7 +288,7 @@ func importAppGroup(knownAppGroupsList map[string]bool, wg *sync.WaitGroup, jobs
 		}
 
 		if knownAppGroupsList[job.Name] {
-			//the appgroup already exists, perform an update
+			// the appgroup already exists, perform an update
 			_, err = Update(job.Name, job.ChannelUri, job.ChannelId, job.DisplayName, nil)
 		} else {
 			_, err = Create(job.Name, job.ChannelUri, job.ChannelId, job.DisplayName, nil)

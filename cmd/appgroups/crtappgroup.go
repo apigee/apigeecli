@@ -30,20 +30,20 @@ var CreateCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = appgroups.Create(name, channelUri, channelId, displayName, attrs)
+		_, err = appgroups.Create(name, channelUri, channelID, displayName, attrs)
 		return
 	},
 }
 
 var (
-	channelId, channelUri, displayName string
+	channelID, channelUri, displayName string
 	attrs                              map[string]string
 )
 
 func init() {
 	CreateCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of the developer app")
-	CreateCmd.Flags().StringVarP(&channelId, "channelid", "i",
+	CreateCmd.Flags().StringVarP(&channelID, "channelid", "i",
 		"", "channel identifier identifies the owner maintaining this grouping")
 	CreateCmd.Flags().StringVarP(&channelUri, "channelurl", "u",
 		"", "A reference to the associated storefront/marketplace")

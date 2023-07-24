@@ -37,8 +37,10 @@ var CreateKeyCmd = &cobra.Command{
 	},
 }
 
-var secret string
-var expiry int
+var (
+	secret string
+	expiry int
+)
 
 func init() {
 	CreateKeyCmd.Flags().StringVarP(&name, "name", "n",
