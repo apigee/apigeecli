@@ -16,6 +16,7 @@ package appgroups
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/url"
@@ -212,14 +213,14 @@ func Export() (respBody []byte, err error) {
 
 // Import
 func Import(conn int, filePath string) error {
-	appgrps, err := readAppGroupssFile(filePath)
+	appgrps, err := readAppGroupsFile(filePath)
 	if err != nil {
 		clilog.Error.Println("Error reading file: ", err)
 		return err
 	}
 
-	clilog.Debug.Printf("Found %d target servers in the file\n", len(appgrps))
-	clilog.Debug.Printf("Create target servers with %d connections\n", conn)
+	clilog.Debug.Printf("Found %d AppGroups in the file\n", len(appgrps))
+	clilog.Debug.Printf("Create AppGroups with %d connections\n", conn)
 
 	knownAppGroupsBytes, err := Export()
 	if err != nil {
@@ -264,6 +265,15 @@ func Import(conn int, filePath string) error {
 		jobChan <- ag
 	}
 
+	close(jobChan)
+	fanOutWg.Wait()
+	close(errChan)
+	fanInWg.Wait()
+
+	if len(errs) > 0 {
+		return errors.New(strings.Join(errs, "\n"))
+	}
+
 	return nil
 }
 
@@ -293,7 +303,7 @@ func importAppGroup(knownAppGroupsList map[string]bool, wg *sync.WaitGroup, jobs
 	}
 }
 
-func readAppGroupssFile(filePath string) ([]appgroup, error) {
+func readAppGroupsFile(filePath string) ([]appgroup, error) {
 	a := []appgroup{}
 
 	jsonFile, err := os.Open(filePath)
