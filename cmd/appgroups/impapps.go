@@ -37,7 +37,10 @@ var ImpAppCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		apiclient.DisableCmdPrintHttpResponse()
-		return appgroups.ImportApps(conn, filePath, name)
+		if name != "" {
+			return appgroups.ImportApps(conn, filePath, name)
+		}
+		return appgroups.ImportAllApps(conn, filePath)
 	},
 }
 

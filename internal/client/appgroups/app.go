@@ -203,8 +203,8 @@ func ImportApps(conn int, filePath string, name string) (err error) {
 		return err
 	}
 
-	clilog.Debug.Printf("Found %d target servers in the file\n", len(appgrpapps))
-	clilog.Debug.Printf("Create target servers with %d connections\n", conn)
+	clilog.Debug.Printf("Found %d apps in the file\n", len(appgrpapps))
+	clilog.Debug.Printf("Create apps with %d connections\n", conn)
 
 	knownAppGroupAppsBytes, err := ExportApps(name)
 	if err != nil {
@@ -359,6 +359,89 @@ func ExportAllApps(appGroupListBytes []byte, conn int) (results [][]byte, err er
 	return results, nil
 }
 
+// ImportAllApps
+func ImportAllApps(conn int, filePath string) (err error) {
+	appgrpapps, err := readAppsArrayFile(filePath)
+	if err != nil {
+		clilog.Error.Println("Error reading file: ", err)
+		return err
+	}
+
+	clilog.Info.Printf("Found %d apps in the file\n", len(appgrpapps))
+	clilog.Info.Printf("Create apps with %d connections\n", conn)
+
+	//flatten the structure
+	a := []appgroupapp{}
+	for _, aga := range appgrpapps {
+		a = append(a, aga[0])
+	}
+
+	jobChan := make(chan appgroupapp)
+	errChan := make(chan error)
+
+	fanOutWg := sync.WaitGroup{}
+	fanInWg := sync.WaitGroup{}
+
+	errs := []string{}
+	fanInWg.Add(1)
+	go func() {
+		defer fanInWg.Done()
+		for {
+			newErr, ok := <-errChan
+			if !ok {
+				return
+			}
+			errs = append(errs, newErr.Error())
+		}
+	}()
+
+	for i := 0; i < conn; i++ {
+		fanOutWg.Add(1)
+		go importAllAppGroupApps(&fanOutWg, jobChan, errChan)
+	}
+
+	for _, aga := range a {
+		jobChan <- aga
+	}
+
+	close(jobChan)
+	fanOutWg.Wait()
+	close(errChan)
+	fanInWg.Wait()
+
+	if len(errs) > 0 {
+		return errors.New(strings.Join(errs, "\n"))
+	}
+
+	return nil
+}
+
+func importAllAppGroupApps(wg *sync.WaitGroup, jobs <-chan appgroupapp, errs chan<- error) {
+	defer wg.Done()
+	var err error
+
+	for {
+		job, ok := <-jobs
+		if !ok {
+			return
+		}
+		// 1. Create the app
+		err = createAppNoKey(job.AppGroup, job.Name, "-1", "", nil, nil, nil)
+		if err != nil {
+			errs <- err
+			continue
+		}
+		// 2. Create app keys
+		for _, c := range job.Credentials {
+			_, err = CreateKey(job.AppGroup, job.Name, c.ConsumerKey, c.ConsumerSecret, c.ExpiresAt, getAPIProductsAsArray(c.APIProducts), c.Scopes, nil)
+			if err != nil {
+				errs <- err
+			}
+		}
+		clilog.Debug.Printf("Completed app %s import to appgroup %s", job.Name, job.AppGroup)
+	}
+}
+
 func exportApp(wg *sync.WaitGroup, jobs <-chan appgroup, results chan<- []byte, errs chan<- error) {
 	defer wg.Done()
 	for {
@@ -411,4 +494,27 @@ func getAPIProductsAsArray(prods []apiProduct) []string {
 		products = append(products, p.ApiProduct)
 	}
 	return products
+}
+
+func readAppsArrayFile(filePath string) ([][]appgroupapp, error) {
+	a := [][]appgroupapp{}
+
+	jsonFile, err := os.Open(filePath)
+	if err != nil {
+		return a, err
+	}
+
+	defer jsonFile.Close()
+
+	byteValue, err := io.ReadAll(jsonFile)
+	if err != nil {
+		return a, err
+	}
+
+	err = json.Unmarshal(byteValue, &a)
+	if err != nil {
+		return a, err
+	}
+
+	return a, nil
 }
