@@ -39,7 +39,7 @@ type appgroup struct {
 	Name        string      `json:"name,omitempty"`
 	Status      *string     `json:"status,omitempty"`
 	AppGroupId  string      `json:"appGroupId,omitempty"`
-	ChannelUri  string      `json:"channelUri,omitempty"`
+	ChannelURI  string      `json:"channelUri,omitempty"`
 	ChannelID   string      `json:"channelId,omitempty"`
 	Attributes  []attribute `json:"attributes,omitempty"`
 	DisplayName string      `json:"displayName,omitempty"`
@@ -54,14 +54,14 @@ type attribute struct {
 var maxPageSize = 1000
 
 // Create
-func Create(name string, channelUri string, channelID string, displayName string, attrs map[string]string) (respBody []byte, err error) {
+func Create(name string, channelURI string, channelID string, displayName string, attrs map[string]string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 
 	app := []string{}
 
 	app = append(app, "\"name\":\""+name+"\"")
-	if channelUri != "" {
-		app = append(app, "\"channelUri\":\""+channelUri+"\"")
+	if channelURI != "" {
+		app = append(app, "\"channelUri\":\""+channelURI+"\"")
 	}
 
 	if channelID != "" {
@@ -89,7 +89,7 @@ func Create(name string, channelUri string, channelID string, displayName string
 }
 
 // Update
-func Update(name string, channelUri string, channelID string, displayName string, attrs map[string]string) (respBody []byte, err error) {
+func Update(name string, channelURI string, channelID string, displayName string, attrs map[string]string) (respBody []byte, err error) {
 	apiclient.ClientPrintHttpResponse.Set(false)
 	appGroupRespBody, err := Get(name)
 	if err != nil {
@@ -102,8 +102,8 @@ func Update(name string, channelUri string, channelID string, displayName string
 		return nil, err
 	}
 
-	if channelUri != "" {
-		a.ChannelUri = channelUri
+	if channelURI != "" {
+		a.ChannelURI = channelURI
 	}
 
 	if channelID != "" {
@@ -289,9 +289,9 @@ func importAppGroup(knownAppGroupsList map[string]bool, wg *sync.WaitGroup, jobs
 
 		if knownAppGroupsList[job.Name] {
 			// the appgroup already exists, perform an update
-			_, err = Update(job.Name, job.ChannelUri, job.ChannelID, job.DisplayName, nil)
+			_, err = Update(job.Name, job.ChannelURI, job.ChannelID, job.DisplayName, nil)
 		} else {
-			_, err = Create(job.Name, job.ChannelUri, job.ChannelID, job.DisplayName, nil)
+			_, err = Create(job.Name, job.ChannelURI, job.ChannelID, job.DisplayName, nil)
 		}
 
 		if err != nil {

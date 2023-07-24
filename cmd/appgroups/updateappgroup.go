@@ -30,7 +30,7 @@ var UpdateCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = appgroups.Update(name, channelUri, channelID, displayName, attrs)
+		_, err = appgroups.Update(name, channelURI, channelID, displayName, attrs)
 		return
 	},
 }
@@ -40,7 +40,7 @@ func init() {
 		"", "Name of the developer app")
 	UpdateCmd.Flags().StringVarP(&channelID, "channelid", "i",
 		"", "channel identifier identifies the owner maintaining this grouping")
-	UpdateCmd.Flags().StringVarP(&channelUri, "channelurl", "u",
+	UpdateCmd.Flags().StringVarP(&channelURI, "channelurl", "u",
 		"", "A reference to the associated storefront/marketplace")
 	UpdateCmd.Flags().StringVarP(&displayName, "display-name", "d",
 		"", "app group name displayed in the UI")
