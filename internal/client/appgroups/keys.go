@@ -24,7 +24,7 @@ import (
 )
 
 // CreateKey
-func CreateKey(name string, appName string, consumerKey string, consumerSecret string, apiProducts []string, scopes []string, attrs map[string]string) (respBody []byte, err error) {
+func CreateKey(name string, appName string, consumerKey string, consumerSecret string, expiresInSeconds string, apiProducts []string, scopes []string, attrs map[string]string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 
 	key := []string{}
