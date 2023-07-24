@@ -15,9 +15,10 @@
 package appgroups
 
 import (
-	"internal/apiclient"
+	"strconv"
 
-	"internal/client/apps"
+	"internal/apiclient"
+	"internal/client/appgroups"
 
 	"github.com/spf13/cobra"
 )
@@ -31,12 +32,13 @@ var CreateKeyCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = apps.CreateKey(name, appName, key, secret, apiProducts, scopes, attrs)
+		_, err = appgroups.CreateKey(name, appName, key, secret, strconv.Itoa(expiry), apiProducts, scopes, attrs)
 		return
 	},
 }
 
 var secret string
+var expiry int
 
 func init() {
 	CreateKeyCmd.Flags().StringVarP(&name, "name", "n",
@@ -44,9 +46,11 @@ func init() {
 	CreateKeyCmd.Flags().StringVarP(&appName, "app-name", "",
 		"", "Name of the app")
 	CreateKeyCmd.Flags().StringVarP(&key, "key", "k",
-		"", "Developer app consumer key")
+		"", "AppGroup app consumer key")
 	CreateKeyCmd.Flags().StringVarP(&secret, "secret", "r",
-		"", "Developer app consumer secret")
+		"", "AppGroup app consumer secret")
+	CreateKeyCmd.Flags().IntVarP(&expiry, "expiry", "x",
+		-1, "Expiration time, in seconds, for the consumer key")
 	CreateKeyCmd.Flags().StringArrayVarP(&apiProducts, "prods", "p",
 		[]string{}, "A list of api products")
 	CreateKeyCmd.Flags().StringArrayVarP(&scopes, "scopes", "s",
