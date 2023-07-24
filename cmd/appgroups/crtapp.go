@@ -31,7 +31,7 @@ var CreateAppCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = appgroups.CreateApp(name, expires, callback, apiProducts, scopes, attrs)
+		_, err = appgroups.CreateApp(name, appName, expires, callback, apiProducts, scopes, attrs)
 		return
 	},
 }
@@ -44,6 +44,8 @@ var (
 func init() {
 	CreateAppCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of the app group")
+	CreateAppCmd.Flags().StringVarP(&appName, "app-name", "",
+		"", "Name of the app")
 	CreateAppCmd.Flags().StringVarP(&expires, "expires", "x",
 		"", "A setting, in milliseconds, for the lifetime of the consumer key")
 	CreateAppCmd.Flags().StringVarP(&callback, "callback", "c",
@@ -56,4 +58,5 @@ func init() {
 		nil, "Custom attributes")
 
 	_ = CreateAppCmd.MarkFlagRequired("name")
+	_ = CreateAppCmd.MarkFlagRequired("app-name")
 }
