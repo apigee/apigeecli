@@ -345,7 +345,6 @@ func Export(conn int, folder string, allRevisions bool) (err error) {
 			lastRevision := maxRevision(proxy.Revision)
 			jobChan <- revision{name: proxy.Name, rev: lastRevision}
 		}
-
 	}
 	close(jobChan)
 	fanOutWg.Wait()
