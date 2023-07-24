@@ -96,7 +96,7 @@ func Get(email string) (respBody []byte, err error) {
 }
 
 // Update
-func Update(email string, firstName string, lastName string, username string, status bool, attrs map[string]string) (respBody []byte, err error) {
+func Update(email string, firstName string, lastName string, username string, status string, attrs map[string]string) (respBody []byte, err error) {
 	apiclient.ClientPrintHttpResponse.Set(false)
 	devRespBody, err := Get(email)
 	if err != nil {
@@ -121,12 +121,13 @@ func Update(email string, firstName string, lastName string, username string, st
 		d.Username = username
 	}
 
-	d.Status = new(string)
-
-	if status {
-		*d.Status = "active"
-	} else {
-		*d.Status = "inactive"
+	if status != "" {
+		apiclient.ClientPrintHttpResponse.Set(false)
+		err = setDeveloperStatus(email, status)
+		apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	reqBody, err := json.Marshal(d)
@@ -138,6 +139,17 @@ func Update(email string, firstName string, lastName string, username string, st
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", url.QueryEscape(email))
 	respBody, err = apiclient.HttpClient(u.String(), string(reqBody), "PUT")
 	return respBody, err
+}
+
+func setDeveloperStatus(email string, action string) (err error) {
+	u, _ := url.Parse(apiclient.BaseURL)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", url.QueryEscape(email))
+	q := u.Query()
+	q.Set("action", action)
+	u.RawQuery = q.Encode()
+
+	_, err = apiclient.HttpClient(u.String(), "", "POST", "application/octet-stream")
+	return err
 }
 
 // GetDeveloperId

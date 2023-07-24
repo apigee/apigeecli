@@ -15,6 +15,7 @@
 package developers
 
 import (
+	"fmt"
 	"internal/apiclient"
 
 	"internal/client/developers"
@@ -31,12 +32,37 @@ var UpdateCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = developers.Update(email, firstName, lastName, userName, status, attrs)
+		_, err = developers.Update(email, firstName, lastName, userName, cmd.Flag("status").Value.String(), attrs)
 		return
 	},
 }
 
-var status bool
+type developerStatus string
+
+var status developerStatus
+
+const (
+	active   developerStatus = "active"
+	inactive developerStatus = "inactive"
+)
+
+func (s *developerStatus) String() string {
+	return string(*s)
+}
+
+func (s *developerStatus) Set(r string) error {
+	switch r {
+	case "active", "inactive":
+		*s = developerStatus(r)
+		return nil
+	default:
+		return fmt.Errorf("must be %s or %s", active, inactive)
+	}
+}
+
+func (s *developerStatus) Type() string {
+	return "developerStatus"
+}
 
 func init() {
 	UpdateCmd.Flags().StringVarP(&email, "email", "n",
@@ -47,8 +73,8 @@ func init() {
 		"", "The last name of the developer")
 	UpdateCmd.Flags().StringVarP(&userName, "user", "u",
 		"", "The username of the developer")
-	UpdateCmd.Flags().BoolVarP(&status, "status", "",
-		true, "The status of the developer")
+	UpdateCmd.Flags().Var(&status, "status",
+		fmt.Sprintf("must be %s or %s", active, inactive))
 	UpdateCmd.Flags().StringToStringVar(&attrs, "attrs",
 		nil, "Custom attributes")
 
