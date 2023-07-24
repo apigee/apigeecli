@@ -33,4 +33,5 @@ func init() {
 	AppCmd.AddCommand(ManageAppCmd)
 	AppCmd.AddCommand(KeyCmd)
 	AppCmd.AddCommand(ExpAppCmd)
+	AppCmd.AddCommand(ImpAppCmd)
 }

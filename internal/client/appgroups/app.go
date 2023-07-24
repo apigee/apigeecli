@@ -18,7 +18,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"net/url"
+	"os"
 	"path"
 	"strconv"
 	"strings"
@@ -58,12 +60,12 @@ type apiProduct struct {
 }
 
 // CreateApp
-func CreateApp(name string, expires string, callback string, apiProducts []string, scopes []string, attrs map[string]string) (respBody []byte, err error) {
+func CreateApp(name string, appName string, expires string, callback string, apiProducts []string, scopes []string, attrs map[string]string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 
 	app := []string{}
 
-	app = append(app, "\"name\":\""+name+"\"")
+	app = append(app, "\"name\":\""+appName+"\"")
 
 	if len(apiProducts) > 0 {
 		app = append(app, "\"apiProducts\":[\""+getArrayStr(apiProducts)+"\"]")
@@ -94,6 +96,23 @@ func CreateApp(name string, expires string, callback string, apiProducts []strin
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "appgroups", name, "apps")
 	respBody, err = apiclient.HttpClient(u.String(), payload)
 	return respBody, err
+}
+
+// createAppNoKey
+func createAppNoKey(name string, appName string, expires string, callback string, apiProducts []string, scopes []string, attrs map[string]string) (err error) {
+	respBody, err := CreateApp(name, appName, expires, callback, apiProducts, scopes, attrs)
+	if err != nil {
+		return err
+	}
+
+	a := appgroupapp{}
+	err = json.Unmarshal(respBody, &a)
+	if err != nil {
+		return err
+	}
+
+	_, err = DeleteKey(name, appName, a.Credentials[0].ConsumerKey)
+	return err
 }
 
 // DeleteApp
@@ -176,6 +195,105 @@ func ExportApps(name string) (respBody []byte, err error) {
 	return respBody, err
 }
 
+// ImportApps
+func ImportApps(conn int, filePath string, name string) (err error) {
+	appgrpapps, err := readAppsFile(filePath)
+	if err != nil {
+		clilog.Error.Println("Error reading file: ", err)
+		return err
+	}
+
+	clilog.Debug.Printf("Found %d target servers in the file\n", len(appgrpapps))
+	clilog.Debug.Printf("Create target servers with %d connections\n", conn)
+
+	knownAppGroupAppsBytes, err := ExportApps(name)
+	if err != nil {
+		return err
+	}
+
+	var knownAppGroupApps []appgroupapp
+	if err = json.Unmarshal(knownAppGroupAppsBytes, &knownAppGroupApps); err != nil {
+		return err
+	}
+
+	knownAppGroupAppsList := map[string]bool{}
+	for _, name := range knownAppGroupApps {
+		knownAppGroupAppsList[name.Name] = true
+	}
+
+	jobChan := make(chan appgroupapp)
+	errChan := make(chan error)
+
+	fanOutWg := sync.WaitGroup{}
+	fanInWg := sync.WaitGroup{}
+
+	errs := []string{}
+	fanInWg.Add(1)
+	go func() {
+		defer fanInWg.Done()
+		for {
+			newErr, ok := <-errChan
+			if !ok {
+				return
+			}
+			errs = append(errs, newErr.Error())
+		}
+	}()
+
+	for i := 0; i < conn; i++ {
+		fanOutWg.Add(1)
+		go importAppGroupApp(knownAppGroupAppsList, &fanOutWg, jobChan, name, errChan)
+	}
+
+	for _, aga := range appgrpapps {
+		jobChan <- aga
+	}
+
+	close(jobChan)
+	fanOutWg.Wait()
+	close(errChan)
+	fanInWg.Wait()
+
+	if len(errs) > 0 {
+		return errors.New(strings.Join(errs, "\n"))
+	}
+
+	return nil
+}
+
+func importAppGroupApp(knownAppGroupsList map[string]bool, wg *sync.WaitGroup, jobs <-chan appgroupapp, name string, errs chan<- error) {
+	defer wg.Done()
+	var err error
+
+	for {
+		job, ok := <-jobs
+		if !ok {
+			return
+		}
+
+		if knownAppGroupsList[job.Name] {
+			//the appgroup already exists, perform an update
+			clilog.Warning.Printf("App %s in AppGroup %s already exists. Updates to app is not currently supported", job.Name, name)
+		} else {
+			// 1. Create the app
+			err = createAppNoKey(name, job.Name, "-1", "", nil, nil, nil)
+			if err != nil {
+				errs <- err
+				continue
+			}
+			// 2. Create app keys
+			for _, c := range job.Credentials {
+				_, err = CreateKey(name, job.Name, c.ConsumerKey, c.ConsumerSecret, c.ExpiresAt, getAPIProductsAsArray(c.APIProducts), c.Scopes, nil)
+				if err != nil {
+					errs <- err
+				}
+			}
+		}
+
+		clilog.Debug.Printf("Completed app %s import to appgroup %s", job.Name, name)
+	}
+}
+
 // ExportAllApps
 func ExportAllApps(appGroupListBytes []byte, conn int) (results [][]byte, err error) {
 
@@ -240,7 +358,6 @@ func ExportAllApps(appGroupListBytes []byte, conn int) (results [][]byte, err er
 		return nil, errors.New(strings.Join(errs, "\n"))
 	}
 	return results, nil
-
 }
 
 func exportApp(wg *sync.WaitGroup, jobs <-chan appgroup, results chan<- []byte, errs chan<- error) {
@@ -264,4 +381,35 @@ func getArrayStr(str []string) string {
 	tmp := strings.Join(str, ",")
 	tmp = strings.ReplaceAll(tmp, ",", "\",\"")
 	return tmp
+}
+
+func readAppsFile(filePath string) ([]appgroupapp, error) {
+	a := []appgroupapp{}
+
+	jsonFile, err := os.Open(filePath)
+	if err != nil {
+		return a, err
+	}
+
+	defer jsonFile.Close()
+
+	byteValue, err := io.ReadAll(jsonFile)
+	if err != nil {
+		return a, err
+	}
+
+	err = json.Unmarshal(byteValue, &a)
+	if err != nil {
+		return a, err
+	}
+
+	return a, nil
+}
+
+func getAPIProductsAsArray(prods []apiProduct) []string {
+	var products []string
+	for _, p := range prods {
+		products = append(products, p.ApiProduct)
+	}
+	return products
 }
