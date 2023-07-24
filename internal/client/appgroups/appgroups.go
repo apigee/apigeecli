@@ -289,9 +289,9 @@ func importAppGroup(knownAppGroupsList map[string]bool, wg *sync.WaitGroup, jobs
 
 		if knownAppGroupsList[job.Name] {
 			// the appgroup already exists, perform an update
-			_, err = Update(job.Name, job.ChannelUri, job.ChannelId, job.DisplayName, nil)
+			_, err = Update(job.Name, job.ChannelUri, job.ChannelID, job.DisplayName, nil)
 		} else {
-			_, err = Create(job.Name, job.ChannelUri, job.ChannelId, job.DisplayName, nil)
+			_, err = Create(job.Name, job.ChannelUri, job.ChannelID, job.DisplayName, nil)
 		}
 
 		if err != nil {
