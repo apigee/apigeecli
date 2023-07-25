@@ -39,11 +39,22 @@ var OasCreateCmd = &cobra.Command{
 		if targetURL != "" && targetURLRef != "" {
 			return fmt.Errorf("either target-url or target-url-ref must be passed, not both")
 		}
+		if integration != "" && apitrigger == "" {
+			return fmt.Errorf("apitrigger must be passed if integration is set")
+		}
+		if integration == "" && apitrigger != "" {
+			return fmt.Errorf("integration must be passed if apitrigger is set")
+		}
+		if (targetURL != "" || targetURLRef != "") && (integration != "" || apitrigger != "") {
+			return fmt.Errorf("integration or apitrigger cannot be set if targetURL or targetURLRef is set")
+		}
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		var content []byte
 		var oasDocName string
+
+		integrationEndpoint := false
 
 		if oasFile != "" {
 			oasDocName, content, err = bundle.LoadDocumentFromFile(oasFile, validateSpec, formatValidation)
@@ -54,11 +65,31 @@ var OasCreateCmd = &cobra.Command{
 			return err
 		}
 
+		targetOptions := bundle.TargetOptions{
+			IntegrationBackend: bundle.IntegrationBackendOptions{
+				IntegrationName: integration,
+				TriggerName:     apitrigger,
+			},
+			HttpBackend: bundle.HttpBackendOptions{
+				OasGoogleAcessTokenScopeLiteral: oasGoogleAcessTokenScopeLiteral,
+				OasGoogleIDTokenAudLiteral:      oasGoogleIDTokenAudLiteral,
+				OasGoogleIDTokenAudRef:          oasGoogleIDTokenAudRef,
+				OasTargetURLRef:                 targetURLRef,
+				TargetURL:                       targetURL,
+			},
+		}
+
+		// check if integrationEndpoint is selected
+		if integration != "" {
+			integrationEndpoint = true
+		}
+
 		// Generate the apiproxy struct
 		err = bundle.GenerateAPIProxyDefFromOAS(name,
 			oasDocName,
 			skipPolicy,
 			addCORS,
+			integrationEndpoint,
 			oasGoogleAcessTokenScopeLiteral,
 			oasGoogleIDTokenAudLiteral,
 			oasGoogleIDTokenAudRef,
@@ -75,11 +106,7 @@ var OasCreateCmd = &cobra.Command{
 			oasDocName,
 			skipPolicy,
 			addCORS,
-			oasGoogleAcessTokenScopeLiteral,
-			oasGoogleIDTokenAudLiteral,
-			oasGoogleIDTokenAudRef,
-			targetURLRef,
-			targetURL)
+			targetOptions)
 
 		if err != nil {
 			return err
@@ -116,6 +143,10 @@ func init() {
 		"", "Set a reference variable containing the target endpoint")
 	OasCreateCmd.Flags().StringVarP(&targetURL, "target-url", "",
 		"", "Set a target URL for the target endpoint")
+	OasCreateCmd.Flags().StringVarP(&integration, "integration", "i",
+		"", "Integration name")
+	OasCreateCmd.Flags().StringVarP(&apitrigger, "trigger", "",
+		"", "API Trigger name; don't include 'api_trigger/'")
 	OasCreateCmd.Flags().BoolVarP(&importProxy, "import", "",
 		true, "Import API Proxy after generation from spec")
 	OasCreateCmd.Flags().BoolVarP(&validateSpec, "validate", "",

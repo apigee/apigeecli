@@ -18,6 +18,7 @@ import (
 	"os"
 
 	"internal/apiclient"
+	"internal/client/apis"
 
 	"internal/bundlegen"
 	"internal/bundlegen/proxybundle"
@@ -40,15 +41,17 @@ var IntegrationCmd = &cobra.Command{
 
 		defer os.RemoveAll(tmpDir)
 
-		if err = bundlegen.GenerateIntegrationAPIProxy(name, integration, apitrigger); err != nil {
+		if err = bundlegen.GenerateIntegrationAPIProxy(name, apitrigger); err != nil {
 			return err
 		}
+
 		if err = proxybundle.GenerateIntegrationAPIProxyBundle(name, integration, apitrigger, true); err != nil {
 			return err
 		}
-		/*if _, err = apis.CreateProxy(name, tmpDir); err != nil {
-			return err
-		}*/
+
+		if importProxy {
+			_, err = apis.CreateProxy(name, tmpDir)
+		}
 		return err
 	},
 }
@@ -62,6 +65,8 @@ func init() {
 		"", "Integration name")
 	IntegrationCmd.Flags().StringVarP(&apitrigger, "trigger", "",
 		"", "API Trigger name; don't include 'api_trigger/'")
+	IntegrationCmd.Flags().BoolVarP(&importProxy, "import", "",
+		true, "Import API Proxy after generation")
 
 	_ = IntegrationCmd.MarkFlagRequired("name")
 	_ = IntegrationCmd.MarkFlagRequired("integration")
