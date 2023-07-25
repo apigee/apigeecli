@@ -168,7 +168,6 @@ func Export() (respBody []byte, err error) {
 
 // Import
 func Import(conn int, filePath string) error {
-
 	entities, err := ReadDevelopersFile(filePath)
 	if err != nil {
 		clilog.Error.Println("Error reading file: ", err)

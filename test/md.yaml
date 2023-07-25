@@ -18,10 +18,10 @@ info:
   title: Masterdata microservice
   description: |
     Masterdata microservice
-servers: 
+servers:
   - url: https://my.example.com/md
 security:
-  - ApiKeyAuth: []  
+  - ApiKeyAuth: []
 paths:
   '/':
     get:

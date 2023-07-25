@@ -65,8 +65,7 @@ type violation struct {
 	Description string `json:"description,omitempty"`
 }
 
-type routingchanges struct {
-}
+type routingchanges struct{}
 
 type routingconflicts struct {
 	EnvironmentGroup      string                `json:"environmentGroup,omitempty"`
@@ -112,7 +111,6 @@ func DeleteProxyRevision(name string, revision int) (respBody []byte, err error)
 
 // DeployProxy
 func DeployProxy(name string, revision int, overrides bool, sequencedRollout bool, safeDeploy bool, serviceAccountName string) (respBody []byte, err error) {
-
 	if safeDeploy {
 		var safeResp []byte
 		d := deploychangereport{}
