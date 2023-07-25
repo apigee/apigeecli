@@ -48,13 +48,9 @@ func GenerateAPIProxyBundleFromOAS(name string,
 	fileName string,
 	skipPolicy bool,
 	addCORS bool,
-	oasGoogleAcessTokenScopeLiteral string,
-	oasGoogleIdTokenAudLiteral string,
-	oasGoogleIdTokenAudRef string,
-	oasTargetUrlRef string,
-	targetUrl string,
+	targetOptions bundlegen.TargetOptions,
 ) (err error) {
-	var apiProxyData, proxyEndpointData, targetEndpointData string
+	var apiProxyData, proxyEndpointData, targetEndpointData, integrationEndpointData string
 	const resourceType = "oas"
 
 	tmpDir, err := os.MkdirTemp("", "proxy")
@@ -82,6 +78,7 @@ func GenerateAPIProxyBundleFromOAS(name string,
 	policiesDirPath := rootDir + string(os.PathSeparator) + "policies"
 	targetDirPath := rootDir + string(os.PathSeparator) + "targets"
 	resDirPath := rootDir + string(os.PathSeparator) + "resources" + string(os.PathSeparator) + resourceType //"oas"
+	integrationDirPath := rootDir + string(os.PathSeparator) + "integration-endpoints"
 
 	if err = os.Mkdir(proxiesDirPath, os.ModePerm); err != nil {
 		return err
@@ -96,17 +93,32 @@ func GenerateAPIProxyBundleFromOAS(name string,
 		return err
 	}
 
-	if err = os.Mkdir(targetDirPath, os.ModePerm); err != nil {
-		return err
-	}
+	if targetOptions.IntegrationBackend.IntegrationName != "" {
 
-	for _, targetEndpoint := range targets.TargetEndpoints {
-		if targetEndpointData, err = target.GetTargetEndpoint(targetEndpoint); err != nil {
+		if err = os.Mkdir(integrationDirPath, os.ModePerm); err != nil {
 			return err
 		}
 
-		if err = writeXMLData(targetDirPath+string(os.PathSeparator)+targetEndpoint.Name+".xml", targetEndpointData); err != nil {
+		// assume there is an integration target
+		integrationEndpointData = target.GetIntegrationEndpoint()
+		if err = writeXMLData(integrationDirPath+string(os.PathSeparator)+"default.xml", integrationEndpointData); err != nil {
 			return err
+		}
+
+	} else {
+
+		if err = os.Mkdir(targetDirPath, os.ModePerm); err != nil {
+			return err
+		}
+
+		for _, targetEndpoint := range targets.TargetEndpoints {
+			if targetEndpointData, err = target.GetTargetEndpoint(targetEndpoint); err != nil {
+				return err
+			}
+
+			if err = writeXMLData(targetDirPath+string(os.PathSeparator)+targetEndpoint.Name+".xml", targetEndpointData); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -124,12 +136,21 @@ func GenerateAPIProxyBundleFromOAS(name string,
 	}
 
 	// add set target url
-	if targetUrl == "" {
+	if targetOptions.HttpBackend.TargetURL == "" {
 		if genapi.GenerateSetTargetPolicy() {
 			if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"Set-Target-1.xml",
-				policies.AddSetTargetEndpointRef(oasTargetUrlRef)); err != nil {
+				policies.AddSetTargetEndpointRef(targetOptions.HttpBackend.OasTargetURLRef)); err != nil {
 				return err
 			}
+		}
+	}
+
+	if targetOptions.IntegrationBackend.IntegrationName != "" {
+		// add set integration request policy
+		if err = writeXMLData(policiesDirPath+string(os.PathSeparator)+"set-integration-request.xml",
+			policies.AddSetIntegrationRequestPolicy(targetOptions.IntegrationBackend.IntegrationName,
+				targetOptions.IntegrationBackend.TriggerName)); err != nil {
+			return err
 		}
 	}
 
