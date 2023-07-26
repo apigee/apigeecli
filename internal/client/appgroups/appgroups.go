@@ -147,8 +147,8 @@ func Delete(name string) (respBody []byte, err error) {
 
 // Manage
 func Manage(name string, action string) (respBody []byte, err error) {
-	if action != "revoke" && action != "approve" {
-		return nil, fmt.Errorf("invalid action. action must be revoke or approve")
+	if action != "active" && action != "inactive" {
+		return nil, fmt.Errorf("invalid action. action must be active or inactive")
 	}
 
 	u, _ := url.Parse(apiclient.BaseURL)

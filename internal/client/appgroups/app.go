@@ -127,7 +127,7 @@ func DeleteApp(name string, appName string) (respBody []byte, err error) {
 func GetApp(name string, appName string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "appgroups", name, "apps", appName)
-	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
@@ -160,7 +160,7 @@ func ManageApp(name string, appName string, action string) (respBody []byte, err
 	q.Set("action", action)
 	u.RawQuery = q.Encode()
 
-	respBody, err = apiclient.HttpClient(u.String(), "", "POST", "application/octet-stream")
+	respBody, err = apiclient.HttpClient(u.String(), "", "PUT", "application/octet-stream")
 	return respBody, err
 }
 

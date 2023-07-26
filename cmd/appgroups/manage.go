@@ -37,9 +37,9 @@ var ManageCmd = &cobra.Command{
 
 func init() {
 	ManageCmd.Flags().StringVarP(&name, "name", "n",
-		"", "Name of the app group")
+		"", "Name of the AppGroup")
 	ManageCmd.Flags().StringVarP(&action, "action", "x",
-		"revoke", "Action to perform - revoke or approve")
+		"revoke", "Action to perform - active or inactive")
 
 	_ = ManageCmd.MarkFlagRequired("name")
 	_ = ManageCmd.MarkFlagRequired("action")

@@ -42,7 +42,7 @@ var (
 
 func init() {
 	CreateCmd.Flags().StringVarP(&name, "name", "n",
-		"", "Name of the developer app")
+		"", "Name of the AppGroup")
 	CreateCmd.Flags().StringVarP(&channelID, "channelid", "i",
 		"", "channel identifier identifies the owner maintaining this grouping")
 	CreateCmd.Flags().StringVarP(&channelURI, "channelurl", "u",
