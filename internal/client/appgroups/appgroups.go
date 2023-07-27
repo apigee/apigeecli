@@ -157,7 +157,7 @@ func Manage(name string, action string) (respBody []byte, err error) {
 	q.Set("action", action)
 	u.RawQuery = q.Encode()
 
-	respBody, err = apiclient.HttpClient(u.String(), "", "POST", "application/octet-stream")
+	respBody, err = apiclient.HttpClient(u.String(), "", "PUT", "application/octet-stream")
 	return respBody, err
 }
 

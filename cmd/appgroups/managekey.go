@@ -16,8 +16,7 @@ package appgroups
 
 import (
 	"internal/apiclient"
-
-	"internal/client/apps"
+	"internal/client/appgroups"
 
 	"github.com/spf13/cobra"
 )
@@ -31,7 +30,7 @@ var ManageKeyCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = apps.ManageKey(name, appName, key, action)
+		_, err = appgroups.ManageKey(name, appName, key, action)
 		return
 	},
 }
@@ -40,11 +39,11 @@ var action string
 
 func init() {
 	ManageKeyCmd.Flags().StringVarP(&name, "name", "n",
-		"", "Name of the app group")
+		"", "Name of the AppGroup")
 	ManageKeyCmd.Flags().StringVarP(&appName, "app-name", "",
 		"", "Name of the app")
 	ManageKeyCmd.Flags().StringVarP(&key, "key", "k",
-		"", "Developer app consumer key")
+		"", "AppGroup app consumer key")
 	ManageKeyCmd.Flags().StringVarP(&action, "action", "x",
 		"revoke", "Action to perform - revoke or approve")
 

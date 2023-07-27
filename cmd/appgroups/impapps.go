@@ -27,8 +27,8 @@ import (
 // ImpAppCmd to import apps
 var ImpAppCmd = &cobra.Command{
 	Use:   "import",
-	Short: "Import a file Apps to an AppGroup",
-	Long:  "Import a file Apps to an AppGroup",
+	Short: "Import a file containing Apps to an AppGroup",
+	Long:  "Import a file containing Apps to an AppGroup",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		if name == "" && !all {
 			return fmt.Errorf("either all must be set to true or a name must be passed")
@@ -52,7 +52,7 @@ func init() {
 	ImpAppCmd.Flags().IntVarP(&conn, "conn", "c",
 		4, "Number of connections")
 	ImpAppCmd.Flags().BoolVarP(&all, "all", "",
-		false, "Import apps for all appgroups in the org")
+		false, "Import Apps for all AppGroups in the org")
 
 	_ = ImpAppCmd.MarkFlagRequired("file")
 }

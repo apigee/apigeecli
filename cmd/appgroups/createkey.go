@@ -44,7 +44,7 @@ var (
 
 func init() {
 	CreateKeyCmd.Flags().StringVarP(&name, "name", "n",
-		"", "Name of the app group")
+		"", "Name of the AppGroup")
 	CreateKeyCmd.Flags().StringVarP(&appName, "app-name", "",
 		"", "Name of the app")
 	CreateKeyCmd.Flags().StringVarP(&key, "key", "k",

@@ -40,7 +40,7 @@ var key string
 
 func init() {
 	GetKeyCmd.Flags().StringVarP(&name, "name", "n",
-		"", "Name of the app group")
+		"", "Name of the AppGroup")
 	GetKeyCmd.Flags().StringVarP(&appName, "app-name", "",
 		"", "Name of the app")
 	GetKeyCmd.Flags().StringVarP(&key, "key", "k",

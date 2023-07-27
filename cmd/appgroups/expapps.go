@@ -36,7 +36,7 @@ var ExpAppCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		const exportFileName = "apps.json"
+		var exportFileName = name + "apps.json"
 
 		apiclient.DisableCmdPrintHttpResponse()
 
@@ -45,7 +45,11 @@ var ExpAppCmd = &cobra.Command{
 			if err != nil {
 				return err
 			}
-			return apiclient.WriteByteArrayToFile(exportFileName, false, payload)
+			prettyPayload, err := apiclient.PrettifyJSON(payload)
+			if err != nil {
+				return err
+			}
+			return apiclient.WriteByteArrayToFile(exportFileName, false, prettyPayload)
 		}
 
 		appGroupsList, err := appgroups.Export()
@@ -65,7 +69,7 @@ var all bool
 
 func init() {
 	ExpAppCmd.Flags().StringVarP(&name, "name", "n",
-		"", "Name of the app group")
+		"", "Name of the AppGroup")
 	ExpAppCmd.Flags().BoolVarP(&all, "all", "",
 		false, "Export apps for all appgroups in the org")
 }

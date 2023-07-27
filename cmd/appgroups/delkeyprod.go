@@ -24,9 +24,9 @@ import (
 
 // DelProdKeyCmd to delete credential
 var DelProdKeyCmd = &cobra.Command{
-	Use:   "delete",
-	Short: "Deletes a consumer key for a AppGroup app",
-	Long:  "Deletes a consumer key for a AppGroup app",
+	Use:   "delete-product",
+	Short: "Deletes a product from an App in an AppGroup app",
+	Long:  "Deletes a product from an App in an AppGroup app",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		return apiclient.SetApigeeOrg(org)
 	},
@@ -40,7 +40,7 @@ var productName string
 
 func init() {
 	DelProdKeyCmd.Flags().StringVarP(&name, "name", "n",
-		"", "Name of the app group")
+		"", "Name of the AppGroup")
 	DelProdKeyCmd.Flags().StringVarP(&appName, "app-name", "",
 		"", "Name of the app")
 	DelProdKeyCmd.Flags().StringVarP(&key, "key", "k",

@@ -43,7 +43,7 @@ var (
 
 func init() {
 	CreateAppCmd.Flags().StringVarP(&name, "name", "n",
-		"", "Name of the app group")
+		"", "Name of the AppGroup")
 	CreateAppCmd.Flags().StringVarP(&appName, "app-name", "",
 		"", "Name of the app")
 	CreateAppCmd.Flags().StringVarP(&expires, "expires", "x",

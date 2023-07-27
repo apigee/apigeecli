@@ -37,7 +37,7 @@ var DelAppCmd = &cobra.Command{
 
 func init() {
 	DelAppCmd.Flags().StringVarP(&name, "name", "n",
-		"", "Name of the app group")
+		"", "Name of the AppGroup")
 	DelAppCmd.Flags().StringVarP(&appName, "app-name", "",
 		"", "Name of the app")
 

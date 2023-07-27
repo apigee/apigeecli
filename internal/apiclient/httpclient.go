@@ -340,6 +340,17 @@ func PrettyPrint(contentType string, body []byte) error {
 	return nil
 }
 
+// PrettifyJSON
+func PrettifyJSON(body []byte) ([]byte, error) {
+	var prettyJSON bytes.Buffer
+	err := json.Indent(&prettyJSON, body, "", "\t")
+	if err != nil {
+		clilog.Error.Println("error parsing response: ", err)
+		return nil, err
+	}
+	return prettyJSON.Bytes(), nil
+}
+
 // Do the HTTP request
 func (c *RateLimitedHTTPClient) Do(req *http.Request) (*http.Response, error) {
 	ctx := context.Background()

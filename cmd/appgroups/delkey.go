@@ -38,7 +38,7 @@ var DelKeyCmd = &cobra.Command{
 
 func init() {
 	DelKeyCmd.Flags().StringVarP(&name, "name", "n",
-		"", "Name of the app group")
+		"", "Name of the AppGroup")
 	DelKeyCmd.Flags().StringVarP(&appName, "app-name", "",
 		"", "Name of the app")
 	DelKeyCmd.Flags().StringVarP(&key, "key", "k",

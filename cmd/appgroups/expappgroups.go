@@ -37,6 +37,10 @@ var ExpCmd = &cobra.Command{
 			return err
 		}
 
-		return apiclient.WriteByteArrayToFile(exportFileName, false, payload)
+		prettyPayload, err := apiclient.PrettifyJSON(payload)
+		if err != nil {
+			return err
+		}
+		return apiclient.WriteByteArrayToFile(exportFileName, false, prettyPayload)
 	},
 }

@@ -25,8 +25,8 @@ import (
 // ImpCmd to import apps
 var ImpCmd = &cobra.Command{
 	Use:   "import",
-	Short: "Import a file containing Appgroups",
-	Long:  "Import a file containing Appgroups",
+	Short: "Import a file containing AppGroups",
+	Long:  "Import a file containing AppGroups",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		return apiclient.SetApigeeOrg(org)
 	},

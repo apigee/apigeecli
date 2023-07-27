@@ -39,7 +39,7 @@ var appName string
 
 func init() {
 	GetAppCmd.Flags().StringVarP(&name, "name", "n",
-		"", "Name of the app group")
+		"", "Name of the AppGroup")
 	GetAppCmd.Flags().StringVarP(&appName, "app-name", "",
 		"", "Name of the app")
 

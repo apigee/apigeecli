@@ -24,8 +24,8 @@ import (
 // ManageCmd to appgroups
 var ManageCmd = &cobra.Command{
 	Use:   "manage",
-	Short: "Approve or revoke an appgroup",
-	Long:  "Approve or revoke an appgroup",
+	Short: "Approve or revoke an AppGroup",
+	Long:  "Approve or revoke an AppGroup",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		return apiclient.SetApigeeOrg(org)
 	},
@@ -39,7 +39,7 @@ func init() {
 	ManageCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of the AppGroup")
 	ManageCmd.Flags().StringVarP(&action, "action", "x",
-		"revoke", "Action to perform - active or inactive")
+		"active", "Action to perform - active or inactive")
 
 	_ = ManageCmd.MarkFlagRequired("name")
 	_ = ManageCmd.MarkFlagRequired("action")

@@ -37,13 +37,13 @@ var UpdateCmd = &cobra.Command{
 
 func init() {
 	UpdateCmd.Flags().StringVarP(&name, "name", "n",
-		"", "Name of the developer app")
+		"", "Name of the AppGroup")
 	UpdateCmd.Flags().StringVarP(&channelID, "channelid", "i",
 		"", "channel identifier identifies the owner maintaining this grouping")
 	UpdateCmd.Flags().StringVarP(&channelURI, "channelurl", "u",
 		"", "A reference to the associated storefront/marketplace")
 	UpdateCmd.Flags().StringVarP(&displayName, "display-name", "d",
-		"", "app group name displayed in the UI")
+		"", "AppGroup name displayed in the UI")
 	UpdateCmd.Flags().StringToStringVar(&attrs, "attrs",
 		nil, "Custom attributes")
 

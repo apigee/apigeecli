@@ -31,4 +31,5 @@ func init() {
 	KeyCmd.AddCommand(CreateKeyCmd)
 	KeyCmd.AddCommand(ManageKeyCmd)
 	KeyCmd.AddCommand(DelProdKeyCmd)
+	KeyCmd.AddCommand(UpdateKeyProdCmd)
 }

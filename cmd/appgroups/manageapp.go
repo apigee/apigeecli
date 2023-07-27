@@ -37,7 +37,7 @@ var ManageAppCmd = &cobra.Command{
 
 func init() {
 	ManageAppCmd.Flags().StringVarP(&name, "name", "n",
-		"", "Name of the app group")
+		"", "Name of the AppGroup")
 	ManageAppCmd.Flags().StringVarP(&appName, "app-name", "",
 		"", "Name of the app")
 	ManageAppCmd.Flags().StringVarP(&action, "action", "x",
