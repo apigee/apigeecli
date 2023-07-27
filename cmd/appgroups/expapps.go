@@ -36,7 +36,7 @@ var ExpAppCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		var exportFileName = name + "apps.json"
+		exportFileName := name + "apps.json"
 
 		apiclient.DisableCmdPrintHttpResponse()
 
