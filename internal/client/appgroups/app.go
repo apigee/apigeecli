@@ -59,43 +59,16 @@ type apiProduct struct {
 	Status     string `json:"status,omitempty"`
 }
 
+type Action uint8
+
+const (
+	CREATE Action = iota
+	UPDATE
+)
+
 // CreateApp
 func CreateApp(name string, appName string, expires string, callback string, apiProducts []string, scopes []string, attrs map[string]string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
-
-	app := []string{}
-
-	app = append(app, "\"name\":\""+appName+"\"")
-
-	if len(apiProducts) > 0 {
-		app = append(app, "\"apiProducts\":[\""+getArrayStr(apiProducts)+"\"]")
-	}
-
-	if callback != "" {
-		app = append(app, "\"callbackUrl\":\""+callback+"\"")
-	}
-
-	if expires != "" {
-		app = append(app, "\"keyExpiresIn\":\""+expires+"\"")
-	}
-
-	if len(scopes) > 0 {
-		app = append(app, "\"scopes\":[\""+getArrayStr(scopes)+"\"]")
-	}
-
-	if len(attrs) != 0 {
-		attributes := []string{}
-		for key, value := range attrs {
-			attributes = append(attributes, "{\"name\":\""+key+"\",\"value\":\""+value+"\"}")
-		}
-		attributesStr := "\"attributes\":[" + strings.Join(attributes, ",") + "]"
-		app = append(app, attributesStr)
-	}
-
-	payload := "{" + strings.Join(app, ",") + "}"
-	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "appgroups", name, "apps")
-	respBody, err = apiclient.HttpClient(u.String(), payload)
-	return respBody, err
+	return createOrUpdate(name, appName, expires, callback, apiProducts, scopes, attrs, CREATE)
 }
 
 // createAppNoKey
@@ -145,6 +118,54 @@ func ListApps(name string, pageSize int, pageToken string) (respBody []byte, err
 
 	u.RawQuery = q.Encode()
 	respBody, err = apiclient.HttpClient(u.String())
+	return respBody, err
+}
+
+// UpdateApp
+func UpdateApp(name string, appName string, expires string, callback string, apiProducts []string, scopes []string, attrs map[string]string) (respBody []byte, err error) {
+	return createOrUpdate(name, appName, expires, callback, apiProducts, scopes, attrs, UPDATE)
+}
+
+func createOrUpdate(name string, appName string, expires string, callback string, apiProducts []string, scopes []string, attrs map[string]string, action Action) (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.BaseURL)
+	app := []string{}
+
+	app = append(app, "\"name\":\""+appName+"\"")
+
+	if len(apiProducts) > 0 {
+		app = append(app, "\"apiProducts\":[\""+getArrayStr(apiProducts)+"\"]")
+	}
+
+	if callback != "" {
+		app = append(app, "\"callbackUrl\":\""+callback+"\"")
+	}
+
+	if expires != "" {
+		app = append(app, "\"keyExpiresIn\":\""+expires+"\"")
+	}
+
+	if len(scopes) > 0 {
+		app = append(app, "\"scopes\":[\""+getArrayStr(scopes)+"\"]")
+	}
+
+	if len(attrs) != 0 {
+		attributes := []string{}
+		for key, value := range attrs {
+			attributes = append(attributes, "{\"name\":\""+key+"\",\"value\":\""+value+"\"}")
+		}
+		attributesStr := "\"attributes\":[" + strings.Join(attributes, ",") + "]"
+		app = append(app, attributesStr)
+	}
+
+	payload := "{" + strings.Join(app, ",") + "}"
+
+	if action == CREATE {
+		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "appgroups", name, "apps")
+		respBody, err = apiclient.HttpClient(u.String(), payload)
+		return respBody, err
+	}
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "appgroups", name, "apps")
+	respBody, err = apiclient.HttpClient(u.String(), payload, "PUT")
 	return respBody, err
 }
 

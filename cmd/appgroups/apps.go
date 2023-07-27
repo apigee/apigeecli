@@ -31,6 +31,7 @@ func init() {
 	AppCmd.AddCommand(GetAppCmd)
 	AppCmd.AddCommand(DelAppCmd)
 	AppCmd.AddCommand(ManageAppCmd)
+	AppCmd.AddCommand(UpdateAppCmd)
 	AppCmd.AddCommand(KeyCmd)
 	AppCmd.AddCommand(ExpAppCmd)
 	AppCmd.AddCommand(ImpAppCmd)

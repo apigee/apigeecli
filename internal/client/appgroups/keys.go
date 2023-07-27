@@ -40,8 +40,10 @@ func CreateKey(name string, appName string, consumerKey string, consumerSecret s
 		key = append(key, attributesStr)
 	}
 
-	key = append(key, "\"consumerKey\":\""+consumerKey+"\"")
-	key = append(key, "\"consumerSecret\":\""+consumerSecret+"\"")
+	if consumerKey != "" {
+		key = append(key, "\"consumerKey\":\""+consumerKey+"\"")
+		key = append(key, "\"consumerSecret\":\""+consumerSecret+"\"")
+	}
 
 	payload := "{" + strings.Join(key, ",") + "}"
 

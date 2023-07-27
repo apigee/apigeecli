@@ -15,6 +15,7 @@
 package appgroups
 
 import (
+	"fmt"
 	"strconv"
 
 	"internal/apiclient"
@@ -29,6 +30,9 @@ var CreateKeyCmd = &cobra.Command{
 	Short: "Create an app key",
 	Long:  "Create an app key",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		if (key != "" && secret == "") || (secret != "" && key == "") {
+			return fmt.Errorf("key and secret must both be passed or neither must be sent")
+		}
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
@@ -48,9 +52,9 @@ func init() {
 	CreateKeyCmd.Flags().StringVarP(&appName, "app-name", "",
 		"", "Name of the app")
 	CreateKeyCmd.Flags().StringVarP(&key, "key", "k",
-		"", "AppGroup app consumer key")
+		"", "Import an existing AppGroup app consumer key")
 	CreateKeyCmd.Flags().StringVarP(&secret, "secret", "r",
-		"", "AppGroup app consumer secret")
+		"", "Import an existing AppGroup app consumer secret")
 	CreateKeyCmd.Flags().IntVarP(&expiry, "expiry", "x",
 		-1, "Expiration time, in seconds, for the consumer key")
 	CreateKeyCmd.Flags().StringArrayVarP(&apiProducts, "prods", "p",
@@ -62,6 +66,4 @@ func init() {
 
 	_ = CreateKeyCmd.MarkFlagRequired("name")
 	_ = CreateKeyCmd.MarkFlagRequired("app-name")
-	_ = CreateKeyCmd.MarkFlagRequired("key")
-	_ = CreateKeyCmd.MarkFlagRequired("secret")
 }
