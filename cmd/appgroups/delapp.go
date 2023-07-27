@@ -12,35 +12,35 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package apps
+package appgroups
 
 import (
 	"internal/apiclient"
-
-	"internal/client/apps"
+	"internal/client/appgroups"
 
 	"github.com/spf13/cobra"
 )
 
-// ExpCmd to export apps
-var ExpCmd = &cobra.Command{
-	Use:   "export",
-	Short: "Export Developer Apps to a file",
-	Long:  "Export Developer Apps to a file",
-	Args: func(cmd *cobra.Command, args []string) (err error) {
+// DelAppCmd to get app
+var DelAppCmd = &cobra.Command{
+	Use:   "delete",
+	Short: "Delete an App in an AppGroup",
+	Long:  "Delete an in an AppGroup",
+	Args: func(cmd *cobra.Command, args []string) error {
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		const exportFileName = "apps.json"
-		payload, err := apps.Export(conn)
-		if err != nil {
-			return err
-		}
-		return apiclient.WriteArrayByteArrayToFile(exportFileName, false, payload)
+		_, err = appgroups.DeleteApp(name, appName)
+		return err
 	},
 }
 
 func init() {
-	ExpCmd.Flags().IntVarP(&conn, "conn", "c",
-		4, "Number of connections")
+	DelAppCmd.Flags().StringVarP(&name, "name", "n",
+		"", "Name of the AppGroup")
+	DelAppCmd.Flags().StringVarP(&appName, "app-name", "",
+		"", "Name of the app")
+
+	_ = DelAppCmd.MarkFlagRequired("name")
+	_ = DelAppCmd.MarkFlagRequired("app-name")
 }

@@ -1,4 +1,4 @@
-// Copyright 2020 Google LLC
+// Copyright 2023 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,35 +12,41 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package apps
+package appgroups
 
 import (
 	"internal/apiclient"
 
-	"internal/client/apps"
+	"internal/client/appgroups"
 
 	"github.com/spf13/cobra"
 )
 
-// ExpCmd to export apps
-var ExpCmd = &cobra.Command{
-	Use:   "export",
-	Short: "Export Developer Apps to a file",
-	Long:  "Export Developer Apps to a file",
+// GetKeyCmd to get credential
+var GetKeyCmd = &cobra.Command{
+	Use:   "get",
+	Short: "Gets details for a consumer key for a AppGroup app",
+	Long:  "Gets details for a consumer key for a AppGroup app",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		const exportFileName = "apps.json"
-		payload, err := apps.Export(conn)
-		if err != nil {
-			return err
-		}
-		return apiclient.WriteArrayByteArrayToFile(exportFileName, false, payload)
+		_, err = appgroups.GetKey(name, appName, key)
+		return
 	},
 }
 
+var key string
+
 func init() {
-	ExpCmd.Flags().IntVarP(&conn, "conn", "c",
-		4, "Number of connections")
+	GetKeyCmd.Flags().StringVarP(&name, "name", "n",
+		"", "Name of the AppGroup")
+	GetKeyCmd.Flags().StringVarP(&appName, "app-name", "",
+		"", "Name of the app")
+	GetKeyCmd.Flags().StringVarP(&key, "key", "k",
+		"", "App consumer key")
+
+	_ = GetKeyCmd.MarkFlagRequired("name")
+	_ = GetKeyCmd.MarkFlagRequired("app-name")
+	_ = GetKeyCmd.MarkFlagRequired("key")
 }

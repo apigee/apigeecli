@@ -1,4 +1,4 @@
-// Copyright 2020 Google LLC
+// Copyright 2023 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,35 +12,37 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package apps
+package appgroups
 
 import (
 	"internal/apiclient"
 
-	"internal/client/apps"
+	"internal/client/appgroups"
 
 	"github.com/spf13/cobra"
 )
 
-// ExpCmd to export apps
-var ExpCmd = &cobra.Command{
-	Use:   "export",
-	Short: "Export Developer Apps to a file",
-	Long:  "Export Developer Apps to a file",
+// ListAppCmd to list apps
+var ListAppCmd = &cobra.Command{
+	Use:   "list",
+	Short: "Returns a list of Developer Applications",
+	Long:  "Returns a list of app IDs within an organization based on app status",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		const exportFileName = "apps.json"
-		payload, err := apps.Export(conn)
-		if err != nil {
-			return err
-		}
-		return apiclient.WriteArrayByteArrayToFile(exportFileName, false, payload)
+		_, err = appgroups.ListApps(name, pageSize, pageToken)
+		return
 	},
 }
 
 func init() {
-	ExpCmd.Flags().IntVarP(&conn, "conn", "c",
-		4, "Number of connections")
+	ListAppCmd.Flags().StringVarP(&name, "name", "n",
+		"", "Name of the AppGroup")
+	ListAppCmd.Flags().IntVarP(&pageSize, "page-size", "s",
+		-1, "Number of appgroups; limit is 1000")
+	ListAppCmd.Flags().StringVarP(&pageToken, "page-token", "p",
+		"", "Page token")
+
+	_ = ListAppCmd.MarkFlagRequired("name")
 }

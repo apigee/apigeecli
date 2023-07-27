@@ -28,6 +28,7 @@ import (
 	"internal/clilog"
 
 	"github.com/apigee/apigeecli/cmd/apis"
+	"github.com/apigee/apigeecli/cmd/appgroups"
 	"github.com/apigee/apigeecli/cmd/apps"
 	cache "github.com/apigee/apigeecli/cmd/cache"
 	"github.com/apigee/apigeecli/cmd/datacollectors"
@@ -142,6 +143,7 @@ func init() {
 	RootCmd.AddCommand(preferences.Cmd)
 	RootCmd.AddCommand(overrides.Cmd)
 	RootCmd.AddCommand(eptattachment.Cmd)
+	RootCmd.AddCommand(appgroups.Cmd)
 }
 
 func initConfig() {

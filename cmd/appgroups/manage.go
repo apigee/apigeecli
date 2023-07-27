@@ -12,35 +12,35 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package apps
+package appgroups
 
 import (
 	"internal/apiclient"
-
-	"internal/client/apps"
+	"internal/client/appgroups"
 
 	"github.com/spf13/cobra"
 )
 
-// ExpCmd to export apps
-var ExpCmd = &cobra.Command{
-	Use:   "export",
-	Short: "Export Developer Apps to a file",
-	Long:  "Export Developer Apps to a file",
+// ManageCmd to appgroups
+var ManageCmd = &cobra.Command{
+	Use:   "manage",
+	Short: "Approve or revoke an AppGroup",
+	Long:  "Approve or revoke an AppGroup",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		const exportFileName = "apps.json"
-		payload, err := apps.Export(conn)
-		if err != nil {
-			return err
-		}
-		return apiclient.WriteArrayByteArrayToFile(exportFileName, false, payload)
+		_, err = appgroups.Manage(name, action)
+		return
 	},
 }
 
 func init() {
-	ExpCmd.Flags().IntVarP(&conn, "conn", "c",
-		4, "Number of connections")
+	ManageCmd.Flags().StringVarP(&name, "name", "n",
+		"", "Name of the AppGroup")
+	ManageCmd.Flags().StringVarP(&action, "action", "x",
+		"active", "Action to perform - active or inactive")
+
+	_ = ManageCmd.MarkFlagRequired("name")
+	_ = ManageCmd.MarkFlagRequired("action")
 }

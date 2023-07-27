@@ -27,6 +27,7 @@ import (
 	"internal/clilog"
 
 	"internal/client/apis"
+	"internal/client/appgroups"
 	"internal/client/apps"
 	"internal/client/datacollectors"
 	"internal/client/developers"
@@ -53,8 +54,8 @@ var ExportCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		var productResponse, appsResponse, targetServerResponse, referencesResponse [][]byte
-		var respBody, listKVMBytes []byte
+		var productResponse, appsResponse, targetServerResponse, referencesResponse, appGroupAppsResponse [][]byte
+		var respBody, listKVMBytes, appGroupsRespBody []byte
 
 		apiclient.DisableCmdPrintHttpResponse()
 
@@ -116,6 +117,16 @@ var ExportCmd = &cobra.Command{
 			return err
 		}
 
+		clilog.Info.Println("Exporting AppGroups...")
+		if appGroupsRespBody, err = appgroups.Export(); proceedOnError(err) != nil {
+			return err
+		}
+		if err = apiclient.WriteByteArrayToFile(
+			appGroupsFileName,
+			false, appGroupsRespBody); proceedOnError(err) != nil {
+			return err
+		}
+
 		clilog.Info.Println("Exporting Developer Apps...")
 		if appsResponse, err = apps.Export(conn); proceedOnError(err) != nil {
 			return err
@@ -123,6 +134,16 @@ var ExportCmd = &cobra.Command{
 		if err = apiclient.WriteArrayByteArrayToFile(
 			appsFileName,
 			false, appsResponse); proceedOnError(err) != nil {
+			return err
+		}
+
+		clilog.Info.Println("Exporting AppGroups Apps...")
+		if appGroupAppsResponse, err = appgroups.ExportAllApps(appGroupsRespBody, conn); proceedOnError(err) != nil {
+			return err
+		}
+		if err = apiclient.WriteArrayByteArrayToFile(
+			appsFileName,
+			false, appGroupAppsResponse); proceedOnError(err) != nil {
 			return err
 		}
 
