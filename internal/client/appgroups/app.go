@@ -164,7 +164,7 @@ func createOrUpdate(name string, appName string, expires string, callback string
 		respBody, err = apiclient.HttpClient(u.String(), payload)
 		return respBody, err
 	}
-	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "appgroups", name, "apps")
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "appgroups", name, "apps", appName)
 	respBody, err = apiclient.HttpClient(u.String(), payload, "PUT")
 	return respBody, err
 }
