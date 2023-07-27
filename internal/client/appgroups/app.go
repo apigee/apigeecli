@@ -92,7 +92,7 @@ func createAppNoKey(name string, appName string, expires string, callback string
 func DeleteApp(name string, appName string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "appgroups", name, "apps", appName)
-	respBody, err = apiclient.HttpClient(u.String())
+	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
 	return respBody, err
 }
 
