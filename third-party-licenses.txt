@@ -33,6 +33,7 @@ internal/bundlegen/proxies,Unknown,Unknown
 internal/bundlegen/proxybundle,Unknown,Unknown
 internal/bundlegen/targets,Unknown,Unknown
 internal/client/apis,Unknown,Unknown
+internal/client/appgroups,Unknown,Unknown
 internal/client/apps,Unknown,Unknown
 internal/client/cache,Unknown,Unknown
 internal/client/datacollectors,Unknown,Unknown
