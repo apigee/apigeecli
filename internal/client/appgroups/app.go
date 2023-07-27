@@ -370,7 +370,7 @@ func ImportAllApps(conn int, filePath string) (err error) {
 	clilog.Info.Printf("Found %d apps in the file\n", len(appgrpapps))
 	clilog.Info.Printf("Create apps with %d connections\n", conn)
 
-	//flatten the structure
+	// flatten the structure
 	a := []appgroupapp{}
 	for _, aga := range appgrpapps {
 		a = append(a, aga[0])
