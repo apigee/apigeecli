@@ -98,6 +98,8 @@ func Get(email string) (respBody []byte, err error) {
 // Update
 func Update(email string, firstName string, lastName string, username string, status string, attrs map[string]string) (respBody []byte, err error) {
 	apiclient.ClientPrintHttpResponse.Set(false)
+	devattrs := []Attribute{}
+
 	devRespBody, err := Get(email)
 	if err != nil {
 		return nil, err
@@ -119,6 +121,16 @@ func Update(email string, firstName string, lastName string, username string, st
 
 	if username != "" {
 		d.Username = username
+	}
+
+	if len(attrs) > 0 {
+		for k, v := range attrs {
+			a := Attribute{}
+			a.Name = k
+			a.Value = v
+			devattrs = append(devattrs, a)
+		}
+		d.Attributes = devattrs
 	}
 
 	if status != "" {
