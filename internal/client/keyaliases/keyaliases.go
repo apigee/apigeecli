@@ -135,7 +135,9 @@ func CreateOrUpdateKeyCert(keystoreName string, name string, update bool, ignore
 
 func createOrUpdate(keystoreName string, name string, format string, password string, update bool, ignoreExpiry bool, ignoreNewLine bool, formParams map[string]string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
+
 	q := u.Query()
+	q.Set("format", format)
 
 	if update {
 		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(),
@@ -143,8 +145,6 @@ func createOrUpdate(keystoreName string, name string, format string, password st
 	} else {
 		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(),
 			"keystores", keystoreName, "aliases")
-
-		q.Set("format", format)
 		q.Set("alias", name)
 	}
 
