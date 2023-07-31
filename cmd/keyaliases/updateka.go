@@ -27,9 +27,9 @@ import (
 
 // UpdateCmd to create key aliases
 var UpdateCmd = &cobra.Command{
-	Use:   "create",
-	Short: "Create a Key Alias from PEM or PKCS12 file",
-	Long:  "Create a Key Alias from PEM or PKCS12 file",
+	Use:   "update",
+	Short: "Update a Key Alias from PEM or PKCS12 file",
+	Long:  "Update a Key Alias from PEM or PKCS12 file",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetApigeeEnv(env)
 		if format == "pfx" && password == "" {
