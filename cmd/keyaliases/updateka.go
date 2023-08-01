@@ -35,9 +35,6 @@ var UpdateCmd = &cobra.Command{
 		if format == "pfx" && password == "" {
 			return fmt.Errorf("password must be set for pfx files")
 		}
-		if keyFile != "" && !utils.FileExists(keyFile) {
-			return fmt.Errorf("keyFile was not found")
-		}
 		if certFile != "" && !utils.FileExists(certFile) {
 			return fmt.Errorf("certFile was not found")
 		}
