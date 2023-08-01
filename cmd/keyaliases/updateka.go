@@ -65,7 +65,7 @@ var UpdateCmd = &cobra.Command{
 				ignoreExpiry,
 				ignoreNewLine,
 				certFile,
-				keyFile,
+				"",
 				password)
 		case "pkcs12":
 			_, err = keyaliases.CreateOrUpdatePfx(keystoreName,
@@ -97,8 +97,6 @@ func init() {
 		false, "Ignore new line in cert chain")
 	UpdateCmd.Flags().StringVarP(&certFile, "certFilePath", "",
 		"", "Path to the X509 certificate in PEM format")
-	UpdateCmd.Flags().StringVarP(&keyFile, "keyFilePath", "",
-		"", "Path to the X509 key in PEM format")
 	UpdateCmd.Flags().StringVarP(&pfxFile, "pfxFilePath", "",
 		"", "Path to the PFX file")
 	UpdateCmd.Flags().StringVarP(&selfFile, "selfsignedFilePath", "",
