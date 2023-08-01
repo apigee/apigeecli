@@ -135,12 +135,18 @@ func CreateOrUpdateKeyCert(keystoreName string, name string, update bool, ignore
 
 func createOrUpdate(keystoreName string, name string, format string, password string, update bool, ignoreExpiry bool, ignoreNewLine bool, formParams map[string]string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
-	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(),
-		"keystores", keystoreName, "aliases")
 
 	q := u.Query()
 	q.Set("format", format)
-	q.Set("alias", name)
+
+	if update {
+		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(),
+			"keystores", keystoreName, "aliases", name)
+	} else {
+		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(),
+			"keystores", keystoreName, "aliases")
+		q.Set("alias", name)
+	}
 
 	if ignoreNewLine {
 		q.Set("ignoreNewlineValidation", "true")
