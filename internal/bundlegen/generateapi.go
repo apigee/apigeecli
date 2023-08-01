@@ -15,12 +15,12 @@
 package bundlegen
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/url"
 	"path"
 	"path/filepath"
 	"regexp"
+	"strconv"
 	"strings"
 
 	"internal/clilog"
@@ -617,10 +617,8 @@ func getQuotaDefinition(i interface{}) (quotaDef, error) {
 	quota := quotaDef{}
 	jsonMap := map[string]string{}
 	str := fmt.Sprintf("%s", i)
-
-	if err := json.Unmarshal([]byte(str), &jsonArrayMap); err != nil {
-		return quotaDef{}, err
-	}
+	fmt.Println(str)
+	jsonArrayMap = parseExtension(str)
 
 	for _, m := range jsonArrayMap {
 		for k, v := range m {
@@ -693,10 +691,7 @@ func getSpikeArrestDefinition(i interface{}) (spikeArrestDef, error) {
 	spikeArrest := spikeArrestDef{}
 	jsonMap := map[string]string{}
 	str := fmt.Sprintf("%s", i)
-
-	if err := json.Unmarshal([]byte(str), &jsonArrayMap); err != nil {
-		return spikeArrestDef{}, err
-	}
+	jsonArrayMap = parseExtension(str)
 
 	for _, m := range jsonArrayMap {
 		for k, v := range m {
@@ -789,4 +784,37 @@ func readScopes(scopes map[string]string) string {
 		scopeString = scopeName + " " + scopeString
 	}
 	return strings.TrimSpace(scopeString)
+}
+
+func parseExtension(extension string) []map[string]interface{} {
+	var result []map[string]interface{}
+	pattern := `map\[(.*?)\]`
+	re := regexp.MustCompile(pattern)
+	matches := re.FindAllStringSubmatch(extension, -1)
+	for _, match := range matches {
+		kvPairs := parseKeyValuePairs(match[1])
+		result = append(result, kvPairs)
+	}
+	return result
+}
+
+func parseKeyValuePairs(match string) map[string]interface{} {
+	//HACK: numbers in yaml are represented as %!s(float64=xx)
+	match = strings.ReplaceAll(match, "%!s(float64=", "")
+	match = strings.ReplaceAll(match, ")", "")
+
+	keyValuePairs := make(map[string]interface{})
+	keyValuePattern := `\b([A-Za-z0-9\-]+)\s*:\s*(\w+)\b`
+	keyValueRe := regexp.MustCompile(keyValuePattern)
+	kvMatches := keyValueRe.FindAllStringSubmatch(match, -1)
+	for _, kvMatch := range kvMatches {
+		key := kvMatch[1]
+		value := kvMatch[2]
+		if intValue, err := strconv.Atoi(value); err == nil {
+			keyValuePairs[key] = intValue
+		} else {
+			keyValuePairs[key] = value
+		}
+	}
+	return keyValuePairs
 }
