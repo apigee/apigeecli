@@ -38,7 +38,6 @@ var UpdateCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-
 		_, err = keyaliases.CreateOrUpdateKeyCert(keystoreName,
 			name,
 			true,
