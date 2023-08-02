@@ -15,12 +15,12 @@
 package bundlegen
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/url"
 	"path"
 	"path/filepath"
 	"regexp"
+	"strconv"
 	"strings"
 
 	"internal/clilog"
@@ -42,8 +42,8 @@ type pathDetailDef struct {
 	AssignMessage  string
 	Backend        backendDef
 	SecurityScheme securitySchemesDef
-	SpikeArrest    spikeArrestDef
-	Quota          quotaDef
+	SpikeArrest    []spikeArrestDef
+	Quota          []quotaDef
 }
 
 type spikeArrestDef struct {
@@ -527,14 +527,18 @@ func generateFlows(paths openapi3.Paths) (err error) {
 					return err
 				}
 			}
-			if pathDetail.SpikeArrest.SpikeArrestEnabled {
-				if err = proxies.AddStepToFlowRequest("Spike-Arrest-"+pathDetail.SpikeArrest.SpikeArrestName, pathDetail.OperationID); err != nil {
-					return err
+			for _, s := range pathDetail.SpikeArrest {
+				if s.SpikeArrestEnabled {
+					if err = proxies.AddStepToFlowRequest("Spike-Arrest-"+s.SpikeArrestName, pathDetail.OperationID); err != nil {
+						return err
+					}
 				}
 			}
-			if pathDetail.Quota.QuotaEnabled {
-				if err = proxies.AddStepToFlowRequest("Quota-"+pathDetail.Quota.QuotaName, pathDetail.OperationID); err != nil {
-					return err
+			for _, q := range pathDetail.Quota {
+				if q.QuotaEnabled {
+					if err = proxies.AddStepToFlowRequest("Quota-"+q.QuotaName, pathDetail.OperationID); err != nil {
+						return err
+					}
 				}
 			}
 		}
@@ -611,127 +615,116 @@ func GetSecuritySchemesList() []securitySchemesDef {
 	return securitySchemesList.SecuritySchemes
 }
 
-func getQuotaDefinition(i interface{}) (quotaDef, error) {
+func getQuotaDefinition(i interface{}) ([]quotaDef, error) {
 	var jsonArrayMap []map[string]interface{}
 
-	quota := quotaDef{}
-	jsonMap := map[string]string{}
+	quotas := []quotaDef{}
 	str := fmt.Sprintf("%s", i)
-
-	if err := json.Unmarshal([]byte(str), &jsonArrayMap); err != nil {
-		return quotaDef{}, err
-	}
+	jsonArrayMap = parseExtension(str)
 
 	for _, m := range jsonArrayMap {
+		quota := quotaDef{}
 		for k, v := range m {
-			jsonMap[k] = fmt.Sprintf("%v", v)
+			if k == "name" {
+				quota.QuotaName = fmt.Sprintf("%v", v)
+				quota.QuotaEnabled = true
+			} else if k == "useQuotaConfigInAPIProduct" {
+				quota.QuotaConfigStepName = fmt.Sprintf("%v", v)
+			} else if k == "allow-ref" {
+				quota.QuotaAllowRef = fmt.Sprintf("%v", v)
+			} else if k == "allow-literal" {
+				quota.QuotaAllowLiteral = fmt.Sprintf("%v", v)
+			} else if k == "interval-ref" {
+				quota.QuotaIntervalRef = fmt.Sprintf("%v", v)
+			} else if k == "interval-literal" {
+				quota.QuotaIntervalLiteral = fmt.Sprintf("%v", v)
+			} else if k == "timeunit-ref" {
+				quota.QuotaTimeUnitRef = fmt.Sprintf("%v", v)
+			} else if k == "timeunit-literal" {
+				quota.QuotaTimeUnitLiteral = fmt.Sprintf("%v", v)
+			} else if k == "identifier-ref" {
+				quota.QuotaIdentifierRef = fmt.Sprintf("%v", v)
+			} else if k == "identifier-literal" {
+				quota.QuotaIdentiferLiteral = fmt.Sprintf("%v", v)
+			}
 		}
+		quotas = append(quotas, quota)
 	}
 
-	if jsonMap["name"] != "" {
-		quota.QuotaName = jsonMap["name"]
-		quota.QuotaEnabled = true
-	} else {
-		return quotaDef{}, fmt.Errorf("x-google-quota extension must have a name")
+	for _, q := range quotas {
+		if q.QuotaName == "" {
+			return nil, fmt.Errorf("x-google-quota extension must have a name")
+		}
+		if q.QuotaConfigStepName == "" {
+			if q.QuotaAllowLiteral == "" && q.QuotaAllowRef == "" {
+				return nil, fmt.Errorf("x-google-quota extension must have either allow-ref or allow-literal")
+			}
+			if q.QuotaIntervalLiteral == "" && q.QuotaIntervalRef == "" {
+				return nil, fmt.Errorf("x-google-quota extension must have either interval-ref or interval-literal")
+			}
+			if q.QuotaTimeUnitLiteral == "" && q.QuotaTimeUnitRef == "" {
+				return nil, fmt.Errorf("x-google-quota extension must have either timeunit-ref or timeunit-literal")
+			}
+		}
+		// store policy XML contents
+		quotaPolicyContent[q.QuotaName] = policies.AddQuotaPolicy(
+			"Quota-"+q.QuotaName,
+			q.QuotaConfigStepName,
+			q.QuotaAllowRef,
+			q.QuotaAllowLiteral,
+			q.QuotaIntervalRef,
+			q.QuotaIntervalLiteral,
+			q.QuotaTimeUnitRef,
+			q.QuotaTimeUnitLiteral,
+			q.QuotaIdentifierRef,
+			q.QuotaIdentiferLiteral)
 	}
 
-	if jsonMap["useQuotaConfigInAPIProduct"] != "" {
-		quota.QuotaConfigStepName = jsonMap["useQuotaConfigInAPIProduct"]
-	} else {
-		if jsonMap["allow-ref"] == "" && jsonMap["allow-literal"] == "" {
-			return quotaDef{}, fmt.Errorf("x-google-quota extension must have either allow-ref or allow-literal")
-		} else if jsonMap["allow-literal"] != "" {
-			quota.QuotaAllowLiteral = jsonMap["allow-literal"]
-		} else if jsonMap["allow-ref"] != "" {
-			quota.QuotaAllowRef = jsonMap["allow-ref"]
-		}
-
-		if jsonMap["interval-ref"] == "" && jsonMap["interval-literal"] == "" {
-			return quotaDef{}, fmt.Errorf("x-google-quota extension must have either interval-ref or interval-literal")
-		} else if jsonMap["interval-literal"] != "" {
-			quota.QuotaIntervalLiteral = jsonMap["interval-literal"]
-		} else if jsonMap["interval-ref"] != "" {
-			quota.QuotaIntervalRef = jsonMap["interval-ref"]
-		}
-
-		if jsonMap["timeunit-ref"] == "" && jsonMap["timeunit-literal"] == "" {
-			return quotaDef{}, fmt.Errorf("x-google-quota extension must have either timeunit-ref or timeunit-literal")
-		} else if jsonMap["timeunit-literal"] != "" {
-			quota.QuotaTimeUnitLiteral = jsonMap["timeunit-literal"]
-		} else if jsonMap["timeunit-ref"] != "" {
-			quota.QuotaTimeUnitRef = jsonMap["timeunit-ref"]
-		}
-
-		if jsonMap["indentifier-literal"] != "" && jsonMap["indentifier-ref"] != "" {
-			return quotaDef{}, fmt.Errorf("x-google-quota extension must have either identifier-ref or identifier-literal")
-		} else if jsonMap["indentifier-literal"] != "" {
-			quota.QuotaIntervalLiteral = jsonMap["identifier-literal"]
-		} else if jsonMap["indentifier-ref"] != "" {
-			quota.QuotaIntervalRef = jsonMap["identifier-ref"]
-		}
-	}
-
-	// store policy XML contents
-	quotaPolicyContent[quota.QuotaName] = policies.AddQuotaPolicy(
-		"Quota-"+quota.QuotaName,
-		quota.QuotaConfigStepName,
-		quota.QuotaAllowRef,
-		quota.QuotaAllowLiteral,
-		quota.QuotaIntervalRef,
-		quota.QuotaIntervalLiteral,
-		quota.QuotaTimeUnitRef,
-		quota.QuotaTimeUnitLiteral,
-		quota.QuotaIdentifierRef,
-		quota.QuotaIdentiferLiteral)
-
-	return quota, nil
+	return quotas, nil
 }
 
-func getSpikeArrestDefinition(i interface{}) (spikeArrestDef, error) {
+func getSpikeArrestDefinition(i interface{}) ([]spikeArrestDef, error) {
 	var jsonArrayMap []map[string]interface{}
 
-	spikeArrest := spikeArrestDef{}
-	jsonMap := map[string]string{}
+	spikeArrests := []spikeArrestDef{}
 	str := fmt.Sprintf("%s", i)
-
-	if err := json.Unmarshal([]byte(str), &jsonArrayMap); err != nil {
-		return spikeArrestDef{}, err
-	}
+	jsonArrayMap = parseExtension(str)
 
 	for _, m := range jsonArrayMap {
+		spikeArrest := spikeArrestDef{}
 		for k, v := range m {
-			jsonMap[k] = fmt.Sprintf("%v", v)
+			if k == "identifier-ref" {
+				spikeArrest.SpikeArrestIdentifierRef = fmt.Sprintf("%v", v)
+			} else if k == "name" {
+				spikeArrest.SpikeArrestName = fmt.Sprintf("%v", v)
+				spikeArrest.SpikeArrestEnabled = true
+			} else if k == "rate-literal" {
+				spikeArrest.SpikeArrestRateLiteral = fmt.Sprintf("%v", v)
+			} else if k == "rate-ref" {
+				spikeArrest.SpikeArrestRateRef = fmt.Sprintf("%v", v)
+			}
 		}
+		spikeArrests = append(spikeArrests, spikeArrest)
 	}
 
-	if jsonMap["identifier-ref"] != "" {
-		spikeArrest.SpikeArrestIdentifierRef = jsonMap["identifier-ref"]
-	} else {
-		return spikeArrestDef{}, fmt.Errorf("x-google-ratelimit extension must have an identifier-ref")
+	for _, s := range spikeArrests {
+		if s.SpikeArrestName == "" {
+			return nil, fmt.Errorf("x-google-ratelimit extension must have a name")
+		}
+		if s.SpikeArrestIdentifierRef == "" {
+			return nil, fmt.Errorf("x-google-ratelimit extension must have an identifier-ref")
+		}
+		if s.SpikeArrestRateLiteral == "" && s.SpikeArrestRateRef == "" {
+			return nil, fmt.Errorf("x-google-ratelimit extension must have either rate-ref or rate-literal")
+		}
+		// store policy XML contents
+		spikeArrestPolicyContent[s.SpikeArrestName] = policies.AddSpikeArrestPolicy("Spike-Arrest-"+s.SpikeArrestName,
+			s.SpikeArrestIdentifierRef,
+			s.SpikeArrestRateRef,
+			s.SpikeArrestRateLiteral)
 	}
 
-	if jsonMap["name"] != "" {
-		spikeArrest.SpikeArrestName = jsonMap["name"]
-		spikeArrest.SpikeArrestEnabled = true
-	} else {
-		return spikeArrestDef{}, fmt.Errorf("x-google-ratelimit extension must have a name")
-	}
-
-	if jsonMap["rate-ref"] == "" && jsonMap["rate-literal"] == "" {
-		return spikeArrestDef{}, fmt.Errorf("x-google-ratelimit extension must have either rate-ref or rate-literal")
-	} else if jsonMap["rate-literal"] != "" {
-		spikeArrest.SpikeArrestRateLiteral = jsonMap["rate-literal"]
-	} else if jsonMap["rate-ref"] != "" {
-		spikeArrest.SpikeArrestRateRef = jsonMap["rate-ref"]
-	}
-
-	// store policy XML contents
-	spikeArrestPolicyContent[spikeArrest.SpikeArrestName] = policies.AddSpikeArrestPolicy("Spike-Arrest-"+spikeArrest.SpikeArrestName,
-		spikeArrest.SpikeArrestIdentifierRef,
-		spikeArrest.SpikeArrestRateRef,
-		spikeArrest.SpikeArrestRateLiteral)
-
-	return spikeArrest, nil
+	return spikeArrests, nil
 }
 
 func processPathExtensions(extensions map[string]interface{}, pathDetail pathDetailDef) (pathDetailDef, error) {
@@ -757,19 +750,19 @@ func processPreFlowExtensions(extensions map[string]interface{}) ([]spikeArrestD
 	for extensionName, extensionValue := range extensions {
 		if extensionName == "x-google-ratelimit" {
 			// process ratelimit
-			spikeArrest, err := getSpikeArrestDefinition(extensionValue)
+			spikeArrests, err := getSpikeArrestDefinition(extensionValue)
 			if err != nil {
 				return []spikeArrestDef{}, []quotaDef{}, err
 			}
-			spikeArrestList = append(spikeArrestList, spikeArrest)
+			spikeArrestList = append(spikeArrestList, spikeArrests...)
 		}
 		if extensionName == "x-google-quota" {
 			// process quota
-			quota, err := getQuotaDefinition(extensionValue)
+			quotas, err := getQuotaDefinition(extensionValue)
 			if err != nil {
 				return []spikeArrestDef{}, []quotaDef{}, err
 			}
-			quotaList = append(quotaList, quota)
+			quotaList = append(quotaList, quotas...)
 		}
 	}
 	return spikeArrestList, quotaList, err
@@ -789,4 +782,37 @@ func readScopes(scopes map[string]string) string {
 		scopeString = scopeName + " " + scopeString
 	}
 	return strings.TrimSpace(scopeString)
+}
+
+func parseExtension(extension string) []map[string]interface{} {
+	var result []map[string]interface{}
+	pattern := `map\[(.*?)\]`
+	re := regexp.MustCompile(pattern)
+	matches := re.FindAllStringSubmatch(extension, -1)
+	for _, match := range matches {
+		kvPairs := parseKeyValuePairs(match[1])
+		result = append(result, kvPairs)
+	}
+	return result
+}
+
+func parseKeyValuePairs(match string) map[string]interface{} {
+	// HACK: numbers in yaml are represented as %!s(float64=xx)
+	match = strings.ReplaceAll(match, "%!s(float64=", "")
+	match = strings.ReplaceAll(match, ")", "")
+
+	keyValuePairs := make(map[string]interface{})
+	keyValuePattern := `\b([A-Za-z0-9\-_]+)\s*:\s*([A-Za-z0-9\-_\.]+)\b`
+	keyValueRe := regexp.MustCompile(keyValuePattern)
+	kvMatches := keyValueRe.FindAllStringSubmatch(match, -1)
+	for _, kvMatch := range kvMatches {
+		key := kvMatch[1]
+		value := kvMatch[2]
+		if intValue, err := strconv.Atoi(value); err == nil {
+			keyValuePairs[key] = intValue
+		} else {
+			keyValuePairs[key] = value
+		}
+	}
+	return keyValuePairs
 }

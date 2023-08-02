@@ -590,8 +590,9 @@ func generateSwaggerFlows(paths map[string]*openapi2.PathItem) (err error) {
 					return err
 				}
 			}
-			if pathDetail.Quota.QuotaEnabled {
-				if err = proxies.AddStepToFlowRequest("Quota-"+pathDetail.Quota.QuotaName, pathDetail.OperationID); err != nil {
+			// TODO: assumes only 1 quota policy
+			if pathDetail.Quota[0].QuotaEnabled {
+				if err = proxies.AddStepToFlowRequest("Quota-"+pathDetail.Quota[0].QuotaName, pathDetail.OperationID); err != nil {
 					return err
 				}
 			}
@@ -779,7 +780,7 @@ func processPathSwaggerExtensions(extensions map[string]interface{}, pathDetail 
 			if err != nil {
 				return pathDetail, err
 			}
-			pathDetail.Quota = quota
+			pathDetail.Quota = append(pathDetail.Quota, quota)
 		}
 	}
 	return pathDetail, err

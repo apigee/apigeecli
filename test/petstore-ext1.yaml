@@ -32,8 +32,11 @@ tags:
   - name: user
     description: Operations about user
 
-x-google-ratelimit: 
-  - name: test1
+x-google-ratelimit:
+  - name: test1_test
+    rate-literal: 10ps
+    identifier-ref: request.header.url #optional
+  - name: test2_test
     rate-literal: 10ps
     identifier-ref: request.header.url #optional
 
@@ -57,11 +60,17 @@ paths:
                 $ref: '#/components/schemas/Pet'
         '405':
           description: Invalid input
-      x-google-quota: 
-        - name: test2
+      x-google-quota:
+        - name: post-pet1
           interval-literal: 1
           timeunit-literal: minute
           allow-literal: 1
+          identifier-ref: request.header.url
+        - name: post-pet2
+          interval-literal: 1
+          timeunit-literal: minute
+          allow-literal: 1
+          identifier-ref: request.header.url
           #interval-ref: propertyset.quota.interval
           #timeunit-ref: propertyset.quota.timeunit
           #allow-ref: propertyset.quota.allow
