@@ -32,8 +32,11 @@ tags:
   - name: user
     description: Operations about user
 
-x-google-ratelimit: 
-  - name: test1
+x-google-ratelimit:
+  - name: test1_test
+    rate-literal: 10ps
+    identifier-ref: request.header.url #optional
+  - name: test2_test
     rate-literal: 10ps
     identifier-ref: request.header.url #optional
 

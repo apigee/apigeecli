@@ -619,6 +619,10 @@ func getQuotaDefinition(i interface{}) (quotaDef, error) {
 	str := fmt.Sprintf("%s", i)
 	jsonArrayMap = parseExtension(str)
 
+	if len(jsonArrayMap) > 1 {
+		clilog.Warning.Println("multiple ratelimit definitions are not supported. selecting the last definition")
+	}
+
 	for _, m := range jsonArrayMap {
 		for k, v := range m {
 			jsonMap[k] = fmt.Sprintf("%v", v)
@@ -691,6 +695,10 @@ func getSpikeArrestDefinition(i interface{}) (spikeArrestDef, error) {
 	jsonMap := map[string]string{}
 	str := fmt.Sprintf("%s", i)
 	jsonArrayMap = parseExtension(str)
+
+	if len(jsonArrayMap) > 1 {
+		clilog.Warning.Println("multiple ratelimit definitions are not supported. selecting the last definition")
+	}
 
 	for _, m := range jsonArrayMap {
 		for k, v := range m {
@@ -803,7 +811,7 @@ func parseKeyValuePairs(match string) map[string]interface{} {
 	match = strings.ReplaceAll(match, ")", "")
 
 	keyValuePairs := make(map[string]interface{})
-	keyValuePattern := `\b([A-Za-z0-9\-]+)\s*:\s*([A-Za-z0-9\-]+)\b`
+	keyValuePattern := `\b([A-Za-z0-9\-_]+)\s*:\s*([A-Za-z0-9\-_]+)\b`
 	keyValueRe := regexp.MustCompile(keyValuePattern)
 	kvMatches := keyValueRe.FindAllStringSubmatch(match, -1)
 	for _, kvMatch := range kvMatches {
