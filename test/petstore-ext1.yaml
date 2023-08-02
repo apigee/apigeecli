@@ -57,8 +57,8 @@ paths:
                 $ref: '#/components/schemas/Pet'
         '405':
           description: Invalid input
-      x-google-quota: 
-        - name: test2
+      x-google-quota:
+        - name: post-pet
           interval-literal: 1
           timeunit-literal: minute
           allow-literal: 1

@@ -617,7 +617,6 @@ func getQuotaDefinition(i interface{}) (quotaDef, error) {
 	quota := quotaDef{}
 	jsonMap := map[string]string{}
 	str := fmt.Sprintf("%s", i)
-	fmt.Println(str)
 	jsonArrayMap = parseExtension(str)
 
 	for _, m := range jsonArrayMap {
@@ -804,7 +803,7 @@ func parseKeyValuePairs(match string) map[string]interface{} {
 	match = strings.ReplaceAll(match, ")", "")
 
 	keyValuePairs := make(map[string]interface{})
-	keyValuePattern := `\b([A-Za-z0-9\-]+)\s*:\s*(\w+)\b`
+	keyValuePattern := `\b([A-Za-z0-9\-]+)\s*:\s*([A-Za-z0-9\-]+)\b`
 	keyValueRe := regexp.MustCompile(keyValuePattern)
 	kvMatches := keyValueRe.FindAllStringSubmatch(match, -1)
 	for _, kvMatch := range kvMatches {
