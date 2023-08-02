@@ -79,8 +79,40 @@ type attribute struct {
 	Value string `json:"value,omitempty"`
 }
 
+type Action uint8
+
+const (
+	CREATE Action = iota
+	UPDATE
+)
+
 // Create
 func Create(name string, email string, expires string, callback string, apiProducts []string, scopes []string, attrs map[string]string) (respBody []byte, err error) {
+	return createOrUpdate(name, email, expires, callback, apiProducts, scopes, attrs, CREATE)
+}
+
+// Delete
+func Delete(name string, developerID string) (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.BaseURL)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", developerID, "apps", name)
+	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
+	return respBody, err
+}
+
+// Get
+func Get(appID string) (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.BaseURL)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apps", appID)
+	respBody, err = apiclient.HttpClient(u.String())
+	return respBody, err
+}
+
+// Update
+func Update(name string, email string, expires string, callback string, apiProducts []string, scopes []string, attrs map[string]string) (respBody []byte, err error) {
+	return createOrUpdate(name, email, expires, callback, apiProducts, scopes, attrs, UPDATE)
+}
+
+func createOrUpdate(name string, email string, expires string, callback string, apiProducts []string, scopes []string, attrs map[string]string, action Action) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 
 	app := []string{}
@@ -113,24 +145,15 @@ func Create(name string, email string, expires string, callback string, apiProdu
 	}
 
 	payload := "{" + strings.Join(app, ",") + "}"
-	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", email, "apps")
-	respBody, err = apiclient.HttpClient(u.String(), payload)
-	return respBody, err
-}
 
-// Delete
-func Delete(name string, developerID string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
-	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", developerID, "apps", name)
-	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
-	return respBody, err
-}
+	if action == CREATE {
+		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", email, "apps")
+		respBody, err = apiclient.HttpClient(u.String(), payload)
+	} else {
+		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", email, "apps", name)
+		respBody, err = apiclient.HttpClient(u.String(), payload, "PUT")
+	}
 
-// Get
-func Get(appID string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
-	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apps", appID)
-	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
