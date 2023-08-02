@@ -61,10 +61,16 @@ paths:
         '405':
           description: Invalid input
       x-google-quota:
-        - name: post-pet
+        - name: post-pet1
           interval-literal: 1
           timeunit-literal: minute
           allow-literal: 1
+          identifier-ref: request.header.url
+        - name: post-pet2
+          interval-literal: 1
+          timeunit-literal: minute
+          allow-literal: 1
+          identifier-ref: request.header.url
           #interval-ref: propertyset.quota.interval
           #timeunit-ref: propertyset.quota.timeunit
           #allow-ref: propertyset.quota.allow
