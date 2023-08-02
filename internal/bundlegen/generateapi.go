@@ -665,9 +665,6 @@ func getQuotaDefinition(i interface{}) ([]quotaDef, error) {
 			if q.QuotaTimeUnitLiteral == "" && q.QuotaTimeUnitRef == "" {
 				return nil, fmt.Errorf("x-google-quota extension must have either timeunit-ref or timeunit-literal")
 			}
-			if q.QuotaIdentiferLiteral == "" && q.QuotaIdentifierRef == "" {
-				return nil, fmt.Errorf("x-google-quota extension must have either identifier-ref or identifier-literal")
-			}
 		}
 		// store policy XML contents
 		quotaPolicyContent[q.QuotaName] = policies.AddQuotaPolicy(
