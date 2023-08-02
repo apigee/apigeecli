@@ -800,7 +800,7 @@ func parseExtension(extension string) []map[string]interface{} {
 }
 
 func parseKeyValuePairs(match string) map[string]interface{} {
-	//HACK: numbers in yaml are represented as %!s(float64=xx)
+	// HACK: numbers in yaml are represented as %!s(float64=xx)
 	match = strings.ReplaceAll(match, "%!s(float64=", "")
 	match = strings.ReplaceAll(match, ")", "")
 

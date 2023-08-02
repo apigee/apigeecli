@@ -590,7 +590,7 @@ func generateSwaggerFlows(paths map[string]*openapi2.PathItem) (err error) {
 					return err
 				}
 			}
-			//TODO: assumes only 1 quota policy
+			// TODO: assumes only 1 quota policy
 			if pathDetail.Quota[0].QuotaEnabled {
 				if err = proxies.AddStepToFlowRequest("Quota-"+pathDetail.Quota[0].QuotaName, pathDetail.OperationID); err != nil {
 					return err
