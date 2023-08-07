@@ -32,22 +32,33 @@ var UpdateCmd = &cobra.Command{
 	Long:  "Update a Target Server",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetApigeeEnv(env)
-		if sslinfo != "" {
-			if _, err = strconv.ParseBool(sslinfo); err != nil {
-				return fmt.Errorf("invalid value for sslinfo. Must be set to true or false")
+		if tlsenabled != "" {
+			if _, err := strconv.ParseBool(tlsenabled); err != nil {
+				return fmt.Errorf("tlsenabled must be set to  true or false")
+			}
+		}
+		if clientAuthEnabled != "" {
+			if _, err := strconv.ParseBool(clientAuthEnabled); err != nil {
+				return fmt.Errorf("clientAuthEnabled must be set to  true or false")
+			}
+		}
+		if ignoreValidationErrors != "" {
+			if _, err := strconv.ParseBool(ignoreValidationErrors); err != nil {
+				return fmt.Errorf("ignoreValidationErrors must be set to  true or false")
 			}
 		}
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+
 		_, err = targetservers.Update(name,
 			description,
 			host,
 			port,
 			enable,
-			grpc,
+			protocol,
 			keyStore, keyAlias, trustStore,
-			sslinfo, tlsenabled, clientAuthEnabled,
+			tlsenabled, clientAuthEnabled,
 			ignoreValidationErrors)
 		return err
 	},
@@ -62,26 +73,25 @@ func init() {
 		"", "Host name of the target")
 	UpdateCmd.Flags().BoolVarP(&enable, "enable", "b",
 		true, "Enabling/disabling a TargetServer")
-	UpdateCmd.Flags().BoolVarP(&grpc, "grpc", "g",
-		false, "Enable target server for gRPC")
 
 	UpdateCmd.Flags().StringVarP(&keyStore, "keyStore", "",
-		"", "Key store for the target server; must be used with sslinfo")
+		"", "Key store for the target server")
 	UpdateCmd.Flags().StringVarP(&keyAlias, "keyAlias", "",
-		"", "Key alias for the target server; must be used with sslinfo")
+		"", "Key alias for the target server")
 	UpdateCmd.Flags().StringVarP(&trustStore, "trustStore", "",
-		"", "Trust store for the target server; must be used with sslinfo")
-	UpdateCmd.Flags().StringVarP(&sslinfo, "sslinfo", "",
-		"", "Enable SSL Info on the target server")
-	UpdateCmd.Flags().BoolVarP(&tlsenabled, "tls", "",
-		false, "Enable TLS for the target server; must be used with sslinfo")
-	UpdateCmd.Flags().BoolVarP(&clientAuthEnabled, "clientAuth", "c",
-		false, "Enable mTLS for the target server; must be used with sslinfo")
-	UpdateCmd.Flags().BoolVarP(&ignoreValidationErrors, "ignoreErr", "i",
-		false, "Ignore TLS validation errors for the target server; must be used with sslinfo")
+		"", "Trust store for the target server")
+
+	UpdateCmd.Flags().StringVarP(&tlsenabled, "tls", "",
+		"", "Enable TLS for the target server")
+	UpdateCmd.Flags().StringVarP(&clientAuthEnabled, "clientAuth", "c",
+		"", "Enable mTLS for the target server")
+	UpdateCmd.Flags().StringVarP(&ignoreValidationErrors, "ignoreErr", "i",
+		"", "Ignore TLS validation errors for the target server")
 
 	UpdateCmd.Flags().IntVarP(&port, "port", "p",
 		-1, "port number")
+	UpdateCmd.Flags().StringVarP(&protocol, "protocol", "",
+		"", "Protocol for a TargetServer")
 
 	_ = UpdateCmd.MarkFlagRequired("name")
 }

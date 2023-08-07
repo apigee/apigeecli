@@ -32,9 +32,19 @@ var CreateCmd = &cobra.Command{
 	Long:  "Create a Target Server",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetApigeeEnv(env)
-		if sslinfo != "" {
-			if _, err = strconv.ParseBool(sslinfo); err != nil {
-				return fmt.Errorf("invalid value for sslinfo. Must be set to true or false")
+		if tlsenabled != "" {
+			if _, err := strconv.ParseBool(tlsenabled); err != nil {
+				return fmt.Errorf("tlsenabled must be set to  true or false")
+			}
+		}
+		if clientAuthEnabled != "" {
+			if _, err := strconv.ParseBool(clientAuthEnabled); err != nil {
+				return fmt.Errorf("clientAuthEnabled must be set to  true or false")
+			}
+		}
+		if ignoreValidationErrors != "" {
+			if _, err := strconv.ParseBool(ignoreValidationErrors); err != nil {
+				return fmt.Errorf("ignoreValidationErrors must be set to  true or false")
 			}
 		}
 		return apiclient.SetApigeeOrg(org)
@@ -45,8 +55,8 @@ var CreateCmd = &cobra.Command{
 			host,
 			port,
 			enable,
-			grpc,
-			keyStore, keyAlias, trustStore, sslinfo,
+			protocol,
+			keyStore, keyAlias, trustStore,
 			tlsenabled, clientAuthEnabled,
 			ignoreValidationErrors)
 		return err
@@ -54,9 +64,9 @@ var CreateCmd = &cobra.Command{
 }
 
 var (
-	description, host, keyStore, keyAlias, trustStore, sslinfo          string
-	grpc, enable, tlsenabled, clientAuthEnabled, ignoreValidationErrors bool
-	port                                                                int
+	tlsenabled, clientAuthEnabled, description, host, keyStore, keyAlias, trustStore, protocol, ignoreValidationErrors string
+	enable                                                                                                             bool
+	port                                                                                                               int
 )
 
 func init() {
@@ -68,26 +78,25 @@ func init() {
 		"", "Host name of the target")
 	CreateCmd.Flags().BoolVarP(&enable, "enable", "b",
 		true, "Enabling/disabling a TargetServer")
-	CreateCmd.Flags().BoolVarP(&grpc, "grpc", "g",
-		false, "Enable target server for gRPC")
 
 	CreateCmd.Flags().StringVarP(&keyStore, "keyStore", "",
-		"", "Key store for the target server; must be used with sslinfo")
+		"", "Key store for the target server")
 	CreateCmd.Flags().StringVarP(&keyAlias, "keyAlias", "",
-		"", "Key alias for the target server; must be used with sslinfo")
+		"", "Key alias for the target server")
 	CreateCmd.Flags().StringVarP(&trustStore, "trustStore", "",
-		"", "Trust store for the target server; must be used with sslinfo")
-	CreateCmd.Flags().StringVarP(&sslinfo, "sslinfo", "",
-		"", "Enable SSL Info on the target server")
-	CreateCmd.Flags().BoolVarP(&tlsenabled, "tls", "",
-		false, "Enable TLS for the target server; must be used with sslinfo")
-	CreateCmd.Flags().BoolVarP(&clientAuthEnabled, "clientAuth", "c",
-		false, "Enable mTLS for the target server; must be used with sslinfo")
-	CreateCmd.Flags().BoolVarP(&ignoreValidationErrors, "ignoreErr", "i",
-		false, "Ignore TLS validation errors for the target server; must be used with sslinfo")
+		"", "Trust store for the target server")
+
+	CreateCmd.Flags().StringVarP(&tlsenabled, "tls", "",
+		"", "Enable TLS for the target server")
+	CreateCmd.Flags().StringVarP(&clientAuthEnabled, "clientAuth", "c",
+		"", "Enable mTLS for the target server")
+	CreateCmd.Flags().StringVarP(&ignoreValidationErrors, "ignoreErr", "i",
+		"", "Ignore TLS validation errors for the target server")
 
 	CreateCmd.Flags().IntVarP(&port, "port", "p",
 		-1, "port number")
+	CreateCmd.Flags().StringVarP(&protocol, "protocol", "",
+		"HTTP", "Protocol for a TargetServer; default is HTTP")
 
 	_ = CreateCmd.MarkFlagRequired("name")
 	_ = CreateCmd.MarkFlagRequired("host")
