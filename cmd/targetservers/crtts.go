@@ -64,9 +64,10 @@ var CreateCmd = &cobra.Command{
 }
 
 var (
-	tlsenabled, clientAuthEnabled, description, host, keyStore, keyAlias, trustStore, protocol, ignoreValidationErrors string
-	enable                                                                                                             bool
-	port                                                                                                               int
+	tlsenabled, clientAuthEnabled, description, host, keyStore, keyAlias string
+	trustStore, protocol, ignoreValidationErrors                         string
+	enable                                                               bool
+	port                                                                 int
 )
 
 func init() {
