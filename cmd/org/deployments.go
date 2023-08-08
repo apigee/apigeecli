@@ -1,4 +1,4 @@
-// Copyright 2020 Google LLC
+// Copyright 2023 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,30 +18,16 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to manage orgs
-var Cmd = &cobra.Command{
-	Use:     "organizations",
-	Aliases: []string{"orgs"},
-	Short:   "Manage Apigee Orgs",
-	Long:    "Manage Apigee Orgs",
+// DeployCmd to get api deployments in an org
+var DeployCmd = &cobra.Command{
+	Use:   "deployments",
+	Short: "Manage deployments in an Apigee org",
+	Long:  "Manage deployments in an Apigee org",
 }
 
-var org string
-
 func init() {
-	Cmd.AddCommand(CreateCmd)
-	Cmd.AddCommand(ListCmd)
-	Cmd.AddCommand(GetCmd)
-	Cmd.AddCommand(MartCmd)
-	Cmd.AddCommand(AcCmd)
-	Cmd.AddCommand(PropCmd)
-	Cmd.AddCommand(ObCmd)
-	Cmd.AddCommand(IngressCmd)
-	Cmd.AddCommand(ExportCmd)
-	Cmd.AddCommand(ImportCmd)
-	Cmd.AddCommand(UpdateCmd)
-	Cmd.AddCommand(SetAddonCmd)
-	Cmd.AddCommand(ReportCmd)
-	Cmd.AddCommand(DelCmd)
-	Cmd.AddCommand(DeployCmd)
+	DeployCmd.PersistentFlags().StringVarP(&org, "org", "o",
+		"", "Apigee organization name")
+
+	DeployCmd.AddCommand(GetDeployCmd)
 }

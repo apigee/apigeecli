@@ -185,6 +185,43 @@ func GetDeployedIngressConfig(view bool) (respBody []byte, err error) {
 	return respBody, err
 }
 
+// GetlDeployments
+func GetDeployments(sharedflows bool) (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.BaseURL)
+	if sharedflows {
+		q := u.Query()
+		q.Set("sharedFlows", "true")
+		u.RawQuery = q.Encode()
+	}
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "deployments")
+	respBody, err = apiclient.HttpClient(u.String())
+	return respBody, err
+}
+
+// GetAllDeployments
+func GetAllDeployments() (respBody []byte, err error) {
+	apiclient.ClientPrintHttpResponse.Set(false)
+	proxiesResponse, err := GetDeployments(false)
+	if err != nil {
+		return nil, err
+	}
+
+	sharedFlowsResponse, err := GetDeployments(true)
+	if err != nil {
+		return nil, err
+	}
+
+	deployments := []string{}
+
+	deployments = append(deployments, "\"proxies\":"+string(proxiesResponse))
+	deployments = append(deployments, "\"sharedFlows\":"+string(sharedFlowsResponse))
+	payload := "{" + strings.Join(deployments, ",") + "}"
+
+	apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
+	err = apiclient.PrettyPrint("json", []byte(payload))
+	return []byte(payload), err
+}
+
 // SetOrgProperty is used to set org properties
 func SetOrgProperty(name string, value string) (err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
