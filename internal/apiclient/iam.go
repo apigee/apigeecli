@@ -249,6 +249,8 @@ func SetIAMPermission(memberName string, iamRole string, memberType string) (err
 		role = "roles/apigee.analyticsAgent"
 	case "deploy":
 		role = "roles/apigee.deployer"
+	case "admin":
+		role = "roles/apigee.environmentAdmin"
 	default: // assume this is a custom role definition
 		re := regexp.MustCompile(`projects\/([a-zA-Z0-9_-]+)\/roles\/([a-zA-Z0-9_-]+)`)
 		result := re.FindString(iamRole)
