@@ -30,14 +30,14 @@ var CreateCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = appgroups.Create(name, channelURI, channelID, displayName, attrs)
+		_, err = appgroups.Create(name, channelURI, channelID, displayName, attrs, devs)
 		return
 	},
 }
 
 var (
 	channelID, channelURI, displayName string
-	attrs                              map[string]string
+	attrs, devs                        map[string]string
 )
 
 func init() {
@@ -51,6 +51,8 @@ func init() {
 		"", "app group name displayed in the UI")
 	CreateCmd.Flags().StringToStringVar(&attrs, "attrs",
 		nil, "Custom attributes")
+	CreateCmd.Flags().StringToStringVar(&devs, "devs",
+		nil, "Developer details; set developerid=role. NOTE: only 1 role is supported")
 
 	_ = CreateCmd.MarkFlagRequired("name")
 }
