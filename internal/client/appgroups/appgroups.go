@@ -137,6 +137,9 @@ func Update(name string, channelURI string, channelID string, displayName string
 		developerDetailsAttribute.Value = getDeveloperDetails(devs)
 	}
 
+	//clear existing attributes
+	a.Attributes = nil
+
 	if len(attrs) != 0 {
 		a.Attributes = make([]attribute, len(attrs))
 		for key, value := range attrs {
@@ -148,9 +151,6 @@ func Update(name string, channelURI string, channelID string, displayName string
 	}
 
 	if developerDetailsAttribute != (attribute{}) {
-		if len(a.Attributes) == 0 {
-			a.Attributes = make([]attribute, 1)
-		}
 		a.Attributes = append(a.Attributes, developerDetailsAttribute)
 	}
 
