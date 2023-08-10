@@ -141,7 +141,6 @@ func Update(name string, channelURI string, channelID string, displayName string
 	a.Attributes = nil
 
 	if len(attrs) != 0 {
-		a.Attributes = make([]attribute, len(attrs))
 		for key, value := range attrs {
 			attr := attribute{}
 			attr.Name = key
