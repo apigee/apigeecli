@@ -15,6 +15,7 @@
 package appgroups
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -51,10 +52,15 @@ type attribute struct {
 	Value string `json:"value,omitempty"`
 }
 
+type devDetail struct {
+	DeveloperId string   `json:"developerId,omitempty"`
+	Roles       []string `json:"roles,omitempty"`
+}
+
 var maxPageSize = 1000
 
 // Create
-func Create(name string, channelURI string, channelID string, displayName string, attrs map[string]string) (respBody []byte, err error) {
+func Create(name string, channelURI string, channelID string, displayName string, attrs map[string]string, devs map[string]string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 
 	app := []string{}
@@ -70,6 +76,13 @@ func Create(name string, channelURI string, channelID string, displayName string
 
 	if displayName != "" {
 		app = append(app, "\"displayName\":\""+displayName+"\"")
+	}
+
+	if len(devs) > 0 {
+		if len(attrs) == 0 {
+			attrs = make(map[string]string)
+		}
+		attrs["__apigee_reserved__developer_details"] = getDeveloperDetails(devs)
 	}
 
 	if len(attrs) != 0 {
@@ -89,9 +102,11 @@ func Create(name string, channelURI string, channelID string, displayName string
 }
 
 // Update
-func Update(name string, channelURI string, channelID string, displayName string, attrs map[string]string) (respBody []byte, err error) {
+func Update(name string, channelURI string, channelID string, displayName string, attrs map[string]string, devs map[string]string) (respBody []byte, err error) {
 	apiclient.ClientPrintHttpResponse.Set(false)
 	appGroupRespBody, err := Get(name)
+	developerDetailsAttribute := attribute{}
+
 	if err != nil {
 		return nil, err
 	}
@@ -114,8 +129,28 @@ func Update(name string, channelURI string, channelID string, displayName string
 		a.DisplayName = displayName
 	}
 
+	if len(devs) > 0 {
+		if len(attrs) == 0 {
+			attrs = make(map[string]string)
+		}
+		developerDetailsAttribute.Name = "__apigee_reserved__developer_details"
+		developerDetailsAttribute.Value = getDeveloperDetails(devs)
+	}
+
+	//clear existing attributes
+	a.Attributes = nil
+
 	if len(attrs) != 0 {
-		// TODO: attributes
+		for key, value := range attrs {
+			attr := attribute{}
+			attr.Name = key
+			attr.Value = value
+			a.Attributes = append(a.Attributes, attr)
+		}
+	}
+
+	if developerDetailsAttribute != (attribute{}) {
+		a.Attributes = append(a.Attributes, developerDetailsAttribute)
 	}
 
 	reqBody, err := json.Marshal(a)
@@ -289,9 +324,9 @@ func importAppGroup(knownAppGroupsList map[string]bool, wg *sync.WaitGroup, jobs
 
 		if knownAppGroupsList[job.Name] {
 			// the appgroup already exists, perform an update
-			_, err = Update(job.Name, job.ChannelURI, job.ChannelID, job.DisplayName, nil)
+			_, err = Update(job.Name, job.ChannelURI, job.ChannelID, job.DisplayName, getMapAttributes(job.Attributes), nil)
 		} else {
-			_, err = Create(job.Name, job.ChannelURI, job.ChannelID, job.DisplayName, nil)
+			_, err = Create(job.Name, job.ChannelURI, job.ChannelID, job.DisplayName, getMapAttributes(job.Attributes), nil)
 		}
 
 		if err != nil {
@@ -324,4 +359,44 @@ func readAppGroupsFile(filePath string) ([]appgroup, error) {
 	}
 
 	return a, nil
+}
+
+func getMapAttributes(attrs []attribute) map[string]string {
+	var custAttrs map[string]string
+	for _, a := range attrs {
+		custAttrs[a.Name] = a.Value
+	}
+	return custAttrs
+}
+
+func getDeveloperDetails(devs map[string]string) string {
+	developerDetails := []string{}
+	for k, v := range devs {
+		developerDetails = append(developerDetails, "{ \"developerId\":\""+k+"\", \"roles\":[ \""+v+"\" ] }")
+	}
+	return base64.StdEncoding.EncodeToString([]byte("[" + strings.Join(developerDetails, ",") + "]"))
+}
+
+func getDeveloperDetailsObject(developerDetailsEncoded string) ([]devDetail, error) {
+	devDetailList := []devDetail{}
+	developerDetails, err := base64.StdEncoding.DecodeString(developerDetailsEncoded)
+	if err != nil {
+		return nil, err
+	}
+	err = json.Unmarshal([]byte(developerDetails), &devDetailList)
+	if err != nil {
+		return nil, err
+	}
+	return devDetailList, nil
+}
+
+func convertToAttributes(a map[string]string) []attribute {
+	attributes := []attribute{}
+	for k, v := range a {
+		attr := attribute{}
+		attr.Name = k
+		attr.Value = v
+		attributes = append(attributes, attr)
+	}
+	return attributes
 }

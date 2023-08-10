@@ -30,7 +30,7 @@ var UpdateCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = appgroups.Update(name, channelURI, channelID, displayName, attrs)
+		_, err = appgroups.Update(name, channelURI, channelID, displayName, attrs, devs)
 		return
 	},
 }
@@ -46,6 +46,8 @@ func init() {
 		"", "AppGroup name displayed in the UI")
 	UpdateCmd.Flags().StringToStringVar(&attrs, "attrs",
 		nil, "Custom attributes")
+	UpdateCmd.Flags().StringToStringVar(&devs, "devs",
+		nil, "Developer details; set developerid=role")
 
 	_ = UpdateCmd.MarkFlagRequired("name")
 }
