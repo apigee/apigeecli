@@ -159,9 +159,6 @@ func Update(name string, channelURI string, channelID string, displayName string
 		return nil, err
 	}
 
-	fmt.Println(string(reqBody))
-	os.Exit(1)
-
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "appgroups", name)
 	respBody, err = apiclient.HttpClient(u.String(), string(reqBody), "PUT")
