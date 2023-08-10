@@ -40,4 +40,5 @@ func init() {
 	IamCmd.AddCommand(TestIamCmd)
 	IamCmd.AddCommand(SetCustCmd)
 	IamCmd.AddCommand(RemoveRoleCmd)
+	IamCmd.AddCommand(SetAdminCmd)
 }
