@@ -259,3 +259,63 @@ func SetAccessToken() error {
 	}
 	return fmt.Errorf("token expired: request a new access token or pass the service account")
 }
+
+// GetDefaultAccessToken
+func GetDefaultAccessToken() (err error) {
+	var req *http.Request
+	var tokenResponse map[string]interface{}
+
+	metadataURL := "http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token"
+
+	err = GetHttpClient()
+	if err != nil {
+		return err
+	}
+
+	if DryRun() {
+		return nil
+	}
+
+	clilog.Debug.Println("Connecting to: ", metadataURL)
+
+	req, err = http.NewRequest(http.MethodGet, metadataURL, nil)
+	if err != nil {
+		clilog.Error.Println("error in client: ", err)
+		return err
+	}
+
+	req.Header.Set("Metadata-Flavor", "Google")
+	resp, err := ApigeeAPIClient.Do(req)
+	if err != nil {
+		clilog.Error.Println("error connecting: ", err)
+		return err
+	}
+
+	if resp != nil {
+		defer resp.Body.Close()
+	}
+
+	if resp == nil {
+		clilog.Error.Println("error in response: Response was null")
+		return fmt.Errorf("error in response: Response was null")
+	}
+
+	respBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		clilog.Error.Println("error in response: ", err)
+		return err
+	} else if resp.StatusCode > 399 {
+		clilog.Debug.Printf("status code %d, error in response: %s\n", resp.StatusCode, string(respBody))
+		clilog.HttpError.Println(string(respBody))
+		return errors.New(getErrorMessage(resp.StatusCode))
+	}
+
+	err = json.Unmarshal(respBody, &tokenResponse)
+	if err != nil {
+		return err
+	}
+
+	SetApigeeToken(tokenResponse["access_token"].(string))
+
+	return nil
+}

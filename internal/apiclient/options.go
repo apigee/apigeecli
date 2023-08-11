@@ -41,6 +41,7 @@ type ApigeeClientOptions struct {
 	PrintOutput    bool   // prints output from http calls
 	NoOutput       bool   // Disable all statements to stdout
 	ProxyUrl       string // use a proxy url
+	MetadataToken  bool   // use metadata outh2 token
 	APIRate        Rate   // throttle api calls to Apigee
 }
 
