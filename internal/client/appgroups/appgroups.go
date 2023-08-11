@@ -15,7 +15,6 @@
 package appgroups
 
 import (
-	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -82,7 +81,7 @@ func Create(name string, channelURI string, channelID string, displayName string
 		if len(attrs) == 0 {
 			attrs = make(map[string]string)
 		}
-		attrs["__apigee_reserved__developer_details"] = getDeveloperDetails(devs)
+		attrs["__apigee_reserved__developer_details"] = strings.ReplaceAll(getDeveloperDetails(devs), "\"", "\\\"")
 	}
 
 	if len(attrs) != 0 {
@@ -374,20 +373,11 @@ func getDeveloperDetails(devs map[string]string) string {
 	for k, v := range devs {
 		developerDetails = append(developerDetails, "{ \"developerId\":\""+k+"\", \"roles\":[ \""+v+"\" ] }")
 	}
-	return base64.StdEncoding.EncodeToString([]byte("[" + strings.Join(developerDetails, ",") + "]"))
-}
-
-func getDeveloperDetailsObject(developerDetailsEncoded string) ([]devDetail, error) {
-	devDetailList := []devDetail{}
-	developerDetails, err := base64.StdEncoding.DecodeString(developerDetailsEncoded)
-	if err != nil {
-		return nil, err
-	}
-	err = json.Unmarshal([]byte(developerDetails), &devDetailList)
-	if err != nil {
-		return nil, err
-	}
-	return devDetailList, nil
+	// The docs https://cloud.google.com/apigee/docs/reference/apis/apigee/rest/v1/organizations.appgroups/create
+	// called for base64 encoding. However, it appears the Apigee Durpal implementation does not require it.
+	// return base64.StdEncoding.EncodeToString([]byte("[" + strings.Join(developerDetails, ",") + "]"))
+	developerDetailsString := "[" + strings.Join(developerDetails, ",") + "]"
+	return developerDetailsString
 }
 
 func convertToAttributes(a map[string]string) []attribute {
