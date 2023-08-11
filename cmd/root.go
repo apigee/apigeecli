@@ -90,9 +90,9 @@ var RootCmd = &cobra.Command{
 
 		if metadataToken {
 			return apiclient.GetDefaultAccessToken()
-		} else {
-			_ = apiclient.SetAccessToken()
 		}
+
+		_ = apiclient.SetAccessToken()
 
 		return nil
 	},
