@@ -260,20 +260,19 @@ func SetAccessToken() error {
 	return fmt.Errorf("token expired: request a new access token or pass the service account")
 }
 
-// GetDefaultAccessToken
-func GetDefaultAccessToken() (err error) {
+func getMetadata(metadata string) (respBpdy []byte, err error) {
 	var req *http.Request
-	var tokenResponse map[string]interface{}
 
-	metadataURL := "http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token"
+	metadataURL := fmt.Sprintf(
+		"http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/%s", metadata)
 
 	err = GetHttpClient()
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	if DryRun() {
-		return nil
+		return nil, nil
 	}
 
 	clilog.Debug.Println("Connecting to: ", metadataURL)
@@ -281,14 +280,14 @@ func GetDefaultAccessToken() (err error) {
 	req, err = http.NewRequest(http.MethodGet, metadataURL, nil)
 	if err != nil {
 		clilog.Error.Println("error in client: ", err)
-		return err
+		return nil, err
 	}
 
 	req.Header.Set("Metadata-Flavor", "Google")
 	resp, err := ApigeeAPIClient.Do(req)
 	if err != nil {
 		clilog.Error.Println("error connecting: ", err)
-		return err
+		return nil, err
 	}
 
 	if resp != nil {
@@ -297,17 +296,28 @@ func GetDefaultAccessToken() (err error) {
 
 	if resp == nil {
 		clilog.Error.Println("error in response: Response was null")
-		return fmt.Errorf("error in response: Response was null")
+		return nil, fmt.Errorf("error in response: Response was null")
 	}
 
 	respBody, err := io.ReadAll(resp.Body)
 	if err != nil {
 		clilog.Error.Println("error in response: ", err)
-		return err
+		return nil, err
 	} else if resp.StatusCode > 399 {
 		clilog.Debug.Printf("status code %d, error in response: %s\n", resp.StatusCode, string(respBody))
 		clilog.HttpError.Println(string(respBody))
-		return errors.New(getErrorMessage(resp.StatusCode))
+		return nil, errors.New(getErrorMessage(resp.StatusCode))
+	}
+	return respBody, err
+}
+
+// GetDefaultAccessToken
+func GetDefaultAccessToken() (err error) {
+	var tokenResponse map[string]interface{}
+
+	respBody, err := getMetadata("token")
+	if err != nil {
+		return err
 	}
 
 	err = json.Unmarshal(respBody, &tokenResponse)
@@ -320,12 +330,10 @@ func GetDefaultAccessToken() (err error) {
 	ClientPrintHttpResponse.Set(false)
 	defer ClientPrintHttpResponse.Set(GetCmdPrintHttpResponseSetting())
 
-	u, _ := url.Parse("http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/account")
-	respBody, _ = HttpClient(u.String())
+	respBody, _ = getMetadata("email")
 	clilog.Debug.Println("service token email: ", string(respBody))
 
-	u, _ = url.Parse("http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/scopes")
-	respBody, _ = HttpClient(u.String())
+	respBody, _ = getMetadata("scopes")
 	clilog.Debug.Println("scopes: ", string(respBody))
 
 	return nil
