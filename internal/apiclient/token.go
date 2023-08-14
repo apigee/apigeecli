@@ -259,3 +259,82 @@ func SetAccessToken() error {
 	}
 	return fmt.Errorf("token expired: request a new access token or pass the service account")
 }
+
+func getMetadata(metadata string) (respBpdy []byte, err error) {
+	var req *http.Request
+
+	metadataURL := fmt.Sprintf(
+		"http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/%s", metadata)
+
+	err = GetHttpClient()
+	if err != nil {
+		return nil, err
+	}
+
+	if DryRun() {
+		return nil, nil
+	}
+
+	clilog.Debug.Println("Connecting to: ", metadataURL)
+
+	req, err = http.NewRequest(http.MethodGet, metadataURL, nil)
+	if err != nil {
+		clilog.Error.Println("error in client: ", err)
+		return nil, err
+	}
+
+	req.Header.Set("Metadata-Flavor", "Google")
+	resp, err := ApigeeAPIClient.Do(req)
+	if err != nil {
+		clilog.Error.Println("error connecting: ", err)
+		return nil, err
+	}
+
+	if resp != nil {
+		defer resp.Body.Close()
+	}
+
+	if resp == nil {
+		clilog.Error.Println("error in response: Response was null")
+		return nil, fmt.Errorf("error in response: Response was null")
+	}
+
+	respBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		clilog.Error.Println("error in response: ", err)
+		return nil, err
+	} else if resp.StatusCode > 399 {
+		clilog.Debug.Printf("status code %d, error in response: %s\n", resp.StatusCode, string(respBody))
+		clilog.HttpError.Println(string(respBody))
+		return nil, errors.New(getErrorMessage(resp.StatusCode))
+	}
+	return respBody, err
+}
+
+// GetDefaultAccessToken
+func GetDefaultAccessToken() (err error) {
+	var tokenResponse map[string]interface{}
+
+	respBody, err := getMetadata("token")
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(respBody, &tokenResponse)
+	if err != nil {
+		return err
+	}
+
+	SetApigeeToken(tokenResponse["access_token"].(string))
+
+	ClientPrintHttpResponse.Set(false)
+	defer ClientPrintHttpResponse.Set(GetCmdPrintHttpResponseSetting())
+
+	respBody, _ = getMetadata("email")
+	clilog.Debug.Println("service token email: ", string(respBody))
+
+	respBody, _ = getMetadata("scopes")
+	clilog.Debug.Println("scopes: ", string(respBody))
+
+	return nil
+}

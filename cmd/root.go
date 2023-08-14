@@ -63,8 +63,18 @@ var RootCmd = &cobra.Command{
 	Short: "Utility to work with Apigee APIs.",
 	Long:  "This command lets you interact with Apigee APIs.",
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-		apiclient.SetServiceAccount(serviceAccount)
-		apiclient.SetApigeeToken(accessToken)
+		if metadataToken && (serviceAccount != "" || accessToken != "") {
+			return fmt.Errorf("metadata-token cannot be used with token or account flags")
+		}
+
+		if serviceAccount != "" && accessToken != "" {
+			return fmt.Errorf("token and account flags cannot be used together")
+		}
+
+		if !metadataToken {
+			apiclient.SetServiceAccount(serviceAccount)
+			apiclient.SetApigeeToken(accessToken)
+		}
 
 		if !disableCheck {
 			if ok, _ := apiclient.TestAndUpdateLastCheck(); !ok {
@@ -76,6 +86,10 @@ var RootCmd = &cobra.Command{
 						"is available for download\n", cmd.Version, latestVersion)
 				}
 			}
+		}
+
+		if metadataToken {
+			return apiclient.GetDefaultAccessToken()
 		}
 
 		_ = apiclient.SetAccessToken()
@@ -93,8 +107,8 @@ func Execute() {
 }
 
 var (
-	accessToken, serviceAccount         string
-	disableCheck, printOutput, noOutput bool
+	accessToken, serviceAccount                        string
+	disableCheck, printOutput, noOutput, metadataToken bool
 )
 
 const ENABLED = "true"
@@ -116,6 +130,9 @@ func init() {
 
 	RootCmd.PersistentFlags().BoolVarP(&noOutput, "no-output", "",
 		false, "Disable printing all statements to stdout")
+
+	RootCmd.PersistentFlags().BoolVarP(&metadataToken, "metadata-token", "",
+		false, "Metadata OAuth2 access token")
 
 	RootCmd.AddCommand(apis.Cmd)
 	RootCmd.AddCommand(org.Cmd)

@@ -16,7 +16,10 @@ curl -L https://raw.githubusercontent.com/apigee/apigeecli/main/downloadLatest.s
 
 NOTE: The signature is not verified and the original zip is not preserved.
 
+<details>
+  <summary>Signature Verification</summary>
 
+### Signature Verification
 To test the signature of the binary, import the gpg public key:
 
 ```sh
@@ -39,6 +42,8 @@ gpg:          There is no indication that the signature belongs to the owner.
 Primary key fingerprint: 72D1 1E3A 3B1E 9FE2 2110  EC45 A714 872F 32F3 4390
 ```
 
+</details>
+
 ## Getting Started
 
 ### User Tokens
@@ -50,23 +55,15 @@ token=$(gcloud auth print-access-token)
 apigeecli orgs list -t $token
 ```
 
-### Set Preferences
-If you are using the same GCP project for Apigee, then consider setting up preferences so they don't have to be included in every command. Preferences are written to the `$HOME/.apigeecli` folder
+### Metadata OAuth2 Access Tokens
 
-```
-project=$(gcloud config get-value project | head -n 1)
+If you are using `apigeecli` on Cloud Shell, GCE instances, Cloud Build, then you can use the metadata to get the access token
 
-apigeecli prefs set -o $project
-```
-
-Subsequent commands can be like this:
-
-```
-token=$(gcloud auth print-access-token)
-apigeecli orgs get -t $token #fetches the org details of the org set in preferences
+```sh
+apigeecli orgs list --metadata-token
 ```
 
-### Access Token Generation
+### Access Token Generation from Service Accounts
 
 `apigeecli` can use the service account directly and obtain an access token.
 
@@ -93,6 +90,27 @@ or
 ```bash
 token=$(gcloud auth print-access-token)
 apigeecli token cache -t $token
+```
+
+or
+```bash
+apigeecli token cache --metadata-token
+```
+
+## Set Preferences
+If you are using the same GCP project for Apigee, then consider setting up preferences so they don't have to be included in every command. Preferences are written to the `$HOME/.apigeecli` folder
+
+```
+project=$(gcloud config get-value project | head -n 1)
+
+apigeecli prefs set -o $project
+```
+
+Subsequent commands can be like this:
+
+```
+token=$(gcloud auth print-access-token)
+apigeecli orgs get -t $token #fetches the org details of the org set in preferences
 ```
 
 ## Container download
