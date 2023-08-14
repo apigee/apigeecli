@@ -317,5 +317,16 @@ func GetDefaultAccessToken() (err error) {
 
 	SetApigeeToken(tokenResponse["access_token"].(string))
 
+	ClientPrintHttpResponse.Set(false)
+	defer ClientPrintHttpResponse.Set(GetCmdPrintHttpResponseSetting())
+
+	u, _ := url.Parse("http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/account")
+	respBody, _ = HttpClient(u.String())
+	clilog.Debug.Println("service token email: ", string(respBody))
+
+	u, _ = url.Parse("http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/scopes")
+	respBody, _ = HttpClient(u.String())
+	clilog.Debug.Println("scopes: ", string(respBody))
+
 	return nil
 }
