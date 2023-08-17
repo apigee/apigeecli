@@ -16,7 +16,5 @@ docs/
 test/
 
 README.md
-third-party-licenses.md
-LICENSE.txt
 CONTRIBUTING.md
 downloadLatest.sh
