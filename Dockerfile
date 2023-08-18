@@ -39,3 +39,5 @@ COPY --from=builder /go/bin/apigeecli /usr/local/bin/apigeecli
 COPY LICENSE.txt /
 COPY third-party-licenses.txt /
 COPY --from=jq /jq /usr/local/bin/jq
+
+ENTRYPOINT [ "apigeecli" ]

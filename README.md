@@ -90,6 +90,36 @@ The lastest container version for apigeecli can be downloaded via
 docker pull ghcr.io/apigee/apigeecli:latest
 ```
 
+### Using docker to run commands locally
+
+```sh
+docker run -ti ghcr.io/apigee/apigeecli:latest orgs list -t $token
+```
+
+### Using apigeecli with Cloud Build
+
+```yaml
+steps:
+- id: 'Run apigeecli commands'
+  name: ghcr.io/apigee/apigeecli:latest
+  entrypoint: 'sh'
+  args:
+    - -c
+    - |
+      #setup preferences
+      apigeecli prefs set --nocheck=true -o $PROJECT_ID
+      apigeecli token cache --metadata-token
+
+      # run other commands here
+      apigeecli orgs list
+```
+
+### Access shell
+
+```sh
+docker run -ti --entrypoint sh ghcr.io/apigee/apigeecli:latest
+```
+
 See this [page](https://github.com/apigee/apigeecli/pkgs/container/apigeecli) for other versions.
 
 ## What you need to know about apigeecli
