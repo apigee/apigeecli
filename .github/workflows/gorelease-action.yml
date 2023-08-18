@@ -17,7 +17,7 @@ name: apigeecli-release
 on:
   push:
     # Publish semver tags as releases.
-    tags:        
+    tags:
       - v1.[0-9]+
       - v1.[0-9]+.[0-9]+-beta
 
@@ -32,34 +32,26 @@ jobs:
           #go-version: '>=1.18.0'
           go-version-file: './go.mod'
           check-latest: true
-          
+
       - name: Reviewdog Lint
         uses: reviewdog/action-golangci-lint@v1
         with:
-          reporter: github-check          
+          reporter: github-check
 
-      - name: 'Install upx'
-        run: |
-          sudo apt-get update -y
-          sudo apt-get install -y upx
-          export GPG_TTY=$(tty)
+      - name: Write private key to disk
+        run: echo "${{ secrets.COSIGN_PRIVATE_KEY }}" > /tmp/cosign.key
 
-      - name: Import GPG key
-        id: import_gpg
-        uses: crazy-max/ghaction-import-gpg@v5
-        with:
-          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
-          passphrase: ${{ secrets.PASSPHRASE }}
+      - uses: sigstore/cosign-installer@main
 
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v3
         with:
           distribution: goreleaser
           version: latest
-          args: release --rm-dist
+          args: release --clean
         env:
+          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
-          GPG_FINGERPRINT: ${{ secrets.FINGERPRINT }}
 
       - name: Upload assets
         uses: actions/upload-artifact@v3

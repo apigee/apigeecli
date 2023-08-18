@@ -11,15 +11,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# gcloud builds submit --config=cloud-builder.yaml --project=project-name 
+# gcloud builds submit --config=cloud-builder.yaml --project=project-name
 steps:
 # Build the container image
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'gcr.io/$PROJECT_ID/apigeecli-builder', '-f', 'Dockerfile.builder', '.']
+  args: ['build', '-t', 'gcr.io/$PROJECT_ID/apigeecli', '-f', 'Dockerfile', '.']
 # Push the container image to Container Registry
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'gcr.io/$PROJECT_ID/apigeecli-builder']
 options:
   env: ["DEBUG=true"]
   machineType: N1_HIGHCPU_8
-  logging: CLOUD_LOGGING_ONLY 
+  logging: CLOUD_LOGGING_ONLY

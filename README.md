@@ -14,36 +14,6 @@ This is a tool to interact with [Apigee APIs](https://cloud.google.com/apigee/do
 curl -L https://raw.githubusercontent.com/apigee/apigeecli/main/downloadLatest.sh | sh -
 ```
 
-NOTE: The signature is not verified and the original zip is not preserved.
-
-<details>
-  <summary>Signature Verification</summary>
-
-### Signature Verification
-To test the signature of the binary, import the gpg public key:
-
-```sh
-gpg --recv-keys --keyserver keyserver.ubuntu.com A714872F32F34390
-gpg: key A714872F32F34390: public key "apigeecli (apigeecli) <13950006+srinandan@users.noreply.github.com>" imported
-gpg: Total number processed: 1
-gpg:               imported: 1
-```
-
-Use curl or wget to download the zip and sig files. Verify using:
-
-```sh
-gpg --verify apigeecli_<signature-file>.sig apigeecli_<original-file>.zip
-gpg: Signature made Thu 05 May 2022 05:58:11 PM UTC
-gpg:                using RSA key 72D11E3A3B1E9FE22110EC45A714872F32F34390
-gpg:                issuer "13950006+srinandan@users.noreply.github.com"
-gpg: Good signature from "apigeecli (apigeecli) <13950006+srinandan@users.noreply.github.com>" [unknown]
-gpg: WARNING: This key is not certified with a trusted signature!
-gpg:          There is no indication that the signature belongs to the owner.
-Primary key fingerprint: 72D1 1E3A 3B1E 9FE2 2110  EC45 A714 872F 32F3 4390
-```
-
-</details>
-
 ## Getting Started
 
 ### User Tokens
@@ -339,6 +309,38 @@ x-google-jwt-locations:
 ```
 
 query parameters are ignored. By default, if no location is specified, the JWT location is the `Authorization` header and value_prefix is `Bearer <token>`
+
+## How do I verify the binary?
+
+All artifacts are signed by [cosign](https://github.com/sigstore/cosign). We recommend verifying any artifact before using them.
+
+You can use the following public key to verify any `apigeecli` binary with:
+
+```sh
+cat cosign.pub
+-----BEGIN PUBLIC KEY-----
+MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEgjcKEyPi18vd6Zk5/ggAkH6CLSy3
+C8gzi5q3xsycjI7if5FABk7bfciR4+g32H8xTl4mVHhHuz6I6FBG24/nuQ==
+-----END PUBLIC KEY-----
+
+cosign verify-blob --key=cosign.pub --signature apigeecli_<platform>_<arch>.zip.sig apigeecli_<platform>_<arch>.zip
+```
+
+Where `platform` can be one of `Darwin`, `Linux` or `Windows` and arch (architecture) can be one of `arm64` or `x86_64`
+
+## How do I verify the apigeecli containers?
+
+All images are signed by [cosign](https://github.com/sigstore/cosign). We recommend verifying any container before using them.
+
+```sh
+cat cosign.pub
+-----BEGIN PUBLIC KEY-----
+MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEgjcKEyPi18vd6Zk5/ggAkH6CLSy3
+C8gzi5q3xsycjI7if5FABk7bfciR4+g32H8xTl4mVHhHuz6I6FBG24/nuQ==
+-----END PUBLIC KEY-----
+
+cosign verify --key=cosign.pub ghcr.io/apigee/apigeecli:latest
+```
 ___
 
 ## Support
