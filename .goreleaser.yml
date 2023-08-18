@@ -69,16 +69,16 @@ checksum:
   name_template: "checksums.txt"
 
 signs:
-  - artifacts: all
+  - cmd: cosign
+    stdin: '{{ .Env.COSIGN_PASSWORD }}'
     args:
-      [
-        "-u",
-        "13950006+srinandan@users.noreply.github.com",
-        "--output",
-        "${signature}",
-        "--detach-sign",
-        "${artifact}",
-      ]
+    - "sign-blob"
+    - "--key=/tmp/cosign.key"
+    - "--output-signature=${signature}"
+    - "${artifact}"
+    - "--yes"
+    artifacts: all
+    output: true
 
 changelog:
   sort: asc
