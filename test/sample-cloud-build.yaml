@@ -1,4 +1,4 @@
-# Copyright 2022 Google LLC
+# Copyright 2023 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -11,15 +11,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# gcloud builds submit --config=cloud-builder.yaml --project=project-name
+
 steps:
-# Build the container image
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'gcr.io/$PROJECT_ID/apigeecli', '-f', 'Dockerfile', '.']
-# Push the container image to Container Registry
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['push', 'gcr.io/$PROJECT_ID/apigeecli']
-options:
-  env: ["DEBUG=true"]
-  machineType: N1_HIGHCPU_8
-  logging: CLOUD_LOGGING_ONLY
+- id: 'Run apigeecli commands'
+  name: ghcr.io/apigee/apigeecli:latest
+  entrypoint: 'sh'
+  args:
+    - -c
+    - |
+      #setup preferences
+      apigeecli prefs set --nocheck=true -o $PROJECT_ID
+      apigeecli token cache --metadata-token
+
+      apigeecli orgs list
