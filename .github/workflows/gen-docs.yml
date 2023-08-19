@@ -20,6 +20,7 @@ on:
     # Publish semver tags as releases.
     tags:
       - v[0-1].[0-9]+
+  workflow_dispatch:
 
 jobs:
   publish-gh-pages:
