@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: Cloud Builder Docker
+name: apigeecli Container Release
 
 # This workflow uses actions that are not certified by GitHub.
 # They are provided by a third-party and are governed by
@@ -47,6 +47,23 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Get Latest Tag
+        id: latest_tag
+        run: |
+          # Fetch all tags and get the latest one
+          git fetch --tags
+          latest_tag=$(git describe --tags --abbrev=0)
+          echo "Latest tag: $latest_tag"
+          echo "::set-output name=tag::$latest_tag"
+
+      - name: Get Commit SHA
+        id: commit_sha
+        run: |
+          # Fetch the commit SHA associated with the pushed tag
+          commit_sha=$(git show-ref -s ${{ steps.latest_tag.outputs.tag }})
+          echo "Commit SHA for tag: $commit_sha"
+          echo "::set-output name=commit_sha::$commit_sha"
+
       # Install the cosign tool except on PR
       # https://github.com/sigstore/cosign-installer
       - name: Install cosign
@@ -72,7 +89,7 @@ jobs:
       # https://github.com/docker/metadata-action
       - name: Extract Docker metadata
         id: meta
-        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        uses: docker/metadata-action@v4
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
@@ -89,14 +106,17 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            TAG=${{ steps.latest_tag.outputs.tag }}
+            COMMIT=${{ steps.commit_sha.outputs.commit_sha }}
 
       # https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions#using-an-intermediate-environment-variable
       - name: Sign image with a key
         run: |
-          cosign sign --yes --output-signature=/tmp/apigeecli.sig ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ env.DIGEST }}
-          cosign attach signature --signature=/tmp/apigeecli.sig ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ env.DIGEST }}
+          cosign sign --yes --output-signature=/tmp/apigeecli.sig ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ env.TAG }}
+          cosign attach signature --signature=/tmp/apigeecli.sig ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ env.TAG }}
         env:
           TAGS: ${{ steps.meta.outputs.tags }}
           COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
-          DIGEST: ${{ steps.build-and-push.outputs.digest }}
+          TAG: ${{ steps.latest_tag.outputs.tag }}
