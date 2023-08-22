@@ -30,6 +30,8 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: apigee/apigeecli
+  TAG: ${{ github.ref_name }}
+  COMMIT: ${{ github.sha }}
 
 
 jobs:
@@ -46,23 +48,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-
-      - name: Get Latest Tag
-        id: latest_tag
-        run: |
-          # Fetch all tags and get the latest one
-          git fetch --tags
-          latest_tag=$(git describe --tags --abbrev=0)
-          echo "Latest tag: $latest_tag"
-          echo "::set-output name=tag::$latest_tag"
-
-      - name: Get Commit SHA
-        id: commit_sha
-        run: |
-          # Fetch the commit SHA associated with the pushed tag
-          commit_sha=$(git show-ref -s ${{ steps.latest_tag.outputs.tag }})
-          echo "Commit SHA for tag: $commit_sha"
-          echo "::set-output name=commit_sha::$commit_sha"
 
       # Install the cosign tool except on PR
       # https://github.com/sigstore/cosign-installer
@@ -107,8 +92,8 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            TAG=${{ steps.latest_tag.outputs.tag }}
-            COMMIT=${{ steps.commit_sha.outputs.commit_sha }}
+            TAG=${{ env.TAG }}
+            COMMIT=${{ env.COMMIT }}
 
       # https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions#using-an-intermediate-environment-variable
       - name: Sign image with a key
@@ -116,7 +101,5 @@ jobs:
           cosign sign --yes --key=env://${{ env.COSIGN_PRIVATE_KEY }} --output-signature=/tmp/apigeecli.sig ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ env.TAG }}
           cosign attach signature --signature=/tmp/apigeecli.sig ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ env.TAG }}
         env:
-          TAGS: ${{ steps.meta.outputs.tags }}
           COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
-          TAG: ${{ steps.latest_tag.outputs.tag }}
