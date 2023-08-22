@@ -99,8 +99,8 @@ jobs:
       - name: Sign image with a key
         run: |
           echo "${{ env.COSIGN_PRIVATE_KEY }}" > /tmp/cosign.key
-          cosign sign --yes --key=/tmp/cosign.key --output-signature=/tmp/apigeecli.sig ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ env.TAG }}
-          cosign attach signature --signature=/tmp/apigeecli.sig ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ env.TAG }}
+          cosign sign --yes --key=/tmp/cosign.key --output-signature=/tmp/apigeecli.sig ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAG }}
+          cosign attach signature --signature=/tmp/apigeecli.sig ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAG }}
         env:
           COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
