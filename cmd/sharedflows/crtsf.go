@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"path/filepath"
 
 	"internal/apiclient"
 
@@ -54,6 +55,9 @@ var CreateCmd = &cobra.Command{
 		} else if sfFolder != "" {
 			if stat, err := os.Stat(folder); err == nil && !stat.IsDir() {
 				return fmt.Errorf("supplied path is not a folder")
+			}
+			if filepath.Base(sfFolder) != "sharedflowbundle" {
+				return fmt.Errorf("--sf-folder or -p must be a path to sharedflowbundle folder")
 			}
 			tmpDir, err := os.MkdirTemp("", "sf")
 			if err != nil {
