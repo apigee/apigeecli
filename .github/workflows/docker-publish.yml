@@ -103,12 +103,7 @@ jobs:
       - name: Sign image with a key
         run: |
           echo "${{ env.COSIGN_PRIVATE_KEY }}" > /tmp/cosign.key
-          image_url=$(docker inspect --format='{{index .RepoDigests 0}}' ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAG }})
-          echo "Image URL: " $image_url
-          digest_sha="${image_url#*@}"
-          echo "Digest: " ${digest_sha}
-          echo "Build Push Action Digest: " ${{ steps.build-and-push.outputs.digest }}
-          cosign sign --yes --key=/tmp/cosign.key --output-signature=/tmp/apigeecli.sig ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${digest_sha}
+          cosign sign --yes --key=/tmp/cosign.key --output-signature=/tmp/apigeecli.sig ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ steps.build-and-push.outputs.digest }}
         env:
           COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
