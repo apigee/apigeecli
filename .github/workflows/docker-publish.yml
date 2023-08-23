@@ -78,7 +78,11 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
+            type=ref,event=tag
             type=raw,value=latest
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=sha
 
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
@@ -99,8 +103,8 @@ jobs:
       - name: Sign image with a key
         run: |
           echo "${{ env.COSIGN_PRIVATE_KEY }}" > /tmp/cosign.key
-          cosign sign --yes --key=/tmp/cosign.key --output-signature=/tmp/apigeecli.sig ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAG }}
-          cosign attach signature --signature=/tmp/apigeecli.sig ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAG }}
+          cosign sign --yes --key=/tmp/cosign.key --output-signature=/tmp/apigeecli.sig ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@{{ env.DIGEST }}
         env:
           COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+          DIGEST: ${{ steps.build-and-push.outputs.digest }}
