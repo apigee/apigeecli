@@ -108,7 +108,7 @@ jobs:
           echo "Image URL: " $image_url
           digest_sha="${image_url#*@}"
           echo "Digest: " ${digest_sha}
-          echo "Build Push Action Digest: " ${DIGEST}
+          echo "Build Push Action Digest: " ${{ steps.build-and-push.outputs.digest }}
           cosign sign --yes --key=/tmp/cosign.key --output-signature=/tmp/apigeecli.sig ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${digest_sha}
         env:
           COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
