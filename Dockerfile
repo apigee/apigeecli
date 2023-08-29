@@ -35,6 +35,13 @@ FROM ghcr.io/jqlang/jq:latest as jq
 
 # use debug because it includes busybox
 FROM gcr.io/distroless/static-debian11:debug
+LABEL org.opencontainers.image.url='https://github.com/apigee/apigeecli' \
+      org.opencontainers.image.documentation='https://github.com/apigee/apigeecli' \
+      org.opencontainers.image.source='https://github.com/apigee/apigeecli' \
+      org.opencontainers.image.vendor='Google LLC' \
+      org.opencontainers.image.licenses='Apache-2.0' \
+      org.opencontainers.image.description='This is a tool to interact with Apigee APIs'
+
 COPY --from=builder /go/bin/apigeecli /usr/local/bin/apigeecli
 COPY LICENSE.txt /
 COPY third-party-licenses.txt /
