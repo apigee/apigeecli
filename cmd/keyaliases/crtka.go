@@ -58,7 +58,7 @@ var CreateCmd = &cobra.Command{
 				ignoreExpiry,
 				ignoreNewLine,
 				selfFile)
-		case "pem":
+		case "keycertfile":
 			_, err = keyaliases.CreateOrUpdateKeyCert(keystoreName,
 				name,
 				false,
@@ -93,7 +93,7 @@ func init() {
 	CreateCmd.Flags().StringVarP(&name, "alias", "s",
 		"", "Name of the key alias")
 	CreateCmd.Flags().StringVarP(&format, "format", "f",
-		"", "Format of the certificate; selfsignedcert, pem or pkcs12 (file extn is .pfx)")
+		"", "Format of the certificate; selfsignedcert, keycertfile or pkcs12 (file extn is .pfx)")
 	CreateCmd.Flags().StringVarP(&password, "password", "p",
 		"", "PKCS12 password")
 	CreateCmd.Flags().BoolVarP(&ignoreExpiry, "exp", "x",
