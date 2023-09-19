@@ -41,7 +41,7 @@ func init() {
 	CsrCmd.Flags().StringVarP(&keystoreName, "key", "k",
 		"", "Name of the key store")
 	CsrCmd.Flags().StringVarP(&aliasName, "alias", "s",
-		"", "Name of the key store")
+		"", "Name of the key alias")
 
 	_ = CsrCmd.MarkFlagRequired("alias")
 	_ = CsrCmd.MarkFlagRequired("key")

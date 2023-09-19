@@ -40,9 +40,8 @@ var GetCmd = &cobra.Command{
 func init() {
 	GetCmd.Flags().StringVarP(&keystoreName, "key", "k",
 		"", "Name of the key store")
-
 	GetCmd.Flags().StringVarP(&aliasName, "alias", "s",
-		"", "Name of the key store")
+		"", "Name of the key alias")
 
 	_ = GetCmd.MarkFlagRequired("alias")
 	_ = GetCmd.MarkFlagRequired("key")
