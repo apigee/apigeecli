@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package apis
+package sharedflows
 
 import (
 	"fmt"
@@ -20,12 +20,11 @@ import (
 	"regexp"
 
 	"internal/apiclient"
+	"internal/client/sharedflows"
 
 	"internal/clilog"
 
 	proxybundle "internal/bundlegen/proxybundle"
-
-	"internal/client/apis"
 
 	"github.com/spf13/cobra"
 )
@@ -34,12 +33,12 @@ import (
 var GhCreateCmd = &cobra.Command{
 	Use:     "github",
 	Aliases: []string{"gh"},
-	Short:   "Creates an API proxy from a GitHub repo",
-	Long:    "Creates an API proxy from a GitHub repo",
+	Short:   "Creates a sharedflow from a GitHub repo",
+	Long:    "Creates a sharedflow from a GitHub repo",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		re := regexp.MustCompile(`(\w+)?\/apiproxy$`)
+		re := regexp.MustCompile(`(\w+)?\/sharedflowbundle$`)
 		if ok := re.Match([]byte(ghPath)); !ok {
-			return fmt.Errorf("github path must end with /apiproxy")
+			return fmt.Errorf("github path must end with /sharedflowbundle")
 		}
 
 		return apiclient.SetApigeeOrg(org)
@@ -48,32 +47,33 @@ var GhCreateCmd = &cobra.Command{
 		if os.Getenv("GITHUB_TOKEN") == "" {
 			clilog.Debug.Println("github token is not set as an env var. Running unauthenticated")
 		}
-		if err = proxybundle.GitHubImportBundle(ghOwner, ghRepo, ghPath, false); err != nil {
-			proxybundle.ProxyCleanUp()
+		if err = proxybundle.GitHubImportBundle(ghOwner, ghRepo, ghPath, true); err != nil {
+			proxybundle.SharedflowCleanUp()
 			return err
 		}
-		_, err = apis.CreateProxy(name, bundleName)
-		proxybundle.ProxyCleanUp()
+
+		_, err = sharedflows.Create(name, bundleName)
+		proxybundle.SharedflowCleanUp()
 		return err
 	},
 }
 
-const bundleName = "apiproxy.zip"
+const bundleName = "sharedflowbundle.zip"
 
 var ghOwner, ghRepo, ghPath string
 
 func init() {
 	GhCreateCmd.Flags().StringVarP(&name, "name", "n",
-		"", "API Proxy name")
+		"", "Sharedflow name")
 	GhCreateCmd.Flags().StringVarP(&ghOwner, "owner", "u",
 		"", "The github organization or username. ex: In https://github.com/apigee, apigee is the owner name")
 	GhCreateCmd.Flags().StringVarP(&ghRepo, "repo", "r",
 		"", "The github repo name. ex: https://github.com/apigee/api-platform-samples, api-platform-samples is the repo")
-	GhCreateCmd.Flags().StringVarP(&ghPath, "proxy-path", "p",
-		"", "The path in the repo to the apiproxy folder. ex: sample-proxies/apikey/apiproxy")
+	GhCreateCmd.Flags().StringVarP(&ghPath, "sf-path", "p",
+		"", "The path in the repo to the sharedflowbundle folder. ex: sample-proxies/security/sharedflowbundle")
 
 	_ = GhCreateCmd.MarkFlagRequired("name")
 	_ = GhCreateCmd.MarkFlagRequired("owner")
 	_ = GhCreateCmd.MarkFlagRequired("repo")
-	_ = GhCreateCmd.MarkFlagRequired("proxy-path")
+	_ = GhCreateCmd.MarkFlagRequired("sf-path")
 }
