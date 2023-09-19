@@ -137,6 +137,12 @@ func importKeystores(wg *sync.WaitGroup, jobs <-chan string, errs chan<- error) 
 			continue
 		}
 
+		req, err = apiclient.SetAuthHeader(req)
+		if err != nil {
+			errs <- err
+			continue
+		}
+
 		resp, err := apiclient.ApigeeAPIClient.Do(req)
 		if err != nil {
 			errs <- err
