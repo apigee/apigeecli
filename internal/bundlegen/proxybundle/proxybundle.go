@@ -21,12 +21,14 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"os"
 	"path"
 	"path/filepath"
 	"regexp"
 	"strings"
 
+	"internal/apiclient"
 	"internal/clilog"
 
 	"internal/bundlegen"
@@ -636,6 +638,15 @@ func GitHubImportBundle(owner string, repo string, repopath string) (err error) 
 		client = github.NewClient(tc)
 	} else {
 		client = github.NewClient(nil)
+	}
+
+	// set the url for on premises versions
+	if apiclient.GetGithubURL() != "" {
+		u, err := url.Parse(apiclient.GetGithubURL())
+		if err != nil {
+			return err
+		}
+		client.BaseURL = u
 	}
 
 	// 1. download the proxy
