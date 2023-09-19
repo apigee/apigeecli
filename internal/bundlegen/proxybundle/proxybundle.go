@@ -204,7 +204,7 @@ func GenerateAPIProxyBundleFromOAS(name string,
 		}
 	}
 
-	if err = archiveBundle(proxyRootDir, name+".zip"); err != nil {
+	if err = archiveBundle(proxyRootDir, name+".zip", false); err != nil {
 		return err
 	}
 
@@ -322,7 +322,7 @@ func GenerateAPIProxyBundleFromGQL(name string,
 		}
 	}
 
-	if err = archiveBundle(proxyRootDir, name+".zip"); err != nil {
+	if err = archiveBundle(proxyRootDir, name+".zip", false); err != nil {
 		return err
 	}
 
@@ -390,7 +390,7 @@ func GenerateIntegrationAPIProxyBundle(name string, integration string, apitrigg
 		return err
 	}
 
-	if err = archiveBundle(proxyRootDir, name+".zip"); err != nil {
+	if err = archiveBundle(proxyRootDir, name+".zip", false); err != nil {
 		return err
 	}
 
@@ -543,7 +543,7 @@ func GenerateAPIProxyBundleFromSwagger(name string,
 		}
 	}
 
-	if err = archiveBundle(proxyRootDir, name+".zip"); err != nil {
+	if err = archiveBundle(proxyRootDir, name+".zip", false); err != nil {
 		return err
 	}
 
@@ -566,11 +566,7 @@ func writeXMLData(fileName string, data string) error {
 	return nil
 }
 
-func GenerateArchiveBundle(pathToZip, destinationPath string) error {
-	return archiveBundle(pathToZip, destinationPath)
-}
-
-func archiveBundle(pathToZip, destinationPath string) (err error) {
+func GenerateArchive(pathToZip, destinationPath string) (err error) {
 	var destinationFile *os.File
 
 	pathSep := `/` // For archives/zip the path separator is always /
@@ -595,6 +591,79 @@ func archiveBundle(pathToZip, destinationPath string) (err error) {
 		}
 		relPath := filepath.ToSlash(strings.TrimPrefix(filePath, filepath.Dir(pathToZip)))
 		zipEntry := strings.TrimPrefix(relPath, pathSep)
+		zipFile, err := myZip.Create(zipEntry)
+		if err != nil {
+			return err
+		}
+		fsFile, err := os.Open(filePath)
+		if err != nil {
+			return err
+		}
+		_, err = io.Copy(zipFile, fsFile)
+		if err != nil {
+			return err
+		}
+		return nil
+	})
+	if err != nil {
+		_ = destinationFile.Close()
+		return err
+	}
+	if err = myZip.Close(); err != nil {
+		return err
+	}
+	if err = destinationFile.Close(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func GenerateArchiveBundle(pathToZip, destinationPath string, sharedflow bool) error {
+	return archiveBundle(pathToZip, destinationPath, sharedflow)
+}
+
+func archiveBundle(pathToZip, destinationPath string, sharedflow bool) (err error) {
+	var destinationFile *os.File
+	var zipEntry string
+	parentFolder := true
+
+	clilog.Debug.Printf("Compressing folder %s to zipfile %s\n", pathToZip, destinationPath)
+
+	pathSep := `/` // For archives/zip the path separator is always /
+
+	if destinationFile, err = os.Create(destinationPath); err != nil {
+		return err
+	}
+
+	myZip := zip.NewWriter(destinationFile)
+	err = filepath.Walk(pathToZip, func(filePath string, info os.FileInfo, err error) error {
+		if info.IsDir() {
+			// for the first time, add the rootDir as the zipEntry
+			if parentFolder {
+				parentFolder = false
+				if sharedflow {
+					zipEntry = sfRootDir + pathSep
+				}
+				zipEntry = proxyRootDir + pathSep
+			} else {
+				relPath := filepath.ToSlash(strings.TrimPrefix(filePath, filepath.Dir(pathToZip)))
+				zipEntry = strings.TrimPrefix(relPath, pathSep) + pathSep
+			}
+			clilog.Debug.Printf("Found directory %s\n", filePath)
+			clilog.Debug.Printf("Creating directory zipEntry %s\n", zipEntry)
+			_, err = myZip.Create(zipEntry)
+			return err
+		}
+		clilog.Debug.Printf("Found file %s\n", filePath)
+		if err != nil {
+			return err
+		}
+		if strings.HasSuffix(filePath, "~") {
+			return nil
+		}
+		relPath := filepath.ToSlash(strings.TrimPrefix(filePath, filepath.Dir(pathToZip)))
+		zipEntry = strings.TrimPrefix(relPath, pathSep)
+		clilog.Debug.Printf("Creating file zipEntry %s\n", zipEntry)
 		zipFile, err := myZip.Create(zipEntry)
 		if err != nil {
 			return err
@@ -670,7 +739,7 @@ func GitHubImportBundle(owner string, repo string, repopath string, sharedflow b
 
 	// 2. compress the proxy folder
 	curDir, _ := os.Getwd()
-	if err := archiveBundle(path.Join(curDir, rootDir), path.Join(curDir, rootDir+".zip")); err != nil {
+	if err := archiveBundle(path.Join(curDir, rootDir), path.Join(curDir, rootDir+".zip"), sharedflow); err != nil {
 		return err
 	}
 
