@@ -41,7 +41,8 @@ import (
 	"golang.org/x/oauth2"
 )
 
-var rootDir = "apiproxy"
+var proxyRootDir = "apiproxy"
+var sfRootDir = "sharedflowbundle"
 
 func GenerateAPIProxyBundleFromOAS(name string,
 	content string,
@@ -58,9 +59,9 @@ func GenerateAPIProxyBundleFromOAS(name string,
 		return err
 	}
 
-	rootDir = path.Join(tmpDir, rootDir)
+	proxyRootDir = path.Join(tmpDir, proxyRootDir)
 
-	if err = os.Mkdir(rootDir, os.ModePerm); err != nil {
+	if err = os.Mkdir(proxyRootDir, os.ModePerm); err != nil {
 		return err
 	}
 
@@ -69,16 +70,16 @@ func GenerateAPIProxyBundleFromOAS(name string,
 		return err
 	}
 
-	err = writeXMLData(rootDir+string(os.PathSeparator)+name+".xml", apiProxyData)
+	err = writeXMLData(proxyRootDir+string(os.PathSeparator)+name+".xml", apiProxyData)
 	if err != nil {
 		return err
 	}
 
-	proxiesDirPath := rootDir + string(os.PathSeparator) + "proxies"
-	policiesDirPath := rootDir + string(os.PathSeparator) + "policies"
-	targetDirPath := rootDir + string(os.PathSeparator) + "targets"
-	resDirPath := rootDir + string(os.PathSeparator) + "resources" + string(os.PathSeparator) + resourceType //"oas"
-	integrationDirPath := rootDir + string(os.PathSeparator) + "integration-endpoints"
+	proxiesDirPath := proxyRootDir + string(os.PathSeparator) + "proxies"
+	policiesDirPath := proxyRootDir + string(os.PathSeparator) + "policies"
+	targetDirPath := proxyRootDir + string(os.PathSeparator) + "targets"
+	resDirPath := proxyRootDir + string(os.PathSeparator) + "resources" + string(os.PathSeparator) + resourceType //"oas"
+	integrationDirPath := proxyRootDir + string(os.PathSeparator) + "integration-endpoints"
 
 	if err = os.Mkdir(proxiesDirPath, os.ModePerm); err != nil {
 		return err
@@ -201,11 +202,11 @@ func GenerateAPIProxyBundleFromOAS(name string,
 		}
 	}
 
-	if err = archiveBundle(rootDir, name+".zip"); err != nil {
+	if err = archiveBundle(proxyRootDir, name+".zip"); err != nil {
 		return err
 	}
 
-	defer os.RemoveAll(rootDir) // clean up
+	defer os.RemoveAll(proxyRootDir) // clean up
 	return nil
 }
 
@@ -228,9 +229,9 @@ func GenerateAPIProxyBundleFromGQL(name string,
 		return err
 	}
 
-	rootDir = path.Join(tmpDir, rootDir)
+	proxyRootDir = path.Join(tmpDir, proxyRootDir)
 
-	if err = os.Mkdir(rootDir, os.ModePerm); err != nil {
+	if err = os.Mkdir(proxyRootDir, os.ModePerm); err != nil {
 		return err
 	}
 
@@ -239,15 +240,15 @@ func GenerateAPIProxyBundleFromGQL(name string,
 		return err
 	}
 
-	err = writeXMLData(rootDir+string(os.PathSeparator)+name+".xml", apiProxyData)
+	err = writeXMLData(proxyRootDir+string(os.PathSeparator)+name+".xml", apiProxyData)
 	if err != nil {
 		return err
 	}
 
-	proxiesDirPath := rootDir + string(os.PathSeparator) + "proxies"
-	policiesDirPath := rootDir + string(os.PathSeparator) + "policies"
-	targetDirPath := rootDir + string(os.PathSeparator) + "targets"
-	resDirPath := rootDir + string(os.PathSeparator) + "resources" + string(os.PathSeparator) + resourceType //"graphql"
+	proxiesDirPath := proxyRootDir + string(os.PathSeparator) + "proxies"
+	policiesDirPath := proxyRootDir + string(os.PathSeparator) + "policies"
+	targetDirPath := proxyRootDir + string(os.PathSeparator) + "targets"
+	resDirPath := proxyRootDir + string(os.PathSeparator) + "resources" + string(os.PathSeparator) + resourceType //"graphql"
 
 	if err = os.Mkdir(proxiesDirPath, os.ModePerm); err != nil {
 		return err
@@ -319,11 +320,11 @@ func GenerateAPIProxyBundleFromGQL(name string,
 		}
 	}
 
-	if err = archiveBundle(rootDir, name+".zip"); err != nil {
+	if err = archiveBundle(proxyRootDir, name+".zip"); err != nil {
 		return err
 	}
 
-	defer os.RemoveAll(rootDir) // clean up
+	defer os.RemoveAll(proxyRootDir) // clean up
 	return nil
 }
 
@@ -335,9 +336,9 @@ func GenerateIntegrationAPIProxyBundle(name string, integration string, apitrigg
 		return err
 	}
 
-	rootDir = path.Join(tmpDir, rootDir)
+	proxyRootDir = path.Join(tmpDir, proxyRootDir)
 
-	if err = os.Mkdir(rootDir, os.ModePerm); err != nil {
+	if err = os.Mkdir(proxyRootDir, os.ModePerm); err != nil {
 		return err
 	}
 
@@ -346,14 +347,14 @@ func GenerateIntegrationAPIProxyBundle(name string, integration string, apitrigg
 		return err
 	}
 
-	err = writeXMLData(rootDir+string(os.PathSeparator)+name+".xml", apiProxyData)
+	err = writeXMLData(proxyRootDir+string(os.PathSeparator)+name+".xml", apiProxyData)
 	if err != nil {
 		return err
 	}
 
-	proxiesDirPath := rootDir + string(os.PathSeparator) + "proxies"
-	policiesDirPath := rootDir + string(os.PathSeparator) + "policies"
-	integrationDirPath := rootDir + string(os.PathSeparator) + "integration-endpoints"
+	proxiesDirPath := proxyRootDir + string(os.PathSeparator) + "proxies"
+	policiesDirPath := proxyRootDir + string(os.PathSeparator) + "policies"
+	integrationDirPath := proxyRootDir + string(os.PathSeparator) + "integration-endpoints"
 
 	if err = os.Mkdir(proxiesDirPath, os.ModePerm); err != nil {
 		return err
@@ -387,11 +388,11 @@ func GenerateIntegrationAPIProxyBundle(name string, integration string, apitrigg
 		return err
 	}
 
-	if err = archiveBundle(rootDir, name+".zip"); err != nil {
+	if err = archiveBundle(proxyRootDir, name+".zip"); err != nil {
 		return err
 	}
 
-	defer os.RemoveAll(rootDir) // clean up
+	defer os.RemoveAll(proxyRootDir) // clean up
 	return nil
 }
 
@@ -406,13 +407,13 @@ func GenerateAPIProxyBundleFromSwagger(name string,
 		return err
 	}
 
-	rootDir = path.Join(tmpDir, rootDir)
+	proxyRootDir = path.Join(tmpDir, proxyRootDir)
 
 	if name == "" {
 		name = bundlegen.GetGoogleApiName()
 	}
 
-	if err = os.Mkdir(rootDir, os.ModePerm); err != nil {
+	if err = os.Mkdir(proxyRootDir, os.ModePerm); err != nil {
 		return err
 	}
 
@@ -421,14 +422,14 @@ func GenerateAPIProxyBundleFromSwagger(name string,
 		return err
 	}
 
-	err = writeXMLData(rootDir+string(os.PathSeparator)+name+".xml", apiProxyData)
+	err = writeXMLData(proxyRootDir+string(os.PathSeparator)+name+".xml", apiProxyData)
 	if err != nil {
 		return err
 	}
 
-	proxiesDirPath := rootDir + string(os.PathSeparator) + "proxies"
-	policiesDirPath := rootDir + string(os.PathSeparator) + "policies"
-	targetDirPath := rootDir + string(os.PathSeparator) + "targets"
+	proxiesDirPath := proxyRootDir + string(os.PathSeparator) + "proxies"
+	policiesDirPath := proxyRootDir + string(os.PathSeparator) + "policies"
+	targetDirPath := proxyRootDir + string(os.PathSeparator) + "targets"
 
 	if err = os.Mkdir(proxiesDirPath, os.ModePerm); err != nil {
 		return err
@@ -540,11 +541,11 @@ func GenerateAPIProxyBundleFromSwagger(name string,
 		}
 	}
 
-	if err = archiveBundle(rootDir, name+".zip"); err != nil {
+	if err = archiveBundle(proxyRootDir, name+".zip"); err != nil {
 		return err
 	}
 
-	defer os.RemoveAll(rootDir) // clean up
+	defer os.RemoveAll(proxyRootDir) // clean up
 
 	return err
 }
@@ -619,9 +620,22 @@ func archiveBundle(pathToZip, destinationPath string) (err error) {
 	return nil
 }
 
-func GitHubImportBundle(owner string, repo string, repopath string) (err error) {
+func GitHubImportBundle(owner string, repo string, repopath string, sharedflow bool) (err error) {
+
+	var rootDir string
+
+	if sharedflow {
+		rootDir = sfRootDir
+	} else {
+		rootDir = proxyRootDir
+	}
+
 	// clean up any files or folders
-	CleanUp()
+	if sharedflow {
+		SharedflowCleanUp()
+	}
+	ProxyCleanUp()
+
 	os.RemoveAll(rootDir)
 
 	var client *github.Client
@@ -639,12 +653,8 @@ func GitHubImportBundle(owner string, repo string, repopath string) (err error) 
 	}
 
 	// 1. download the proxy
-	if err := downloadProxyFromRepo(client, ctx, owner, repo, repopath); err != nil {
+	if err := downloadProxyFromRepo(client, ctx, owner, repo, repopath, sharedflow); err != nil {
 		return err
-	}
-
-	if client != nil {
-		clilog.Info.Println("")
 	}
 
 	// 2. compress the proxy folder
@@ -657,13 +667,19 @@ func GitHubImportBundle(owner string, repo string, repopath string) (err error) 
 	return err
 }
 
-func CleanUp() {
-	if _, err := os.Stat(rootDir + ".zip"); err == nil {
-		_ = os.Remove(rootDir + ".zip")
+func ProxyCleanUp() {
+	if _, err := os.Stat(proxyRootDir + ".zip"); err == nil {
+		_ = os.Remove(proxyRootDir + ".zip")
 	}
 }
 
-func downloadProxyFromRepo(client *github.Client, ctx context.Context, owner string, repo string, repopath string) (err error) {
+func SharedflowCleanUp() {
+	if _, err := os.Stat(sfRootDir + ".zip"); err == nil {
+		_ = os.Remove(sfRootDir + ".zip")
+	}
+}
+
+func downloadProxyFromRepo(client *github.Client, ctx context.Context, owner string, repo string, repopath string, sharedflow bool) (err error) {
 	var fileContent *github.RepositoryContent
 	var directoryContents []*github.RepositoryContent
 
@@ -672,7 +688,7 @@ func downloadProxyFromRepo(client *github.Client, ctx context.Context, owner str
 	}
 
 	if fileContent != nil {
-		if err = downloadResource(*fileContent.Path, *fileContent.DownloadURL); err != nil {
+		if err = downloadResource(*fileContent.Path, *fileContent.DownloadURL, sharedflow); err != nil {
 			return err
 		}
 	}
@@ -680,11 +696,11 @@ func downloadProxyFromRepo(client *github.Client, ctx context.Context, owner str
 	if len(directoryContents) > 0 {
 		for _, directoryContent := range directoryContents {
 			if *directoryContent.Type == "dir" {
-				if err = downloadProxyFromRepo(client, ctx, owner, repo, path.Join(repopath, *directoryContent.Name)); err != nil {
+				if err = downloadProxyFromRepo(client, ctx, owner, repo, path.Join(repopath, *directoryContent.Name), sharedflow); err != nil {
 					return err
 				}
 			} else if *directoryContent.Type == "file" {
-				if err = downloadResource(*directoryContent.Path, *directoryContent.DownloadURL); err != nil {
+				if err = downloadResource(*directoryContent.Path, *directoryContent.DownloadURL, sharedflow); err != nil {
 					return err
 				}
 			}
@@ -696,18 +712,34 @@ func downloadProxyFromRepo(client *github.Client, ctx context.Context, owner str
 func getApiProxyFolder(repoPath string) (apiProxyFolder string, apiProxyFile string) {
 	re := regexp.MustCompile(`(\S*)?(\/?)apiproxy`)
 
-	apiProxyFileBytes := re.ReplaceAll([]byte(repoPath), []byte(rootDir))
+	apiProxyFileBytes := re.ReplaceAll([]byte(repoPath), []byte(proxyRootDir))
 	apiProxyFile = string(apiProxyFileBytes)
 
 	apiProxyFolder = filepath.Dir(apiProxyFile)
 	return apiProxyFolder, apiProxyFile
 }
 
+func getSharedflowFolder(repoPath string) (sfFolder string, sfFile string) {
+	re := regexp.MustCompile(`(\S*)?(\/?)sharedflowbundle`)
+
+	sfFileBytes := re.ReplaceAll([]byte(repoPath), []byte(sfRootDir))
+	sfFile = string(sfFileBytes)
+
+	sfFolder = filepath.Dir(sfFile)
+	return sfFolder, sfFile
+}
+
 // downloadResource method is used to download resources, proxy bundles, sharedflows
-func downloadResource(repoPath string, url string) (err error) {
+func downloadResource(repoPath string, url string, sharedflow bool) (err error) {
 	var apiproxyFolder, apiproxyFile string
 
-	if apiproxyFolder, apiproxyFile = getApiProxyFolder(repoPath); err != nil {
+	if sharedflow {
+		if apiproxyFolder, apiproxyFile = getSharedflowFolder(repoPath); err != nil {
+			return err
+		}
+	}
+
+	if apiproxyFolder, apiproxyFile = getSharedflowFolder(repoPath); err != nil {
 		return err
 	}
 
