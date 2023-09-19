@@ -58,9 +58,7 @@ var CreateCmd = &cobra.Command{
 				ignoreExpiry,
 				ignoreNewLine,
 				selfFile)
-		case "pem":
-			fallthrough
-		case "keycertfile":
+		case "keycertfile", "pem":
 			_, err = keyaliases.CreateOrUpdateKeyCert(keystoreName,
 				name,
 				false,
