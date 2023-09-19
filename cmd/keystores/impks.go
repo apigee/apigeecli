@@ -43,7 +43,7 @@ var (
 
 func init() {
 	ImpCmd.Flags().StringVarP(&filePath, "file", "f",
-		"", "File containing API Products")
+		"", "Path to file containing Apigee Keystores")
 	ImpCmd.Flags().IntVarP(&conn, "conn", "c",
 		4, "Number of connections")
 
