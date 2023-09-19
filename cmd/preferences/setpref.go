@@ -34,6 +34,10 @@ var SetCmd = &cobra.Command{
 			return err
 		}
 
+		if err = apiclient.SetGithubURL(gitHubURL); err != nil {
+			return err
+		}
+
 		if nocheck {
 			if err = apiclient.SetNoCheck(nocheck); err != nil {
 				return err
@@ -45,8 +49,8 @@ var SetCmd = &cobra.Command{
 }
 
 var (
-	org, proxyURL     string
-	usestage, nocheck bool
+	org, proxyURL, gitHubURL string
+	usestage, nocheck        bool
 )
 
 func init() {
@@ -61,4 +65,7 @@ func init() {
 
 	SetCmd.Flags().BoolVarP(&nocheck, "nocheck", "",
 		false, "Don't check for newer versions of cmd")
+
+	SetCmd.Flags().StringVarP(&gitHubURL, "github", "g",
+		"", "On premises Github URL")
 }

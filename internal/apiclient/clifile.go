@@ -36,7 +36,8 @@ type apigeeCLI struct {
 	LastCheck string `json:"lastCheck,omitempty"`
 	Org       string `json:"defaultOrg,omitempty"`
 	Staging   bool   `json:"staging,omitempty"`
-	ProxyUrl  string `json:"proxyUrl,omitempty"`
+	ProxyURL  string `json:"proxyUrl,omitempty"`
+	GithubURL string `json:"githubURL,omitempty"`
 	Nocheck   bool   `json:"nocheck,omitempty" default:"false"`
 }
 
@@ -69,8 +70,12 @@ func ReadPreferencesFile() (err error) {
 		UseStaging()
 	}
 
-	if cliPref.ProxyUrl != "" {
-		SetProxyURL(cliPref.ProxyUrl)
+	if cliPref.ProxyURL != "" {
+		SetProxyURL(cliPref.ProxyURL)
+	}
+
+	if cliPref.GithubURL != "" {
+		SetGithubURL(cliPref.GithubURL)
 	}
 
 	if cliPref.Org != "" {
@@ -195,7 +200,7 @@ func SetProxy(url string) (err error) {
 		return nil
 	}
 
-	cliPref.ProxyUrl = url
+	cliPref.ProxyURL = url
 	data, err := json.Marshal(&cliPref)
 	if err != nil {
 		clilog.Debug.Printf("Error marshalling: %v\n", err)
@@ -203,6 +208,25 @@ func SetProxy(url string) (err error) {
 	}
 	clilog.Debug.Println("Writing ", string(data))
 	return WritePerferencesFile(data)
+}
+
+func SetGithubURL(url string) (err error) {
+	if url == "" {
+		return nil
+	}
+
+	cliPref.GithubURL = url
+	data, err := json.Marshal(&cliPref)
+	if err != nil {
+		clilog.Debug.Printf("Error marshalling: %v\n", err)
+		return err
+	}
+	clilog.Debug.Println("Writing ", string(data))
+	return WritePerferencesFile(data)
+}
+
+func GetGithubURL() string {
+	return cliPref.GithubURL
 }
 
 func GetPreferences() (err error) {
