@@ -16,9 +16,10 @@ package sharedflows
 
 import (
 	"encoding/json"
+	"time"
+
 	"internal/apiclient"
 	"internal/clilog"
-	"time"
 
 	"internal/client/sharedflows"
 

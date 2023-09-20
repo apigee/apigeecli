@@ -136,7 +136,7 @@ func Update(name string, channelURI string, channelID string, displayName string
 		developerDetailsAttribute.Value = getDeveloperDetails(devs)
 	}
 
-	//clear existing attributes
+	// clear existing attributes
 	a.Attributes = nil
 
 	if len(attrs) != 0 {
