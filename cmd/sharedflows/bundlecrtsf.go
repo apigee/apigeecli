@@ -67,7 +67,7 @@ var BundleCreateCmd = &cobra.Command{
 
 			sfBundlePath := path.Join(tmpDir, name+".zip")
 
-			if err = proxybundle.GenerateArchiveBundle(sfFolder, sfBundlePath); err != nil {
+			if err = proxybundle.GenerateArchiveBundle(sfFolder, sfBundlePath, true); err != nil {
 				return err
 			}
 			if _, err = sharedflows.Create(name, sfBundlePath); err != nil {

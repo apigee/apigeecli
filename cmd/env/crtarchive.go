@@ -65,7 +65,7 @@ var CreateArchiveCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		if folder != "" {
 			zipfile = name + ".zip"
-			if err = proxybundle.GenerateArchiveBundle(folder, zipfile); err != nil {
+			if err = proxybundle.GenerateArchive(folder, zipfile); err != nil {
 				return err
 			}
 		}
