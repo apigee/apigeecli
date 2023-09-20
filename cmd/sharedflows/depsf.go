@@ -15,7 +15,11 @@
 package sharedflows
 
 import (
+	"encoding/json"
+	"time"
+
 	"internal/apiclient"
+	"internal/clilog"
 
 	"internal/client/sharedflows"
 
@@ -38,14 +42,48 @@ var DepCmd = &cobra.Command{
 			}
 		}
 		_, err = sharedflows.Deploy(name, revision, overrides, serviceAccountName)
+		apiclient.DisableCmdPrintHttpResponse()
+
+		if wait {
+			clilog.Info.Printf("Checking deployment status in %d seconds\n", interval)
+
+			stop := apiclient.Every(interval*time.Second, func(time.Time) bool {
+				var respBody []byte
+				respMap := make(map[string]interface{})
+				if respBody, err = sharedflows.ListRevisionDeployments(name, revision); err != nil {
+					clilog.Error.Printf("Error fetching sharedflow revision status: %v", err)
+					return false
+				}
+
+				if err = json.Unmarshal(respBody, &respMap); err != nil {
+					return true
+				}
+
+				if respMap["state"] == "PROGRESSING" {
+					clilog.Info.Printf("Sharedflow deployment status is: %s. Waiting %d seconds.\n", respMap["state"], interval)
+					return true
+				} else if respMap["state"] == "READY" {
+					clilog.Info.Println("Sharedflow deployment completed with status: ", respMap["state"])
+					return false
+				} else {
+					clilog.Info.Println("Sharedflow deployment failed with status: ", respMap["state"])
+					return false
+				}
+			})
+
+			<-stop
+		}
+
 		return err
 	},
 }
 
 var (
-	overrides          bool
+	overrides, wait    bool
 	serviceAccountName string
 )
+
+const interval = 10
 
 func init() {
 	DepCmd.Flags().StringVarP(&name, "name", "n",
@@ -56,6 +94,9 @@ func init() {
 		-1, "Sharedflow revision. If not set, the highest revision is used")
 	DepCmd.Flags().BoolVarP(&overrides, "ovr", "r",
 		false, "Forces deployment of the new revision")
+	DepCmd.Flags().BoolVarP(&wait, "wait", "",
+		false, "Waits for the deployment to finish, with success or error")
+
 	DepCmd.Flags().StringVarP(&serviceAccountName, "sa", "s",
 		"", "The format must be {ACCOUNT_ID}@{PROJECT}.iam.gserviceaccount.com.")
 

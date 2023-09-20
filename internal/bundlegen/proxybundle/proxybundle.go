@@ -43,8 +43,10 @@ import (
 	"golang.org/x/oauth2"
 )
 
-var proxyRootDir = "apiproxy"
-var sfRootDir = "sharedflowbundle"
+var (
+	proxyRootDir = "apiproxy"
+	sfRootDir    = "sharedflowbundle"
+)
 
 func GenerateAPIProxyBundleFromOAS(name string,
 	content string,
@@ -692,7 +694,6 @@ func archiveBundle(pathToZip, destinationPath string, sharedflow bool) (err erro
 }
 
 func GitHubImportBundle(owner string, repo string, repopath string, sharedflow bool) (err error) {
-
 	var rootDir string
 
 	if sharedflow {
