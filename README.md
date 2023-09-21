@@ -83,6 +83,16 @@ token=$(gcloud auth print-access-token)
 apigeecli orgs get -t $token #fetches the org details of the org set in preferences
 ```
 
+The following preferences can be set:
+
+| Flag                   | Description                                           |
+| -----------------------| ----------------------------------------------------- |
+| `-g, --github string`  | On premises Github URL                                |
+| `-o, --org string`     | Apigee organization name                              |
+| `-p, --proxy string`   | Use http proxy before contacting the control plane    |
+| `--nocheck`            | Don't check for newer versions of cmd                 |
+
+
 ## Container download
 The lastest container version for apigeecli can be downloaded via
 

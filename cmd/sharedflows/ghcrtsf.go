@@ -34,7 +34,7 @@ var GhCreateCmd = &cobra.Command{
 	Use:     "github",
 	Aliases: []string{"gh"},
 	Short:   "Creates a sharedflow from a GitHub repo",
-	Long:    "Creates a sharedflow from a GitHub repo",
+	Long:    "Creates a sharedflow from a GitHub repo. Check apigeecli prefs for GH on-prem options",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		re := regexp.MustCompile(`(\w+)?\/sharedflowbundle$`)
 		if ok := re.Match([]byte(ghPath)); !ok {
