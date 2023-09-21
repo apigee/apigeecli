@@ -35,7 +35,7 @@ var GhCreateCmd = &cobra.Command{
 	Use:     "github",
 	Aliases: []string{"gh"},
 	Short:   "Creates an API proxy from a GitHub repo",
-	Long:    "Creates an API proxy from a GitHub repo",
+	Long:    "Creates an API proxy from a GitHub repo. Check apigeecli prefs for GH on-prem options",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		re := regexp.MustCompile(`(\w+)?\/apiproxy$`)
 		if ok := re.Match([]byte(ghPath)); !ok {
