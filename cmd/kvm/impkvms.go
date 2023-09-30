@@ -47,7 +47,7 @@ var ImpCmd = &cobra.Command{
 		if len(orgKVMFileList) > 0 {
 			clilog.Info.Println("Importing org scoped KVMs...")
 			for _, orgKVMFile := range orgKVMFileList {
-                kvmFile := filepath.Base(orgKVMFile)
+				kvmFile := filepath.Base(orgKVMFile)
 				kvmMetadata := strings.Split(kvmFile, "_")
 				clilog.Info.Printf("\tCreating KVM %s\n", orgKVMFile)
 				if _, err = kvm.Create("", kvmMetadata[1], true); err != nil {
@@ -63,7 +63,7 @@ var ImpCmd = &cobra.Command{
 		if len(envKVMFileList) > 0 {
 			clilog.Info.Println("Importing env scoped KVMs...")
 			for _, envKVMFile := range envKVMFileList {
-                kvmFile := filepath.Base(envKVMFile)
+				kvmFile := filepath.Base(envKVMFile)
 				kvmMetadata := strings.Split(kvmFile, "_")
 				apiclient.SetApigeeEnv(kvmMetadata[1])
 				clilog.Info.Printf("\tCreating KVM %s\n", envKVMFile)
@@ -80,7 +80,7 @@ var ImpCmd = &cobra.Command{
 		if len(proxyKVMFileList) > 0 {
 			clilog.Info.Println("Importing proxy scoped KVMs...")
 			for _, proxyKVMFile := range proxyKVMFileList {
-                kvmFile := filepath.Base(proxyKVMFile)
+				kvmFile := filepath.Base(proxyKVMFile)
 				kvmMetadata := strings.Split(kvmFile, "_")
 				clilog.Info.Printf("\tCreating KVM %s\n", proxyKVMFile)
 				if _, err = kvm.Create(kvmMetadata[1], kvmMetadata[2], true); err != nil {
