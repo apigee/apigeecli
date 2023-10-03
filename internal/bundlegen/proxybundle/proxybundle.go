@@ -43,7 +43,7 @@ import (
 	"golang.org/x/oauth2"
 )
 
-var (
+const (
 	proxyRootDir = "apiproxy"
 	sfRootDir    = "sharedflowbundle"
 )
@@ -63,9 +63,9 @@ func GenerateAPIProxyBundleFromOAS(name string,
 		return err
 	}
 
-	proxyRootDir = path.Join(tmpDir, proxyRootDir)
+	tmpProxyRootDir := path.Join(tmpDir, proxyRootDir)
 
-	if err = os.Mkdir(proxyRootDir, os.ModePerm); err != nil {
+	if err = os.Mkdir(tmpProxyRootDir, os.ModePerm); err != nil {
 		return err
 	}
 
@@ -74,16 +74,16 @@ func GenerateAPIProxyBundleFromOAS(name string,
 		return err
 	}
 
-	err = writeXMLData(proxyRootDir+string(os.PathSeparator)+name+".xml", apiProxyData)
+	err = writeXMLData(tmpProxyRootDir+string(os.PathSeparator)+name+".xml", apiProxyData)
 	if err != nil {
 		return err
 	}
 
-	proxiesDirPath := proxyRootDir + string(os.PathSeparator) + "proxies"
-	policiesDirPath := proxyRootDir + string(os.PathSeparator) + "policies"
-	targetDirPath := proxyRootDir + string(os.PathSeparator) + "targets"
-	resDirPath := proxyRootDir + string(os.PathSeparator) + "resources" + string(os.PathSeparator) + resourceType //"oas"
-	integrationDirPath := proxyRootDir + string(os.PathSeparator) + "integration-endpoints"
+	proxiesDirPath := tmpProxyRootDir + string(os.PathSeparator) + "proxies"
+	policiesDirPath := tmpProxyRootDir + string(os.PathSeparator) + "policies"
+	targetDirPath := tmpProxyRootDir + string(os.PathSeparator) + "targets"
+	resDirPath := tmpProxyRootDir + string(os.PathSeparator) + "resources" + string(os.PathSeparator) + resourceType //"oas"
+	integrationDirPath := tmpProxyRootDir + string(os.PathSeparator) + "integration-endpoints"
 
 	if err = os.Mkdir(proxiesDirPath, os.ModePerm); err != nil {
 		return err
@@ -206,11 +206,11 @@ func GenerateAPIProxyBundleFromOAS(name string,
 		}
 	}
 
-	if err = archiveBundle(proxyRootDir, name+".zip", false); err != nil {
+	if err = archiveBundle(tmpProxyRootDir, name+".zip", false); err != nil {
 		return err
 	}
 
-	defer os.RemoveAll(proxyRootDir) // clean up
+	defer os.RemoveAll(tmpProxyRootDir) // clean up
 	return nil
 }
 
@@ -233,9 +233,9 @@ func GenerateAPIProxyBundleFromGQL(name string,
 		return err
 	}
 
-	proxyRootDir = path.Join(tmpDir, proxyRootDir)
+	tmpProxyRootDir := path.Join(tmpDir, proxyRootDir)
 
-	if err = os.Mkdir(proxyRootDir, os.ModePerm); err != nil {
+	if err = os.Mkdir(tmpProxyRootDir, os.ModePerm); err != nil {
 		return err
 	}
 
@@ -244,15 +244,15 @@ func GenerateAPIProxyBundleFromGQL(name string,
 		return err
 	}
 
-	err = writeXMLData(proxyRootDir+string(os.PathSeparator)+name+".xml", apiProxyData)
+	err = writeXMLData(tmpProxyRootDir+string(os.PathSeparator)+name+".xml", apiProxyData)
 	if err != nil {
 		return err
 	}
 
-	proxiesDirPath := proxyRootDir + string(os.PathSeparator) + "proxies"
-	policiesDirPath := proxyRootDir + string(os.PathSeparator) + "policies"
-	targetDirPath := proxyRootDir + string(os.PathSeparator) + "targets"
-	resDirPath := proxyRootDir + string(os.PathSeparator) + "resources" + string(os.PathSeparator) + resourceType //"graphql"
+	proxiesDirPath := tmpProxyRootDir + string(os.PathSeparator) + "proxies"
+	policiesDirPath := tmpProxyRootDir + string(os.PathSeparator) + "policies"
+	targetDirPath := tmpProxyRootDir + string(os.PathSeparator) + "targets"
+	resDirPath := tmpProxyRootDir + string(os.PathSeparator) + "resources" + string(os.PathSeparator) + resourceType //"graphql"
 
 	if err = os.Mkdir(proxiesDirPath, os.ModePerm); err != nil {
 		return err
@@ -324,11 +324,11 @@ func GenerateAPIProxyBundleFromGQL(name string,
 		}
 	}
 
-	if err = archiveBundle(proxyRootDir, name+".zip", false); err != nil {
+	if err = archiveBundle(tmpProxyRootDir, name+".zip", false); err != nil {
 		return err
 	}
 
-	defer os.RemoveAll(proxyRootDir) // clean up
+	defer os.RemoveAll(tmpProxyRootDir) // clean up
 	return nil
 }
 
@@ -340,9 +340,9 @@ func GenerateIntegrationAPIProxyBundle(name string, integration string, apitrigg
 		return err
 	}
 
-	proxyRootDir = path.Join(tmpDir, proxyRootDir)
+	tmpProxyRootDir := path.Join(tmpDir, proxyRootDir)
 
-	if err = os.Mkdir(proxyRootDir, os.ModePerm); err != nil {
+	if err = os.Mkdir(tmpProxyRootDir, os.ModePerm); err != nil {
 		return err
 	}
 
@@ -351,14 +351,14 @@ func GenerateIntegrationAPIProxyBundle(name string, integration string, apitrigg
 		return err
 	}
 
-	err = writeXMLData(proxyRootDir+string(os.PathSeparator)+name+".xml", apiProxyData)
+	err = writeXMLData(tmpProxyRootDir+string(os.PathSeparator)+name+".xml", apiProxyData)
 	if err != nil {
 		return err
 	}
 
-	proxiesDirPath := proxyRootDir + string(os.PathSeparator) + "proxies"
-	policiesDirPath := proxyRootDir + string(os.PathSeparator) + "policies"
-	integrationDirPath := proxyRootDir + string(os.PathSeparator) + "integration-endpoints"
+	proxiesDirPath := tmpProxyRootDir + string(os.PathSeparator) + "proxies"
+	policiesDirPath := tmpProxyRootDir + string(os.PathSeparator) + "policies"
+	integrationDirPath := tmpProxyRootDir + string(os.PathSeparator) + "integration-endpoints"
 
 	if err = os.Mkdir(proxiesDirPath, os.ModePerm); err != nil {
 		return err
@@ -392,11 +392,11 @@ func GenerateIntegrationAPIProxyBundle(name string, integration string, apitrigg
 		return err
 	}
 
-	if err = archiveBundle(proxyRootDir, name+".zip", false); err != nil {
+	if err = archiveBundle(tmpProxyRootDir, name+".zip", false); err != nil {
 		return err
 	}
 
-	defer os.RemoveAll(proxyRootDir) // clean up
+	defer os.RemoveAll(tmpProxyRootDir) // clean up
 	return nil
 }
 
@@ -411,13 +411,13 @@ func GenerateAPIProxyBundleFromSwagger(name string,
 		return err
 	}
 
-	proxyRootDir = path.Join(tmpDir, proxyRootDir)
+	tmpProxyRootDir := path.Join(tmpDir, proxyRootDir)
 
 	if name == "" {
 		name = bundlegen.GetGoogleApiName()
 	}
 
-	if err = os.Mkdir(proxyRootDir, os.ModePerm); err != nil {
+	if err = os.Mkdir(tmpProxyRootDir, os.ModePerm); err != nil {
 		return err
 	}
 
@@ -426,14 +426,14 @@ func GenerateAPIProxyBundleFromSwagger(name string,
 		return err
 	}
 
-	err = writeXMLData(proxyRootDir+string(os.PathSeparator)+name+".xml", apiProxyData)
+	err = writeXMLData(tmpProxyRootDir+string(os.PathSeparator)+name+".xml", apiProxyData)
 	if err != nil {
 		return err
 	}
 
-	proxiesDirPath := proxyRootDir + string(os.PathSeparator) + "proxies"
-	policiesDirPath := proxyRootDir + string(os.PathSeparator) + "policies"
-	targetDirPath := proxyRootDir + string(os.PathSeparator) + "targets"
+	proxiesDirPath := tmpProxyRootDir + string(os.PathSeparator) + "proxies"
+	policiesDirPath := tmpProxyRootDir + string(os.PathSeparator) + "policies"
+	targetDirPath := tmpProxyRootDir + string(os.PathSeparator) + "targets"
 
 	if err = os.Mkdir(proxiesDirPath, os.ModePerm); err != nil {
 		return err
@@ -545,11 +545,11 @@ func GenerateAPIProxyBundleFromSwagger(name string,
 		}
 	}
 
-	if err = archiveBundle(proxyRootDir, name+".zip", false); err != nil {
+	if err = archiveBundle(tmpProxyRootDir, name+".zip", false); err != nil {
 		return err
 	}
 
-	defer os.RemoveAll(proxyRootDir) // clean up
+	defer os.RemoveAll(tmpProxyRootDir) // clean up
 
 	return err
 }
