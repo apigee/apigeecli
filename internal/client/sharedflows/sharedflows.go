@@ -333,7 +333,7 @@ func Export(conn int, folder string, allRevisions bool) (err error) {
 
 	for i := 0; i < conn; i++ {
 		fanOutWg.Add(1)
-		go exportSharedFlows(&fanOutWg, jobChan, folder, errChan)
+		go exportSharedFlows(&fanOutWg, jobChan, folder, allRevisions, errChan)
 	}
 
 	for _, proxy := range shrdflows.Flows {
@@ -357,14 +357,14 @@ func Export(conn int, folder string, allRevisions bool) (err error) {
 	return nil
 }
 
-func exportSharedFlows(wg *sync.WaitGroup, jobs <-chan revision, folder string, errs chan<- error) {
+func exportSharedFlows(wg *sync.WaitGroup, jobs <-chan revision, folder string, allRevisions bool, errs chan<- error) {
 	defer wg.Done()
 	for {
 		job, ok := <-jobs
 		if !ok {
 			return
 		}
-		err := apiclient.FetchBundle("sharedflows", folder, job.name, job.rev, false)
+		err := apiclient.FetchBundle("sharedflows", folder, job.name, job.rev, allRevisions)
 		if err != nil {
 			errs <- err
 		}
