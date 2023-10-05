@@ -459,7 +459,7 @@ func ExportProxies(conn int, folder string, allRevisions bool) (err error) {
 
 	for i := 0; i < conn; i++ {
 		fanOutWg.Add(1)
-		go exportAPIProxies(&fanOutWg, jobChan, folder, errChan)
+		go exportAPIProxies(&fanOutWg, jobChan, folder, allRevisions, errChan)
 	}
 
 	for _, proxy := range prxs.Proxies {
@@ -483,14 +483,14 @@ func ExportProxies(conn int, folder string, allRevisions bool) (err error) {
 	return nil
 }
 
-func exportAPIProxies(wg *sync.WaitGroup, jobs <-chan revision, folder string, errs chan<- error) {
+func exportAPIProxies(wg *sync.WaitGroup, jobs <-chan revision, folder string, allRevisions bool, errs chan<- error) {
 	defer wg.Done()
 	for {
 		job, ok := <-jobs
 		if !ok {
 			return
 		}
-		err := apiclient.FetchBundle("apis", folder, job.name, job.rev, false)
+		err := apiclient.FetchBundle("apis", folder, job.name, job.rev, allRevisions)
 		if err != nil {
 			errs <- err
 		}
