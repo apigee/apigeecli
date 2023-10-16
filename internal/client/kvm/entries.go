@@ -21,9 +21,11 @@ import (
 	"os"
 	"path"
 	"strconv"
+	"strings"
 	"sync"
 
 	"internal/apiclient"
+	"internal/client/apis"
 
 	"internal/clilog"
 )
@@ -105,6 +107,66 @@ func ListEntries(proxyName string, mapName string, pageSize int, pageToken strin
 	}
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
+}
+
+// ExportAllEntries
+func ExportAllEntries() (err error) {
+	type proxy struct {
+		Name         string `json:"name,omitempty"`
+		APIProxyType string `json:"apiProxyType,omitempty"`
+	}
+
+	type proxies struct {
+		Proxies []proxy `json:"proxies,omitempty"`
+	}
+
+	p := proxies{}
+	programmableProxies := []string{}
+
+	apiList, err := apis.ListProxies(false)
+	if err != nil {
+		return err
+	}
+
+	if err = json.Unmarshal(apiList, &p); err != nil {
+		return err
+	}
+
+	for _, proxy := range p.Proxies {
+		//search for only programmable proxies. standard proxies can't have KVMs
+		if proxy.APIProxyType == "PROGRAMMABLE" {
+			programmableProxies = append(programmableProxies, proxy.Name)
+		}
+	}
+
+	for _, programmableProxy := range programmableProxies {
+		kvmList := []string{}
+		kvmListResp, err := List(programmableProxy)
+		if err != nil {
+			return err
+		}
+		if err = json.Unmarshal(kvmListResp, &kvmList); err != nil {
+			return err
+		}
+		if len(kvmList) > 0 {
+			clilog.Info.Printf("Found %d scoped KVMs for proxy %s\n", len(kvmList), programmableProxy)
+			for _, proxyKVM := range kvmList {
+				clilog.Info.Printf("Eporting entries for KVM %s of proxy %s\n", programmableProxy, proxyKVM)
+				proxyKVMEntries, err := ExportEntries(programmableProxy, proxyKVM)
+				if err != nil {
+					return err
+				}
+				fileName := strings.Join([]string{"proxy", programmableProxy, proxyKVM, "kvmfile"}, "_")
+				for i := range proxyKVMEntries {
+					if err = apiclient.WriteByteArrayToFile(fileName+"_"+strconv.Itoa(i)+".json", false, proxyKVMEntries[i]); err != nil {
+						return err
+					}
+				}
+			}
+		}
+	}
+
+	return nil
 }
 
 // ExportEntries

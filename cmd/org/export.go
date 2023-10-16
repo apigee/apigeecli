@@ -107,6 +107,11 @@ var ExportCmd = &cobra.Command{
 			}
 		}
 
+		clilog.Info.Printf("Exporting Proxy scoped KV Map entries for org %s\n", org)
+		if err = kvm.ExportAllEntries(); err != nil {
+			return err
+		}
+
 		clilog.Info.Println("Exporting Developers...")
 		if respBody, err = developers.Export(); proceedOnError(err) != nil {
 			return err
