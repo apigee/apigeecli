@@ -48,7 +48,7 @@ var ExpCmd = &cobra.Command{
 
 		apiclient.DisableCmdPrintHttpResponse()
 
-		//return all kvm entries from all proxies
+		// return all kvm entries from all proxies
 		if env == "" && proxyName == "" {
 			return kvm.ExportAllEntries()
 		}
