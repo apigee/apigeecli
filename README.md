@@ -43,6 +43,13 @@ gcloud auth application-default login
 apigeecli orgs list --default-token
 ```
 
+or through impersonation
+
+```sh
+gcloud auth application-default login --impersonate-service-account <SA>
+apigeecli orgs list --default-token
+```
+
 ### Access Token Generation from Service Accounts
 
 `apigeecli` can use the service account directly and obtain an access token.
