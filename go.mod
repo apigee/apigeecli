@@ -24,6 +24,7 @@ require (
 )
 
 require (
+	cloud.google.com/go/compute/metadata v0.2.0 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.2 // indirect
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.2.0 // indirect
 	github.com/getkin/kin-openapi v0.115.0 // indirect
