@@ -1,0 +1,24 @@
+{
+    // Default Editor Config
+    "editor.formatOnSave": true,
+    "files.trimTrailingWhitespace": true,
+    "files.insertFinalNewline": true,
+    "files.associations": {
+        "*.yaml.tpl": "yaml",
+        "*.yaml.envtpl": "yaml"
+    },
+    // Golang Config
+    "go.enableCodeLens": {
+        "references": false,
+        "runtest": false
+    },
+    "go.useLanguageServer": true,
+    "go.lintTool": "golangci-lint",
+    "go.buildOnSave": "off",
+    "go.lintOnSave": "on",
+    "go.vetOnSave": "on",
+    // YAML Config
+    "[yaml]": {
+        "editor.formatOnSave": true
+    },
+}

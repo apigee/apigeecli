@@ -1,0 +1,8 @@
+{
+    // See https://code.visualstudio.com/docs/editor/extension-marketplace#_workspace-recommended-extensions
+    "recommendations": [
+        "golang.go",
+        "redhat.vscode-yaml",
+        "davidanson.vscode-markdownlint"
+    ]
+}
