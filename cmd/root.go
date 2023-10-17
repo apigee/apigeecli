@@ -145,7 +145,7 @@ func init() {
 		false, "Metadata OAuth2 access token")
 
 	RootCmd.PersistentFlags().BoolVarP(&defaultToken, "default-token", "",
-		false, "Use Google defalt application credentials access token")
+		false, "Use Google default application credentials access token")
 
 	RootCmd.AddCommand(apis.Cmd)
 	RootCmd.AddCommand(org.Cmd)
