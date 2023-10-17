@@ -63,17 +63,18 @@ var RootCmd = &cobra.Command{
 	Short: "Utility to work with Apigee APIs.",
 	Long:  "This command lets you interact with Apigee APIs.",
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		if metadataToken && defaultToken {
+			return fmt.Errorf("metadata-token and default-token cannot be used together")
+		}
+		if defaultToken && (serviceAccount != "" || accessToken != "") {
+			return fmt.Errorf("default-token cannot be used with token or account flags")
+		}
 		if metadataToken && (serviceAccount != "" || accessToken != "") {
 			return fmt.Errorf("metadata-token cannot be used with token or account flags")
 		}
 
 		if serviceAccount != "" && accessToken != "" {
 			return fmt.Errorf("token and account flags cannot be used together")
-		}
-
-		if !metadataToken {
-			apiclient.SetServiceAccount(serviceAccount)
-			apiclient.SetApigeeToken(accessToken)
 		}
 
 		if !disableCheck {
@@ -88,7 +89,16 @@ var RootCmd = &cobra.Command{
 			}
 		}
 
+		if !metadataToken && !defaultToken {
+			apiclient.SetServiceAccount(serviceAccount)
+			apiclient.SetApigeeToken(accessToken)
+		}
+
 		if metadataToken {
+			return apiclient.GetMetadataAccessToken()
+		}
+
+		if defaultToken {
 			return apiclient.GetDefaultAccessToken()
 		}
 
@@ -107,8 +117,8 @@ func Execute() {
 }
 
 var (
-	accessToken, serviceAccount                        string
-	disableCheck, printOutput, noOutput, metadataToken bool
+	accessToken, serviceAccount                                      string
+	disableCheck, printOutput, noOutput, metadataToken, defaultToken bool
 )
 
 const ENABLED = "true"
@@ -133,6 +143,9 @@ func init() {
 
 	RootCmd.PersistentFlags().BoolVarP(&metadataToken, "metadata-token", "",
 		false, "Metadata OAuth2 access token")
+
+	RootCmd.PersistentFlags().BoolVarP(&defaultToken, "default-token", "",
+		false, "Use Google defalt application credentials access token")
 
 	RootCmd.AddCommand(apis.Cmd)
 	RootCmd.AddCommand(org.Cmd)

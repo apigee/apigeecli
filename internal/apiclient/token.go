@@ -15,6 +15,7 @@
 package apiclient
 
 import (
+	"context"
 	"crypto/x509"
 	"encoding/json"
 	"encoding/pem"
@@ -33,6 +34,7 @@ import (
 
 	"github.com/lestrrat-go/jwx/v2/jwa"
 	"github.com/lestrrat-go/jwx/v2/jwt"
+	"golang.org/x/oauth2/google"
 )
 
 type serviceAccount struct {
@@ -313,6 +315,21 @@ func getMetadata(metadata string) (respBpdy []byte, err error) {
 
 // GetDefaultAccessToken
 func GetDefaultAccessToken() (err error) {
+	ctx := context.Background()
+	tokenSource, err := google.DefaultTokenSource(ctx, "https://www.googleapis.com/auth/cloud-platform")
+	if err != nil {
+		return err
+	}
+	token, err := tokenSource.Token()
+	if err != nil {
+		return err
+	}
+	SetApigeeToken(token.AccessToken)
+	return nil
+}
+
+// GetMetadataAccessToken
+func GetMetadataAccessToken() (err error) {
 	var tokenResponse map[string]interface{}
 
 	respBody, err := getMetadata("token")
