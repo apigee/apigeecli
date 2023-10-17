@@ -17,6 +17,7 @@ curl -L https://raw.githubusercontent.com/apigee/apigeecli/main/downloadLatest.s
 ## Getting Started
 
 ### User Tokens
+
 The simplest way to get started with `apigeecli` is
 
 ```
@@ -31,6 +32,15 @@ If you are using `apigeecli` on Cloud Shell, GCE instances, Cloud Build, then yo
 
 ```sh
 apigeecli orgs list --metadata-token
+```
+
+### Google Default Application Credentials
+
+You can configure gcloud to setup/create default application credentials. These credentials can be used by `apigeecli`.
+
+```sh
+gcloud auth application-default login
+apigeecli orgs list --default-token
 ```
 
 ### Access Token Generation from Service Accounts
@@ -57,17 +67,20 @@ apigeecli token cache -a serviceaccount.json
 ```
 
 or
+
 ```bash
 token=$(gcloud auth print-access-token)
 apigeecli token cache -t $token
 ```
 
 or
+
 ```bash
 apigeecli token cache --metadata-token
 ```
 
 ## Set Preferences
+
 If you are using the same GCP project for Apigee, then consider setting up preferences so they don't have to be included in every command. Preferences are written to the `$HOME/.apigeecli` folder
 
 ```
@@ -92,8 +105,8 @@ The following preferences can be set:
 | `-p, --proxy string`   | Use http proxy before contacting the control plane    |
 | `--nocheck`            | Don't check for newer versions of cmd                 |
 
-
 ## Container download
+
 The lastest container version for apigeecli can be downloaded via
 
 ```sh
@@ -156,6 +169,7 @@ The following environment variables may be set to control the behavior of `apige
 * `APIGEECLI_DRYRUN=true` does not execute Apigee control plane APIs
 
 ## Generating API Proxies
+
 `apigeecli` can generate API proxies from:
 
 * OpenAPI 3.0 Specification
@@ -195,7 +209,6 @@ components:
 ```
 
 is interpreted as OAuth-v20 (verification only) policy and the VerifyAPIKey policy.
-
 
 These security schemes can be added to the PreFlow by enabling the scheme globally
 
@@ -381,6 +394,7 @@ C8gzi5q3xsycjI7if5FABk7bfciR4+g32H8xTl4mVHhHuz6I6FBG24/nuQ==
 
 cosign verify --key=cosign.pub ghcr.io/apigee/apigeecli:latest
 ```
+
 ___
 
 ## Support
