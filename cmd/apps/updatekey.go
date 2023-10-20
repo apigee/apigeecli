@@ -15,7 +15,9 @@
 package apps
 
 import (
+	"fmt"
 	"internal/apiclient"
+	"strconv"
 
 	"internal/client/apps"
 
@@ -31,7 +33,10 @@ var UpdateKeyCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = apps.UpdateKey(developerEmail, name, key, secret, apiProducts, scopes, attrs)
+		if _, err = strconv.Atoi(expires); err != nil {
+			return fmt.Errorf("expires must be an integer: %v", err)
+		}
+		_, err = apps.UpdateKey(developerEmail, name, key, secret, apiProducts, scopes, expires, attrs)
 		return
 	},
 }
@@ -45,6 +50,8 @@ func init() {
 		[]string{}, "A list of api products")
 	UpdateKeyCmd.Flags().StringArrayVarP(&scopes, "scopes", "s",
 		[]string{}, "OAuth scopes")
+	UpdateKeyCmd.Flags().StringVarP(&expires, "expires", "x",
+		"", "A setting, in milliseconds, for the lifetime of the consumer key")
 	UpdateKeyCmd.Flags().StringToStringVar(&attrs, "attrs",
 		nil, "Custom attributes")
 
