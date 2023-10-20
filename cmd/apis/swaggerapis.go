@@ -69,7 +69,7 @@ var SwaggerCreateCmd = &cobra.Command{
 			addCORS)
 
 		if importProxy {
-			_, err = apis.CreateProxy(name, name+".zip")
+			_, err = apis.CreateProxy(name, name+zipExt)
 		}
 
 		return err
