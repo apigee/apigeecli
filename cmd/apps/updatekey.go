@@ -16,8 +16,9 @@ package apps
 
 import (
 	"fmt"
-	"internal/apiclient"
 	"strconv"
+
+	"internal/apiclient"
 
 	"internal/client/apps"
 

@@ -133,7 +133,7 @@ func ExportAllEntries() (err error) {
 	}
 
 	for _, proxy := range p.Proxies {
-		//search for only programmable proxies. standard proxies can't have KVMs
+		// search for only programmable proxies. standard proxies can't have KVMs
 		if proxy.APIProxyType == "PROGRAMMABLE" {
 			programmableProxies = append(programmableProxies, proxy.Name)
 		}
