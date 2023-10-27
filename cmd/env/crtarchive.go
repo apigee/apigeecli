@@ -105,11 +105,10 @@ var CreateArchiveCmd = &cobra.Command{
 					} else {
 						clilog.Info.Printf("Archive deployment failed with status: %s", respMap.Error.Message)
 					}
-					return false
 				} else {
 					clilog.Info.Printf("Unknown state %s", respMap.Metadata.State)
-					return false
 				}
+				return false
 			})
 
 			<-stop

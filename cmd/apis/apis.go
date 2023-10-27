@@ -30,6 +30,8 @@ var (
 	conn, revision int
 )
 
+const zipExt = ".zip"
+
 func init() {
 	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")

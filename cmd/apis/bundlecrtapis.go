@@ -63,7 +63,7 @@ var BundleCreateCmd = &cobra.Command{
 			}
 			defer os.RemoveAll(tmpDir)
 
-			proxyBundlePath := path.Join(tmpDir, name+".zip")
+			proxyBundlePath := path.Join(tmpDir, name+zipExt)
 
 			if err = proxybundle.GenerateArchiveBundle(proxyFolder, proxyBundlePath, false); err != nil {
 				return err

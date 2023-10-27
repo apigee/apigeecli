@@ -73,11 +73,10 @@ var DepCmd = &cobra.Command{
 					return true
 				} else if respMap["state"] == "READY" {
 					clilog.Info.Println("Proxy deployment completed with status: ", respMap["state"])
-					return false
 				} else {
 					clilog.Info.Println("Proxy deployment failed with status: ", respMap["state"])
-					return false
 				}
+				return false
 			})
 
 			<-stop

@@ -24,7 +24,7 @@ import (
 )
 
 // CreateKey
-func CreateKey(developerEmail string, appID string, consumerKey string, consumerSecret string, apiProducts []string, scopes []string, attrs map[string]string) (respBody []byte, err error) {
+func CreateKey(developerEmail string, appID string, consumerKey string, consumerSecret string, apiProducts []string, scopes []string, expires string, attrs map[string]string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 
 	key := []string{}
@@ -42,6 +42,10 @@ func CreateKey(developerEmail string, appID string, consumerKey string, consumer
 
 	key = append(key, "\"consumerKey\":\""+consumerKey+"\"")
 	key = append(key, "\"consumerSecret\":\""+consumerSecret+"\"")
+
+	if expires != "" {
+		key = append(key, "\"expiresAt\":\""+expires+"\"")
+	}
 
 	payload := "{" + strings.Join(key, ",") + "}"
 
@@ -83,7 +87,7 @@ func GetKey(developerEmail string, appID string, key string) (respBody []byte, e
 }
 
 // UpdateKey
-func UpdateKey(developerEmail string, appID string, consumerKey string, consumerSecret string, apiProducts []string, scopes []string, attrs map[string]string) (respBody []byte, err error) {
+func UpdateKey(developerEmail string, appID string, consumerKey string, consumerSecret string, apiProducts []string, scopes []string, expires string, attrs map[string]string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 
 	key := []string{}
@@ -94,6 +98,10 @@ func UpdateKey(developerEmail string, appID string, consumerKey string, consumer
 
 	if len(scopes) > 0 {
 		key = append(key, "\"scopes\":[\""+getArrayStr(scopes)+"\"]")
+	}
+
+	if expires != "" {
+		key = append(key, "\"expiresAt\":\""+expires+"\"")
 	}
 
 	if len(attrs) > 0 {

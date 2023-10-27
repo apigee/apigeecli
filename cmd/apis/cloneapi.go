@@ -79,7 +79,7 @@ var CloneCmd = &cobra.Command{
 				return err
 			}
 
-			proxyBundlePath := path.Join(tmpDir, name+".zip")
+			proxyBundlePath := path.Join(tmpDir, name+zipExt)
 
 			if err = proxybundle.GenerateArchiveBundle(path.Join(tmpDir, "apiproxy"), proxyBundlePath, false); err != nil {
 				return err
