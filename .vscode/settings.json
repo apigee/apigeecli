@@ -14,9 +14,13 @@
     },
     "go.useLanguageServer": true,
     "go.lintTool": "golangci-lint",
-    "go.buildOnSave": "off",
-    "go.lintOnSave": "on",
-    "go.vetOnSave": "on",
+    "go.lintOnSave": "workspace",
+    "go.vetOnSave": "workspace",
+    "[go]": {
+        "editor.insertSpaces": true,
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "golang.go"
+    },
     // YAML Config
     "[yaml]": {
         "editor.formatOnSave": true
