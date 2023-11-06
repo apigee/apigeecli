@@ -15,6 +15,9 @@
 package env
 
 import (
+	"fmt"
+	"net/url"
+
 	"internal/apiclient"
 
 	"internal/client/env"
@@ -28,21 +31,28 @@ var CreateCmd = &cobra.Command{
 	Short: "Create a new environment",
 	Long:  "Create a new environment",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		_, err = url.Parse(fwdProxyURI)
+		if err != nil {
+			return fmt.Errorf("invalid URI string for fwdProxyURI: %v", err)
+		}
 		apiclient.SetApigeeEnv(environment)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = env.Create(deploymentType)
+		_, err = env.Create(deploymentType, fwdProxyURI)
 		return
 	},
 }
 
-var deploymentType string
+var deploymentType, fwdProxyURI string
 
 func init() {
 	CreateCmd.Flags().StringVarP(&environment, "env", "e",
 		"", "Apigee environment name")
 	CreateCmd.Flags().StringVarP(&deploymentType, "deptype", "d",
 		"", "Deployment type - must be PROXY or ARCHIVE")
+	CreateCmd.Flags().StringVarP(&fwdProxyURI, "fwdproxyuri", "f",
+		"", "URL of the forward proxy to be applied to the runtime instances in this env")
+
 	_ = CreateCmd.MarkFlagRequired("env")
 }

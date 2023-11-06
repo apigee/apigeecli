@@ -26,7 +26,7 @@ import (
 )
 
 // Create
-func Create(deploymentType string) (respBody []byte, err error) {
+func Create(deploymentType string, fwdProxyURI string) (respBody []byte, err error) {
 	environment := []string{}
 	environment = append(environment, "\"name\":\""+apiclient.GetApigeeEnv()+"\"")
 
@@ -35,6 +35,10 @@ func Create(deploymentType string) (respBody []byte, err error) {
 			return nil, fmt.Errorf("deploymentType must be PROXY or ARCHIVE")
 		}
 		environment = append(environment, "\"deployment_type\":\""+deploymentType+"\"")
+	}
+
+	if fwdProxyURI != "" {
+		environment = append(environment, "\"forwardProxyUri\":\""+fwdProxyURI+"\"")
 	}
 
 	payload := "{" + strings.Join(environment, ",") + "}"
