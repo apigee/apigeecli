@@ -38,20 +38,18 @@ var CreateCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = env.Create(deploymentType, apiProxyType, fwdProxyURI)
+		_, err = env.Create(deploymentType, fwdProxyURI)
 		return
 	},
 }
 
-var deploymentType, apiProxyType, fwdProxyURI string
+var deploymentType, fwdProxyURI string
 
 func init() {
 	CreateCmd.Flags().StringVarP(&environment, "env", "e",
 		"", "Apigee environment name")
 	CreateCmd.Flags().StringVarP(&deploymentType, "deptype", "d",
 		"", "Deployment type - must be PROXY or ARCHIVE")
-	CreateCmd.Flags().StringVarP(&apiProxyType, "proxtype", "p",
-		"", "Proxy type - must be PROGRAMMABLE or CONFIGURABLE")
 	CreateCmd.Flags().StringVarP(&fwdProxyURI, "fowdproxyuri", "f",
 		"", "URL of the forward proxy to be applied to the runtime instances in this env")
 	_ = CreateCmd.MarkFlagRequired("env")
