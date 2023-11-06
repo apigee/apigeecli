@@ -16,8 +16,9 @@ package env
 
 import (
 	"fmt"
-	"internal/apiclient"
 	"net/url"
+
+	"internal/apiclient"
 
 	"internal/client/env"
 
@@ -50,7 +51,7 @@ func init() {
 		"", "Apigee environment name")
 	CreateCmd.Flags().StringVarP(&deploymentType, "deptype", "d",
 		"", "Deployment type - must be PROXY or ARCHIVE")
-	CreateCmd.Flags().StringVarP(&fwdProxyURI, "fowdproxyuri", "f",
+	CreateCmd.Flags().StringVarP(&fwdProxyURI, "fwdproxyuri", "f",
 		"", "URL of the forward proxy to be applied to the runtime instances in this env")
 	_ = CreateCmd.MarkFlagRequired("env")
 }
