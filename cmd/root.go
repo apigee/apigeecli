@@ -44,7 +44,6 @@ import (
 	"github.com/apigee/apigeecli/cmd/kvm"
 	"github.com/apigee/apigeecli/cmd/ops"
 	"github.com/apigee/apigeecli/cmd/org"
-	"github.com/apigee/apigeecli/cmd/overrides"
 	"github.com/apigee/apigeecli/cmd/preferences"
 	"github.com/apigee/apigeecli/cmd/products"
 	"github.com/apigee/apigeecli/cmd/projects"
@@ -171,7 +170,6 @@ func init() {
 	RootCmd.AddCommand(instances.Cmd)
 	RootCmd.AddCommand(ops.Cmd)
 	RootCmd.AddCommand(preferences.Cmd)
-	RootCmd.AddCommand(overrides.Cmd)
 	RootCmd.AddCommand(eptattachment.Cmd)
 	RootCmd.AddCommand(appgroups.Cmd)
 }
