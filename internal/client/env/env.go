@@ -26,7 +26,7 @@ import (
 )
 
 // Create
-func Create(deploymentType string, apiProxyType string) (respBody []byte, err error) {
+func Create(deploymentType string, apiProxyType string, fwdProxyURI string) (respBody []byte, err error) {
 	environment := []string{}
 	environment = append(environment, "\"name\":\""+apiclient.GetApigeeEnv()+"\"")
 
@@ -42,6 +42,10 @@ func Create(deploymentType string, apiProxyType string) (respBody []byte, err er
 			return nil, fmt.Errorf("apiProxyType must be CONFIGURABLE or PROGRAMMABLE")
 		}
 		environment = append(environment, "\"apiProxyType\":\""+apiProxyType+"\"")
+	}
+
+	if fwdProxyURI != "" {
+		environment = append(environment, "\"forwardProxyUri\":\""+fwdProxyURI+"\"")
 	}
 
 	payload := "{" + strings.Join(environment, ",") + "}"
