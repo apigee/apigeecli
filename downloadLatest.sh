@@ -88,11 +88,11 @@ download_cli() {
     curl -fsLO -H 'Cache-Control: no-cache, no-store' "$COSIGN_PUBLIC_KEY"
     echo "Downloading the signature file " "$SIG_URL"
     curl -fsLO -H 'Cache-Control: no-cache, no-store' "$SIG_URL"
-    sig_filename="apigeecli_${OSEXT}_${APIGEECLI_ARCH}.zip.sig"
+    sig_filename="apigeecli_${APIGEECLI_VERSION}_${OSEXT}_${APIGEECLI_ARCH}.zip.sig"
     echo "Verifying the signature"
-    cosign verify-blob --key cosign.pub --signature "$sig_filename" "$filename"
-    rm "$sig_filename"
-    rm cosign.pub
+    cosign verify-blob --key "$tmp/cosign.pub" --signature "$tmp/$sig_filename" "$tmp/$filename"
+    rm "$tmp/$sig_filename"
+    rm $tmp/cosign.pub
   else
     echo "cosign is not installed, skipping signature verification"
   fi
