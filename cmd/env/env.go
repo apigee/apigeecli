@@ -43,4 +43,7 @@ func init() {
 	Cmd.AddCommand(DeployCmd)
 	Cmd.AddCommand(TraceConfigCmd)
 	Cmd.AddCommand(ArchiveCmd)
+	Cmd.AddCommand(SecInCmd)
+	Cmd.AddCommand(SecActCmd)
+	Cmd.AddCommand(SecActCfgCmd)
 }

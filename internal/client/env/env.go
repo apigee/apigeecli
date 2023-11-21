@@ -241,3 +241,34 @@ func ClearEnvProperties() (err error) {
 
 	return err
 }
+
+// GetSecurityActionsConfig
+func GetSecurityActionsConfig() (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.BaseURL)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments",
+		apiclient.GetApigeeEnv(), "securityActionsConfig")
+	respBody, err = apiclient.HttpClient(u.String())
+	return respBody, err
+}
+
+// GetSecurityRuntimeConfig
+func GetSecurityRuntimeConfig() (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.BaseURL)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments",
+		apiclient.GetApigeeEnv(), "apiSecurityRuntimeConfig")
+	respBody, err = apiclient.HttpClient(u.String())
+	return respBody, err
+}
+
+// UpdateSecurityActionsConfig
+func UpdateSecurityActionsConfig(action bool) (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.BaseURL)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments",
+		apiclient.GetApigeeEnv(), "apiSecurityRuntimeConfig")
+
+	payload := fmt.Sprintf("{ \"name\": \"organizations/%s/environments/%s/securityActionsConfig\",\"payload\": %t}",
+		apiclient.GetApigeeOrg(), apiclient.GetApigeeEnv(), action)
+
+	respBody, err = apiclient.HttpClient(u.String(), payload, "PATCH")
+	return respBody, err
+}

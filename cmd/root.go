@@ -34,6 +34,7 @@ import (
 	"github.com/apigee/apigeecli/cmd/apps"
 	cache "github.com/apigee/apigeecli/cmd/cache"
 	"github.com/apigee/apigeecli/cmd/datacollectors"
+	"github.com/apigee/apigeecli/cmd/datastores"
 	"github.com/apigee/apigeecli/cmd/developers"
 	"github.com/apigee/apigeecli/cmd/env"
 	"github.com/apigee/apigeecli/cmd/envgroup"
@@ -176,6 +177,7 @@ func init() {
 	RootCmd.AddCommand(appgroups.Cmd)
 	RootCmd.AddCommand(apidocs.Cmd)
 	RootCmd.AddCommand(apicategories.Cmd)
+	RootCmd.AddCommand(datastores.Cmd)
 }
 
 func initConfig() {

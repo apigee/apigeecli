@@ -52,7 +52,6 @@ func createOrUpdate(siteid string, name string, title string, description string
 	anonAllowed string, apiProductName string, requireCallbackUrl string, imageUrl string,
 	categoryIds []string, action Action,
 ) (respBody []byte, err error) {
-
 	u, _ := url.Parse(apiclient.BaseURL)
 
 	apidoc := []string{}
