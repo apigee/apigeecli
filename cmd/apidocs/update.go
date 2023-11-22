@@ -57,7 +57,7 @@ var UpdateCmd = &cobra.Command{
 func init() {
 	UpdateCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Catalog name")
-	UpdateCmd.Flags().StringVarP(&title, "title", "t",
+	UpdateCmd.Flags().StringVarP(&title, "title", "l",
 		"", "The user-facing name of the catalog item")
 	UpdateCmd.Flags().StringVarP(&description, "desc", "d",
 		"", "Description of the catalog item")

@@ -30,13 +30,13 @@ var GetDocCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = apidocs.GetDocumentation(siteid, name)
+		_, err = apidocs.GetDocumentation(siteid, id)
 		return
 	},
 }
 
 func init() {
-	GetDocCmd.Flags().StringVarP(&name, "name", "n",
-		"", "Catalog name")
-	_ = GetDocCmd.MarkFlagRequired("name")
+	GetDocCmd.Flags().StringVarP(&id, "id", "i",
+		"", "Catalog ID")
+	_ = GetDocCmd.MarkFlagRequired("id")
 }

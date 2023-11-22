@@ -30,13 +30,13 @@ var DelCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = apidocs.Delete(siteid, name)
+		_, err = apidocs.Delete(siteid, id)
 		return
 	},
 }
 
 func init() {
-	DelCmd.Flags().StringVarP(&name, "name", "n",
-		"", "Catalog name")
-	_ = DelCmd.MarkFlagRequired("name")
+	DelCmd.Flags().StringVarP(&id, "id", "i",
+		"", "Catalog ID")
+	_ = DelCmd.MarkFlagRequired("id")
 }

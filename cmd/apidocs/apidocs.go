@@ -25,7 +25,7 @@ var Cmd = &cobra.Command{
 	Long:  "Manage Apigee API catalog item through ApiDoc",
 }
 
-var org, siteid, name string
+var org, siteid, id, name string
 
 func init() {
 	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
@@ -37,6 +37,8 @@ func init() {
 	Cmd.AddCommand(GetCmd)
 	Cmd.AddCommand(DelCmd)
 	Cmd.AddCommand(DocCmd)
+	Cmd.AddCommand(CreateCmd)
+	Cmd.AddCommand(UpdateCmd)
 
 	_ = Cmd.MarkFlagRequired("org")
 	_ = Cmd.MarkFlagRequired("siteid")

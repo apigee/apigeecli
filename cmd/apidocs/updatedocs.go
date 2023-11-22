@@ -74,7 +74,7 @@ var openAPIPath, graphQLPath string
 func init() {
 	UpdateDocCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Catalog name")
-	UpdateDocCmd.Flags().StringVarP(&openAPIPath, "openapi", "o",
+	UpdateDocCmd.Flags().StringVarP(&openAPIPath, "openapi", "p",
 		"", "Path to a file containing OpenAPI Specification documentation")
 	UpdateDocCmd.Flags().StringVarP(&graphQLPath, "graphql", "q",
 		"", "Path to a file containing GraphQL documentation")

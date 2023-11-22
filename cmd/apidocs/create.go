@@ -60,7 +60,7 @@ var (
 )
 
 func init() {
-	CreateCmd.Flags().StringVarP(&title, "title", "t",
+	CreateCmd.Flags().StringVarP(&title, "title", "l",
 		"", "The user-facing name of the catalog item")
 	CreateCmd.Flags().StringVarP(&description, "desc", "d",
 		"", "Description of the catalog item")
