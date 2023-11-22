@@ -1,4 +1,4 @@
-// Copyright 2020 Google LLC
+// Copyright 2023 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,29 +16,38 @@ package env
 
 import (
 	"internal/apiclient"
+	"internal/client/env"
 
-	environments "internal/client/env"
-
+	"github.com/apigee/apigeecli/cmd/utils"
 	"github.com/spf13/cobra"
 )
 
-// EnableSecActCmd to manage tracing of apis
-var EnableSecActCmd = &cobra.Command{
-	Use:   "enable",
-	Short: "Enable a SecurityAction",
-	Long:  "Enable a SecurityAction",
+// CreateSecActCmd to get a securityaction
+var CreateSecActCmd = &cobra.Command{
+	Use:   "create",
+	Short: "Create a new SecurityAction",
+	Long:  "Create a new SecurityAction",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetApigeeEnv(environment)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = environments.EnableSecurityAction(name)
+		content, err := utils.ReadFile(securityActionFile)
+		if err != nil {
+			return err
+		}
+		_, err = env.CreateSecurityAction(name, content)
 		return
 	},
 }
 
+var securityActionFile string
+
 func init() {
-	EnableSecActCmd.Flags().StringVarP(&name, "name", "n",
+	CreateSecActCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Security Action name")
-	_ = EnableSecActCmd.MarkFlagRequired("name")
+	CreateSecActCmd.Flags().StringVarP(&securityActionFile, "file", "f",
+		"", "Path to a file containing Security Action content")
+	_ = CreateSecActCmd.MarkFlagRequired("name")
+	_ = CreateSecActCmd.MarkFlagRequired("file")
 }

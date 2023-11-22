@@ -39,6 +39,6 @@ var DisableSecActCmd = &cobra.Command{
 
 func init() {
 	DisableSecActCmd.Flags().StringVarP(&name, "name", "n",
-		"", "Catalog name")
+		"", "Security Action name")
 	_ = DisableSecActCmd.MarkFlagRequired("name")
 }

@@ -38,6 +38,6 @@ var GetSecActCmd = &cobra.Command{
 
 func init() {
 	GetSecActCmd.Flags().StringVarP(&name, "name", "n",
-		"", "Catalog name")
+		"", "Security Action name")
 	_ = GetSecActCmd.MarkFlagRequired("name")
 }

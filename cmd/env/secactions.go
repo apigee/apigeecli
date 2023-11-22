@@ -35,4 +35,5 @@ func init() {
 	SecActCmd.AddCommand(GetSecActCmd)
 	SecActCmd.AddCommand(EnableSecActCmd)
 	SecActCmd.AddCommand(DisableSecActCmd)
+	SecActCmd.AddCommand(CreateSecActCmd)
 }
