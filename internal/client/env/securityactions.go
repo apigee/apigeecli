@@ -15,12 +15,58 @@
 package env
 
 import (
+	"encoding/json"
 	"net/url"
 	"path"
 	"strconv"
 
 	"internal/apiclient"
 )
+
+type securityAction struct {
+	Name            string          `json:"name,omitempty"`
+	Description     string          `json:"description,omitempty"`
+	State           string          `json:"state,omitempty"`
+	CreateTime      string          `json:"createTime,omitempty"`
+	UpdateTime      string          `json:"updateTime,omitempty"`
+	ConditionConfig conditionConfig `json:"conditionConfig,omitempty"`
+	Allow           responseCode    `json:"allow,omitempty"`
+	Deny            responseCode    `json:"deny,omitempty"`
+	Flag            flag            `json:"flag,omitempty"`
+	ExpireTime      string          `json:"expireTime,omitempty"`
+	Ttl             string          `json:"ttl,omitempty"`
+}
+
+type conditionConfig struct {
+	IpAddressRanges []string `json:"ipAddressRanges,omitempty"`
+	BotReasons      []string `json:"botReasons,omitempty"`
+}
+
+type responseCode struct {
+	ResponseCode int `json:"responseCode,omitempty"`
+}
+
+type flag struct {
+	Headers []header `json:"headers,omitempty"`
+}
+
+type header struct {
+	Name  string `json:"name,omitempty"`
+	Value string `json:"value,omitempty"`
+}
+
+// CreateSecurityAction
+func CreateSecurityAction(name string, content []byte) (respBody []byte, err error) {
+	sa := securityAction{}
+	if err = json.Unmarshal(content, &sa); err != nil {
+		return nil, err
+	}
+	u, _ := url.Parse(apiclient.BaseURL)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments",
+		apiclient.GetApigeeEnv(), "securityActions")
+	respBody, err = apiclient.HttpClient(u.String(), string(content))
+	return respBody, err
+}
 
 // DisableSecurityAction
 func DisableSecurityAction(name string) (respBody []byte, err error) {
