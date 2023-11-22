@@ -25,19 +25,19 @@ import (
 // GetCmd to get a catalog items
 var GetCmd = &cobra.Command{
 	Use:   "get",
-	Short: "Gets a catalog item",
-	Long:  "Gets a catalog item",
+	Short: "Gets an API Category by ID",
+	Long:  "Gets an API Category by ID",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = apicategories.Get(siteid, name)
+		_, err = apicategories.Get(siteid, id)
 		return
 	},
 }
 
 func init() {
-	GetCmd.Flags().StringVarP(&name, "name", "n",
-		"", "Catalog name")
-	_ = GetCmd.MarkFlagRequired("name")
+	GetCmd.Flags().StringVarP(&id, "id", "i",
+		"", "API Category ID")
+	_ = GetCmd.MarkFlagRequired("id")
 }

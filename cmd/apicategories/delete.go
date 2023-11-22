@@ -24,19 +24,19 @@ import (
 // DelCmd to get a catalog items
 var DelCmd = &cobra.Command{
 	Use:   "delete",
-	Short: "Deletes a catalog item",
-	Long:  "Deletes a catalog item",
+	Short: "Deletes an API Category by ID",
+	Long:  "Deletes an API Category by ID",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = apicategories.Delete(siteid, name)
+		_, err = apicategories.Delete(siteid, id)
 		return
 	},
 }
 
 func init() {
-	DelCmd.Flags().StringVarP(&name, "name", "n",
-		"", "Catalog name")
-	_ = DelCmd.MarkFlagRequired("name")
+	DelCmd.Flags().StringVarP(&id, "id", "i",
+		"", "API Category ID")
+	_ = DelCmd.MarkFlagRequired("id")
 }

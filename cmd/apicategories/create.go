@@ -36,8 +36,10 @@ var CreateCmd = &cobra.Command{
 	},
 }
 
+var name string
+
 func init() {
 	CreateCmd.Flags().StringVarP(&name, "name", "n",
-		"", "Catalog name")
+		"", "API Category name")
 	_ = CreateCmd.MarkFlagRequired("name")
 }

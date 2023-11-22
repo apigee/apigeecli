@@ -25,7 +25,7 @@ var Cmd = &cobra.Command{
 	Long:  "Manage Apigee API categories that are tagged on catalog items",
 }
 
-var org, siteid, name string
+var org, siteid, id string
 
 func init() {
 	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
@@ -36,6 +36,7 @@ func init() {
 	Cmd.AddCommand(ListCmd)
 	Cmd.AddCommand(GetCmd)
 	Cmd.AddCommand(DelCmd)
+	Cmd.AddCommand(CreateCmd)
 
 	_ = Cmd.MarkFlagRequired("org")
 	_ = Cmd.MarkFlagRequired("siteid")
