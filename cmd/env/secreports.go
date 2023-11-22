@@ -18,19 +18,19 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// SecInCmd to manage security incidents
-var SecInCmd = &cobra.Command{
-	Use:   "secincidents",
-	Short: "View SecurityIncidents from Apigee Advanced Security",
-	Long:  "View SecurityIncidents from Apigee Advanced Security",
+// SecReportCmd to manage security reports
+var SecReportCmd = &cobra.Command{
+	Use:   "secreports",
+	Short: "Manage SecurityReports for Apigee Advanced Security",
+	Long:  "View SecurityReports for Apigee Advanced Security",
 }
 
 func init() {
-	SecInCmd.PersistentFlags().StringVarP(&environment, "env", "e",
+	SecReportCmd.PersistentFlags().StringVarP(&environment, "env", "e",
 		"", "Apigee environment name")
 
-	_ = SecInCmd.MarkPersistentFlagRequired("env")
+	_ = SecReportCmd.MarkPersistentFlagRequired("env")
 
-	SecInCmd.AddCommand(ListSecInCmd)
-	SecInCmd.AddCommand(GetSecInCmd)
+	//SecReportCmd.AddCommand(ListSecReportCmd)
+	//SecReportCmd.AddCommand(GetSecReportCmd)
 }

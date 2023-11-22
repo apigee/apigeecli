@@ -15,22 +15,29 @@
 package env
 
 import (
+	"internal/apiclient"
+	"internal/client/env"
+
 	"github.com/spf13/cobra"
 )
 
-// SecInCmd to manage security incidents
-var SecInCmd = &cobra.Command{
-	Use:   "secincidents",
-	Short: "View SecurityIncidents from Apigee Advanced Security",
-	Long:  "View SecurityIncidents from Apigee Advanced Security",
+// GetSecInCmd
+var GetSecInCmd = &cobra.Command{
+	Use:   "get",
+	Short: "Returns a security incidents by name",
+	Long:  "Returns a security incidents by name",
+	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetApigeeEnv(environment)
+		return apiclient.SetApigeeOrg(org)
+	},
+	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		_, err = env.GetSecurityIncident(name)
+		return
+	},
 }
 
 func init() {
-	SecInCmd.PersistentFlags().StringVarP(&environment, "env", "e",
-		"", "Apigee environment name")
-
-	_ = SecInCmd.MarkPersistentFlagRequired("env")
-
-	SecInCmd.AddCommand(ListSecInCmd)
-	SecInCmd.AddCommand(GetSecInCmd)
+	GetSecInCmd.Flags().StringVarP(&name, "name", "n",
+		"", "Name of the security incident")
+	_ = GetSecInCmd.MarkFlagRequired("name")
 }
