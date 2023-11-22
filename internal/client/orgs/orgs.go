@@ -44,23 +44,28 @@ type orgProperties struct {
 }
 
 type organization struct {
-	Name                     string        `json:"name,omitempty"`
-	DisplayName              string        `json:"displayName,omitempty"`
-	Description              string        `json:"description,omitempty"`
-	CreatedAt                string        `json:"createdAt,omitempty"`
-	LastModifiedAt           string        `json:"lastModifiedAt,omitempty"`
-	Environments             []string      `json:"environments,omitempty"`
-	Properties               orgProperties `json:"properties,omitempty"`
-	AnalyticsRegion          string        `json:"analyticsRegion,omitempty"`
-	AuthorizedNetwork        string        `json:"authorizedNetwork,omitempty"`
-	RuntimeType              string        `json:"runtimeType,omitempty"`
-	SubscriptionType         string        `json:"subscriptionType,omitempty"`
-	CaCertificate            string        `json:"caCertificate,omitempty"`
-	RuntimeEncryptionKeyName string        `json:"runtimeDatabaseEncryptionKeyName,omitempty"`
-	ProjectId                string        `json:"projectId,omitempty"`
-	State                    string        `json:"state,omitempty"`
-	BillingType              string        `json:"billingType,omitempty"`
-	AddOnsConfig             addonsConfig  `json:"addonsConfig,omitempty"`
+	Name                             string        `json:"name,omitempty"`
+	DisplayName                      string        `json:"displayName,omitempty"`
+	Description                      string        `json:"description,omitempty"`
+	CreatedAt                        string        `json:"createdAt,omitempty"`
+	LastModifiedAt                   string        `json:"lastModifiedAt,omitempty"`
+	Environments                     []string      `json:"environments,omitempty"`
+	Properties                       orgProperties `json:"properties,omitempty"`
+	AnalyticsRegion                  string        `json:"analyticsRegion,omitempty"`
+	AuthorizedNetwork                string        `json:"authorizedNetwork,omitempty"`
+	RuntimeType                      string        `json:"runtimeType,omitempty"`
+	SubscriptionType                 string        `json:"subscriptionType,omitempty"`
+	CaCertificate                    string        `json:"caCertificate,omitempty"`
+	RuntimeEncryptionKeyName         string        `json:"runtimeDatabaseEncryptionKeyName,omitempty"`
+	ProjectId                        string        `json:"projectId,omitempty"`
+	State                            string        `json:"state,omitempty"`
+	BillingType                      string        `json:"billingType,omitempty"`
+	AddOnsConfig                     addonsConfig  `json:"addonsConfig,omitempty"`
+	ApiConsumerDataEncryptionKeyName string        `json:"apiConsumerDataEncryptionKeyName,omitempty"`
+	ControlPlaneEncryptionKeyName    string        `json:"controlPlaneEncryptionKeyName,omitempty"`
+	ApiConsumerDataLocation          string        `json:"apiConsumerDataLocation,omitempty"`
+	ApigeeProjectId                  string        `json:"apigeeProjectId,omitempty"`
+	DisableVpcPeering                bool          `json:"disableVpcPeering,omitempty"`
 }
 
 type addonsConfig struct {
@@ -85,11 +90,15 @@ func validRegion(region string) bool {
 }
 
 // Create
-func Create(region string, network string, runtimeType string, databaseKey string, billingType string, disablePortal bool) (respBody []byte, err error) {
+func Create(description string, analyticsRegion string, authorizedNetwork string,
+	disableVpcPeering bool, runtimeType string, billingType string, runtimeDatabaseEncryptionKeyName string,
+	portalDisabled bool, apiConsumerDataEncryptionKeyName string, controlPlaneEncryptionKeyName string,
+	apiConsumerDataLocation string) (respBody []byte, err error) {
+
 	const baseURL = "https://apigee.googleapis.com/v1/organizations"
 	stageBaseURL := "https://staging-apigee.sandbox.googleapis.com/v1/organizations/"
 
-	if !validRegion(region) {
+	if !validRegion(analyticsRegion) {
 		return respBody, fmt.Errorf("invalid analytics region."+
 			" Analytics region must be one of : %v", analyticsRegions)
 	}
@@ -108,14 +117,38 @@ func Create(region string, network string, runtimeType string, databaseKey strin
 
 	orgPayload := []string{}
 	orgPayload = append(orgPayload, "\"name\":\""+apiclient.GetApigeeOrg()+"\"")
-	orgPayload = append(orgPayload, "\"analyticsRegion\":\""+region+"\"")
+	orgPayload = append(orgPayload, "\"analyticsRegion\":\""+analyticsRegion+"\"")
 	orgPayload = append(orgPayload, "\"runtimeType\":\""+runtimeType+"\"")
-	if disablePortal {
+	if description != "" {
+		orgPayload = append(orgPayload, "\"description\":\""+description+"\"")
+	}
+	if portalDisabled {
 		orgPayload = append(orgPayload, "\"portalDisabled\": true")
 	}
+
 	if runtimeType == "CLOUD" {
-		orgPayload = append(orgPayload, "\"authorizedNetwork\":\""+network+"\"")
-		orgPayload = append(orgPayload, "\"runtimeDatabaseEncryptionKeyName\":\""+databaseKey+"\"")
+		if disableVpcPeering {
+			orgPayload = append(orgPayload, "\"disableVpcPeering\": true")
+		} else if !disableVpcPeering && authorizedNetwork == "" {
+			return nil, fmt.Errorf("authorizedNetwork must be passed when VPC Peering is disabled")
+		} else {
+			orgPayload = append(orgPayload, "\"disableVpcPeering\": false")
+			orgPayload = append(orgPayload, "\"authorizedNetwork\":\""+authorizedNetwork+"\"")
+		}
+		orgPayload = append(orgPayload, "\"runtimeDatabaseEncryptionKeyName\":\""+
+			runtimeDatabaseEncryptionKeyName+"\"")
+		if apiConsumerDataEncryptionKeyName != "" {
+			orgPayload = append(orgPayload, "\"apiConsumerDataEncryptionKeyName\":\""+
+				apiConsumerDataEncryptionKeyName+"\"")
+		}
+		if controlPlaneEncryptionKeyName != "" {
+			orgPayload = append(orgPayload, "\"controlPlaneEncryptionKeyName\":\""+
+				controlPlaneEncryptionKeyName+"\"")
+		}
+		if apiConsumerDataLocation != "" {
+			orgPayload = append(orgPayload, "\"apiConsumerDataLocation\":\""+
+				apiConsumerDataLocation+"\"")
+		}
 	}
 
 	if billingType != "" {
@@ -125,6 +158,7 @@ func Create(region string, network string, runtimeType string, databaseKey strin
 	payload := "{" + strings.Join(orgPayload, ",") + "}"
 	respBody, err = apiclient.HttpClient(u.String(), payload)
 	return respBody, err
+
 }
 
 // Get
@@ -273,7 +307,8 @@ func SetOrgProperty(name string, value string) (err error) {
 }
 
 // Update
-func Update(description string, displayName string, region string, network string, runtimeType string, databaseKey string) (respBody []byte, err error) {
+func Update(description string, authorizedNetwork string) (respBody []byte, err error) {
+
 	apiclient.ClientPrintHttpResponse.Set(false)
 	orgBody, err := Get()
 	if err != nil {
@@ -291,24 +326,8 @@ func Update(description string, displayName string, region string, network strin
 		org.Description = description
 	}
 
-	if displayName != "" {
-		org.DisplayName = displayName
-	}
-
-	if region != "" {
-		org.AnalyticsRegion = region
-	}
-
-	if network != "" {
-		org.AuthorizedNetwork = network
-	}
-
-	if runtimeType != "" {
-		org.RuntimeType = runtimeType
-	}
-
-	if databaseKey != "" {
-		org.RuntimeEncryptionKeyName = databaseKey
+	if authorizedNetwork != "" {
+		org.AuthorizedNetwork = authorizedNetwork
 	}
 
 	newOrgBody, err := json.Marshal(org)

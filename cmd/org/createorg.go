@@ -44,47 +44,54 @@ var CreateCmd = &cobra.Command{
 		if billingType != SUBSCRIPTION && billingType != EVALUATION {
 			return fmt.Errorf("billing type must be %s or %s", SUBSCRIPTION, EVALUATION)
 		}
-
-		if runtimeType == CLOUD {
-			if network == "" {
-				return fmt.Errorf("authorized network must be supplied")
-			}
-			if databaseKey == "" {
-				return fmt.Errorf("runtime database encryption key must be supplied")
-			}
-		}
 		apiclient.SetProjectID(projectID)
 		return apiclient.SetApigeeOrg(projectID)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = orgs.Create(region, network, runtimeType, databaseKey, billingType, disablePortal)
+		_, err = orgs.Create(description, analyticsRegion, authorizedNetwork,
+			disableVpcPeering, runtimeType, billingType, runtimeDatabaseEncryptionKeyName,
+			portalDisabled, apiConsumerDataEncryptionKeyName, controlPlaneEncryptionKeyName,
+			apiConsumerDataLocation)
 		return
 	},
 }
 
 var (
-	region, projectID, network, runtimeType, description, databaseKey, billingType string
-	disablePortal                                                                  bool
+	analyticsRegion, projectID, authorizedNetwork, runtimeType                               string
+	description, runtimeDatabaseEncryptionKeyName, billingType                               string
+	apiConsumerDataEncryptionKeyName, controlPlaneEncryptionKeyName, apiConsumerDataLocation string
+	disableVpcPeering, portalDisabled                                                        bool
 )
 
 func init() {
-	CreateCmd.Flags().StringVarP(&region, "reg", "r",
-		"", "Analytics region name")
-	CreateCmd.Flags().StringVarP(&projectID, "prj", "p",
-		"", "GCP Project ID")
 	CreateCmd.Flags().StringVarP(&description, "desc", "d",
 		"", "Apigee org description")
-	CreateCmd.Flags().StringVarP(&network, "net", "n",
-		"default", "Authorized network; if using a shared VPC format is "+
-			"projects/{host-project-id}/{location}/networks/{network-name}")
-	CreateCmd.Flags().StringVarP(&databaseKey, "key", "k",
-		"", "Runtime Database Encryption Key")
+	CreateCmd.Flags().StringVarP(&analyticsRegion, "reg", "r",
+		"", "Analytics region name")
+	CreateCmd.Flags().BoolVarP(&disableVpcPeering, "disable-vpc-peering", "",
+		true, "Disable VPC Peering; default true")
 	CreateCmd.Flags().StringVarP(&runtimeType, "runtime-type", "",
 		HYBRID, "Runtime type: CLOUD or HYBRID")
 	CreateCmd.Flags().StringVarP(&runtimeType, "billing-type", "",
 		"", "Billing type: SUBSCRIPTION or EVALUATION")
-	CreateCmd.Flags().BoolVarP(&disablePortal, "disable-portal", "",
-		false, "Disable creation of Developer Portals")
+	CreateCmd.Flags().StringVarP(&runtimeDatabaseEncryptionKeyName, "runtime-key", "",
+		"", "Runtime Database Encryption Key")
+	CreateCmd.Flags().StringVarP(&apiConsumerDataEncryptionKeyName, "consumer-key", "",
+		"", "API Consumer Data Encryption Key")
+	CreateCmd.Flags().StringVarP(&controlPlaneEncryptionKeyName, "controlplane-key", "",
+		"", "Apigee Controlplane Encryption Key")
+	CreateCmd.Flags().StringVarP(&apiConsumerDataLocation, "key", "k",
+		"", "API Consumer data location")
+
+	CreateCmd.Flags().StringVarP(&projectID, "prj", "p",
+		"", "GCP Project ID")
+
+	CreateCmd.Flags().StringVarP(&authorizedNetwork, "net", "n",
+		"default", "Authorized network; if using a shared VPC format is "+
+			"projects/{host-project-id}/{location}/networks/{network-name}")
+
+	CreateCmd.Flags().BoolVarP(&portalDisabled, "disable-portal", "",
+		false, "Disable creation of Developer Portals; default false")
 
 	_ = CreateCmd.MarkFlagRequired("prj")
 	_ = CreateCmd.MarkFlagRequired("reg")
