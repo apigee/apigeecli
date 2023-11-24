@@ -21,7 +21,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// GetSecInCmd
+// GetSecInCmd returns security incidents
 var GetSecInCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Returns a security incidents by name",
