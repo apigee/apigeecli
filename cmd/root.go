@@ -52,6 +52,7 @@ import (
 	"github.com/apigee/apigeecli/cmd/projects"
 	"github.com/apigee/apigeecli/cmd/references"
 	res "github.com/apigee/apigeecli/cmd/res"
+	"github.com/apigee/apigeecli/cmd/securityprofiles"
 	"github.com/apigee/apigeecli/cmd/sharedflows"
 	"github.com/apigee/apigeecli/cmd/sync"
 	targetservers "github.com/apigee/apigeecli/cmd/targetservers"
@@ -178,6 +179,7 @@ func init() {
 	RootCmd.AddCommand(apidocs.Cmd)
 	RootCmd.AddCommand(apicategories.Cmd)
 	RootCmd.AddCommand(datastores.Cmd)
+	RootCmd.AddCommand(securityprofiles.Cmd)
 }
 
 func initConfig() {
