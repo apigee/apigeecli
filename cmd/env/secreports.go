@@ -31,6 +31,6 @@ func init() {
 
 	_ = SecReportCmd.MarkPersistentFlagRequired("env")
 
-	//SecReportCmd.AddCommand(ListSecReportCmd)
-	//SecReportCmd.AddCommand(GetSecReportCmd)
+	SecReportCmd.AddCommand(ListSecReportCmd)
+	SecReportCmd.AddCommand(GetSecReportCmd)
 }
