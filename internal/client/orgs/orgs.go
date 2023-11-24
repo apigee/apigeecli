@@ -93,8 +93,8 @@ func validRegion(region string) bool {
 func Create(description string, analyticsRegion string, authorizedNetwork string,
 	disableVpcPeering bool, runtimeType string, billingType string, runtimeDatabaseEncryptionKeyName string,
 	portalDisabled bool, apiConsumerDataEncryptionKeyName string, controlPlaneEncryptionKeyName string,
-	apiConsumerDataLocation string) (respBody []byte, err error) {
-
+	apiConsumerDataLocation string,
+) (respBody []byte, err error) {
 	const baseURL = "https://apigee.googleapis.com/v1/organizations"
 	stageBaseURL := "https://staging-apigee.sandbox.googleapis.com/v1/organizations/"
 
@@ -158,7 +158,6 @@ func Create(description string, analyticsRegion string, authorizedNetwork string
 	payload := "{" + strings.Join(orgPayload, ",") + "}"
 	respBody, err = apiclient.HttpClient(u.String(), payload)
 	return respBody, err
-
 }
 
 // Get
@@ -308,7 +307,6 @@ func SetOrgProperty(name string, value string) (err error) {
 
 // Update
 func Update(description string, authorizedNetwork string) (respBody []byte, err error) {
-
 	apiclient.ClientPrintHttpResponse.Set(false)
 	orgBody, err := Get()
 	if err != nil {
