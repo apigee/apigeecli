@@ -51,7 +51,8 @@ func GetSecurityReport(reportID string) (respBody []byte, err error) {
 
 // ListSecurityReports
 func ListSecurityReports(pageSize int, pageToken string, dataset string, to string,
-	from string, status string, submittedBy string) (respBody []byte, err error) {
+	from string, status string, submittedBy string,
+) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments",
 		apiclient.GetApigeeEnv(), "securityReports")
