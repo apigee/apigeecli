@@ -35,8 +35,10 @@ var ListCmd = &cobra.Command{
 	},
 }
 
-var pageSize int
-var pageToken string
+var (
+	pageSize  int
+	pageToken string
+)
 
 func init() {
 	ListCmd.Flags().IntVarP(&pageSize, "pageSize", "",
