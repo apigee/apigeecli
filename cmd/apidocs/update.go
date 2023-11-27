@@ -48,15 +48,15 @@ var UpdateCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = apidocs.Update(siteid, name, title, description, published,
+		_, err = apidocs.Update(siteid, id, title, description, published,
 			anonAllowed, apiProductName, requireCallbackUrl, imageUrl, categoryIds)
 		return
 	},
 }
 
 func init() {
-	UpdateCmd.Flags().StringVarP(&name, "name", "n",
-		"", "Catalog name")
+	UpdateCmd.Flags().StringVarP(&name, "id", "i",
+		"", "Catalog UUID")
 	UpdateCmd.Flags().StringVarP(&title, "title", "l",
 		"", "The user-facing name of the catalog item")
 	UpdateCmd.Flags().StringVarP(&description, "desc", "d",
@@ -75,7 +75,7 @@ func init() {
 	UpdateCmd.Flags().StringArrayVarP(&categoryIds, "category-ids", "",
 		nil, "The IDs of the API categories to which this catalog item belongs")
 
-	_ = UpdateCmd.MarkFlagRequired("name")
+	_ = UpdateCmd.MarkFlagRequired("id")
 	_ = UpdateCmd.MarkFlagRequired("title")
 	_ = UpdateCmd.MarkFlagRequired("apiProductName")
 }

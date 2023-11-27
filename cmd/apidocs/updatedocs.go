@@ -64,7 +64,7 @@ var UpdateDocCmd = &cobra.Command{
 			graphQL = string(graphQLDoc)
 		}
 
-		_, err = apidocs.UpdateDocumentation(siteid, name, openAPI, graphQL)
+		_, err = apidocs.UpdateDocumentation(siteid, id, name, openAPI, graphQL)
 		return
 	},
 }
@@ -72,12 +72,14 @@ var UpdateDocCmd = &cobra.Command{
 var openAPIPath, graphQLPath string
 
 func init() {
+	UpdateDocCmd.Flags().StringVarP(&id, "id", "i",
+		"", "Catalog UUID")
 	UpdateDocCmd.Flags().StringVarP(&name, "name", "n",
-		"", "Catalog name")
+		"", "Display Name")
 	UpdateDocCmd.Flags().StringVarP(&openAPIPath, "openapi", "p",
 		"", "Path to a file containing OpenAPI Specification documentation")
 	UpdateDocCmd.Flags().StringVarP(&graphQLPath, "graphql", "q",
 		"", "Path to a file containing GraphQL documentation")
 
-	_ = UpdateDocCmd.MarkFlagRequired("name")
+	_ = UpdateDocCmd.MarkFlagRequired("id")
 }
