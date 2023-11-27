@@ -15,6 +15,7 @@
 package securityprofiles
 
 import (
+	"encoding/json"
 	"net/url"
 	"path"
 	"strconv"
@@ -23,8 +24,39 @@ import (
 	"internal/apiclient"
 )
 
+type secprofile struct {
+	Name          string        `json:"name"`
+	DisplayName   string        `json:"displayName"`
+	Description   string        `json:"description,omitempty"`
+	ProfileConfig profileConfig `json:"profileConfig"`
+	ScoreConfigs  []scoreConfig `json:"scoreConfigs,omitempty"`
+}
+
+type profileConfig struct {
+	Categories []category `json:"categories"`
+}
+
+type scoreConfig struct {
+	Title       string `json:"title,omitempty"`
+	Description string `json:"description,omitempty"`
+	ScorePath   string `json:"scorePath,omitempty"`
+}
+
+type category struct {
+	Abuse         interface{} `json:"abuse,omitempty"`
+	Mediation     interface{} `json:"mediation,omitempty"`
+	Authorization interface{} `json:"authorization,omitempty"`
+	Threat        interface{} `json:"threat,omitempty"`
+	Mtls          interface{} `json:"mtls,omitempty"`
+	Cors          interface{} `json:"cors,omitempty"`
+}
+
 // Create
 func Create(name string, content []byte) (respBody []byte, err error) {
+	sc := secprofile{}
+	if err = json.Unmarshal(content, &sc); err != nil {
+		return nil, err
+	}
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "securityProfiles")
 	q := u.Query()
