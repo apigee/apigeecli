@@ -15,7 +15,6 @@
 package apidocs
 
 import (
-	"encoding/json"
 	"net/url"
 	"path"
 	"strings"
@@ -40,15 +39,15 @@ func Create(siteid string, title string, description string, published string,
 }
 
 // Update
-func Update(siteid string, name string, title string, description string, published string,
+func Update(siteid string, id string, title string, description string, published string,
 	anonAllowed string, apiProductName string, requireCallbackUrl string, imageUrl string,
 	categoryIds []string,
 ) (respBody []byte, err error) {
-	return createOrUpdate(siteid, name, title, description, published, anonAllowed,
+	return createOrUpdate(siteid, id, title, description, published, anonAllowed,
 		apiProductName, requireCallbackUrl, imageUrl, categoryIds, UPDATE)
 }
 
-func createOrUpdate(siteid string, name string, title string, description string, published string,
+func createOrUpdate(siteid string, id string, title string, description string, published string,
 	anonAllowed string, apiProductName string, requireCallbackUrl string, imageUrl string,
 	categoryIds []string, action Action,
 ) (respBody []byte, err error) {
@@ -81,12 +80,7 @@ func createOrUpdate(siteid string, name string, title string, description string
 	}
 
 	if len(categoryIds) > 0 {
-		c, err := json.Marshal(categoryIds)
-		if err != nil {
-			return nil, err
-		}
-		categories := string(c)
-		apidoc = append(apidoc, "\"categoryIds\":"+categories)
+		apidoc = append(apidoc, "\"categoryIds\":[\""+getArrayStr(categoryIds)+"\"]")
 	}
 
 	payload := "{" + strings.Join(apidoc, ",") + "}"
@@ -95,7 +89,7 @@ func createOrUpdate(siteid string, name string, title string, description string
 		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sites", siteid, "apidocs")
 		respBody, err = apiclient.HttpClient(u.String(), payload)
 	} else {
-		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sites", siteid, "apidocs", name)
+		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sites", siteid, "apidocs", id)
 		respBody, err = apiclient.HttpClient(u.String(), payload, "PUT")
 	}
 
@@ -103,17 +97,17 @@ func createOrUpdate(siteid string, name string, title string, description string
 }
 
 // GetDocumentation
-func GetDocumentation(siteid string, name string) (respBody []byte, err error) {
+func GetDocumentation(siteid string, id string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
-	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sites", siteid, "apidocs", name, "documentation")
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sites", siteid, "apidocs", id, "documentation")
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
 // Get
-func Get(siteid string, name string) (respBody []byte, err error) {
+func Get(siteid string, id string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
-	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sites", siteid, "apidocs", name)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sites", siteid, "apidocs", id)
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
@@ -127,28 +121,36 @@ func List(siteid string) (respBody []byte, err error) {
 }
 
 // Delete
-func Delete(siteid string, name string) (respBody []byte, err error) {
+func Delete(siteid string, id string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
-	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sites", siteid, "apidocs", name)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sites", siteid, "apidocs", id)
 	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
 	return respBody, err
 }
 
 // UpdateDocumentation
-func UpdateDocumentation(siteid string, name string, openAPIDoc string, graphQLDoc string) (respBody []byte, err error) {
+func UpdateDocumentation(siteid string, id string, displayName string, openAPIDoc string, graphQLDoc string) (respBody []byte, err error) {
 	var payload string
 
 	if openAPIDoc != "" {
-		payload = "{\"oasDocumentation\":\"spec\":{" + openAPIDoc + "}}"
+		payload = "{\"oasDocumentation\":\"spec\":{" + "\"displayName\":" +
+			displayName + "," + "\"contents\":" + openAPIDoc + "}}"
 	}
 
 	if graphQLDoc != "" {
-		payload = "{\"graphqlDocumentation\":\"spec\":{" + openAPIDoc + "}}"
+		payload = "{\"graphqlDocumentation\":\"spec\":{" + "\"displayName\":" +
+			displayName + "," + "\"contents\":" + openAPIDoc + "}}"
 	}
 
 	u, _ := url.Parse(apiclient.BaseURL)
-	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sites", siteid, "apidocs", name, "documentation")
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sites", siteid, "apidocs", id, "documentation")
 	respBody, err = apiclient.HttpClient(u.String(), payload, "PATCH")
 
 	return nil, nil
+}
+
+func getArrayStr(str []string) string {
+	tmp := strings.Join(str, ",")
+	tmp = strings.ReplaceAll(tmp, ",", "\",\"")
+	return tmp
 }
