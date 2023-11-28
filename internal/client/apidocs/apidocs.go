@@ -129,17 +129,18 @@ func Delete(siteid string, id string) (respBody []byte, err error) {
 }
 
 // UpdateDocumentation
-func UpdateDocumentation(siteid string, id string, displayName string, openAPIDoc string, graphQLDoc string) (respBody []byte, err error) {
+func UpdateDocumentation(siteid string, id string, displayName string, openAPIDoc string, graphQLDoc string, endpointUri string) (respBody []byte, err error) {
 	var payload string
 
 	if openAPIDoc != "" {
-		payload = "{\"oasDocumentation\":\"spec\":{" + "\"displayName\":" +
-			displayName + "," + "\"contents\":" + openAPIDoc + "}}"
+		payload = "{\"oasDocumentation\":{\"spec\":{\"displayName\":\"" +
+			displayName + "\",\"contents\":" + openAPIDoc + "}}}"
 	}
 
 	if graphQLDoc != "" {
-		payload = "{\"graphqlDocumentation\":\"spec\":{" + "\"displayName\":" +
-			displayName + "," + "\"contents\":" + openAPIDoc + "}}"
+		payload = "{\"graphqlDocumentation\":{\"endpointUri\":\"" + endpointUri +
+			"\",\"schema\":{\"displayName\":\"" + displayName + 
+			"\",\"contents\":" + graphQLDoc + "}}}"
 	}
 
 	u, _ := url.Parse(apiclient.BaseURL)

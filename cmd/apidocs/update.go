@@ -55,7 +55,7 @@ var UpdateCmd = &cobra.Command{
 }
 
 func init() {
-	UpdateCmd.Flags().StringVarP(&name, "id", "i",
+	UpdateCmd.Flags().StringVarP(&id, "id", "i",
 		"", "Catalog UUID")
 	UpdateCmd.Flags().StringVarP(&title, "title", "l",
 		"", "The user-facing name of the catalog item")

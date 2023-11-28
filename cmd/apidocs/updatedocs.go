@@ -37,6 +37,9 @@ var UpdateDocCmd = &cobra.Command{
 		if openAPIPath != "" && graphQLPath != "" {
 			return fmt.Errorf("The flags openapi and grapql cannot both be set")
 		}
+		if graphQLPath != "" && endpointUri == "" {
+			return fmt.Errorf("The flags graphQLPath and endpointUri must be set together")
+		}
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
@@ -64,12 +67,13 @@ var UpdateDocCmd = &cobra.Command{
 			graphQL = string(graphQLDoc)
 		}
 
-		_, err = apidocs.UpdateDocumentation(siteid, id, name, openAPI, graphQL)
+		_, err = apidocs.UpdateDocumentation(siteid, id, name, openAPI, graphQL, endpointUri)
 		return
 	},
 }
 
 var openAPIPath, graphQLPath string
+var endpointUri string
 
 func init() {
 	UpdateDocCmd.Flags().StringVarP(&id, "id", "i",
@@ -80,6 +84,9 @@ func init() {
 		"", "Path to a file containing OpenAPI Specification documentation")
 	UpdateDocCmd.Flags().StringVarP(&graphQLPath, "graphql", "q",
 		"", "Path to a file containing GraphQL documentation")
+	UpdateDocCmd.Flags().StringVarP(&endpointUri, "endpointUri", "e",
+		"", "URI for the GraphQL proxy")
 
 	_ = UpdateDocCmd.MarkFlagRequired("id")
+	_ = UpdateDocCmd.MarkFlagRequired("name")
 }
