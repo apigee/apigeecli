@@ -235,15 +235,14 @@ func FetchBundle(entityType string, folder string, name string, revision string,
 func ImportBundleAsync(entityType string, name string, bundlePath string, wg *sync.WaitGroup) {
 	defer wg.Done()
 
-	_ = ImportBundle(entityType, name, bundlePath)
+	_, _ = ImportBundle(entityType, name, bundlePath)
 }
 
 // ImportBundle imports a sharedflow or api proxy bundle
-func ImportBundle(entityType string, name string, bundlePath string) error {
-	err := ReadBundle(bundlePath)
-	if err != nil {
+func ImportBundle(entityType string, name string, bundlePath string) (respBody []byte, err error) {
+	if err = ReadBundle(bundlePath); err != nil {
 		clilog.Error.Println(err)
-		return err
+		return nil, err
 	}
 
 	// when importing from a folder, proxy name = file name
@@ -265,14 +264,13 @@ func ImportBundle(entityType string, name string, bundlePath string) error {
 		"proxy": bundlePath,
 	}
 
-	_, err = PostHttpOctet(false, u.String(), formParams)
-	if err != nil {
+	if respBody, err = PostHttpOctet(false, u.String(), formParams); err != nil {
 		clilog.Error.Println(err)
-		return err
+		return nil, err
 	}
 
 	clilog.Debug.Printf("Completed entity: %s", u.String())
-	return nil
+	return respBody, err
 }
 
 func FolderExists(folder string) (err error) {
