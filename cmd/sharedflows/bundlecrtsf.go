@@ -113,6 +113,8 @@ func init() {
 		false, "Forces deployment of the new revision")
 	BundleCreateCmd.Flags().BoolVarP(&wait, "wait", "",
 		false, "Waits for the deployment to finish, with success or error")
+	BundleCreateCmd.Flags().StringVarP(&serviceAccountName, "sa", "s",
+		"", "The format must be {ACCOUNT_ID}@{PROJECT}.iam.gserviceaccount.com.")
 
 	_ = BundleCreateCmd.MarkFlagRequired("name")
 }
