@@ -107,8 +107,6 @@ func init() {
 		"", "Path to the Sharedflow Bundle; ex: ./test/sharedflowbundle")
 	BundleCreateCmd.Flags().StringVarP(&env, "env", "e",
 		"", "Apigee environment name")
-	BundleCreateCmd.Flags().IntVarP(&revision, "rev", "v",
-		-1, "Sharedflow revision. If not set, the highest revision is used")
 	BundleCreateCmd.Flags().BoolVarP(&overrides, "ovr", "r",
 		false, "Forces deployment of the new revision")
 	BundleCreateCmd.Flags().BoolVarP(&wait, "wait", "",
