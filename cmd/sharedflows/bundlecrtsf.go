@@ -21,6 +21,7 @@ import (
 	"path/filepath"
 
 	"internal/apiclient"
+	"internal/clilog"
 
 	"internal/bundlegen/proxybundle"
 
@@ -82,6 +83,7 @@ var BundleCreateCmd = &cobra.Command{
 			}
 		}
 		if env != "" {
+			clilog.Info.Printf("Deploying the Sharedflow %s to environment %s\n", name, env)
 			if revision, err = GetRevision(respBody); err != nil {
 				return err
 			}
