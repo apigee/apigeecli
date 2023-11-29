@@ -32,7 +32,7 @@ import (
 var BundleCreateCmd = &cobra.Command{
 	Use:   "bundle",
 	Short: "Creates an API proxy from an Zip or folder",
-	Long:  "Creates an API proxy from an Zip or folder",
+	Long:  "Creates an API proxy from an Zip or folder; Optionally deploy the API to an env",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		if proxyZip != "" && proxyFolder != "" {
 			return fmt.Errorf("proxy bundle (zip) and folder to an API proxy cannot be combined")

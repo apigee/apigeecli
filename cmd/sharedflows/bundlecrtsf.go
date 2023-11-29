@@ -33,7 +33,7 @@ import (
 var BundleCreateCmd = &cobra.Command{
 	Use:   "bundle",
 	Short: "Creates a sharedflow in an Apigee Org",
-	Long:  "Creates a sharedflow in an Apigee Org",
+	Long:  "Creates a sharedflow in an Apigee Org; Optionally deploy the sharedflow to an env",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetApigeeEnv(env)
 		if sfZip != "" && sfFolder != "" {
