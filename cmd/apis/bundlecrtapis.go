@@ -45,11 +45,15 @@ var BundleCreateCmd = &cobra.Command{
 				return err
 			}
 		}
+		if env != "" {
+			apiclient.SetApigeeEnv(env)
+		}
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		var respBody []byte
 		if proxyZip != "" {
-			_, err = apis.CreateProxy(name, proxyZip)
+			respBody, err = apis.CreateProxy(name, proxyZip)
 		} else if proxyFolder != "" {
 			if stat, err := os.Stat(folder); err == nil && !stat.IsDir() {
 				return fmt.Errorf("supplied path is not a folder")
@@ -68,11 +72,24 @@ var BundleCreateCmd = &cobra.Command{
 			if err = proxybundle.GenerateArchiveBundle(proxyFolder, proxyBundlePath, false); err != nil {
 				return err
 			}
-			if _, err = apis.CreateProxy(name, proxyBundlePath); err != nil {
+			if respBody, err = apis.CreateProxy(name, proxyBundlePath); err != nil {
 				return err
 			}
-
-			return os.Remove(proxyBundlePath)
+			if err = os.Remove(proxyBundlePath); err != nil {
+				return err
+			}
+		}
+		if env != "" {
+			if revision, err = GetRevision(respBody); err != nil {
+				return err
+			}
+			if _, err = apis.DeployProxy(name, revision, overrides,
+				sequencedRollout, safeDeploy, serviceAccountName); err != nil {
+				return err
+			}
+			if wait {
+				return Wait(name, revision)
+			}
 		}
 		return err
 	},
@@ -88,6 +105,20 @@ func init() {
 		"", "Path to the Proxy bundle/zip file")
 	BundleCreateCmd.Flags().StringVarP(&proxyFolder, "proxy-folder", "f",
 		"", "Path to the Proxy Bundle; ex: ./test/apiproxy")
+
+	BundleCreateCmd.Flags().StringVarP(&env, "env", "e",
+		"", "Name of the environment to deploy the proxy")
+	BundleCreateCmd.Flags().BoolVarP(&overrides, "ovr", "r",
+		false, "Forces deployment of the new revision")
+	BundleCreateCmd.Flags().BoolVarP(&wait, "wait", "",
+		false, "Waits for the deployment to finish, with success or error")
+	BundleCreateCmd.Flags().BoolVarP(&sequencedRollout, "sequencedrollout", "",
+		false, "If set to true, the routing rules will be rolled out in a safe order; default is false")
+	BundleCreateCmd.Flags().BoolVarP(&safeDeploy, "safedeploy", "",
+		true, "When set to true, generateDeployChangeReport will be executed and "+
+			"deployment will proceed if there are no conflicts; default is true")
+	BundleCreateCmd.Flags().StringVarP(&serviceAccountName, "sa", "s",
+		"", "The format must be {ACCOUNT_ID}@{PROJECT}.iam.gserviceaccount.com.")
 
 	_ = BundleCreateCmd.MarkFlagRequired("name")
 }

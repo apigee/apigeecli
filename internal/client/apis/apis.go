@@ -83,7 +83,7 @@ type conflictingdeployment struct {
 // CreateProxy
 func CreateProxy(name string, proxy string) (respBody []byte, err error) {
 	if proxy != "" {
-		err = apiclient.ImportBundle("apis", name, proxy)
+		respBody, err = apiclient.ImportBundle("apis", name, proxy)
 		return respBody, err
 	}
 	u, _ := url.Parse(apiclient.BaseURL)

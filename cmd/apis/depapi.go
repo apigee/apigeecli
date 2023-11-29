@@ -15,11 +15,7 @@
 package apis
 
 import (
-	"encoding/json"
-	"time"
-
 	"internal/apiclient"
-	"internal/clilog"
 
 	"internal/client/apis"
 
@@ -51,37 +47,9 @@ var DepCmd = &cobra.Command{
 			return err
 		}
 
-		apiclient.DisableCmdPrintHttpResponse()
-
 		if wait {
-			clilog.Info.Printf("Checking deployment status in %d seconds\n", interval)
-
-			stop := apiclient.Every(interval*time.Second, func(time.Time) bool {
-				var respBody []byte
-				respMap := make(map[string]interface{})
-				if respBody, err = apis.ListProxyRevisionDeployments(name, revision); err != nil {
-					clilog.Error.Printf("Error fetching proxy revision status: %v", err)
-					return false
-				}
-
-				if err = json.Unmarshal(respBody, &respMap); err != nil {
-					return true
-				}
-
-				if respMap["state"] == "PROGRESSING" {
-					clilog.Info.Printf("Proxy deployment status is: %s. Waiting %d seconds.\n", respMap["state"], interval)
-					return true
-				} else if respMap["state"] == "READY" {
-					clilog.Info.Println("Proxy deployment completed with status: ", respMap["state"])
-				} else {
-					clilog.Info.Println("Proxy deployment failed with status: ", respMap["state"])
-				}
-				return false
-			})
-
-			<-stop
+			err = Wait(name, revision)
 		}
-
 		return err
 	},
 }

@@ -47,11 +47,15 @@ var BundleCreateCmd = &cobra.Command{
 				return err
 			}
 		}
+		if env != "" {
+			apiclient.SetApigeeEnv(env)
+		}
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		var respBody []byte
 		if sfZip != "" {
-			_, err = sharedflows.Create(name, sfZip)
+			respBody, err = sharedflows.Create(name, sfZip)
 		} else if sfFolder != "" {
 			if stat, err := os.Stat(folder); err == nil && !stat.IsDir() {
 				return fmt.Errorf("supplied path is not a folder")
@@ -70,10 +74,23 @@ var BundleCreateCmd = &cobra.Command{
 			if err = proxybundle.GenerateArchiveBundle(sfFolder, sfBundlePath, true); err != nil {
 				return err
 			}
-			if _, err = sharedflows.Create(name, sfBundlePath); err != nil {
+			if respBody, err = sharedflows.Create(name, sfBundlePath); err != nil {
 				return err
 			}
-			return os.Remove(sfBundlePath)
+			if err = os.Remove(sfBundlePath); err != nil {
+				return err
+			}
+		}
+		if env != "" {
+			if revision, err = GetRevision(respBody); err != nil {
+				return err
+			}
+			if _, err = sharedflows.Deploy(name, revision, overrides, serviceAccountName); err != nil {
+				return err
+			}
+			if wait {
+				return Wait(name, revision)
+			}
 		}
 		return err
 	},
@@ -88,6 +105,14 @@ func init() {
 		"", "Path to the Sharedflow bundle/zip file")
 	BundleCreateCmd.Flags().StringVarP(&sfFolder, "sf-folder", "f",
 		"", "Path to the Sharedflow Bundle; ex: ./test/sharedflowbundle")
+	BundleCreateCmd.Flags().StringVarP(&env, "env", "e",
+		"", "Apigee environment name")
+	BundleCreateCmd.Flags().IntVarP(&revision, "rev", "v",
+		-1, "Sharedflow revision. If not set, the highest revision is used")
+	BundleCreateCmd.Flags().BoolVarP(&overrides, "ovr", "r",
+		false, "Forces deployment of the new revision")
+	BundleCreateCmd.Flags().BoolVarP(&wait, "wait", "",
+		false, "Waits for the deployment to finish, with success or error")
 
 	_ = BundleCreateCmd.MarkFlagRequired("name")
 }

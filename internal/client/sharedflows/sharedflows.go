@@ -52,7 +52,7 @@ type revision struct {
 // Create
 func Create(name string, proxy string) (respBody []byte, err error) {
 	if proxy != "" {
-		err = apiclient.ImportBundle("sharedflows", name, proxy)
+		respBody, err = apiclient.ImportBundle("sharedflows", name, proxy)
 		return respBody, err
 	}
 	u, _ := url.Parse(apiclient.BaseURL)
