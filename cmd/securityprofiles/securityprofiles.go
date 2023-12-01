@@ -39,6 +39,8 @@ func init() {
 	Cmd.AddCommand(DetachCmd)
 	Cmd.AddCommand(CreateCmd)
 	Cmd.AddCommand(ListRevisionsCmd)
+	Cmd.AddCommand(UpdateCmd)
+	Cmd.AddCommand(ExpCmd)
 
 	_ = Cmd.MarkFlagRequired("org")
 }

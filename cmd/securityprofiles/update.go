@@ -18,29 +18,33 @@ import (
 	"internal/apiclient"
 	"internal/client/securityprofiles"
 
+	"github.com/apigee/apigeecli/cmd/utils"
 	"github.com/spf13/cobra"
 )
 
-// GetCmd to list catalog items
-var GetCmd = &cobra.Command{
-	Use:   "get",
-	Short: "Returns a security profile by name",
-	Long:  "Returns a security profile by name",
+// UpdateCmd to update a security profile
+var UpdateCmd = &cobra.Command{
+	Use:   "update",
+	Short: "Update an existing Security Profile",
+	Long:  "Update an existing Security Profile",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = securityprofiles.Get(name, revision)
+		content, err := utils.ReadFile(securityActionFile)
+		if err != nil {
+			return err
+		}
+		_, err = securityprofiles.Update(name, content)
 		return
 	},
 }
 
-var name string
-
 func init() {
-	GetCmd.Flags().StringVarP(&name, "name", "n",
+	UpdateCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of the security profile")
-	GetCmd.Flags().StringVarP(&revision, "revision", "r",
-		"", "Revision of the security profile")
-	_ = GetCmd.MarkFlagRequired("name")
+	UpdateCmd.Flags().StringVarP(&securityActionFile, "file", "f",
+		"", "Path to a file containing Security Profile content")
+	_ = UpdateCmd.MarkFlagRequired("name")
+	_ = UpdateCmd.MarkFlagRequired("file")
 }

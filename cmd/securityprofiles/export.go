@@ -1,4 +1,4 @@
-// Copyright 2023 Google LLC
+// Copyright 2020 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,31 +16,43 @@ package securityprofiles
 
 import (
 	"internal/apiclient"
+	"os"
+
 	"internal/client/securityprofiles"
 
 	"github.com/spf13/cobra"
 )
 
-// GetCmd to list catalog items
-var GetCmd = &cobra.Command{
-	Use:   "get",
-	Short: "Returns a security profile by name",
-	Long:  "Returns a security profile by name",
+// ExpCmd to export sec profiles
+var ExpCmd = &cobra.Command{
+	Use:   "export",
+	Short: "Export Security Profiles to a file",
+	Long:  "Export Security Profiles to a file",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = securityprofiles.Get(name, revision)
-		return
+		if folder == "" {
+			folder, _ = os.Getwd()
+		}
+		if err = apiclient.FolderExists(folder); err != nil {
+			return err
+		}
+		return securityprofiles.Export(conn, folder, allRevisions)
 	},
 }
 
-var name string
+var (
+	conn         int
+	folder       string
+	allRevisions bool
+)
 
 func init() {
-	GetCmd.Flags().StringVarP(&name, "name", "n",
-		"", "Name of the security profile")
-	GetCmd.Flags().StringVarP(&revision, "revision", "r",
-		"", "Revision of the security profile")
-	_ = GetCmd.MarkFlagRequired("name")
+	ExpCmd.Flags().IntVarP(&conn, "conn", "c",
+		4, "Number of connections")
+	ExpCmd.Flags().StringVarP(&folder, "folder", "f",
+		"", "folder to export API proxy bundles")
+	ExpCmd.Flags().BoolVarP(&allRevisions, "all", "",
+		false, "Export all proxy revisions")
 }
