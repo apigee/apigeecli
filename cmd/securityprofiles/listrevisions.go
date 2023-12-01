@@ -23,14 +23,14 @@ import (
 
 // ListRevisionsCmd to list catalog items
 var ListRevisionsCmd = &cobra.Command{
-	Use:   "listversions",
+	Use:   "listrevisions",
 	Short: "Returns the revisions of a security profile",
 	Long:  "Returns the revisions of a security profile",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = securityprofiles.ListVersions(name)
+		_, err = securityprofiles.ListRevisions(name)
 		return
 	},
 }
@@ -38,4 +38,5 @@ var ListRevisionsCmd = &cobra.Command{
 func init() {
 	ListRevisionsCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of the security profile")
+	_ = ListRevisionsCmd.MarkFlagRequired("name")
 }

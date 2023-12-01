@@ -43,8 +43,6 @@ var TestCmd = &cobra.Command{
 var id string
 
 func init() {
-	TestCmd.Flags().StringVarP(&id, "id", "i",
-		"", "Data store id")
 	TestCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Display name for the data store")
 	TestCmd.Flags().StringVarP(&targetType, "target", "",

@@ -104,7 +104,7 @@ func Get(name string) (respBody []byte, err error) {
 }
 
 // ListVersions
-func ListVersions(name string) (respBody []byte, err error) {
+func ListRevisions(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "securityProfiles", name+":listRevisions")
 	respBody, err = apiclient.HttpClient(u.String())

@@ -45,4 +45,7 @@ func init() {
 		"", "Apigee environment name")
 	AttachCmd.Flags().StringVarP(&revision, "rev", "r",
 		"", "Security Profile revision id")
+	_ = AttachCmd.MarkFlagRequired("name")
+	_ = AttachCmd.MarkFlagRequired("env")
+	_ = AttachCmd.MarkFlagRequired("rev")
 }

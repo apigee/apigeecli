@@ -44,7 +44,7 @@ var securityActionFile string
 
 func init() {
 	CreateCmd.Flags().StringVarP(&name, "name", "n",
-		"", "Security Action name")
+		"", "Name of the security profile")
 	CreateCmd.Flags().StringVarP(&securityActionFile, "file", "f",
 		"", "Path to a file containing Security Profile content")
 	_ = CreateCmd.MarkFlagRequired("name")

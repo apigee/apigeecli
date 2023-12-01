@@ -40,4 +40,5 @@ var name string
 func init() {
 	GetCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of the security profile")
+	_ = GetCmd.MarkFlagRequired("name")
 }

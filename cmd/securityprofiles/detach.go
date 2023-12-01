@@ -23,9 +23,9 @@ import (
 
 // DetachCmd to list catalog items
 var DetachCmd = &cobra.Command{
-	Use:   "get",
-	Short: "Returns a security profile by name",
-	Long:  "Returns a security profile by name",
+	Use:   "detach",
+	Short: "Detach a security profile from an environment",
+	Long:  "Detach a security profile from an environment",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetApigeeEnv(environment)
 		return apiclient.SetApigeeOrg(org)
@@ -41,4 +41,6 @@ func init() {
 		"", "Name of the security profile")
 	DetachCmd.Flags().StringVarP(&environment, "env", "e",
 		"", "Apigee environment name")
+	_ = DetachCmd.MarkFlagRequired("name")
+	_ = DetachCmd.MarkFlagRequired("env")
 }

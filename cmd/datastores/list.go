@@ -36,6 +36,6 @@ var ListCmd = &cobra.Command{
 }
 
 func init() {
-	ListCmd.Flags().StringVarP(&targetType, "name", "n",
+	ListCmd.Flags().StringVarP(&targetType, "targettype", "",
 		"", "TargetType is used to fetch datastores of matching type; default is fetch all")
 }

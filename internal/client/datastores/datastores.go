@@ -202,7 +202,7 @@ func GetVersion(name string) (version string, err error) {
 func List(targetType string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "analytics", "datastores")
-	if (targetType != "") && (targetType != "gcs" || targetType != "bigquery") {
+	if (targetType != "") && (targetType != "gcs" && targetType != "bigquery") {
 		return nil, fmt.Errorf("invalid targetType. Must be gcs or bigquery")
 	}
 	q := u.Query()

@@ -38,4 +38,5 @@ var DeleteCmd = &cobra.Command{
 func init() {
 	DeleteCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of the security profile")
+	_ = DeleteCmd.MarkFlagRequired("name")
 }
