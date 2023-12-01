@@ -200,8 +200,8 @@ func SearchApp(name string) (respBody []byte, err error) {
 // List
 func List(includeCred bool, expand bool, count int, status string, startKey string,
 	ids string, keyStatus string, apiProduct string, pageSize int,
-	pageToken string, filter string) (respBody []byte, err error) {
-
+	pageToken string, filter string,
+) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apps")
 	q := u.Query()

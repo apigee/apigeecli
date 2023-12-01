@@ -17,6 +17,7 @@ package apps
 import (
 	"encoding/json"
 	"fmt"
+
 	"internal/apiclient"
 
 	"internal/client/apps"
@@ -41,7 +42,7 @@ var DelCmd = &cobra.Command{
 			return err
 		}
 
-		if id, err = getDeveloperId(respBody); err != nil {
+		if id, err = getDeveloperID(respBody); err != nil {
 			return err
 		}
 		apiclient.EnableCmdPrintHttpResponse()
@@ -57,11 +58,10 @@ func init() {
 	_ = DelCmd.MarkFlagRequired("name")
 }
 
-func getDeveloperId(respBody []byte) (id string, err error) {
+func getDeveloperID(respBody []byte) (id string, err error) {
 	var respMap map[string]interface{}
 	if err = json.Unmarshal(respBody, &respMap); err != nil {
-		return "", nil
+		return "", err
 	}
 	return fmt.Sprintf("%v", respMap["developerId"]), nil
-
 }
