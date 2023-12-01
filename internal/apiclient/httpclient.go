@@ -283,10 +283,10 @@ func HttpClient(params ...string) (respBody []byte, err error) {
 
 	switch paramLen := len(params); paramLen {
 	case 1:
-		req, err = http.NewRequest("GET", params[0], nil)
+		req, err = http.NewRequest(http.MethodGet, params[0], nil)
 	case 2:
 		clilog.Debug.Println("Payload: ", params[1])
-		req, err = http.NewRequest("POST", params[0], bytes.NewBuffer([]byte(params[1])))
+		req, err = http.NewRequest(http.MethodPost, params[0], bytes.NewBuffer([]byte(params[1])))
 	case 3:
 		if req, err = getRequest(params); err != nil {
 			return nil, err
@@ -405,16 +405,16 @@ func GetHttpClient() (err error) {
 
 func getRequest(params []string) (req *http.Request, err error) {
 	if params[2] == "DELETE" {
-		req, err = http.NewRequest("DELETE", params[0], nil)
+		req, err = http.NewRequest(http.MethodDelete, params[0], nil)
 	} else if params[2] == "PUT" {
 		clilog.Debug.Println("Payload: ", params[1])
-		req, err = http.NewRequest("PUT", params[0], bytes.NewBuffer([]byte(params[1])))
+		req, err = http.NewRequest(http.MethodPut, params[0], bytes.NewBuffer([]byte(params[1])))
 	} else if params[2] == "PATCH" {
 		clilog.Debug.Println("Payload: ", params[1])
-		req, err = http.NewRequest("PATCH", params[0], bytes.NewBuffer([]byte(params[1])))
+		req, err = http.NewRequest(http.MethodPatch, params[0], bytes.NewBuffer([]byte(params[1])))
 	} else if params[2] == "POST" {
 		clilog.Debug.Println("Payload: ", params[1])
-		req, err = http.NewRequest("POST", params[0], bytes.NewBuffer([]byte(params[1])))
+		req, err = http.NewRequest(http.MethodPost, params[0], bytes.NewBuffer([]byte(params[1])))
 	} else {
 		return nil, errors.New("unsupported method")
 	}

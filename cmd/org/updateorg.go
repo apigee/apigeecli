@@ -33,35 +33,21 @@ var UpdateCmd = &cobra.Command{
 		if runtimeType != "HYBRID" && runtimeType != "CLOUD" {
 			return fmt.Errorf("runtime type must be CLOUD or HYBRID")
 		}
-		if runtimeType == "CLOUD" {
-			if network == "" {
-				return fmt.Errorf("authorized network must be supplied")
-			}
-			if databaseKey == "" {
-				return fmt.Errorf("runtime database encryption key must be supplied")
-			}
-		}
 		apiclient.SetProjectID(projectID)
 		return apiclient.SetApigeeOrg(projectID)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = orgs.Update(description, "", region, network, runtimeType, databaseKey)
+		_, err = orgs.Update(description, authorizedNetwork)
 		return
 	},
 }
 
 func init() {
-	UpdateCmd.Flags().StringVarP(&region, "reg", "r",
-		"", "Analytics region name")
 	UpdateCmd.Flags().StringVarP(&description, "desc", "d",
 		"", "Apigee org description")
-	UpdateCmd.Flags().StringVarP(&network, "net", "n",
+	UpdateCmd.Flags().StringVarP(&authorizedNetwork, "net", "n",
 		"default", "Authorized network; if using a shared VPC format is "+
 			"projects/{host-project-id}/{location}/networks/{network-name}")
-	UpdateCmd.Flags().StringVarP(&databaseKey, "key", "k",
-		"", "Runtime Database Encryption Key")
-	UpdateCmd.Flags().StringVarP(&runtimeType, "runtime-type", "",
-		"HYBRID", "Runtime type: CLOUD or HYBRID")
 
 	_ = UpdateCmd.MarkFlagRequired("prj")
 	_ = UpdateCmd.MarkFlagRequired("reg")

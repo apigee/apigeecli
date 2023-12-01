@@ -27,11 +27,14 @@ import (
 
 	"internal/clilog"
 
+	"github.com/apigee/apigeecli/cmd/apicategories"
+	"github.com/apigee/apigeecli/cmd/apidocs"
 	"github.com/apigee/apigeecli/cmd/apis"
 	"github.com/apigee/apigeecli/cmd/appgroups"
 	"github.com/apigee/apigeecli/cmd/apps"
 	cache "github.com/apigee/apigeecli/cmd/cache"
 	"github.com/apigee/apigeecli/cmd/datacollectors"
+	"github.com/apigee/apigeecli/cmd/datastores"
 	"github.com/apigee/apigeecli/cmd/developers"
 	"github.com/apigee/apigeecli/cmd/env"
 	"github.com/apigee/apigeecli/cmd/envgroup"
@@ -49,6 +52,7 @@ import (
 	"github.com/apigee/apigeecli/cmd/projects"
 	"github.com/apigee/apigeecli/cmd/references"
 	res "github.com/apigee/apigeecli/cmd/res"
+	"github.com/apigee/apigeecli/cmd/securityprofiles"
 	"github.com/apigee/apigeecli/cmd/sharedflows"
 	"github.com/apigee/apigeecli/cmd/sync"
 	targetservers "github.com/apigee/apigeecli/cmd/targetservers"
@@ -172,6 +176,10 @@ func init() {
 	RootCmd.AddCommand(preferences.Cmd)
 	RootCmd.AddCommand(eptattachment.Cmd)
 	RootCmd.AddCommand(appgroups.Cmd)
+	RootCmd.AddCommand(apidocs.Cmd)
+	RootCmd.AddCommand(apicategories.Cmd)
+	RootCmd.AddCommand(datastores.Cmd)
+	RootCmd.AddCommand(securityprofiles.Cmd)
 }
 
 func initConfig() {

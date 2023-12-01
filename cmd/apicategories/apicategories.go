@@ -1,4 +1,4 @@
-// Copyright 2020 Google LLC
+// Copyright 2023 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,38 +12,32 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package env
+package apicategories
 
 import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to manage envs
+// Cmd to manage api catalog items
 var Cmd = &cobra.Command{
-	Use:     "environments",
-	Aliases: []string{"envs"},
-	Short:   "Manage Apigee environments",
-	Long:    "Manage Apigee environments",
+	Use:   "apicategories",
+	Short: "Manage Apigee API categories that are tagged on catalog items",
+	Long:  "Manage Apigee API categories that are tagged on catalog items",
 }
 
-var org, environment string
+var org, siteid, id string
 
 func init() {
 	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
+	Cmd.PersistentFlags().StringVarP(&siteid, "siteid", "s",
+		"", "Name or siteid of the portal")
 
 	Cmd.AddCommand(ListCmd)
-	Cmd.AddCommand(CreateCmd)
 	Cmd.AddCommand(GetCmd)
 	Cmd.AddCommand(DelCmd)
-	Cmd.AddCommand(IamCmd)
-	Cmd.AddCommand(DebugCmd)
-	Cmd.AddCommand(ObCmd)
-	Cmd.AddCommand(PropCmd)
-	Cmd.AddCommand(DeployCmd)
-	Cmd.AddCommand(TraceConfigCmd)
-	Cmd.AddCommand(ArchiveCmd)
-	Cmd.AddCommand(SecInCmd)
-	Cmd.AddCommand(SecActCmd)
-	Cmd.AddCommand(SecActCfgCmd)
+	Cmd.AddCommand(CreateCmd)
+
+	_ = Cmd.MarkFlagRequired("org")
+	_ = Cmd.MarkFlagRequired("siteid")
 }
