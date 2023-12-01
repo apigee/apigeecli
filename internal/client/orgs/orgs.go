@@ -181,6 +181,7 @@ func Delete(retension string) (respBody []byte, err error) {
 	return respBody, err
 }
 
+// GetOrgField
 func GetOrgField(key string) (value string, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg())
@@ -196,6 +197,39 @@ func GetOrgField(key string) (value string, err error) {
 		return "", err
 	}
 	return fmt.Sprintf("%v", orgMap[key]), nil
+}
+
+// GetAddOn
+func GetAddOn(addon string) (enabled bool) {
+	u, _ := url.Parse(apiclient.BaseURL)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg())
+
+	apiclient.DisableCmdPrintHttpResponse()
+	defer apiclient.EnableCmdPrintHttpResponse()
+
+	orgBody, err := apiclient.HttpClient(u.String())
+	if err != nil {
+		return false
+	}
+	o := organization{}
+	err = json.Unmarshal(orgBody, &o)
+	if err != nil {
+		return false
+	}
+	switch addon {
+	case "advancedApiOpsConfig":
+		return o.AddOnsConfig.AdvancedApiOpsConfig.Enabled
+	case "integrationConfig":
+		return o.AddOnsConfig.IntegrationConfig.Enabled
+	case "monetizationConfig":
+		return o.AddOnsConfig.MonetizationConfig.Enabled
+	case "apiSecurityConfig":
+		return o.AddOnsConfig.AdvancedApiSecurityConfig.Enabled
+	case "connectorsPlatformConfig":
+		return o.AddOnsConfig.ConnectorsPlatformConfig.Enabled
+	default:
+		return false
+	}
 }
 
 // List

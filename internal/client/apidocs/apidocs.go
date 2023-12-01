@@ -139,7 +139,7 @@ func UpdateDocumentation(siteid string, id string, displayName string, openAPIDo
 
 	if graphQLDoc != "" {
 		payload = "{\"graphqlDocumentation\":{\"endpointUri\":\"" + endpointUri +
-			"\",\"schema\":{\"displayName\":\"" + displayName + 
+			"\",\"schema\":{\"displayName\":\"" + displayName +
 			"\",\"contents\":" + graphQLDoc + "}}}"
 	}
 

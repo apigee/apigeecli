@@ -15,8 +15,9 @@
 package securityprofiles
 
 import (
-	"internal/apiclient"
 	"os"
+
+	"internal/apiclient"
 
 	"internal/client/securityprofiles"
 

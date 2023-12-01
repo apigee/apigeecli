@@ -72,8 +72,10 @@ var UpdateDocCmd = &cobra.Command{
 	},
 }
 
-var openAPIPath, graphQLPath string
-var endpointUri string
+var (
+	openAPIPath, graphQLPath string
+	endpointUri              string
+)
 
 func init() {
 	UpdateDocCmd.Flags().StringVarP(&id, "id", "i",
