@@ -179,11 +179,9 @@ func SearchApp(name string) (respBody []byte, err error) {
 	defer apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
 
 	u, _ := url.Parse(apiclient.BaseURL)
-	// search by name is not implemented; use list and return the appropriate app
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apps")
 	q := u.Query()
-	q.Set("expand", "true")
-	q.Set("includeCred", "false")
+	q.Set("filter", "appName="+name)
 	u.RawQuery = q.Encode()
 
 	respBody, err = apiclient.HttpClient(u.String())
@@ -191,7 +189,7 @@ func SearchApp(name string) (respBody []byte, err error) {
 		return respBody, err
 	}
 	jq := gojsonq.New().JSONString(string(respBody)).From("app").Where("name", "eq", name)
-	out := jq.Get()
+	out := jq.First()
 	outBytes, err := json.Marshal(out)
 	if err != nil {
 		return outBytes, err
@@ -200,7 +198,10 @@ func SearchApp(name string) (respBody []byte, err error) {
 }
 
 // List
-func List(includeCred bool, expand bool, count int) (respBody []byte, err error) {
+func List(includeCred bool, expand bool, count int, status string, startKey string,
+	ids string, keyStatus string, apiProduct string, pageSize int,
+	pageToken string, filter string) (respBody []byte, err error) {
+
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apps")
 	q := u.Query()
@@ -215,8 +216,30 @@ func List(includeCred bool, expand bool, count int) (respBody []byte, err error)
 		q.Set("includeCred", "false")
 	}
 	if count != -1 {
-		q.Set("row", strconv.Itoa(count))
+		q.Set("rows", strconv.Itoa(count))
 	}
+	if startKey != "" {
+		q.Set("startKey", startKey)
+	}
+	if ids != "" {
+		q.Set("ids", ids)
+	}
+	if keyStatus != "" {
+		q.Set("keyStatus", keyStatus)
+	}
+	if apiProduct != "" {
+		q.Set("apiProduct", apiProduct)
+	}
+	if pageSize != -1 {
+		q.Set("pageSize", strconv.Itoa(pageSize))
+	}
+	if pageToken != "" {
+		q.Set("pageToken", pageToken)
+	}
+	if filter != "" {
+		q.Set("filter", filter)
+	}
+
 	u.RawQuery = q.Encode()
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
