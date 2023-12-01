@@ -53,7 +53,7 @@ func init() {
 	ExpCmd.Flags().IntVarP(&conn, "conn", "c",
 		4, "Number of connections")
 	ExpCmd.Flags().StringVarP(&folder, "folder", "f",
-		"", "folder to export API proxy bundles")
+		"", "folder to export Security Profiles")
 	ExpCmd.Flags().BoolVarP(&allRevisions, "all", "",
 		false, "Export all proxy revisions")
 }
