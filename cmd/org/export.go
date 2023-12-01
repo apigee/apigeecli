@@ -38,6 +38,7 @@ import (
 	"internal/client/orgs"
 	"internal/client/products"
 	"internal/client/references"
+	"internal/client/securityprofiles"
 	"internal/client/sharedflows"
 	"internal/client/sync"
 	"internal/client/targetservers"
@@ -172,6 +173,13 @@ var ExportCmd = &cobra.Command{
 			return err
 		}
 
+		if orgs.GetAddOn("apiSecurityConfig") {
+			clilog.Info.Println("Exporting API Security Configuration...")
+			if err = securityprofiles.Export(conn, folder, allRevisions); proceedOnError(err) != nil {
+				return err
+			}
+		}
+
 		if runtimeType == "HYBRID" {
 			clilog.Info.Println("Exporting Sync Authorization Identities...")
 			if respBody, err = sync.Get(); err != nil {
@@ -289,7 +297,8 @@ func init() {
 	ExportCmd.Flags().BoolVarP(&cleanPath, "clean", "",
 		false, "clean folder or files and directories before export")
 	ExportCmd.Flags().BoolVarP(&allRevisions, "all", "",
-		false, "Export all revisions, default=false. Exports the latest revision")
+		false, "Export all revisions, default=false. Exports the latest revision."+
+			"Applies to proxies, sf and sec profiles")
 	ExportCmd.Flags().BoolVarP(&continueOnErr, "continueOnError", "",
 		false, "Ignore errors and continue exporting data")
 }
