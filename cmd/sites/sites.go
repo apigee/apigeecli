@@ -25,7 +25,7 @@ var Cmd = &cobra.Command{
 	Long:  "Manage Apigee API Portals",
 }
 
-var org, siteid, id, name string
+var org string
 
 func init() {
 	Cmd.PersistentFlags().StringVarP(&org, "org", "o",

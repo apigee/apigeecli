@@ -182,7 +182,9 @@ var ExportCmd = &cobra.Command{
 		}
 
 		clilog.Info.Println("Exporting API Portal apidocs Configuration...")
-		apidocs.Export(portalsFolderName)
+		if err = apidocs.Export(portalsFolderName); proceedOnError(err) != nil {
+			return err
+		}
 
 		if runtimeType == "HYBRID" {
 			clilog.Info.Println("Exporting Sync Authorization Identities...")
@@ -311,10 +313,10 @@ func createFolders() (err error) {
 	if err = os.Mkdir(proxiesFolderName, 0o755); err != nil {
 		return err
 	}
-	if os.Mkdir(sharedFlowsFolderName, 0o755); err != nil {
+	if err = os.Mkdir(sharedFlowsFolderName, 0o755); err != nil {
 		return err
 	}
-	if os.Mkdir(portalsFolderName, 0o755); err != nil {
+	if err = os.Mkdir(portalsFolderName, 0o755); err != nil {
 		return err
 	}
 	return nil
