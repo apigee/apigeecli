@@ -33,10 +33,13 @@ import (
 	"internal/client/envgroups"
 	"internal/client/keystores"
 	"internal/client/kvm"
+	"internal/client/orgs"
 	"internal/client/products"
 	"internal/client/references"
 	"internal/client/sharedflows"
 	"internal/client/targetservers"
+
+	"internal/client/securityprofiles"
 
 	"github.com/apigee/apigeecli/cmd/utils"
 	"github.com/spf13/cobra"
@@ -121,6 +124,13 @@ var ImportCmd = &cobra.Command{
 		if utils.FileExists(path.Join(folder, dataCollFileName)) {
 			clilog.Info.Println("Importing Data Collectors Configuration...")
 			if err = datacollectors.Import(path.Join(folder, dataCollFileName)); err != nil {
+				return err
+			}
+		}
+
+		if orgs.GetAddOn("apiSecurityConfig") {
+			clilog.Info.Println("Importing Security Profile Configuration...")
+			if err = securityprofiles.Import(conn, path.Join(folder, securityProfilesFolderName)); err != nil {
 				return err
 			}
 		}
