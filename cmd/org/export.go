@@ -26,6 +26,7 @@ import (
 
 	"internal/clilog"
 
+	"internal/client/apidocs"
 	"internal/client/apis"
 	"internal/client/appgroups"
 	"internal/client/apps"
@@ -180,6 +181,9 @@ var ExportCmd = &cobra.Command{
 			}
 		}
 
+		clilog.Info.Println("Exporting API Portal apidocs Configuration...")
+		apidocs.Export(portalsFolderName)
+
 		if runtimeType == "HYBRID" {
 			clilog.Info.Println("Exporting Sync Authorization Identities...")
 			if respBody, err = sync.Get(); err != nil {
@@ -307,8 +311,13 @@ func createFolders() (err error) {
 	if err = os.Mkdir(proxiesFolderName, 0o755); err != nil {
 		return err
 	}
-	err = os.Mkdir(sharedFlowsFolderName, 0o755)
-	return err
+	if os.Mkdir(sharedFlowsFolderName, 0o755); err != nil {
+		return err
+	}
+	if os.Mkdir(portalsFolderName, 0o755); err != nil {
+		return err
+	}
+	return nil
 }
 
 func exportKVMEntries(scope string, env string, listKVMBytes []byte) (err error) {

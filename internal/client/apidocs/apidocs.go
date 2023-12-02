@@ -15,11 +15,15 @@
 package apidocs
 
 import (
+	"encoding/json"
+	"fmt"
 	"net/url"
 	"path"
+	"strconv"
 	"strings"
 
 	"internal/apiclient"
+	"internal/client/sites"
 )
 
 type Action uint8
@@ -28,6 +32,37 @@ const (
 	CREATE Action = iota
 	UPDATE
 )
+
+const maxPageSize = 100
+
+type listapidocs struct {
+	Status        string `json:"status,omitempty"`
+	Message       string `json:"message,omitempty"`
+	RequestID     string `json:"requestId,omitempty"`
+	ErrorCode     string `json:"errorCode,omitempty"`
+	Data          []data `json:"data,omitempty"`
+	NextPageToken string `json:"nextPageToken,omitempty"`
+}
+
+type data struct {
+	SiteID                   string   `json:"siteId,omitempty"`
+	ID                       string   `json:"id,omitempty"`
+	Title                    string   `json:"title,omitempty"`
+	Description              string   `json:"description,omitempty"`
+	Published                bool     `json:"published,omitempty"`
+	AnonAllowed              bool     `json:"anonAllowed,omitempty"`
+	ApiProductName           string   `json:"apiProductName,omitempty"`
+	RequireCallbackUrl       bool     `json:"requireCallbackUrl,omitempty"`
+	ImageUrl                 string   `json:"imageUrl,omitempty"`
+	CategoryIDs              []string `json:"categoryIds,omitempty"`
+	Modified                 string   `json:"modified,omitempty"`
+	Visibility               bool     `json:"visibility,omitempty"`
+	EdgeAPIProductName       string   `json:"edgeAPIProductName,omitempty"`
+	SpecID                   string   `json:"specId,omitempty"`
+	GraphqlSchema            string   `json:"graphqlSchema,omitempty"`
+	GraphqlEndpointUrl       string   `json:"graphqlEndpointUrl,omitempty"`
+	GraphqlSchemaDisplayName string   `json:"graphqlSchemaDisplayName,omitempty"`
+}
 
 // Create
 func Create(siteid string, title string, description string, published string,
@@ -113,9 +148,18 @@ func Get(siteid string, id string) (respBody []byte, err error) {
 }
 
 // List
-func List(siteid string) (respBody []byte, err error) {
+func List(siteid string, pageSize int, pageToken string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sites", siteid, "apidocs")
+	q := u.Query()
+	if pageSize != -1 {
+		q.Set("pageSize", strconv.Itoa(pageSize))
+	}
+	if pageToken != "" {
+		q.Set("pageToken", pageToken)
+	}
+
+	u.RawQuery = q.Encode()
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
@@ -148,6 +192,46 @@ func UpdateDocumentation(siteid string, id string, displayName string, openAPIDo
 	respBody, err = apiclient.HttpClient(u.String(), payload, "PATCH")
 
 	return nil, nil
+}
+
+// Export
+func Export(folder string) (err error) {
+	apiclient.ClientPrintHttpResponse.Set(false)
+	defer apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
+
+	siteids, err := sites.GetSiteIDs()
+	if err != nil {
+		return err
+	}
+
+	pageToken := ""
+	listdocs := listapidocs{}
+
+	for _, siteid := range siteids {
+		for {
+			l := listapidocs{}
+			listRespBytes, err := List(siteid, maxPageSize, pageToken)
+			if err != nil {
+				return fmt.Errorf("failed to fetch apidocs: %w", err)
+			}
+			err = json.Unmarshal(listRespBytes, &l)
+			if err != nil {
+				return fmt.Errorf("failed to unmarshall: %w", err)
+			}
+			listdocs.Data = append(listdocs.Data, l.Data...)
+			pageToken = l.NextPageToken
+			if l.NextPageToken == "" {
+				break
+			}
+		}
+	}
+
+	respBody, err := json.Marshal(listdocs.Data)
+	if err != nil {
+		return err
+	}
+	respBody, _ = apiclient.PrettifyJSON(respBody)
+	return apiclient.WriteByteArrayToFile(path.Join(folder, "apidocs.json"), false, respBody)
 }
 
 func getArrayStr(str []string) string {

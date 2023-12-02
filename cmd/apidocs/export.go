@@ -1,4 +1,4 @@
-// Copyright 2023 Google LLC
+// Copyright 2020 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,34 +15,40 @@
 package apidocs
 
 import (
+	"os"
+
 	"internal/apiclient"
+
 	"internal/client/apidocs"
 
 	"github.com/spf13/cobra"
 )
 
-// ListCmd to list catalog items
-var ListCmd = &cobra.Command{
-	Use:   "list",
-	Short: "Returns the catalog items associated with a portal",
-	Long:  "Returns the catalog items associated with a portal",
+// ExpCmd to export apidocs
+var ExpCmd = &cobra.Command{
+	Use:   "export",
+	Short: "Export API Docs to a file",
+	Long:  "Export API Docs to a file",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = apidocs.List(siteid, pageSize, pageToken)
-		return
+		if folder == "" {
+			folder, _ = os.Getwd()
+		}
+		if err = apiclient.FolderExists(folder); err != nil {
+			return err
+		}
+		return apidocs.Export(folder)
 	},
 }
 
 var (
-	pageSize  int
-	pageToken string
+	folder string
 )
 
 func init() {
-	ListCmd.Flags().IntVarP(&pageSize, "page-size", "",
-		-1, "The maximum number of versions to return")
-	ListCmd.Flags().StringVarP(&pageToken, "page-token", "",
-		"", "A page token, received from a previous call")
+
+	ExpCmd.Flags().StringVarP(&folder, "folder", "f",
+		"", "folder to export API Docs")
 }
