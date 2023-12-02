@@ -46,7 +46,7 @@ var ExpCmd = &cobra.Command{
 var (
 	conn   int
 	folder string
-	//allRevisions bool
+	// allRevisions bool
 )
 
 func init() {
