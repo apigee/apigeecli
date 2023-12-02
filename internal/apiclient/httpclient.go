@@ -451,7 +451,7 @@ func handleResponse(resp *http.Response) (respBody []byte, err error) {
 		clilog.HttpError.Println(string(respBody))
 		return nil, errors.New(getErrorMessage(resp.StatusCode))
 	}
-
+	clilog.Debug.Println("Response: ", string(respBody))
 	return respBody, PrettyPrint(resp.Header.Get("Content-Type"), respBody)
 }
 

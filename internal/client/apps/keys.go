@@ -63,7 +63,7 @@ func CreateKey(developerEmail string, appID string, consumerKey string, consumer
 	// since the API does not support adding products when creating a key, use a second API call to add products
 	if len(apiProducts) > 0 {
 		apiclient.ClientPrintHttpResponse.Set(false)
-		respBody, err = UpdateKeyProducts(developerEmail, appID, consumerKey, apiProducts)
+		respBody, err = UpdateKeyProducts(developerEmail, appID, consumerKey, apiProducts, expires)
 		apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
 	}
 
@@ -87,7 +87,8 @@ func GetKey(developerEmail string, appID string, key string) (respBody []byte, e
 }
 
 // UpdateKey
-func UpdateKey(developerEmail string, appID string, consumerKey string, consumerSecret string, apiProducts []string, scopes []string, expires string, attrs map[string]string) (respBody []byte, err error) {
+func UpdateKey(developerEmail string, appID string, consumerKey string, consumerSecret string,
+	apiProducts []string, scopes []string, expires string, attrs map[string]string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 
 	key := []string{}
@@ -127,11 +128,14 @@ func UpdateKey(developerEmail string, appID string, consumerKey string, consumer
 	return respBody, err
 }
 
-func UpdateKeyProducts(developerEmail string, appID string, consumerKey string, apiProducts []string) (respBody []byte, err error) {
+func UpdateKeyProducts(developerEmail string, appID string, consumerKey string, apiProducts []string, expires string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 
 	key := []string{}
 	key = append(key, "\"apiProducts\":[\""+getArrayStr(apiProducts)+"\"]")
+	if expires != "" {
+		key = append(key, "\"expiresAt\":\""+expires+"\"")
+	}
 
 	payload := "{" + strings.Join(key, ",") + "}"
 
