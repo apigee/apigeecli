@@ -15,9 +15,6 @@
 package apps
 
 import (
-	"encoding/json"
-	"fmt"
-
 	"internal/apiclient"
 
 	"internal/client/apps"
@@ -34,34 +31,18 @@ var DelCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		var respBody []byte
-		var id string
-
-		apiclient.DisableCmdPrintHttpResponse()
-		if respBody, err = apps.SearchApp(name); err != nil {
-			return err
-		}
-
-		if id, err = getDeveloperID(respBody); err != nil {
-			return err
-		}
-		apiclient.EnableCmdPrintHttpResponse()
 		_, err = apps.Delete(name, id)
 		return
 	},
 }
 
+var id string
+
 func init() {
 	DelCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of the developer app")
-
+	DelCmd.Flags().StringVarP(&id, "id", "i",
+		"", "Developer Id")
 	_ = DelCmd.MarkFlagRequired("name")
-}
-
-func getDeveloperID(respBody []byte) (id string, err error) {
-	var respMap map[string]interface{}
-	if err = json.Unmarshal(respBody, &respMap); err != nil {
-		return "", err
-	}
-	return fmt.Sprintf("%v", respMap["developerId"]), nil
+	_ = DelCmd.MarkFlagRequired("id")
 }
