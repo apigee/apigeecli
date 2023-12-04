@@ -15,8 +15,6 @@
 package apidocs
 
 import (
-	"os"
-
 	"internal/apiclient"
 
 	"internal/client/apidocs"
@@ -24,29 +22,29 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// ExpCmd to export apidocs
-var ExpCmd = &cobra.Command{
-	Use:   "export",
-	Short: "Export API Docs to a file",
-	Long:  "Export API Docs to a file",
+// ImpCmd to import products
+var ImpCmd = &cobra.Command{
+	Use:   "import",
+	Short: "Import from a folder containing apidocs",
+	Long:  "Import from a folder containing apidocs",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		return apiclient.SetApigeeOrg(org)
 	},
-	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		if folder == "" {
-			folder, _ = os.Getwd()
-		}
-		if err = apiclient.FolderExists(folder); err != nil {
-			return err
-		}
-		apiclient.DisableCmdPrintHttpResponse()
-		return apidocs.Export(folder)
+	RunE: func(cmd *cobra.Command, args []string) error {
+		return apidocs.Import(conn, folder)
 	},
 }
 
-var folder string
+var (
+	conn     int
+	filePath string
+)
 
 func init() {
-	ExpCmd.Flags().StringVarP(&folder, "folder", "f",
-		"", "folder to export API Docs")
+	ImpCmd.Flags().StringVarP(&filePath, "folder", "f",
+		"", "Folder containing apidocs.json and apidocs_<siteid>_<id>.json files")
+	ImpCmd.Flags().IntVarP(&conn, "conn", "c",
+		4, "Number of connections")
+
+	_ = ImpCmd.MarkFlagRequired("file")
 }

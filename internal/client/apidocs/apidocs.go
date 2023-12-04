@@ -24,6 +24,7 @@ import (
 
 	"internal/apiclient"
 	"internal/client/sites"
+	"internal/clilog"
 )
 
 type Action uint8
@@ -173,7 +174,9 @@ func Delete(siteid string, id string) (respBody []byte, err error) {
 }
 
 // UpdateDocumentation
-func UpdateDocumentation(siteid string, id string, displayName string, openAPIDoc string, graphQLDoc string, endpointUri string) (respBody []byte, err error) {
+func UpdateDocumentation(siteid string, id string, displayName string,
+	openAPIDoc string, graphQLDoc string, endpointUri string,
+) (respBody []byte, err error) {
 	var payload string
 
 	if openAPIDoc != "" {
@@ -220,6 +223,17 @@ func Export(folder string) (err error) {
 			}
 			listdocs.Data = append(listdocs.Data, l.Data...)
 			pageToken = l.NextPageToken
+			// write apidocs Documentation
+			for _, data := range l.Data {
+				respDocsBody, err := GetDocumentation(siteid, data.ID)
+				if err != nil {
+					return err
+				}
+				docFileName := fmt.Sprintf("apidocs_%s_%s.json", siteid, data.ID)
+				if err = apiclient.WriteByteArrayToFile(path.Join(folder, docFileName), false, respDocsBody); err != nil {
+					return err
+				}
+			}
 			if l.NextPageToken == "" {
 				break
 			}
@@ -234,8 +248,21 @@ func Export(folder string) (err error) {
 	return apiclient.WriteByteArrayToFile(path.Join(folder, "apidocs.json"), false, respBody)
 }
 
+func Import(conn int, folder string) (err error) {
+	entities, err := readAPIDocsFile(path.Join(folder, "apidocs.json"))
+	if err != nil {
+		clilog.Error.Println("Error reading file: ", err)
+		return err
+	}
+	return fmt.Errorf("not implemented")
+}
+
 func getArrayStr(str []string) string {
 	tmp := strings.Join(str, ",")
 	tmp = strings.ReplaceAll(tmp, ",", "\",\"")
 	return tmp
+}
+
+func readAPIDocsFile(filePath string) (d []data, err error) {
+	return nil, nil
 }
