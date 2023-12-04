@@ -15,6 +15,7 @@
 package apicategories
 
 import (
+	"fmt"
 	"internal/apiclient"
 
 	"internal/client/apicategories"
@@ -31,6 +32,9 @@ var CreateCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		if siteid == "" {
+			return fmt.Errorf("siteid is a mandatory parameter")
+		}
 		_, err = apicategories.Create(siteid, name)
 		return
 	},

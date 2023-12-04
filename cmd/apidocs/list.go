@@ -15,6 +15,7 @@
 package apidocs
 
 import (
+	"fmt"
 	"internal/apiclient"
 	"internal/client/apidocs"
 
@@ -27,6 +28,9 @@ var ListCmd = &cobra.Command{
 	Short: "Returns the catalog items associated with a portal",
 	Long:  "Returns the catalog items associated with a portal",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		if siteid == "" {
+			return fmt.Errorf("siteid is a mandatory parameter")
+		}
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
