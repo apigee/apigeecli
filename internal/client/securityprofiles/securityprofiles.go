@@ -278,7 +278,7 @@ func Compute(name string, startTime string, endTime string, filters []string,
 }
 
 // Export
-func Export(conn int, folder string, allRevisions bool) (err error) {
+func Export(conn int, folder string) (err error) {
 	apiclient.ClientPrintHttpResponse.Set(false)
 	defer apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
 
@@ -323,7 +323,7 @@ func Export(conn int, folder string, allRevisions bool) (err error) {
 
 	for i := 0; i < conn; i++ {
 		fanOutWg.Add(1)
-		go exportWorker(&fanOutWg, workChan, folder, allRevisions, errChan)
+		go exportWorker(&fanOutWg, workChan, folder, errChan)
 	}
 
 	for _, i := range listsecprofiles.SecurityProfiles {
@@ -342,13 +342,10 @@ func Export(conn int, folder string, allRevisions bool) (err error) {
 	return nil
 }
 
-func exportWorker(wg *sync.WaitGroup, workCh <-chan secprofile, folder string, allRevisions bool, errs chan<- error) {
+func exportWorker(wg *sync.WaitGroup, workCh <-chan secprofile, folder string, errs chan<- error) {
 	defer wg.Done()
 	for {
-		var respBody []byte
 		var err error
-
-		listsecprofiles := secprofiles{}
 
 		work, ok := <-workCh
 		if !ok {
@@ -360,34 +357,13 @@ func exportWorker(wg *sync.WaitGroup, workCh <-chan secprofile, folder string, a
 			return
 		}
 
-		if allRevisions {
-			securityProfileName := work.Name[strings.LastIndex(work.Name, "/")+1:]
-			clilog.Info.Printf("Exporting all the revisions for Security Profile %s\n", securityProfileName)
-
-			if respBody, err = ListRevisions(securityProfileName); err != nil {
-				errs <- err
-			}
-			err = json.Unmarshal(respBody, &listsecprofiles)
-			if err != nil {
-				errs <- err
-			}
-			for _, s := range listsecprofiles.SecurityProfiles {
-				payload, err := json.Marshal(s)
-				if err != nil {
-					errs <- err
-				}
-				payload, _ = apiclient.PrettifyJSON(payload)
-				apiclient.WriteByteArrayToFile(path.Join(folder, s.Name+".json"), false, payload)
-			}
-		} else {
-			clilog.Info.Printf("Exporting Security Profile %s\n", work.Name)
-			payload, err := json.Marshal(work)
-			if err != nil {
-				errs <- err
-			}
-			payload, _ = apiclient.PrettifyJSON(payload)
-			apiclient.WriteByteArrayToFile(path.Join(folder, work.Name+".json"), false, payload)
+		clilog.Info.Printf("Exporting Security Profile %s\n", work.Name)
+		payload, err := json.Marshal(work)
+		if err != nil {
+			errs <- err
 		}
+		payload, _ = apiclient.PrettifyJSON(payload)
+		apiclient.WriteByteArrayToFile(path.Join(folder, work.Name+".json"), false, payload)
 	}
 }
 

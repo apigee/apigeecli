@@ -175,8 +175,7 @@ var ExportCmd = &cobra.Command{
 
 		if orgs.GetAddOn("apiSecurityConfig") {
 			clilog.Info.Println("Exporting API Security Configuration...")
-			if err = securityprofiles.Export(conn, securityProfilesFolderName,
-				false); proceedOnError(err) != nil {
+			if err = securityprofiles.Export(conn, securityProfilesFolderName); proceedOnError(err) != nil {
 				return err
 			}
 		}

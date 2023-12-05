@@ -39,14 +39,13 @@ var ExpCmd = &cobra.Command{
 		if err = apiclient.FolderExists(folder); err != nil {
 			return err
 		}
-		return securityprofiles.Export(conn, folder, false)
+		return securityprofiles.Export(conn, folder)
 	},
 }
 
 var (
 	conn   int
 	folder string
-	// allRevisions bool
 )
 
 func init() {
@@ -54,6 +53,4 @@ func init() {
 		4, "Number of connections")
 	ExpCmd.Flags().StringVarP(&folder, "folder", "f",
 		"", "folder to export Security Profiles")
-	/*ExpCmd.Flags().BoolVarP(&allRevisions, "all", "",
-	false, "Export all proxy revisions")*/
 }
