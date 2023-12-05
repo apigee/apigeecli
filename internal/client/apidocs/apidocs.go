@@ -15,12 +15,18 @@
 package apidocs
 
 import (
+	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"io"
 	"net/url"
+	"os"
 	"path"
+	"path/filepath"
 	"strconv"
 	"strings"
+	"sync"
 
 	"internal/apiclient"
 	"internal/client/sites"
@@ -43,6 +49,33 @@ type listapidocs struct {
 	ErrorCode     string `json:"errorCode,omitempty"`
 	Data          []data `json:"data,omitempty"`
 	NextPageToken string `json:"nextPageToken,omitempty"`
+}
+
+type documentation struct {
+	Status    string      `json:"status,omitempty"`
+	Message   string      `json:"message,omitempty"`
+	RequestID string      `json:"requestId,omitempty"`
+	Data      apidocsdata `json:"data,omitempty"`
+}
+
+type apidocsdata struct {
+	OasDocumentation     *oasDocumentation     `json:"oasDocumentation,omitempty"`
+	GraphqlDocumentation *graphqlDocumentation `json:"graphqlDocumentation,omitempty"`
+}
+
+type oasDocumentation struct {
+	Spec   spec   `json:"spec,omitempty"`
+	Format string `json:"format,omitempty"`
+}
+
+type spec struct {
+	DisplayName string `json:"displayName,omitempty"`
+	Contents    string `json:"contents,omitempty"`
+}
+
+type graphqlDocumentation struct {
+	Schema      spec   `json:"schema,omitempty"`
+	EndpointUri string `json:"endpointUri,omitempty"`
 }
 
 type data struct {
@@ -250,11 +283,110 @@ func Export(folder string) (err error) {
 
 func Import(conn int, folder string) (err error) {
 	entities, err := readAPIDocsFile(path.Join(folder, "apidocs.json"))
+	var errs []string
+
 	if err != nil {
 		clilog.Error.Println("Error reading file: ", err)
 		return err
 	}
-	return fmt.Errorf("not implemented")
+	for _, entity := range entities {
+		respBodyApiDocs, e := Create(entity.SiteID, entity.Title, entity.Description,
+			strconv.FormatBool(entity.Published),
+			strconv.FormatBool(entity.AnonAllowed), entity.ApiProductName,
+			strconv.FormatBool(entity.RequireCallbackUrl), entity.ImageUrl, entity.CategoryIDs)
+		if e != nil {
+			errs = append(errs, e.Error())
+			continue
+		}
+		d := documentation{}
+		if e = json.Unmarshal(respBodyApiDocs, &d); e != nil {
+			errs = append(errs, e.Error())
+			continue
+		}
+		// get all the files that match this siteid
+		siteIDDocsList := []string{}
+		err = filepath.Walk(folder, func(path string, info os.FileInfo, err error) error {
+			if err != nil {
+				return err
+			}
+			if info.IsDir() {
+				return nil
+			}
+			if filepath.Ext(path) != ".json" {
+				return nil
+			}
+			matchCriteria := fmt.Sprintf("apidocs_%s_*.json", entity.SiteID)
+			if ok, _ := filepath.Match(matchCriteria, path); ok {
+				siteIDDocsList = append(siteIDDocsList, path)
+			}
+			return nil
+		})
+		if err != nil {
+			return err
+		}
+		if len(siteIDDocsList) == 0 {
+			clilog.Warning.Printf("No API Docs files were found for siteid %s in the folder", entity.SiteID)
+			continue
+		}
+		clilog.Debug.Printf("Found %d API Docs for siteid %s in the folder\n", len(siteIDDocsList), entity.SiteID)
+		for _, siteIDDoc := range siteIDDocsList {
+			doc, err := readAPIDocumentationFile(siteIDDoc)
+			if err != nil {
+				errs = append(errs, err.Error())
+				continue
+			}
+			if doc.Data.GraphqlDocumentation != nil {
+				schema, err := base64.StdEncoding.DecodeString(doc.Data.GraphqlDocumentation.Schema.Contents)
+				if err != nil {
+					errs = append(errs, err.Error())
+					continue
+				}
+				_, err = UpdateDocumentation(entity.SiteID, entity.ID, doc.Data.OasDocumentation.Spec.DisplayName, "",
+					string(schema), doc.Data.GraphqlDocumentation.EndpointUri)
+			} else {
+				oasdoc, err := base64.StdEncoding.DecodeString(doc.Data.OasDocumentation.Spec.Contents)
+				if err != nil {
+					errs = append(errs, err.Error())
+					continue
+				}
+				_, err = UpdateDocumentation(entity.SiteID, entity.ID, doc.Data.OasDocumentation.Spec.DisplayName, string(oasdoc),
+					"", "")
+			}
+			if err != nil {
+				errs = append(errs, err.Error())
+				continue
+			}
+		}
+	}
+
+	if len(errs) > 0 {
+		return errors.New(strings.Join(errs, "\n"))
+	}
+	return nil
+}
+
+func importDocs(wg *sync.WaitGroup, jobs <-chan string, errs chan<- error) {
+	defer wg.Done()
+	for {
+		job, ok := <-jobs
+		if !ok {
+			return
+		}
+		jsonFile, err := os.Open(job)
+		if err != nil {
+			errs <- err
+		}
+		byteValue, err := io.ReadAll(jsonFile)
+		if err != nil {
+			errs <- err
+		}
+		docsFile := documentation{}
+		err = json.Unmarshal(byteValue, &docsFile)
+		if err != nil {
+			errs <- err
+		}
+		jsonFile.Close()
+	}
 }
 
 func getArrayStr(str []string) string {
@@ -264,5 +396,41 @@ func getArrayStr(str []string) string {
 }
 
 func readAPIDocsFile(filePath string) (d []data, err error) {
-	return nil, nil
+	jsonFile, err := os.Open(filePath)
+	if err != nil {
+		return nil, err
+	}
+
+	defer jsonFile.Close()
+
+	byteValue, err := io.ReadAll(jsonFile)
+	if err != nil {
+		return nil, err
+	}
+
+	err = json.Unmarshal(byteValue, &d)
+
+	if err != nil {
+		return nil, err
+	}
+	return d, nil
+}
+
+func readAPIDocumentationFile(fileName string) (d documentation, err error) {
+	jsonFile, err := os.Open(fileName)
+	if err != nil {
+		return d, err
+	}
+
+	defer jsonFile.Close()
+
+	content, err := io.ReadAll(jsonFile)
+	if err != nil {
+		return d, err
+	}
+	err = json.Unmarshal(content, &d)
+	if err != nil {
+		return d, err
+	}
+	return d, nil
 }
