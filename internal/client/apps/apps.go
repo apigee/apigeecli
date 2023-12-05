@@ -189,7 +189,7 @@ func SearchApp(name string) (respBody []byte, err error) {
 		return respBody, err
 	}
 	jq := gojsonq.New().JSONString(string(respBody)).From("app").Where("name", "eq", name)
-	out := jq.First()
+	out := jq.Get()
 	outBytes, err := json.Marshal(out)
 	if err != nil {
 		return outBytes, err
