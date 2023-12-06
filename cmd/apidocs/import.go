@@ -15,6 +15,7 @@
 package apidocs
 
 import (
+	"fmt"
 	"internal/apiclient"
 
 	"internal/client/apidocs"
@@ -31,20 +32,16 @@ var ImpCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return apidocs.Import(conn, folder)
+		if siteid == "" {
+			return fmt.Errorf("siteid is a mandatory parameter")
+		}
+		return apidocs.Import(siteid, folder)
 	},
 }
 
-var (
-	conn     int
-	filePath string
-)
-
 func init() {
-	ImpCmd.Flags().StringVarP(&filePath, "folder", "f",
-		"", "Folder containing apidocs.json and apidocs_<siteid>_<id>.json files")
-	ImpCmd.Flags().IntVarP(&conn, "conn", "c",
-		4, "Number of connections")
+	ImpCmd.Flags().StringVarP(&folder, "folder", "f",
+		"", "Folder containing site_<siteid>.json and apidocs_<siteid>_<id>.json files")
 
 	_ = ImpCmd.MarkFlagRequired("file")
 }
