@@ -16,6 +16,7 @@ package apidocs
 
 import (
 	"fmt"
+
 	"internal/apiclient"
 
 	"internal/client/apidocs"

@@ -214,15 +214,14 @@ func Delete(siteid string, id string) (respBody []byte, err error) {
 func UpdateDocumentation(siteid string, id string, displayName string,
 	openAPIDoc string, graphQLDoc string, endpointUri string,
 ) (respBody []byte, err error) {
-
 	var data map[string]interface{}
 	// var payload string
 	if openAPIDoc != "" {
 		data = map[string]interface{}{
 			"oasDocumentation": map[string]interface{}{
 				"spec": map[string]interface{}{
-					"displayName":displayName,
-					"contents":openAPIDoc,
+					"displayName": displayName,
+					"contents":    openAPIDoc,
 				},
 			},
 		}
@@ -231,10 +230,10 @@ func UpdateDocumentation(siteid string, id string, displayName string,
 	if graphQLDoc != "" {
 		data = map[string]interface{}{
 			"graphqlDocumentation": map[string]interface{}{
-				"endpointUri":endpointUri,
+				"endpointUri": endpointUri,
 				"schema": map[string]interface{}{
-					"displayName":displayName,
-					"contents":graphQLDoc,
+					"displayName": displayName,
+					"contents":    graphQLDoc,
 				},
 			},
 		}
@@ -245,7 +244,7 @@ func UpdateDocumentation(siteid string, id string, displayName string,
 		fmt.Printf("could not marshal json: %s\n", err)
 		return
 	}
-	payload := string(jsonData);
+	payload := string(jsonData)
 
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sites", siteid, "apidocs", id, "documentation")
