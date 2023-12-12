@@ -15,7 +15,7 @@
 package apidocs
 
 import (
-	"encoding/base64"
+	// "encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -93,6 +93,14 @@ type data struct {
 	GraphqlSchema            string   `json:"graphqlSchema,omitempty"`
 	GraphqlEndpointUrl       string   `json:"graphqlEndpointUrl,omitempty"`
 	GraphqlSchemaDisplayName string   `json:"graphqlSchemaDisplayName,omitempty"`
+}
+
+type apidocResponse struct {
+	Status    string `json:"status,omitempty"`
+	Message   string `json:"message,omitempty"`
+	RequestID string `json:"requestId,omitempty"`
+	ErrorCode string `json:"errorCode,omitempty"`
+	Data      data   `json:"data,omitempty"`
 }
 
 // Create
@@ -211,17 +219,18 @@ func UpdateDocumentation(siteid string, id string, displayName string,
 
 	if openAPIDoc != "" {
 		payload = "{\"oasDocumentation\":{\"spec\":{\"displayName\":\"" +
-			displayName + "\",\"contents\":" + openAPIDoc + "}}}"
+			displayName + "\",\"contents\":\"" + openAPIDoc + "\"}}}"
 	}
 
 	if graphQLDoc != "" {
 		payload = "{\"graphqlDocumentation\":{\"endpointUri\":\"" + endpointUri +
 			"\",\"schema\":{\"displayName\":\"" + displayName +
-			"\",\"contents\":" + graphQLDoc + "}}}"
+			"\",\"contents\":\"" + graphQLDoc + "\"}}}"
 	}
 
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sites", siteid, "apidocs", id, "documentation")
+	fmt.Printf("Kurt: update %s\n%s\n", u.String(), payload)
 	respBody, err = apiclient.HttpClient(u.String(), payload, "PATCH")
 
 	return nil, nil
@@ -280,13 +289,14 @@ func Export(folder string) (err error) {
 
 func Import(siteid string, folder string) (err error) {
 	var errs []string
+	var respBody []byte
 	docsList, err := readAPIDocsDataFile(path.Join(folder, "site_"+siteid+".json"))
 	if err != nil {
 		return err
 	}
 	for _, doc := range docsList {
 		// 1. create the apidoc object
-		_, err = Create(siteid, doc.Title, doc.Description, strconv.FormatBool(doc.Published),
+		respBody, err = Create(siteid, doc.Title, doc.Description, strconv.FormatBool(doc.Published),
 			strconv.FormatBool(doc.AnonAllowed), doc.ApiProductName,
 			strconv.FormatBool(doc.RequireCallbackUrl), doc.ImageUrl, doc.CategoryIDs)
 		if err != nil {
@@ -294,28 +304,30 @@ func Import(siteid string, folder string) (err error) {
 			continue
 
 		}
+
+		// get the new doc.ID from the created apidoc
+		response := apidocResponse{}
+		err = json.Unmarshal(respBody, &response)
+		if err != nil {
+			return err
+		}
+
 		// 2. find the documentation associated with this site
-		documentationFileName := fmt.Sprintf("apidocs_%s_%s", siteid, doc.ID)
+		documentationFileName := path.Join(folder, "apidocs_"+siteid+"_"+doc.ID+".json")
 		apidocument, err := readAPIDocumentationFile(documentationFileName)
 		if err != nil {
 			errs = append(errs, err.Error())
 			continue
 		}
 		if apidocument.Data.GraphqlDocumentation != nil {
-			schema, err := base64.StdEncoding.DecodeString(apidocument.Data.GraphqlDocumentation.Schema.Contents)
-			if err != nil {
-				errs = append(errs, err.Error())
-				continue
-			}
-			_, err = UpdateDocumentation(siteid, doc.ID, apidocument.Data.OasDocumentation.Spec.DisplayName, "",
-				string(schema), apidocument.Data.GraphqlDocumentation.EndpointUri)
+			_, err = UpdateDocumentation(siteid, response.Data.ID,
+				apidocument.Data.GraphqlDocumentation.Schema.DisplayName, "",
+				apidocument.Data.GraphqlDocumentation.Schema.Contents,
+				apidocument.Data.GraphqlDocumentation.EndpointUri)
 		} else {
-			oasdoc, err := base64.StdEncoding.DecodeString(apidocument.Data.OasDocumentation.Spec.Contents)
-			if err != nil {
-				errs = append(errs, err.Error())
-				continue
-			}
-			_, err = UpdateDocumentation(siteid, doc.ID, apidocument.Data.OasDocumentation.Spec.DisplayName, string(oasdoc),
+			_, err = UpdateDocumentation(siteid, response.Data.ID,
+				apidocument.Data.OasDocumentation.Spec.DisplayName,
+				apidocument.Data.OasDocumentation.Spec.Contents,
 				"", "")
 		}
 		if err != nil {
