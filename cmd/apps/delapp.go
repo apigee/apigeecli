@@ -43,7 +43,6 @@ func init() {
 		"", "Name of the developer app")
 	DelCmd.Flags().StringVarP(&id, "id", "i",
 		"", "Developer Id")
-
 	_ = DelCmd.MarkFlagRequired("name")
 	_ = DelCmd.MarkFlagRequired("id")
 }

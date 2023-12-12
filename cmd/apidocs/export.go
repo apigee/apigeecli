@@ -15,33 +15,38 @@
 package apidocs
 
 import (
-	"fmt"
+	"os"
 
 	"internal/apiclient"
+
 	"internal/client/apidocs"
 
 	"github.com/spf13/cobra"
 )
 
-// DelCmd to get a catalog items
-var DelCmd = &cobra.Command{
-	Use:   "delete",
-	Short: "Deletes a catalog item",
-	Long:  "Deletes a catalog item",
+// ExpCmd to export apidocs
+var ExpCmd = &cobra.Command{
+	Use:   "export",
+	Short: "Export API Docs to a file",
+	Long:  "Export API Docs to a file",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		if siteid == "" {
-			return fmt.Errorf("siteid is a mandatory parameter")
-		}
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = apidocs.Delete(siteid, id)
-		return
+		if folder == "" {
+			folder, _ = os.Getwd()
+		}
+		if err = apiclient.FolderExists(folder); err != nil {
+			return err
+		}
+		apiclient.DisableCmdPrintHttpResponse()
+		return apidocs.Export(folder)
 	},
 }
 
+var folder string
+
 func init() {
-	DelCmd.Flags().StringVarP(&id, "id", "i",
-		"", "Catalog ID")
-	_ = DelCmd.MarkFlagRequired("id")
+	ExpCmd.Flags().StringVarP(&folder, "folder", "f",
+		"", "folder to export API Docs")
 }

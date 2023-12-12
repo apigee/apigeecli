@@ -32,6 +32,7 @@ const (
 
 	proxiesFolderName          = "proxies"
 	sharedFlowsFolderName      = "sharedflows"
+  portalsFolderName     = "portals"
 	securityProfilesFolderName = "securityprofiles"
 )
 

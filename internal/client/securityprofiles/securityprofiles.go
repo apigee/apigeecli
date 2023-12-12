@@ -296,6 +296,7 @@ func Export(conn int, folder string) (err error) {
 			return fmt.Errorf("failed to unmarshall: %w", err)
 		}
 		listsecprofiles.SecurityProfiles = append(listsecprofiles.SecurityProfiles, l.SecurityProfiles...)
+		pageToken = l.NextPageToken
 		if l.NextPageToken == "" {
 			break
 		}

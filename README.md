@@ -128,6 +128,21 @@ docker run -ti ghcr.io/apigee/apigeecli:latest orgs list -t $token
 
 ### Using apigeecli with Cloud Build
 
+To execute apigeecli commands in cloud build, 
+
+```
+steps:
+- id: 'Run apigeecli commands'
+  name: ghcr.io/apigee/apigeecli:latest
+  args:
+  - 'orgs'
+  - 'get'
+  - '-o'
+  - '$PROJECT_ID'
+  - '--metadata-token'
+```
+
+If you need the response from the previous command as input to the next, then take advantage of `sh` and `jq` like so:
 ```yaml
 steps:
 - id: 'Run apigeecli commands'
@@ -141,7 +156,7 @@ steps:
       apigeecli token cache --metadata-token
 
       # run other commands here
-      apigeecli orgs list
+      apigeecli orgs list | jq
 ```
 
 ### Access shell

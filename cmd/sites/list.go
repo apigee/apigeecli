@@ -12,36 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package apidocs
+package sites
 
 import (
-	"fmt"
-
 	"internal/apiclient"
-	"internal/client/apidocs"
+	"internal/client/sites"
 
 	"github.com/spf13/cobra"
 )
 
-// DelCmd to get a catalog items
-var DelCmd = &cobra.Command{
-	Use:   "delete",
-	Short: "Deletes a catalog item",
-	Long:  "Deletes a catalog item",
+// ListCmd to list catalog items
+var ListCmd = &cobra.Command{
+	Use:   "list",
+	Short: "Returns the API Portals associated with the org",
+	Long:  "Returns the API Portals associated with the org",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		if siteid == "" {
-			return fmt.Errorf("siteid is a mandatory parameter")
-		}
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = apidocs.Delete(siteid, id)
+		_, err = sites.List()
 		return
 	},
-}
-
-func init() {
-	DelCmd.Flags().StringVarP(&id, "id", "i",
-		"", "Catalog ID")
-	_ = DelCmd.MarkFlagRequired("id")
 }

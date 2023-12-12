@@ -43,7 +43,9 @@ var CreateCmd = &cobra.Command{
 		if err != nil {
 			return fmt.Errorf("require-callback-url must be a boolean value: %v", err)
 		}
-
+		if siteid == "" {
+			return fmt.Errorf("siteid is a mandatory parameter")
+		}
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

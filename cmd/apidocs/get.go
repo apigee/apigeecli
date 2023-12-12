@@ -15,6 +15,8 @@
 package apidocs
 
 import (
+	"fmt"
+
 	"internal/apiclient"
 	"internal/client/apidocs"
 
@@ -27,6 +29,9 @@ var GetCmd = &cobra.Command{
 	Short: "Gets a catalog item",
 	Long:  "Gets a catalog item",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		if siteid == "" {
+			return fmt.Errorf("siteid is a mandatory parameter")
+		}
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

@@ -15,6 +15,8 @@
 package apicategories
 
 import (
+	"fmt"
+
 	"internal/apiclient"
 	"internal/client/apicategories"
 
@@ -27,6 +29,9 @@ var ListCmd = &cobra.Command{
 	Short: "Returns the API categories associated with a portal",
 	Long:  "Returns the API categories associated with a portal",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		if siteid == "" {
+			return fmt.Errorf("siteid is a mandatory parameter")
+		}
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

@@ -31,15 +31,17 @@ var ListCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = apps.List(includeCred, expand, count)
+		_, err = apps.List(includeCred, expand, count, status,
+			startKey, ids, keyStatus, apiProduct, pageSize, pageToken, filter)
 		return
 	},
 }
 
 var (
-	expand      = false
-	includeCred = false
-	count       int
+	status, startKey, ids, keyStatus, apiProduct, pageToken, filter string
+	expand                                                          = false
+	includeCred                                                     = false
+	count, pageSize                                                 int
 )
 
 func init() {
@@ -49,4 +51,18 @@ func init() {
 		false, "Expand Details")
 	ListCmd.Flags().BoolVarP(&includeCred, "inclCred", "i",
 		false, "Include Credentials")
+	ListCmd.Flags().StringVarP(&status, "status", "s",
+		"", "Filter by the status of the app. Valid values are approved or revoked")
+	ListCmd.Flags().StringVarP(&ids, "ids", "",
+		"", "Comma-separated list of app IDs")
+	ListCmd.Flags().StringVarP(&keyStatus, "key-status", "k",
+		"", "Key status of the app. Valid values include approved or revoked")
+	ListCmd.Flags().StringVarP(&apiProduct, "api-product", "p",
+		"", "Name of the API Product to filter by")
+	ListCmd.Flags().IntVarP(&pageSize, "page-size", "",
+		-1, "Count of apps a single page can have in the response")
+	ListCmd.Flags().StringVarP(&pageToken, "page-token", "",
+		"", "The starting index record for listing the apps")
+	ListCmd.Flags().StringVarP(&filter, "filter", "f",
+		"", "The filter expression to be used to get the list of apps")
 }

@@ -16,32 +16,32 @@ package apidocs
 
 import (
 	"fmt"
-
 	"internal/apiclient"
+
 	"internal/client/apidocs"
 
 	"github.com/spf13/cobra"
 )
 
-// DelCmd to get a catalog items
-var DelCmd = &cobra.Command{
-	Use:   "delete",
-	Short: "Deletes a catalog item",
-	Long:  "Deletes a catalog item",
+// ImpCmd to import products
+var ImpCmd = &cobra.Command{
+	Use:   "import",
+	Short: "Import from a folder containing apidocs",
+	Long:  "Import from a folder containing apidocs",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		return apiclient.SetApigeeOrg(org)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
 		if siteid == "" {
 			return fmt.Errorf("siteid is a mandatory parameter")
 		}
-		return apiclient.SetApigeeOrg(org)
-	},
-	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = apidocs.Delete(siteid, id)
-		return
+		return apidocs.Import(siteid, folder)
 	},
 }
 
 func init() {
-	DelCmd.Flags().StringVarP(&id, "id", "i",
-		"", "Catalog ID")
-	_ = DelCmd.MarkFlagRequired("id")
+	ImpCmd.Flags().StringVarP(&folder, "folder", "f",
+		"", "Folder containing site_<siteid>.json and apidocs_<siteid>_<id>.json files")
+
+	_ = ImpCmd.MarkFlagRequired("file")
 }
