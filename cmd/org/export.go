@@ -176,7 +176,7 @@ var ExportCmd = &cobra.Command{
 
 		if orgs.GetAddOn("apiSecurityConfig") {
 			clilog.Info.Println("Exporting API Security Configuration...")
-			if err = securityprofiles.Export(conn, folder, allRevisions); proceedOnError(err) != nil {
+			if err = securityprofiles.Export(conn, securityProfilesFolderName); proceedOnError(err) != nil {
 				return err
 			}
 		}
@@ -319,7 +319,7 @@ func createFolders() (err error) {
 	if err = os.Mkdir(portalsFolderName, 0o755); err != nil {
 		return err
 	}
-	return nil
+	return os.Mkdir(securityProfilesFolderName, 0o755)
 }
 
 func exportKVMEntries(scope string, env string, listKVMBytes []byte) (err error) {

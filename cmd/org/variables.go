@@ -30,9 +30,10 @@ const (
 	tracecfgFileName      = "_tracecfg.json"
 	referencesFileName    = "references.json"
 
-	proxiesFolderName     = "proxies"
-	sharedFlowsFolderName = "sharedflows"
-	portalsFolderName     = "portals"
+	proxiesFolderName          = "proxies"
+	sharedFlowsFolderName      = "sharedflows"
+	portalsFolderName          = "portals"
+	securityProfilesFolderName = "securityprofiles"
 )
 
 var conn int

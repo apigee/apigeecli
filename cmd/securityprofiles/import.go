@@ -12,37 +12,40 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package apidocs
+package securityprofiles
 
 import (
 	"fmt"
+	"os"
 
 	"internal/apiclient"
 
-	"internal/client/apidocs"
+	"internal/client/securityprofiles"
 
 	"github.com/spf13/cobra"
 )
 
-// ImpCmd to import products
+// ImpCmd to import sec profiles
 var ImpCmd = &cobra.Command{
 	Use:   "import",
-	Short: "Import from a folder containing apidocs",
-	Long:  "Import from a folder containing apidocs",
+	Short: "Import a folder containing Security Profiles",
+	Long:  "Import a folder containing Security Profiles",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		return apiclient.SetApigeeOrg(org)
 	},
-	RunE: func(cmd *cobra.Command, args []string) error {
-		if siteid == "" {
-			return fmt.Errorf("siteid is a mandatory parameter")
+	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		if stat, err := os.Stat(folder); err == nil && !stat.IsDir() {
+			return fmt.Errorf("supplied path is not a folder")
 		}
-		return apidocs.Import(siteid, folder)
+		return securityprofiles.Import(conn, folder)
 	},
 }
 
 func init() {
 	ImpCmd.Flags().StringVarP(&folder, "folder", "f",
-		"", "Folder containing site_<siteid>.json and apidocs_<siteid>_<id>.json files")
+		"", "folder containing one or more security profiles")
+	ImpCmd.Flags().IntVarP(&conn, "conn", "c",
+		4, "Number of connections")
 
-	_ = ImpCmd.MarkFlagRequired("file")
+	_ = ImpCmd.MarkFlagRequired("folder")
 }

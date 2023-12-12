@@ -41,8 +41,8 @@ var (
 )
 
 func init() {
-	ListCmd.Flags().IntVarP(&pageSize, "pageSize", "",
+	ListCmd.Flags().IntVarP(&pageSize, "page-size", "",
 		-1, "The maximum number of versions to return")
-	ListCmd.Flags().StringVarP(&pageToken, "pageToken", "",
+	ListCmd.Flags().StringVarP(&pageToken, "page-token", "",
 		"", "A page token, received from a previous call")
 }
