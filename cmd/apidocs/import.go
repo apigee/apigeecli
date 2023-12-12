@@ -16,38 +16,32 @@ package apidocs
 
 import (
 	"fmt"
-
 	"internal/apiclient"
+
 	"internal/client/apidocs"
 
 	"github.com/spf13/cobra"
 )
 
-// ListCmd to list catalog items
-var ListCmd = &cobra.Command{
-	Use:   "list",
-	Short: "Returns the catalog items associated with a portal",
-	Long:  "Returns the catalog items associated with a portal",
+// ImpCmd to import products
+var ImpCmd = &cobra.Command{
+	Use:   "import",
+	Short: "Import from a folder containing apidocs",
+	Long:  "Import from a folder containing apidocs",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		return apiclient.SetApigeeOrg(org)
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
 		if siteid == "" {
 			return fmt.Errorf("siteid is a mandatory parameter")
 		}
-		return apiclient.SetApigeeOrg(org)
-	},
-	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = apidocs.List(siteid, pageSize, pageToken)
-		return
+		return apidocs.Import(siteid, folder)
 	},
 }
 
-var (
-	pageSize  int
-	pageToken string
-)
-
 func init() {
-	ListCmd.Flags().IntVarP(&pageSize, "page-size", "",
-		-1, "The maximum number of versions to return")
-	ListCmd.Flags().StringVarP(&pageToken, "page-token", "",
-		"", "A page token, received from a previous call")
+	ImpCmd.Flags().StringVarP(&folder, "folder", "f",
+		"", "Folder containing site_<siteid>.json and apidocs_<siteid>_<id>.json files")
+
+	_ = ImpCmd.MarkFlagRequired("file")
 }

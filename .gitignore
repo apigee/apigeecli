@@ -23,3 +23,6 @@ apiproxy/
 
 #keys for envoy
 remote-service.*
+
+#json files
+*.json

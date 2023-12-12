@@ -12,13 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package apidocs
+package sites
 
 import (
-	"fmt"
-
 	"internal/apiclient"
-	"internal/client/apidocs"
+	"internal/client/sites"
 
 	"github.com/spf13/cobra"
 )
@@ -26,28 +24,13 @@ import (
 // ListCmd to list catalog items
 var ListCmd = &cobra.Command{
 	Use:   "list",
-	Short: "Returns the catalog items associated with a portal",
-	Long:  "Returns the catalog items associated with a portal",
+	Short: "Returns the API Portals associated with the org",
+	Long:  "Returns the API Portals associated with the org",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		if siteid == "" {
-			return fmt.Errorf("siteid is a mandatory parameter")
-		}
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = apidocs.List(siteid, pageSize, pageToken)
+		_, err = sites.List()
 		return
 	},
-}
-
-var (
-	pageSize  int
-	pageToken string
-)
-
-func init() {
-	ListCmd.Flags().IntVarP(&pageSize, "page-size", "",
-		-1, "The maximum number of versions to return")
-	ListCmd.Flags().StringVarP(&pageToken, "page-token", "",
-		"", "A page token, received from a previous call")
 }

@@ -15,11 +15,18 @@
 package apidocs
 
 import (
+	"encoding/json"
+	"errors"
+	"fmt"
+	"io"
 	"net/url"
+	"os"
 	"path"
+	"strconv"
 	"strings"
 
 	"internal/apiclient"
+	"internal/client/sites"
 )
 
 type Action uint8
@@ -28,6 +35,72 @@ const (
 	CREATE Action = iota
 	UPDATE
 )
+
+const maxPageSize = 100
+
+type listapidocs struct {
+	Status        string `json:"status,omitempty"`
+	Message       string `json:"message,omitempty"`
+	RequestID     string `json:"requestId,omitempty"`
+	ErrorCode     string `json:"errorCode,omitempty"`
+	Data          []data `json:"data,omitempty"`
+	NextPageToken string `json:"nextPageToken,omitempty"`
+}
+
+type apidocsdata struct {
+	Status    string        `json:"status,omitempty"`
+	Message   string        `json:"message,omitempty"`
+	RequestID string        `json:"requestId,omitempty"`
+	Data      documentation `json:"data,omitempty"`
+}
+
+type documentation struct {
+	OasDocumentation     *oasDocumentation     `json:"oasDocumentation,omitempty"`
+	GraphqlDocumentation *graphqlDocumentation `json:"graphqlDocumentation,omitempty"`
+}
+
+type oasDocumentation struct {
+	Spec   spec   `json:"spec,omitempty"`
+	Format string `json:"format,omitempty"`
+}
+
+type spec struct {
+	DisplayName string `json:"displayName,omitempty"`
+	Contents    string `json:"contents,omitempty"`
+}
+
+type graphqlDocumentation struct {
+	Schema      spec   `json:"schema,omitempty"`
+	EndpointUri string `json:"endpointUri,omitempty"`
+}
+
+type data struct {
+	SiteID                   string   `json:"siteId,omitempty"`
+	ID                       string   `json:"id,omitempty"`
+	Title                    string   `json:"title,omitempty"`
+	Description              string   `json:"description,omitempty"`
+	Published                bool     `json:"published,omitempty"`
+	AnonAllowed              bool     `json:"anonAllowed,omitempty"`
+	ApiProductName           string   `json:"apiProductName,omitempty"`
+	RequireCallbackUrl       bool     `json:"requireCallbackUrl,omitempty"`
+	ImageUrl                 string   `json:"imageUrl,omitempty"`
+	CategoryIDs              []string `json:"categoryIds,omitempty"`
+	Modified                 string   `json:"modified,omitempty"`
+	Visibility               bool     `json:"visibility,omitempty"`
+	EdgeAPIProductName       string   `json:"edgeAPIProductName,omitempty"`
+	SpecID                   string   `json:"specId,omitempty"`
+	GraphqlSchema            string   `json:"graphqlSchema,omitempty"`
+	GraphqlEndpointUrl       string   `json:"graphqlEndpointUrl,omitempty"`
+	GraphqlSchemaDisplayName string   `json:"graphqlSchemaDisplayName,omitempty"`
+}
+
+type apidocResponse struct {
+	Status    string `json:"status,omitempty"`
+	Message   string `json:"message,omitempty"`
+	RequestID string `json:"requestId,omitempty"`
+	ErrorCode string `json:"errorCode,omitempty"`
+	Data      data   `json:"data,omitempty"`
+}
 
 // Create
 func Create(siteid string, title string, description string, published string,
@@ -113,9 +186,18 @@ func Get(siteid string, id string) (respBody []byte, err error) {
 }
 
 // List
-func List(siteid string) (respBody []byte, err error) {
+func List(siteid string, pageSize int, pageToken string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sites", siteid, "apidocs")
+	q := u.Query()
+	if pageSize != -1 {
+		q.Set("pageSize", strconv.Itoa(pageSize))
+	}
+	if pageToken != "" {
+		q.Set("pageToken", pageToken)
+	}
+
+	u.RawQuery = q.Encode()
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
@@ -129,19 +211,41 @@ func Delete(siteid string, id string) (respBody []byte, err error) {
 }
 
 // UpdateDocumentation
-func UpdateDocumentation(siteid string, id string, displayName string, openAPIDoc string, graphQLDoc string, endpointUri string) (respBody []byte, err error) {
-	var payload string
+func UpdateDocumentation(siteid string, id string, displayName string,
+	openAPIDoc string, graphQLDoc string, endpointUri string,
+) (respBody []byte, err error) {
 
+	var data map[string]interface{}
+	// var payload string
 	if openAPIDoc != "" {
-		payload = "{\"oasDocumentation\":{\"spec\":{\"displayName\":\"" +
-			displayName + "\",\"contents\":" + openAPIDoc + "}}}"
+		data = map[string]interface{}{
+			"oasDocumentation": map[string]interface{}{
+				"spec": map[string]interface{}{
+					"displayName":displayName,
+					"contents":openAPIDoc,
+				},
+			},
+		}
 	}
 
 	if graphQLDoc != "" {
-		payload = "{\"graphqlDocumentation\":{\"endpointUri\":\"" + endpointUri +
-			"\",\"schema\":{\"displayName\":\"" + displayName +
-			"\",\"contents\":" + graphQLDoc + "}}}"
+		data = map[string]interface{}{
+			"graphqlDocumentation": map[string]interface{}{
+				"endpointUri":endpointUri,
+				"schema": map[string]interface{}{
+					"displayName":displayName,
+					"contents":graphQLDoc,
+				},
+			},
+		}
 	}
+
+	jsonData, err := json.Marshal(data)
+	if err != nil {
+		fmt.Printf("could not marshal json: %s\n", err)
+		return
+	}
+	payload := string(jsonData);
 
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sites", siteid, "apidocs", id, "documentation")
@@ -150,8 +254,151 @@ func UpdateDocumentation(siteid string, id string, displayName string, openAPIDo
 	return nil, nil
 }
 
+// Export
+func Export(folder string) (err error) {
+	apiclient.ClientPrintHttpResponse.Set(false)
+	defer apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
+
+	siteids, err := sites.GetSiteIDs()
+	if err != nil {
+		return err
+	}
+
+	pageToken := ""
+
+	for _, siteid := range siteids {
+		l := listapidocs{}
+		for {
+			listRespBytes, err := List(siteid, maxPageSize, pageToken)
+			if err != nil {
+				return fmt.Errorf("failed to fetch apidocs: %w", err)
+			}
+			err = json.Unmarshal(listRespBytes, &l)
+			if err != nil {
+				return fmt.Errorf("failed to unmarshall: %w", err)
+			}
+			pageToken = l.NextPageToken
+			// write apidocs Documentation
+			for _, data := range l.Data {
+				respDocsBody, err := GetDocumentation(siteid, data.ID)
+				if err != nil {
+					return err
+				}
+				docFileName := fmt.Sprintf("apidocs_%s_%s.json", siteid, data.ID)
+				if err = apiclient.WriteByteArrayToFile(path.Join(folder, docFileName), false, respDocsBody); err != nil {
+					return err
+				}
+			}
+			if l.NextPageToken == "" {
+				break
+			}
+		}
+		respBody, err := json.Marshal(l.Data)
+		if err != nil {
+			return err
+		}
+		respBody, _ = apiclient.PrettifyJSON(respBody)
+		if err = apiclient.WriteByteArrayToFile(path.Join(folder, "site_"+siteid+".json"), false, respBody); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func Import(siteid string, folder string) (err error) {
+	var errs []string
+	var respBody []byte
+	docsList, err := readAPIDocsDataFile(path.Join(folder, "site_"+siteid+".json"))
+	if err != nil {
+		return err
+	}
+	for _, doc := range docsList {
+		// 1. create the apidoc object
+		respBody, err = Create(siteid, doc.Title, doc.Description, strconv.FormatBool(doc.Published),
+			strconv.FormatBool(doc.AnonAllowed), doc.ApiProductName,
+			strconv.FormatBool(doc.RequireCallbackUrl), doc.ImageUrl, doc.CategoryIDs)
+		if err != nil {
+			errs = append(errs, err.Error())
+			continue
+
+		}
+
+		// get the new doc.ID from the created apidoc
+		response := apidocResponse{}
+		err = json.Unmarshal(respBody, &response)
+		if err != nil {
+			return err
+		}
+
+		// 2. find the documentation associated with this site
+		documentationFileName := path.Join(folder, "apidocs_"+siteid+"_"+doc.ID+".json")
+		apidocument, err := readAPIDocumentationFile(documentationFileName)
+		if err != nil {
+			errs = append(errs, err.Error())
+			continue
+		}
+		if apidocument.Data.GraphqlDocumentation != nil {
+			_, err = UpdateDocumentation(siteid, response.Data.ID,
+				apidocument.Data.GraphqlDocumentation.Schema.DisplayName, "",
+				apidocument.Data.GraphqlDocumentation.Schema.Contents,
+				apidocument.Data.GraphqlDocumentation.EndpointUri)
+		} else {
+			_, err = UpdateDocumentation(siteid, response.Data.ID,
+				apidocument.Data.OasDocumentation.Spec.DisplayName,
+				apidocument.Data.OasDocumentation.Spec.Contents,
+				"", "")
+		}
+		if err != nil {
+			errs = append(errs, err.Error())
+			continue
+		}
+	}
+	if len(errs) > 0 {
+		return errors.New(strings.Join(errs, "\n"))
+	}
+	return nil
+}
+
 func getArrayStr(str []string) string {
 	tmp := strings.Join(str, ",")
 	tmp = strings.ReplaceAll(tmp, ",", "\",\"")
 	return tmp
+}
+
+func readAPIDocumentationFile(fileName string) (a apidocsdata, err error) {
+	jsonFile, err := os.Open(fileName)
+	if err != nil {
+		return a, err
+	}
+
+	defer jsonFile.Close()
+
+	content, err := io.ReadAll(jsonFile)
+	if err != nil {
+		return a, err
+	}
+	err = json.Unmarshal(content, &a)
+	if err != nil {
+		return a, err
+	}
+	return a, nil
+}
+
+func readAPIDocsDataFile(fileName string) (d []data, err error) {
+	jsonFile, err := os.Open(fileName)
+	if err != nil {
+		return d, err
+	}
+
+	defer jsonFile.Close()
+
+	content, err := io.ReadAll(jsonFile)
+	if err != nil {
+		return d, err
+	}
+	err = json.Unmarshal(content, &d)
+	if err != nil {
+		return d, err
+	}
+	return d, nil
 }

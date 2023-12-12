@@ -12,36 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package apidocs
+package sites
 
 import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to manage apis
+// Cmd to manage
 var Cmd = &cobra.Command{
-	Use:   "apidocs",
-	Short: "Manage Apigee API catalog item through ApiDoc",
-	Long:  "Manage Apigee API catalog item through ApiDoc",
+	Use:   "sites",
+	Short: "Manage Apigee API Portals",
+	Long:  "Manage Apigee API Portals",
 }
 
-var org, siteid, id, name string
+var org string
 
 func init() {
 	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
-	Cmd.PersistentFlags().StringVarP(&siteid, "siteid", "s",
-		"", "Name or siteid of the portal")
 
 	Cmd.AddCommand(ListCmd)
-	Cmd.AddCommand(GetCmd)
-	Cmd.AddCommand(DelCmd)
-	Cmd.AddCommand(DocCmd)
-	Cmd.AddCommand(CreateCmd)
-	Cmd.AddCommand(UpdateCmd)
-	Cmd.AddCommand(ExpCmd)
-	Cmd.AddCommand(ImpCmd)
 
 	_ = Cmd.MarkFlagRequired("org")
-	_ = Cmd.MarkFlagRequired("siteid")
 }
