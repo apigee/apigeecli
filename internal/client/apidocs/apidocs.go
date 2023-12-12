@@ -15,7 +15,6 @@
 package apidocs
 
 import (
-	// "encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -215,22 +214,41 @@ func Delete(siteid string, id string) (respBody []byte, err error) {
 func UpdateDocumentation(siteid string, id string, displayName string,
 	openAPIDoc string, graphQLDoc string, endpointUri string,
 ) (respBody []byte, err error) {
-	var payload string
 
+	var data map[string]interface{}
+	// var payload string
 	if openAPIDoc != "" {
-		payload = "{\"oasDocumentation\":{\"spec\":{\"displayName\":\"" +
-			displayName + "\",\"contents\":\"" + openAPIDoc + "\"}}}"
+		data = map[string]interface{}{
+			"oasDocumentation": map[string]interface{}{
+				"spec": map[string]interface{}{
+					"displayName":displayName,
+					"contents":openAPIDoc,
+				},
+			},
+		}
 	}
 
 	if graphQLDoc != "" {
-		payload = "{\"graphqlDocumentation\":{\"endpointUri\":\"" + endpointUri +
-			"\",\"schema\":{\"displayName\":\"" + displayName +
-			"\",\"contents\":\"" + graphQLDoc + "\"}}}"
+		data = map[string]interface{}{
+			"graphqlDocumentation": map[string]interface{}{
+				"endpointUri":endpointUri,
+				"schema": map[string]interface{}{
+					"displayName":displayName,
+					"contents":graphQLDoc,
+				},
+			},
+		}
 	}
+
+	jsonData, err := json.Marshal(data)
+	if err != nil {
+		fmt.Printf("could not marshal json: %s\n", err)
+		return
+	}
+	payload := string(jsonData);
 
 	u, _ := url.Parse(apiclient.BaseURL)
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sites", siteid, "apidocs", id, "documentation")
-	fmt.Printf("Kurt: update %s\n%s\n", u.String(), payload)
 	respBody, err = apiclient.HttpClient(u.String(), payload, "PATCH")
 
 	return nil, nil
