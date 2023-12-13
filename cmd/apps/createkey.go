@@ -34,8 +34,10 @@ var CreateKeyCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		if _, err = strconv.Atoi(expires); err != nil {
-			return fmt.Errorf("expires must be an integer: %v", err)
+		if expires != "" {
+			if _, err = strconv.Atoi(expires); err != nil {
+				return fmt.Errorf("expires must be an integer: %v", err)
+			}
 		}
 		_, err = apps.CreateKey(developerEmail, name, key, secret, apiProducts, scopes, expires, attrs)
 		return
@@ -52,7 +54,7 @@ func init() {
 	CreateKeyCmd.Flags().StringArrayVarP(&scopes, "scopes", "s",
 		[]string{}, "OAuth scopes")
 	CreateKeyCmd.Flags().StringVarP(&expires, "expires", "x",
-		"", "A setting, in milliseconds, for the lifetime of the consumer key")
+		"", "A setting, in seconds, for the lifetime of the consumer key")
 	CreateKeyCmd.Flags().StringToStringVar(&attrs, "attrs",
 		nil, "Custom attributes")
 

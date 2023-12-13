@@ -15,6 +15,9 @@
 package apps
 
 import (
+	"fmt"
+	"strconv"
+
 	"internal/apiclient"
 
 	"internal/client/apps"
@@ -31,6 +34,12 @@ var GenKeyCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		if expires != "" {
+			if _, err = strconv.Atoi(expires); err != nil {
+				return fmt.Errorf("expires must be an integer: %v", err)
+			}
+			expires += "000"
+		}
 		_, err = apps.GenerateKey(name, devID, apiProducts, callback, expires, scopes)
 		return
 	},
@@ -42,9 +51,9 @@ func init() {
 	GenKeyCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of the developer app")
 	GenKeyCmd.Flags().StringVarP(&devID, "devid", "d",
-		"", "Developer Id")
+		"", "The developer's id or email")
 	GenKeyCmd.Flags().StringVarP(&expires, "expires", "x",
-		"", "A setting, in milliseconds, for the lifetime of the consumer key")
+		"", "A setting, in seconds, for the lifetime of the consumer key")
 	GenKeyCmd.Flags().StringVarP(&callback, "callback", "c",
 		"", "The callbackUrl is used by OAuth")
 	GenKeyCmd.Flags().StringArrayVarP(&apiProducts, "prods", "p",

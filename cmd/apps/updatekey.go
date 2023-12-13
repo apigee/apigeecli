@@ -15,9 +15,6 @@
 package apps
 
 import (
-	"fmt"
-	"strconv"
-
 	"internal/apiclient"
 
 	"internal/client/apps"
@@ -34,10 +31,7 @@ var UpdateKeyCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		if _, err = strconv.Atoi(expires); err != nil {
-			return fmt.Errorf("expires must be an integer: %v", err)
-		}
-		_, err = apps.UpdateKey(developerEmail, name, key, secret, apiProducts, scopes, expires, attrs)
+		_, err = apps.UpdateKey(developerEmail, name, key, secret, apiProducts, scopes, attrs)
 		return
 	},
 }
@@ -45,19 +39,14 @@ var UpdateKeyCmd = &cobra.Command{
 func init() {
 	UpdateKeyCmd.Flags().StringVarP(&key, "key", "k",
 		"", "Developer app consumer key")
-	UpdateKeyCmd.Flags().StringVarP(&secret, "secret", "r",
-		"", "Developer app consumer secret")
 	UpdateKeyCmd.Flags().StringArrayVarP(&apiProducts, "prods", "p",
 		[]string{}, "A list of api products")
 	UpdateKeyCmd.Flags().StringArrayVarP(&scopes, "scopes", "s",
 		[]string{}, "OAuth scopes")
-	UpdateKeyCmd.Flags().StringVarP(&expires, "expires", "x",
-		"", "A setting, in milliseconds, for the lifetime of the consumer key")
 	UpdateKeyCmd.Flags().StringToStringVar(&attrs, "attrs",
 		nil, "Custom attributes")
 
 	_ = UpdateKeyCmd.MarkFlagRequired("name")
 	_ = UpdateKeyCmd.MarkFlagRequired("key")
-	_ = UpdateKeyCmd.MarkFlagRequired("secret")
 	_ = UpdateKeyCmd.MarkFlagRequired("prods")
 }
