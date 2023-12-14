@@ -46,9 +46,7 @@ var CreateKeyCmd = &cobra.Command{
 	},
 }
 
-var (
-	secret  string
-)
+var secret string
 
 func init() {
 	CreateKeyCmd.Flags().StringVarP(&name, "name", "n",
