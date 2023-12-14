@@ -15,13 +15,18 @@
 package apicategories
 
 import (
+	"encoding/json"
+	"errors"
 	"fmt"
+	"io"
 	"net/url"
+	"os"
 	"path"
 	"strings"
 
 	"internal/apiclient"
 	"internal/client/sites"
+	"internal/clilog"
 )
 
 type listapicategories struct {
@@ -110,4 +115,47 @@ func Export(folder string) (err error) {
 		}
 	}
 	return nil
+}
+
+// Import
+func Import(siteid string, apicateogyFile string) (err error) {
+	errs := []string{}
+	l, err := readAPICategoriesFile(apicateogyFile)
+	if err != nil {
+		return err
+	}
+	if len(l.Data) < 1 {
+		clilog.Warning.Println("No categories found for the siteid")
+		return nil
+	}
+
+	for _, category := range l.Data {
+		_, err = Create(siteid, category.Name)
+		if err != nil {
+			errs = append(errs, err.Error())
+		}
+	}
+	if len(errs) > 0 {
+		return errors.New(strings.Join(errs, "\n"))
+	}
+	return nil
+}
+
+func readAPICategoriesFile(fileName string) (l listapicategories, err error) {
+	jsonFile, err := os.Open(fileName)
+	if err != nil {
+		return l, err
+	}
+
+	defer jsonFile.Close()
+
+	content, err := io.ReadAll(jsonFile)
+	if err != nil {
+		return l, err
+	}
+	err = json.Unmarshal(content, &l)
+	if err != nil {
+		return l, err
+	}
+	return l, nil
 }

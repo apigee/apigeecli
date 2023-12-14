@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package apidocs
+package apicategories
 
 import (
 	"fmt"
 
 	"internal/apiclient"
 
-	"internal/client/apidocs"
+	"internal/client/apicategories"
 
 	"github.com/spf13/cobra"
 )
@@ -27,8 +27,8 @@ import (
 // ImpCmd to import products
 var ImpCmd = &cobra.Command{
 	Use:   "import",
-	Short: "Import from a folder containing apidocs",
-	Long:  "Import from a folder containing apidocs",
+	Short: "Import from a folder containing apicategories",
+	Long:  "Import from a folder containing apicategories",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		return apiclient.SetApigeeOrg(org)
 	},
@@ -36,13 +36,15 @@ var ImpCmd = &cobra.Command{
 		if siteid == "" {
 			return fmt.Errorf("siteid is a mandatory parameter")
 		}
-		return apidocs.Import(siteid, folder)
+		return apicategories.Import(siteid, apicategoryFile)
 	},
 }
 
-func init() {
-	ImpCmd.Flags().StringVarP(&folder, "folder", "f",
-		"", "Folder containing site_<siteid>.json and apidocs_<siteid>_<id>.json files")
+var apicategoryFile string
 
-	_ = ImpCmd.MarkFlagRequired("folder")
+func init() {
+	ImpCmd.Flags().StringVarP(&apicategoryFile, "file", "f",
+		"", "A file containing apicategories")
+
+	_ = ImpCmd.MarkFlagRequired("file")
 }
