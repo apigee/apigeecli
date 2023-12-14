@@ -33,17 +33,20 @@ var GetCmd = &cobra.Command{
 			return fmt.Errorf("siteid is a mandatory parameter")
 		}
 		if name == "" && id == "" {
-			return fmt.Errorf("name or id must be set as a parameter")
+			return fmt.Errorf("title or id must be set as a parameter")
 		}
-		if name != "" || id != "" {
-			return fmt.Errorf("name and id cannot be set as a parameter")
+		if name != "" && id != "" {
+			return fmt.Errorf("title and id cannot be set as a parameter")
 		}
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		if name != "" {
-			_, err = apidocs.GetByName(siteid, name)
-			return err
+			var payload []byte
+			if payload, err = apidocs.GetByTitle(siteid, name); err != nil {
+				return err
+			}
+			return apiclient.PrettyPrint("application/json", payload)
 		}
 		_, err = apidocs.Get(siteid, id)
 		return
@@ -53,6 +56,6 @@ var GetCmd = &cobra.Command{
 func init() {
 	GetCmd.Flags().StringVarP(&id, "id", "i",
 		"", "Catalog ID")
-	GetCmd.Flags().StringVarP(&name, "name", "n",
-		"", "Catalog Name")
+	GetCmd.Flags().StringVarP(&name, "title", "",
+		"", "Catalog Title")
 }

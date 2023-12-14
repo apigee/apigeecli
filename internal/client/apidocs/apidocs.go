@@ -185,9 +185,10 @@ func Get(siteid string, id string) (respBody []byte, err error) {
 	return respBody, err
 }
 
-// GetByName
-func GetByName(siteid string, name string) (respBody []byte, err error) {
+// GetByTitle
+func GetByTitle(siteid string, title string) (respBody []byte, err error) {
 	apiclient.ClientPrintHttpResponse.Set(false)
+	defer apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
 	fullList := listapidocs{}
 	pageToken := ""
 	for {
@@ -200,13 +201,21 @@ func GetByName(siteid string, name string) (respBody []byte, err error) {
 		if err != nil {
 			return nil, fmt.Errorf("failed to unmarshall: %w", err)
 		}
-		pageToken = l.NextPageToken
 		fullList.Data = append(fullList.Data, l.Data...)
+		pageToken = l.NextPageToken
 		if l.NextPageToken == "" {
 			break
 		}
 	}
-	return nil, nil
+	for _, data := range fullList.Data {
+		if data.Title == title {
+			if respBody, err = json.Marshal(data); err != nil {
+				return nil, err
+			}
+			return respBody, nil
+		}
+	}
+	return nil, fmt.Errorf("unable to find apidocs with title %s", title)
 }
 
 // List

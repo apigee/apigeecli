@@ -30,11 +30,24 @@ var GetCmd = &cobra.Command{
 	Short: "Gets an API Category by ID",
 	Long:  "Gets an API Category by ID",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		if siteid == "" {
+			return fmt.Errorf("siteid is a mandatory parameter")
+		}
+		if name == "" && id == "" {
+			return fmt.Errorf("name or id must be set as a parameter")
+		}
+		if name != "" && id != "" {
+			return fmt.Errorf("name and id cannot be set as a parameter")
+		}
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		if siteid == "" {
-			return fmt.Errorf("siteid is a mandatory parameter")
+		if name != "" {
+			var payload []byte
+			if payload, err = apicategories.GetByName(siteid, name); err != nil {
+				return err
+			}
+			return apiclient.PrettyPrint("application/json", payload)
 		}
 		_, err = apicategories.Get(siteid, id)
 		return
@@ -44,5 +57,6 @@ var GetCmd = &cobra.Command{
 func init() {
 	GetCmd.Flags().StringVarP(&id, "id", "i",
 		"", "API Category ID")
-	_ = GetCmd.MarkFlagRequired("id")
+	GetCmd.Flags().StringVarP(&name, "name", "n",
+		"", "API Catalog Name")
 }
