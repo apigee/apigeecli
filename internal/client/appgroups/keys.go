@@ -45,6 +45,10 @@ func CreateKey(name string, appName string, consumerKey string, consumerSecret s
 		key = append(key, "\"consumerSecret\":\""+consumerSecret+"\"")
 	}
 
+	if expiresInSeconds != "" {
+		key = append(key, "\"expiresInSeconds\":\""+expiresInSeconds+"\"")
+	}
+
 	payload := "{" + strings.Join(key, ",") + "}"
 
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "appgroups", name, "apps", appName, "keys")
@@ -60,9 +64,8 @@ func CreateKey(name string, appName string, consumerKey string, consumerSecret s
 
 	// since the API does not support adding products when creating a key, use a second API call to add products
 	if len(apiProducts) > 0 {
-		apiclient.ClientPrintHttpResponse.Set(false)
+		apiclient.ClientPrintHttpResponse.Set(true)
 		respBody, err = UpdateKeyProducts(name, appName, consumerKey, apiProducts)
-		apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
 	}
 
 	return respBody, err

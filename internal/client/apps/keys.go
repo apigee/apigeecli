@@ -85,7 +85,7 @@ func GetKey(developerEmail string, appID string, key string) (respBody []byte, e
 }
 
 // UpdateKey
-func UpdateKey(developerEmail string, appID string, consumerKey string, consumerSecret string,
+func UpdateKey(developerEmail string, appID string, consumerKey string,
 	apiProducts []string, scopes []string, attrs map[string]string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 
@@ -109,10 +109,6 @@ func UpdateKey(developerEmail string, appID string, consumerKey string, consumer
 	}
 
 	key = append(key, "\"consumerKey\":\""+consumerKey+"\"")
-
-	if consumerSecret != "" {
-		key = append(key, "\"consumerSecret\":\""+consumerSecret+"\"")
-	}
 
 	payload := "{" + strings.Join(key, ",") + "}"
 

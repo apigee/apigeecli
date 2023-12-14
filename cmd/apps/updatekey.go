@@ -31,7 +31,7 @@ var UpdateKeyCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = apps.UpdateKey(developerEmail, name, key, secret, apiProducts, scopes, attrs)
+		_, err = apps.UpdateKey(developerEmail, name, key, apiProducts, scopes, attrs)
 		return
 	},
 }
