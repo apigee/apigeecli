@@ -15,12 +15,30 @@
 package apicategories
 
 import (
+	"fmt"
 	"net/url"
 	"path"
 	"strings"
 
 	"internal/apiclient"
+	"internal/client/sites"
 )
+
+type listapicategories struct {
+	Status        string `json:"status,omitempty"`
+	Message       string `json:"message,omitempty"`
+	RequestID     string `json:"requestId,omitempty"`
+	ErrorCode     string `json:"errorCode,omitempty"`
+	Data          []data `json:"data,omitempty"`
+	NextPageToken string `json:"nextPageToken,omitempty"`
+}
+
+type data struct {
+	SiteID     string `json:"siteId,omitempty"`
+	ID         string `json:"id,omitempty"`
+	Name       string `json:"name,omitempty"`
+	UpdateTime string `json:"updateTime,omitempty"`
+}
 
 // Create
 func Create(siteid string, name string) (respBody []byte, err error) {
@@ -68,4 +86,28 @@ func Update(siteid string, name string) (respBody []byte, err error) {
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sites", siteid, "apicategories")
 	respBody, err = apiclient.HttpClient(u.String(), payload, "PATCH")
 	return respBody, err
+}
+
+// Export
+func Export(folder string) (err error) {
+	apiclient.ClientPrintHttpResponse.Set(false)
+	defer apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
+
+	siteids, err := sites.GetSiteIDs()
+	if err != nil {
+		return err
+	}
+
+	for _, siteid := range siteids {
+		listRespBytes, err := List(siteid)
+		if err != nil {
+			return fmt.Errorf("failed to fetch apicategories: %w", err)
+		}
+
+		docFileName := fmt.Sprintf("apicategory_%s.json", siteid)
+		if err = apiclient.WriteByteArrayToFile(path.Join(folder, docFileName), false, listRespBytes); err != nil {
+			return err
+		}
+	}
+	return nil
 }

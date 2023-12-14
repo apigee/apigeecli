@@ -37,6 +37,7 @@ func init() {
 	Cmd.AddCommand(GetCmd)
 	Cmd.AddCommand(DelCmd)
 	Cmd.AddCommand(CreateCmd)
+	Cmd.AddCommand(ExpCmd)
 
 	_ = Cmd.MarkFlagRequired("org")
 	_ = Cmd.MarkFlagRequired("siteid")

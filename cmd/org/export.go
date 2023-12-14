@@ -26,6 +26,7 @@ import (
 
 	"internal/clilog"
 
+	"internal/client/apicategories"
 	"internal/client/apidocs"
 	"internal/client/apis"
 	"internal/client/appgroups"
@@ -183,6 +184,11 @@ var ExportCmd = &cobra.Command{
 
 		clilog.Info.Println("Exporting API Portal apidocs Configuration...")
 		if err = apidocs.Export(portalsFolderName); proceedOnError(err) != nil {
+			return err
+		}
+
+		clilog.Info.Println("Exporting API Portal apicategories Configuration...")
+		if err = apicategories.Export(portalsFolderName); proceedOnError(err) != nil {
 			return err
 		}
 
