@@ -185,6 +185,30 @@ func Get(siteid string, id string) (respBody []byte, err error) {
 	return respBody, err
 }
 
+// GetByName
+func GetByName(siteid string, name string) (respBody []byte, err error) {
+	apiclient.ClientPrintHttpResponse.Set(false)
+	fullList := listapidocs{}
+	pageToken := ""
+	for {
+		l := listapidocs{}
+		listRespBytes, err := List(siteid, maxPageSize, pageToken)
+		if err != nil {
+			return nil, fmt.Errorf("failed to fetch apidocs: %w", err)
+		}
+		err = json.Unmarshal(listRespBytes, &l)
+		if err != nil {
+			return nil, fmt.Errorf("failed to unmarshall: %w", err)
+		}
+		pageToken = l.NextPageToken
+		fullList.Data = append(fullList.Data, l.Data...)
+		if l.NextPageToken == "" {
+			break
+		}
+	}
+	return nil, nil
+}
+
 // List
 func List(siteid string, pageSize int, pageToken string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)

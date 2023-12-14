@@ -15,11 +15,15 @@
 package apicategories
 
 import (
+	"encoding/json"
+	"fmt"
 	"net/url"
 	"path"
 	"strings"
 
 	"internal/apiclient"
+
+	"github.com/thedevsaddam/gojsonq"
 )
 
 // Create
@@ -68,4 +72,20 @@ func Update(siteid string, name string) (respBody []byte, err error) {
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sites", siteid, "apicategories")
 	respBody, err = apiclient.HttpClient(u.String(), payload, "PATCH")
 	return respBody, err
+}
+
+// GetByName
+func GetByName(siteid string, name string) (respBody []byte, err error) {
+	apiclient.ClientPrintHttpResponse.Set(false)
+	listRespBytes, err := List(siteid)
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch apidocs: %w", err)
+	}
+	jq := gojsonq.New().JSONString(string(listRespBytes)).From("data").Where("name", "eq", name)
+	out := jq.First()
+	outBytes, err := json.Marshal(out)
+	if err != nil {
+		return outBytes, err
+	}
+	return outBytes, nil
 }
