@@ -61,7 +61,8 @@ func CreateKey(developerEmail string, appID string, consumerKey string, consumer
 
 	// since the API does not support adding products when creating a key, use a second API call to add products
 	if len(apiProducts) > 0 {
-		apiclient.ClientPrintHttpResponse.Set(true)
+		// restore client output setting
+		apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
 		respBody, err = UpdateKeyProducts(developerEmail, appID, consumerKey, apiProducts, scopes)
 	}
 
