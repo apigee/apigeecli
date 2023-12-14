@@ -15,6 +15,9 @@
 package apps
 
 import (
+	"fmt"
+	"strconv"
+
 	"internal/apiclient"
 
 	"internal/client/apps"
@@ -31,6 +34,12 @@ var UpdateCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		if expires != "" {
+			if _, err = strconv.Atoi(expires); err != nil {
+				return fmt.Errorf("expires must be an integer: %v", err)
+			}
+			expires += "000"
+		}
 		_, err = apps.Update(name, email, expires, callback, apiProducts, scopes, attrs)
 		return
 	},

@@ -36,15 +36,17 @@ var CreateKeyCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = appgroups.CreateKey(name, appName, key, secret, strconv.Itoa(expiry), apiProducts, scopes, attrs)
+		if expires != "" {
+			if _, err = strconv.Atoi(expires); err != nil {
+				return fmt.Errorf("expires must be an integer: %v", err)
+			}
+		}
+		_, err = appgroups.CreateKey(name, appName, key, secret, expires, apiProducts, scopes, attrs)
 		return
 	},
 }
 
-var (
-	secret string
-	expiry int
-)
+var secret string
 
 func init() {
 	CreateKeyCmd.Flags().StringVarP(&name, "name", "n",
@@ -55,8 +57,8 @@ func init() {
 		"", "Import an existing AppGroup app consumer key")
 	CreateKeyCmd.Flags().StringVarP(&secret, "secret", "r",
 		"", "Import an existing AppGroup app consumer secret")
-	CreateKeyCmd.Flags().IntVarP(&expiry, "expiry", "x",
-		-1, "Expiration time, in seconds, for the consumer key")
+	CreateKeyCmd.Flags().StringVarP(&expires, "expires", "x",
+		"", "A setting, in seconds, for the lifetime of the consumer key")
 	CreateKeyCmd.Flags().StringArrayVarP(&apiProducts, "prods", "p",
 		[]string{}, "A list of api products")
 	CreateKeyCmd.Flags().StringArrayVarP(&scopes, "scopes", "s",
@@ -66,4 +68,5 @@ func init() {
 
 	_ = CreateKeyCmd.MarkFlagRequired("name")
 	_ = CreateKeyCmd.MarkFlagRequired("app-name")
+	_ = CreateKeyCmd.MarkFlagRequired("prods")
 }

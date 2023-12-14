@@ -15,6 +15,9 @@
 package appgroups
 
 import (
+	"fmt"
+	"strconv"
+
 	"internal/apiclient"
 
 	"internal/client/appgroups"
@@ -31,6 +34,12 @@ var CreateAppCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		if expires != "" {
+			if _, err = strconv.Atoi(expires); err != nil {
+				return fmt.Errorf("expires must be an integer: %v", err)
+			}
+			expires += "000"
+		}
 		_, err = appgroups.CreateApp(name, appName, expires, callback, apiProducts, scopes, attrs)
 		return
 	},
@@ -47,7 +56,7 @@ func init() {
 	CreateAppCmd.Flags().StringVarP(&appName, "app-name", "",
 		"", "Name of the app")
 	CreateAppCmd.Flags().StringVarP(&expires, "expires", "x",
-		"", "A setting, in milliseconds, for the lifetime of the consumer key")
+		"", "A setting, in seconds, for the lifetime of the consumer key")
 	CreateAppCmd.Flags().StringVarP(&callback, "callback", "c",
 		"", "The callbackUrl is used by OAuth")
 	CreateAppCmd.Flags().StringArrayVarP(&apiProducts, "prods", "p",
@@ -59,4 +68,5 @@ func init() {
 
 	_ = CreateAppCmd.MarkFlagRequired("name")
 	_ = CreateAppCmd.MarkFlagRequired("app-name")
+	_ = CreateAppCmd.MarkFlagRequired("prods")
 }
