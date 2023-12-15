@@ -16,8 +16,11 @@ package apicategories
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
+	"io"
 	"net/url"
+	"os"
 	"path"
 	"reflect"
 	"strings"
@@ -25,7 +28,25 @@ import (
 	"internal/apiclient"
 
 	"github.com/thedevsaddam/gojsonq"
+	"internal/client/sites"
+	"internal/clilog"
 )
+
+type listapicategories struct {
+	Status        string `json:"status,omitempty"`
+	Message       string `json:"message,omitempty"`
+	RequestID     string `json:"requestId,omitempty"`
+	ErrorCode     string `json:"errorCode,omitempty"`
+	Data          []data `json:"data,omitempty"`
+	NextPageToken string `json:"nextPageToken,omitempty"`
+}
+
+type data struct {
+	SiteID     string `json:"siteId,omitempty"`
+	ID         string `json:"id,omitempty"`
+	Name       string `json:"name,omitempty"`
+	UpdateTime string `json:"updateTime,omitempty"`
+}
 
 // Create
 func Create(siteid string, name string) (respBody []byte, err error) {
@@ -75,6 +96,7 @@ func Update(siteid string, name string) (respBody []byte, err error) {
 	return respBody, err
 }
 
+
 // GetByName
 func GetByName(siteid string, name string) (respBody []byte, err error) {
 	apiclient.ClientPrintHttpResponse.Set(false)
@@ -104,4 +126,70 @@ func isNil(i interface{}) bool {
 		return reflect.ValueOf(i).IsNil()
 	}
 	return false
+
+// Export
+func Export(folder string) (err error) {
+	apiclient.ClientPrintHttpResponse.Set(false)
+	defer apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
+
+	siteids, err := sites.GetSiteIDs()
+	if err != nil {
+		return err
+	}
+
+	for _, siteid := range siteids {
+		listRespBytes, err := List(siteid)
+		if err != nil {
+			return fmt.Errorf("failed to fetch apicategories: %w", err)
+		}
+
+		docFileName := fmt.Sprintf("apicategory_%s.json", siteid)
+		if err = apiclient.WriteByteArrayToFile(path.Join(folder, docFileName), false, listRespBytes); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// Import
+func Import(siteid string, apicateogyFile string) (err error) {
+	errs := []string{}
+	l, err := readAPICategoriesFile(apicateogyFile)
+	if err != nil {
+		return err
+	}
+	if len(l.Data) < 1 {
+		clilog.Warning.Println("No categories found for the siteid")
+		return nil
+	}
+
+	for _, category := range l.Data {
+		_, err = Create(siteid, category.Name)
+		if err != nil {
+			errs = append(errs, err.Error())
+		}
+	}
+	if len(errs) > 0 {
+		return errors.New(strings.Join(errs, "\n"))
+	}
+	return nil
+}
+
+func readAPICategoriesFile(fileName string) (l listapicategories, err error) {
+	jsonFile, err := os.Open(fileName)
+	if err != nil {
+		return l, err
+	}
+
+	defer jsonFile.Close()
+
+	content, err := io.ReadAll(jsonFile)
+	if err != nil {
+		return l, err
+	}
+	err = json.Unmarshal(content, &l)
+	if err != nil {
+		return l, err
+	}
+	return l, nil
 }

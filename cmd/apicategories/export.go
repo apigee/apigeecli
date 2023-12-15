@@ -12,37 +12,41 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package apidocs
+package apicategories
 
 import (
-	"fmt"
+	"os"
 
 	"internal/apiclient"
 
-	"internal/client/apidocs"
+	"internal/client/apicategories"
 
 	"github.com/spf13/cobra"
 )
 
-// ImpCmd to import products
-var ImpCmd = &cobra.Command{
-	Use:   "import",
-	Short: "Import from a folder containing apidocs",
-	Long:  "Import from a folder containing apidocs",
+// ExpCmd to export apidocs
+var ExpCmd = &cobra.Command{
+	Use:   "export",
+	Short: "Export API Categories across all sites",
+	Long:  "Export API Categories across all sites",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		return apiclient.SetApigeeOrg(org)
 	},
-	RunE: func(cmd *cobra.Command, args []string) error {
-		if siteid == "" {
-			return fmt.Errorf("siteid is a mandatory parameter")
+	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		if folder == "" {
+			folder, _ = os.Getwd()
 		}
-		return apidocs.Import(siteid, folder)
+		if err = apiclient.FolderExists(folder); err != nil {
+			return err
+		}
+		apiclient.DisableCmdPrintHttpResponse()
+		return apicategories.Export(folder)
 	},
 }
 
-func init() {
-	ImpCmd.Flags().StringVarP(&folder, "folder", "f",
-		"", "Folder containing site_<siteid>.json and apidocs_<siteid>_<id>.json files")
+var folder string
 
-	_ = ImpCmd.MarkFlagRequired("folder")
+func init() {
+	ExpCmd.Flags().StringVarP(&folder, "folder", "f",
+		"", "folder to export API Docs")
 }
