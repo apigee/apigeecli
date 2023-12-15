@@ -27,9 +27,10 @@ import (
 
 	"internal/apiclient"
 
-	"github.com/thedevsaddam/gojsonq"
 	"internal/client/sites"
 	"internal/clilog"
+
+	"github.com/thedevsaddam/gojsonq"
 )
 
 type listapicategories struct {
@@ -96,7 +97,6 @@ func Update(siteid string, name string) (respBody []byte, err error) {
 	return respBody, err
 }
 
-
 // GetByName
 func GetByName(siteid string, name string) (respBody []byte, err error) {
 	apiclient.ClientPrintHttpResponse.Set(false)
@@ -126,6 +126,7 @@ func isNil(i interface{}) bool {
 		return reflect.ValueOf(i).IsNil()
 	}
 	return false
+}
 
 // Export
 func Export(folder string) (err error) {
