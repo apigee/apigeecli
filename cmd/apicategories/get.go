@@ -27,8 +27,8 @@ import (
 // GetCmd to get a catalog items
 var GetCmd = &cobra.Command{
 	Use:   "get",
-	Short: "Gets an API Category by ID",
-	Long:  "Gets an API Category by ID",
+	Short: "Gets an API Category by ID or name",
+	Long:  "Gets an API Category by ID or name",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		if siteid == "" {
 			return fmt.Errorf("siteid is a mandatory parameter")
