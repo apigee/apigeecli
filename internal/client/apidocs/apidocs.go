@@ -185,6 +185,39 @@ func Get(siteid string, id string) (respBody []byte, err error) {
 	return respBody, err
 }
 
+// GetByTitle
+func GetByTitle(siteid string, title string) (respBody []byte, err error) {
+	apiclient.ClientPrintHttpResponse.Set(false)
+	defer apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
+	fullList := listapidocs{}
+	pageToken := ""
+	for {
+		l := listapidocs{}
+		listRespBytes, err := List(siteid, maxPageSize, pageToken)
+		if err != nil {
+			return nil, fmt.Errorf("failed to fetch apidocs: %w", err)
+		}
+		err = json.Unmarshal(listRespBytes, &l)
+		if err != nil {
+			return nil, fmt.Errorf("failed to unmarshall: %w", err)
+		}
+		fullList.Data = append(fullList.Data, l.Data...)
+		pageToken = l.NextPageToken
+		if l.NextPageToken == "" {
+			break
+		}
+	}
+	for _, data := range fullList.Data {
+		if data.Title == title {
+			if respBody, err = json.Marshal(data); err != nil {
+				return nil, err
+			}
+			return respBody, nil
+		}
+	}
+	return nil, fmt.Errorf("unable to find apidocs with title %s", title)
+}
+
 // List
 func List(siteid string, pageSize int, pageToken string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)

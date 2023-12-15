@@ -22,11 +22,15 @@ import (
 	"net/url"
 	"os"
 	"path"
+	"reflect"
 	"strings"
 
 	"internal/apiclient"
+
 	"internal/client/sites"
 	"internal/clilog"
+
+	"github.com/thedevsaddam/gojsonq"
 )
 
 type listapicategories struct {
@@ -91,6 +95,37 @@ func Update(siteid string, name string) (respBody []byte, err error) {
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sites", siteid, "apicategories")
 	respBody, err = apiclient.HttpClient(u.String(), payload, "PATCH")
 	return respBody, err
+}
+
+// GetByName
+func GetByName(siteid string, name string) (respBody []byte, err error) {
+	apiclient.ClientPrintHttpResponse.Set(false)
+	defer apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
+	listRespBytes, err := List(siteid)
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch apidocs: %w", err)
+	}
+	out := gojsonq.New().JSONString(string(listRespBytes)).From("data").Where("name", "eq", name).First()
+	if isNil(out) {
+		return nil, fmt.Errorf("unable to find category with name %s", name)
+	}
+	outBytes, err := json.Marshal(out)
+	if err != nil {
+		return outBytes, err
+	}
+	return outBytes, nil
+}
+
+// from: https://mangatmodi.medium.com/go-check-nil-interface-the-right-way-d142776edef1
+func isNil(i interface{}) bool {
+	if i == nil {
+		return true
+	}
+	switch reflect.TypeOf(i).Kind() {
+	case reflect.Ptr, reflect.Map, reflect.Array, reflect.Chan, reflect.Slice:
+		return reflect.ValueOf(i).IsNil()
+	}
+	return false
 }
 
 // Export
