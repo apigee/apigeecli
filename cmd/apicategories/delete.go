@@ -26,14 +26,25 @@ import (
 // DelCmd to get a catalog items
 var DelCmd = &cobra.Command{
 	Use:   "delete",
-	Short: "Deletes an API Category by ID",
-	Long:  "Deletes an API Category by ID",
+	Short: "Deletes an API Category by ID or name",
+	Long:  "Deletes an API Category by ID or name",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		if siteid == "" {
+			return fmt.Errorf("siteid is a mandatory parameter")
+		}
+		if name == "" && id == "" {
+			return fmt.Errorf("name or id must be set as a parameter")
+		}
+		if name != "" && id != "" {
+			return fmt.Errorf("name and id cannot be set as a parameter")
+		}
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		if siteid == "" {
-			return fmt.Errorf("siteid is a mandatory parameter")
+		if name != "" {
+			if id, err = apicategories.GetIDByName(siteid, name); err != nil {
+				return err
+			}
 		}
 		_, err = apicategories.Delete(siteid, id)
 		return
@@ -43,5 +54,6 @@ var DelCmd = &cobra.Command{
 func init() {
 	DelCmd.Flags().StringVarP(&id, "id", "i",
 		"", "API Category ID")
-	_ = DelCmd.MarkFlagRequired("id")
+	DelCmd.Flags().StringVarP(&name, "name", "n",
+		"", "API Catalog Name")
 }
