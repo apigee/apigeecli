@@ -337,10 +337,30 @@ func Export(folder string) (err error) {
 	return nil
 }
 
-func Import(siteid string, folder string) (err error) {
+/**
+How the useNewSiteID flag works:
+Assume data is exported from org1 which contains siteid site1. The fles are exported as
+site_org1-site1.json and apidocs_org1-site1_00000.json
+
+When importing this data into a new org, the siteid changes (since it is a combination of
+org name and siteid).
+
+Now import the data to org2 as
+apigeecli apidocs import -o org2 -s site1 --source-f . --use-new-siteid=true -t $token
+*/
+
+// Import
+func Import(siteid string, useNewSiteID bool, folder string) (err error) {
 	var errs []string
 	var respBody []byte
-	docsList, err := readAPIDocsDataFile(path.Join(folder, "site_"+siteid+".json"))
+	var docsList []data
+
+	if useNewSiteID {
+		apiDocsName := fmt.Sprintf("site_%s-%s.json", apiclient.GetApigeeOrg(), siteid)
+		docsList, err = readAPIDocsDataFile(path.Join(folder, apiDocsName))
+	} else {
+		docsList, err = readAPIDocsDataFile(path.Join(folder, "site_"+siteid+".json"))
+	}
 	if err != nil {
 		return err
 	}
@@ -363,7 +383,13 @@ func Import(siteid string, folder string) (err error) {
 		}
 
 		// 2. find the documentation associated with this site
-		documentationFileName := path.Join(folder, "apidocs_"+siteid+"_"+doc.ID+".json")
+		var documentationFileName string
+		if useNewSiteID {
+			apiDocsName := fmt.Sprintf("apidocs_%s-%s_%s.json", apiclient.GetApigeeOrg(), siteid, doc.ID)
+			documentationFileName = path.Join(folder, apiDocsName)
+		} else {
+			documentationFileName = path.Join(folder, "apidocs_"+siteid+"_"+doc.ID+".json")
+		}
 		apidocument, err := readAPIDocumentationFile(documentationFileName)
 		if err != nil {
 			errs = append(errs, err.Error())
