@@ -26,8 +26,8 @@ import (
 // DelCmd to get a catalog items
 var DelCmd = &cobra.Command{
 	Use:   "delete",
-	Short: "Deletes an API Category by ID",
-	Long:  "Deletes an API Category by ID",
+	Short: "Deletes an API Category by ID or name",
+	Long:  "Deletes an API Category by ID or name",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		if siteid == "" {
 			return fmt.Errorf("siteid is a mandatory parameter")
