@@ -33,11 +33,14 @@ internal/bundlegen/policies,Unknown,Unknown
 internal/bundlegen/proxies,Unknown,Unknown
 internal/bundlegen/proxybundle,Unknown,Unknown
 internal/bundlegen/targets,Unknown,Unknown
+internal/client/apicategories,Unknown,Unknown
+internal/client/apidocs,Unknown,Unknown
 internal/client/apis,Unknown,Unknown
 internal/client/appgroups,Unknown,Unknown
 internal/client/apps,Unknown,Unknown
 internal/client/cache,Unknown,Unknown
 internal/client/datacollectors,Unknown,Unknown
+internal/client/datastores,Unknown,Unknown
 internal/client/developers,Unknown,Unknown
 internal/client/env,Unknown,Unknown
 internal/client/envgroups,Unknown,Unknown
@@ -52,7 +55,9 @@ internal/client/orgs,Unknown,Unknown
 internal/client/products,Unknown,Unknown
 internal/client/references,Unknown,Unknown
 internal/client/res,Unknown,Unknown
+internal/client/securityprofiles,Unknown,Unknown
 internal/client/sharedflows,Unknown,Unknown
+internal/client/sites,Unknown,Unknown
 internal/client/sync,Unknown,Unknown
 internal/client/targetservers,Unknown,Unknown
 internal/clilog,Unknown,Unknown
