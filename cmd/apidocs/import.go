@@ -48,16 +48,16 @@ var ImpCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return apidocs.Import(siteid, useNewSiteID, folder)
+		return apidocs.Import(siteid, useSrcSiteID, folder)
 	},
 }
 
-var useNewSiteID bool
+var useSrcSiteID string
 
 func init() {
 	ImpCmd.Flags().StringVarP(&folder, "folder", "f",
 		"", "Folder containing site_<siteid>.json and apidocs_<siteid>_<id>.json files")
-	ImpCmd.Flags().BoolVarP(&useNewSiteID, "use-new-siteid", "",
-		false, "Use new siteid when importing; useful whem importing data between two orgs")
+	ImpCmd.Flags().StringVarP(&useSrcSiteID, "use-src-siteid", "",
+		"", "Use source siteid when importing; useful whem importing data between two orgs")
 	_ = ImpCmd.MarkFlagRequired("folder")
 }

@@ -350,14 +350,13 @@ apigeecli apidocs import -o org2 -s site1 --source-f . --use-new-siteid=true -t 
 */
 
 // Import
-func Import(siteid string, useNewSiteID bool, folder string) (err error) {
+func Import(siteid string, useSrcSiteID string, folder string) (err error) {
 	var errs []string
 	var respBody []byte
 	var docsList []data
 
-	if useNewSiteID {
-		apiDocsName := fmt.Sprintf("site_%s-%s.json", apiclient.GetApigeeOrg(), siteid)
-		docsList, err = readAPIDocsDataFile(path.Join(folder, apiDocsName))
+	if useSrcSiteID != "" {
+		docsList, err = readAPIDocsDataFile(path.Join(folder, "site_"+useSrcSiteID+".json"))
 	} else {
 		docsList, err = readAPIDocsDataFile(path.Join(folder, "site_"+siteid+".json"))
 	}
@@ -384,8 +383,8 @@ func Import(siteid string, useNewSiteID bool, folder string) (err error) {
 
 		// 2. find the documentation associated with this site
 		var documentationFileName string
-		if useNewSiteID {
-			apiDocsName := fmt.Sprintf("apidocs_%s-%s_%s.json", apiclient.GetApigeeOrg(), siteid, doc.ID)
+		if useSrcSiteID != "" {
+			apiDocsName := fmt.Sprintf("apidocs_%s_%s.json", useSrcSiteID, doc.ID)
 			documentationFileName = path.Join(folder, apiDocsName)
 		} else {
 			documentationFileName = path.Join(folder, "apidocs_"+siteid+"_"+doc.ID+".json")
