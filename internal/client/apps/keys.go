@@ -87,7 +87,8 @@ func GetKey(developerEmail string, appID string, key string) (respBody []byte, e
 
 // UpdateKey
 func UpdateKey(developerEmail string, appID string, consumerKey string,
-	apiProducts []string, scopes []string, attrs map[string]string) (respBody []byte, err error) {
+	apiProducts []string, scopes []string, attrs map[string]string,
+) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.BaseURL)
 
 	key := []string{}
