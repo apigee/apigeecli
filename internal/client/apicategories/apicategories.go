@@ -99,6 +99,24 @@ func Update(siteid string, name string) (respBody []byte, err error) {
 
 // GetByName
 func GetByName(siteid string, name string) (respBody []byte, err error) {
+	return getByName(siteid, name)
+}
+
+// GetIDByName
+func GetIDByName(siteid string, name string) (id string, err error) {
+	outBytes, err := getByName(siteid, name)
+	if err != nil {
+		return "", err
+	}
+	var apicatResp = map[string]string{}
+	err = json.Unmarshal(outBytes, &apicatResp)
+	if err != nil {
+		return "", err
+	}
+	return apicatResp["id"], nil
+}
+
+func getByName(siteid string, name string) (respBytes []byte, err error) {
 	apiclient.ClientPrintHttpResponse.Set(false)
 	defer apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
 	listRespBytes, err := List(siteid)
