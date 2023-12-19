@@ -35,9 +35,7 @@ jobs:
           check-latest: true
 
       - name: Reviewdog Lint
-        uses: reviewdog/action-golangci-lint@v3
-        with:
-          reporter: github-check
+        uses: reviewdog/action-golangci-lint@v2
 
       - name: Write private key to disk
         run: echo "${{ secrets.COSIGN_PRIVATE_KEY }}" > /tmp/cosign.key
