@@ -35,7 +35,7 @@ jobs:
           check-latest: true
 
       - name: Reviewdog Lint
-        uses: reviewdog/action-golangci-lint@v3
+        uses: reviewdog/action-golangci-lint@v2
         with:
           reporter: github-check
 
