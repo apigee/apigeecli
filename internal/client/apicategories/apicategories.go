@@ -108,7 +108,7 @@ func GetIDByName(siteid string, name string) (id string, err error) {
 	if err != nil {
 		return "", err
 	}
-	var apicatResp = map[string]string{}
+	apicatResp := map[string]string{}
 	err = json.Unmarshal(outBytes, &apicatResp)
 	if err != nil {
 		return "", err

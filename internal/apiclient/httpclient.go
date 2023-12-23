@@ -283,13 +283,13 @@ func HttpClient(params ...string) (respBody []byte, err error) {
 	case 2:
 		payload := []byte(params[1])
 		if len(payload) > 0 {
-			//attempt to convert to json
+			// attempt to convert to json
 			jsonPayload, err := PrettifyJSON([]byte(params[1]))
 			if err != nil {
-				//payload is not json, print as-is
+				// payload is not json, print as-is
 				clilog.Debug.Println("Payload: ", string(payload))
 			} else {
-				//print json
+				// print json
 				clilog.Debug.Println("Payload: ", string(jsonPayload))
 			}
 		}
@@ -356,7 +356,7 @@ func PrettifyJSON(body []byte) ([]byte, error) {
 	var prettyJSON bytes.Buffer
 	err := json.Indent(&prettyJSON, body, "", "\t")
 	if err != nil {
-		//fail silently
+		// fail silently
 		return nil, err
 	}
 	return prettyJSON.Bytes(), nil
