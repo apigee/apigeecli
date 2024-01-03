@@ -16,6 +16,7 @@ package apps
 
 import (
 	"fmt"
+
 	"internal/apiclient"
 
 	"internal/client/apps"
@@ -30,7 +31,7 @@ var UpdateKeyCmd = &cobra.Command{
 	Long:  "Update a a developer app key",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		if name == "" {
-			return fmt.Errorf("Developer App Name is a mandatory parameter")
+			return fmt.Errorf("developer app name is a mandatory parameter")
 		}
 		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)

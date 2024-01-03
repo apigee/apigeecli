@@ -27,7 +27,8 @@ import (
 // CreateKey
 func CreateKey(developerEmail string, appID string, consumerKey string, consumerSecret string,
 	apiProducts []string, scopes []string, expires string,
-	attrs map[string]string) (respBody []byte, err error) {
+	attrs map[string]string,
+) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 
 	key := []string{}
@@ -67,7 +68,7 @@ func CreateKey(developerEmail string, appID string, consumerKey string, consumer
 		// restore client output setting
 		apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
 		respBody, err = UpdateKey(developerEmail, appID, consumerKey, apiProducts, scopes, nil)
-		//UpdateKeyProducts(developerEmail, appID, consumerKey, apiProducts, scopes)
+		// UpdateKeyProducts(developerEmail, appID, consumerKey, apiProducts, scopes)
 	}
 
 	return respBody, err
@@ -93,7 +94,6 @@ func GetKey(developerEmail string, appID string, key string) (respBody []byte, e
 func UpdateKey(developerEmail string, appID string, consumerKey string,
 	apiProducts []string, scopes []string, attrs map[string]string,
 ) (respBody []byte, err error) {
-
 	curCred := credential{}
 
 	apiclient.ClientPrintHttpResponse.Set(false)
@@ -106,7 +106,7 @@ func UpdateKey(developerEmail string, appID string, consumerKey string,
 		return nil, err
 	}
 
-	//remove all products from the app
+	// remove all products from the app
 	for _, p := range curCred.APIProducts {
 		_, err = deleteKeyProduct(developerEmail, appID, consumerKey, p.Name)
 		if err != nil {
@@ -116,7 +116,7 @@ func UpdateKey(developerEmail string, appID string, consumerKey string,
 
 	apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
 
-	//add the products set in the function
+	// add the products set in the function
 
 	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 
