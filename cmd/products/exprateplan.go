@@ -28,6 +28,7 @@ var ExpRateplanCmd = &cobra.Command{
 	Short: "Export the rate plans of an API product to a file",
 	Long:  "Export the rate plans of an API product to a file",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

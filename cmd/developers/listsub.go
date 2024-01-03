@@ -27,6 +27,7 @@ var ListSubCmd = &cobra.Command{
 	Use:   "list",
 	Short: "Returns a list of Developer subscriptions",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	Long: "Returns a list of Developer subscriptions",

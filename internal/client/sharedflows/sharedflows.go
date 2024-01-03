@@ -55,7 +55,7 @@ func Create(name string, proxy string) (respBody []byte, err error) {
 		respBody, err = apiclient.ImportBundle("sharedflows", name, proxy)
 		return respBody, err
 	}
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sharedflows")
 	proxyName := "{\"name\":\"" + name + "\"}"
 	respBody, err = apiclient.HttpClient(u.String(), proxyName)
@@ -64,7 +64,7 @@ func Create(name string, proxy string) (respBody []byte, err error) {
 
 // Get
 func Get(name string, revision int) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	if revision != -1 {
 		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sharedflows", name, "revisions", strconv.Itoa(revision))
 	} else {
@@ -77,7 +77,7 @@ func Get(name string, revision int) (respBody []byte, err error) {
 // GetHighestSfRevision
 func GetHighestSfRevision(name string) (version int, err error) {
 	apiclient.ClientPrintHttpResponse.Set(false)
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sharedflows", name)
 	respBody, err := apiclient.HttpClient(u.String())
 	apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
@@ -98,7 +98,7 @@ func GetHighestSfRevision(name string) (version int, err error) {
 
 // Delete
 func Delete(name string, revision int) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	if revision != -1 {
 		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sharedflows", name, "revisions", strconv.Itoa(revision))
 	} else {
@@ -110,7 +110,7 @@ func Delete(name string, revision int) (respBody []byte, err error) {
 
 // List
 func List(includeRevisions bool) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	if includeRevisions {
 		q := u.Query()
 		q.Set("includeRevisions", strconv.FormatBool(includeRevisions))
@@ -123,7 +123,7 @@ func List(includeRevisions bool) (respBody []byte, err error) {
 
 // ListEnvDeployments
 func ListEnvDeployments() (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 
 	if apiclient.GetApigeeEnv() == "" {
 		return respBody, fmt.Errorf("environment name missing")
@@ -140,7 +140,7 @@ func ListEnvDeployments() (respBody []byte, err error) {
 
 // ListDeployments
 func ListDeployments(name string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sharedflows", name, "deployments")
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
@@ -148,7 +148,7 @@ func ListDeployments(name string) (respBody []byte, err error) {
 
 // ListRevisionDeployments
 func ListRevisionDeployments(name string, revision int) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	if apiclient.GetApigeeEnv() == "" {
 		return respBody, fmt.Errorf("environment name missing")
 	}
@@ -160,7 +160,7 @@ func ListRevisionDeployments(name string, revision int) (respBody []byte, err er
 
 // Deploy
 func Deploy(name string, revision int, overrides bool, serviceAccountName string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	if overrides || serviceAccountName != "" {
 		q := u.Query()
 		if overrides {
@@ -276,7 +276,7 @@ func Clean(name string, reportOnly bool) (err error) {
 
 // Undeploy
 func Undeploy(name string, revision int) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(),
 		"sharedflows", name, "revisions", strconv.Itoa(revision), "deployments")
 	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
@@ -290,7 +290,7 @@ func Fetch(name string, revision int) (err error) {
 
 // Export
 func Export(conn int, folder string, allRevisions bool) (err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	q := u.Query()
 	q.Set("includeRevisions", "true")
 	u.RawQuery = q.Encode()
@@ -441,7 +441,7 @@ func importSharedFlows(wg *sync.WaitGroup, jobs <-chan string, errs chan<- error
 			return
 		}
 
-		u, _ := url.Parse(apiclient.BaseURL)
+		u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 		q := u.Query()
 		q.Set("name", strings.TrimSuffix(filepath.Base(job), ".zip"))
 		q.Set("action", "import")

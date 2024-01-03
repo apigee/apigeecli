@@ -34,7 +34,7 @@ func getFilterStr(filter map[string]string) string {
 
 // CreateTraceSession
 func CreateTraceSession(name string, revision int, filter map[string]string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(),
 		"apis", name, "revisions", strconv.Itoa(revision), "debugsessions")
 	q := u.Query()
@@ -53,7 +53,7 @@ func CreateTraceSession(name string, revision int, filter map[string]string) (re
 
 // GetTraceSession
 func GetTraceSession(name string, revision int, sessionID string, messageID string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	if messageID == "" {
 		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(),
 			"apis", name, "revisions", strconv.Itoa(revision), "debugsessions", sessionID, "data")
@@ -71,7 +71,7 @@ func GetTraceSession(name string, revision int, sessionID string, messageID stri
 
 // ListTracceSession
 func ListTracceSession(name string, revision int) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(),
 		"apis", name, "revisions", strconv.Itoa(revision), "debugsessions")
 	respBody, err = apiclient.HttpClient(u.String())

@@ -28,6 +28,7 @@ var DelRatePlanCmd = &cobra.Command{
 	Short: "Delete rate plan associated with the API Product",
 	Long:  "Delete rate plan associated with the API Product",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
@@ -39,7 +40,7 @@ var DelRatePlanCmd = &cobra.Command{
 func init() {
 	DelRatePlanCmd.Flags().StringVarP(&name, "name", "n",
 		"", "name of the API Product")
-	DelRatePlanCmd.Flags().StringVarP(&rateplan, "rateplan", "r",
+	DelRatePlanCmd.Flags().StringVarP(&rateplan, "rateplan", "p",
 		"", "name of the API Product")
 
 	_ = DelRatePlanCmd.MarkFlagRequired("name")

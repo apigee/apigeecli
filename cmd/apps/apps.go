@@ -27,13 +27,15 @@ var Cmd = &cobra.Command{
 }
 
 var (
-	appID, name, org string
-	conn             int
+	appID, name, org, region string
+	conn                     int
 )
 
 func init() {
 	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
+	Cmd.PersistentFlags().StringVarP(&region, "region", "r",
+		"", "Apigee control plane region name; default is https://apigee.googleapis.com")
 
 	Cmd.AddCommand(ListCmd)
 	Cmd.AddCommand(GetCmd)

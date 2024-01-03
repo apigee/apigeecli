@@ -28,6 +28,7 @@ var ListCmd = &cobra.Command{
 	Short: "Returns a list of Developer Applications",
 	Long:  "Returns a list of app IDs within an organization based on app status",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

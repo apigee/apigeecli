@@ -27,6 +27,7 @@ var GetSubCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Returns a Developer subscription",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	Long: "Returns a Developer subscription",

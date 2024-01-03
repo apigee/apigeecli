@@ -29,6 +29,7 @@ var DelCmd = &cobra.Command{
 	Long: "Deletes an API proxy and all associated endpoints, policies, resources, and revisions." +
 		"The proxy must be undeployed first.",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

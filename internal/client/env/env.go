@@ -43,7 +43,7 @@ func Create(deploymentType string, fwdProxyURI string) (respBody []byte, err err
 
 	payload := "{" + strings.Join(environment, ",") + "}"
 
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments")
 	respBody, err = apiclient.HttpClient(u.String(), payload)
 	return respBody, err
@@ -51,7 +51,7 @@ func Create(deploymentType string, fwdProxyURI string) (respBody []byte, err err
 
 // Delete
 func Delete() (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv())
 	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
 	return respBody, err
@@ -59,7 +59,7 @@ func Delete() (respBody []byte, err error) {
 
 // Get
 func Get(config bool) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	if config {
 		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "deployedConfig")
 	} else {
@@ -71,7 +71,7 @@ func Get(config bool) (respBody []byte, err error) {
 
 // List
 func List() (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments")
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
@@ -79,7 +79,7 @@ func List() (respBody []byte, err error) {
 
 // GetDeployments
 func GetDeployments(sharedflows bool) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	if sharedflows {
 		q := u.Query()
 		q.Set("sharedFlows", "true")
@@ -115,7 +115,7 @@ func GetAllDeployments() (respBody []byte, err error) {
 
 // GetDeployedConfig
 func GetDeployedConfig() (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "deployedConfig")
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
@@ -142,7 +142,7 @@ func SetEnvProperty(name string, value string) (err error) {
 		Properties     envProperties `json:"properties,omitempty"`
 	}
 
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv())
 	// get env details
 	apiclient.ClientPrintHttpResponse.Set(false)
@@ -183,7 +183,7 @@ func SetEnvProperty(name string, value string) (err error) {
 		return err
 	}
 
-	u, _ = url.Parse(apiclient.BaseURL)
+	u, _ = url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv())
 	_, err = apiclient.HttpClient(u.String(), string(newEnvBody), "PUT")
 
@@ -211,7 +211,7 @@ func ClearEnvProperties() (err error) {
 		Properties     envProperties `json:"-,omitempty"`
 	}
 
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv())
 	// get env details
 	apiclient.ClientPrintHttpResponse.Set(false)
@@ -235,7 +235,7 @@ func ClearEnvProperties() (err error) {
 		return err
 	}
 
-	u, _ = url.Parse(apiclient.BaseURL)
+	u, _ = url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv())
 	_, err = apiclient.HttpClient(u.String(), string(newEnvBody), "PUT")
 
@@ -244,7 +244,7 @@ func ClearEnvProperties() (err error) {
 
 // GetSecurityActionsConfig
 func GetSecurityActionsConfig() (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments",
 		apiclient.GetApigeeEnv(), "securityActionsConfig")
 	respBody, err = apiclient.HttpClient(u.String())
@@ -253,7 +253,7 @@ func GetSecurityActionsConfig() (respBody []byte, err error) {
 
 // GetSecurityRuntimeConfig
 func GetSecurityRuntimeConfig() (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments",
 		apiclient.GetApigeeEnv(), "apiSecurityRuntimeConfig")
 	respBody, err = apiclient.HttpClient(u.String())
@@ -262,7 +262,7 @@ func GetSecurityRuntimeConfig() (respBody []byte, err error) {
 
 // UpdateSecurityActionsConfig
 func UpdateSecurityActionsConfig(action bool) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments",
 		apiclient.GetApigeeEnv(), "apiSecurityRuntimeConfig")
 

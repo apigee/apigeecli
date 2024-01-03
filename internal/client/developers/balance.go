@@ -43,7 +43,7 @@ func Adjust(email string, adjust string) (respBody []byte, err error) {
 		return nil, err
 	}
 
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", url.QueryEscape(email), "balance:adjust")
 	respBody, err = apiclient.HttpClient(u.String(), adjust)
 	return respBody, err
@@ -55,7 +55,7 @@ func Credit(email string, transact string) (respBody []byte, err error) {
 		return nil, err
 	}
 
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", url.QueryEscape(email), "balance:credit")
 	respBody, err = apiclient.HttpClient(u.String(), transact)
 	return respBody, err

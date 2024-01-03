@@ -47,7 +47,7 @@ func Create(name string, hostnames []string) (respBody []byte, err error) {
 
 	payload := "{" + strings.Join(envgroup, ",") + "}"
 
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "envgroups")
 	respBody, err = apiclient.HttpClient(u.String(), payload)
 	return respBody, err
@@ -55,7 +55,7 @@ func Create(name string, hostnames []string) (respBody []byte, err error) {
 
 // Get
 func Get(name string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "envgroups", name)
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
@@ -63,7 +63,7 @@ func Get(name string) (respBody []byte, err error) {
 
 // Delete
 func Delete(name string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "envgroups", name)
 	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
 	return respBody, err
@@ -71,7 +71,7 @@ func Delete(name string) (respBody []byte, err error) {
 
 // List
 func List() (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "envgroups")
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
@@ -79,7 +79,7 @@ func List() (respBody []byte, err error) {
 
 // PatchHosts
 func PatchHosts(name string, hostnames []string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "envgroups", name)
 	q := u.Query()
 	q.Set("updateMask", "hostnames")
@@ -99,7 +99,7 @@ func Attach(name string, environment string) (respBody []byte, err error) {
 	envgroup = append(envgroup, "\"environment\":\""+environment+"\"")
 	payload := "{" + strings.Join(envgroup, ",") + "}"
 
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "envgroups", name, "attachments")
 	respBody, err = apiclient.HttpClient(u.String(), payload)
 	return respBody, err
@@ -141,7 +141,7 @@ func DetachEnvironment(name string, environment string) (respBody []byte, err er
 
 // Detach
 func Detach(name string, attachment string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "envgroups", name, "attachments", attachment)
 	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
 	return respBody, err
@@ -149,7 +149,7 @@ func Detach(name string, attachment string) (respBody []byte, err error) {
 
 // ListAttach
 func ListAttach(name string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "envgroups", name, "attachments")
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err

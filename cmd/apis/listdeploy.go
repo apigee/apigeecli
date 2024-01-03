@@ -40,6 +40,7 @@ var ListDepCmd = &cobra.Command{
 		if name != "" && revision == -1 && apiclient.GetApigeeEnv() != "" {
 			return fmt.Errorf("revision must be supplied with proxy name and env")
 		}
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
@@ -67,7 +68,7 @@ func init() {
 		"", "API proxy name")
 	ListDepCmd.Flags().StringVarP(&env, "env", "e",
 		"", "Apigee environment name")
-	ListDepCmd.Flags().IntVarP(&revision, "rev", "r",
+	ListDepCmd.Flags().IntVarP(&revision, "rev", "v",
 		-1, "API Proxy revision")
 	ListDepCmd.Flags().BoolVarP(&report, "report", "",
 		false, "Generate Deploy Change Report; Default is false")

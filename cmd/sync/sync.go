@@ -25,11 +25,13 @@ var Cmd = &cobra.Command{
 	Long:  "Manage identities with grant access to control plane resources",
 }
 
-var org, identity string
+var org, identity, region string
 
 func init() {
 	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
+	Cmd.PersistentFlags().StringVarP(&region, "region", "r",
+		"", "Apigee control plane region name; default is https://apigee.googleapis.com")
 
 	Cmd.AddCommand(SetCmd)
 	Cmd.AddCommand(GetCmd)

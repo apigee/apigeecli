@@ -29,6 +29,7 @@ var CsrCmd = &cobra.Command{
 	Long:  "Generates a PKCS #10 Certificate Signing Request for the private key in an alias",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetApigeeEnv(env)
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

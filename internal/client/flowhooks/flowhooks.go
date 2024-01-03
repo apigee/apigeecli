@@ -25,7 +25,7 @@ import (
 
 // Attach
 func Attach(name string, description string, sharedflow string, continueOnErr bool) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 
 	flowhook := []string{}
 
@@ -49,7 +49,7 @@ func Attach(name string, description string, sharedflow string, continueOnErr bo
 
 // Detach
 func Detach(name string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "flowhooks", name)
 	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
 	return respBody, err
@@ -57,7 +57,7 @@ func Detach(name string) (respBody []byte, err error) {
 
 // Get
 func Get(name string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "flowhooks", name)
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
@@ -65,7 +65,7 @@ func Get(name string) (respBody []byte, err error) {
 
 // List
 func List() (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "flowhooks")
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err

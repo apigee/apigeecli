@@ -263,7 +263,7 @@ func SetIAMPermission(memberName string, iamRole string, memberType string) (err
 	ClientPrintHttpResponse.Set(false)
 	defer ClientPrintHttpResponse.Set(GetCmdPrintHttpResponseSetting())
 
-	u, _ := url.Parse(BaseURL)
+	u, _ := url.Parse(GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, GetApigeeOrg(), "environments", GetApigeeEnv()+":getIamPolicy")
 	getIamPolicyBody, err := HttpClient(u.String())
 	if err != nil {
@@ -296,7 +296,7 @@ func SetIAMPermission(memberName string, iamRole string, memberType string) (err
 		getIamPolicy.Bindings = append(getIamPolicy.Bindings, binding)
 	}
 
-	u, _ = url.Parse(BaseURL)
+	u, _ = url.Parse(GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, GetApigeeOrg(), "environments", GetApigeeEnv()+":setIamPolicy")
 
 	setIamPolicy := setIamPolicy{}
@@ -318,7 +318,7 @@ func RemoveIAMPermission(memberName string, iamRole string) (err error) {
 	ClientPrintHttpResponse.Set(false)
 	defer ClientPrintHttpResponse.Set(GetCmdPrintHttpResponseSetting())
 
-	u, _ := url.Parse(BaseURL)
+	u, _ := url.Parse(GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, GetApigeeOrg(), "environments", GetApigeeEnv()+":getIamPolicy")
 	getIamPolicyBody, err := HttpClient(u.String())
 	clilog.Debug.Println(string(getIamPolicyBody))
@@ -417,7 +417,7 @@ func RemoveIAMPermission(memberName string, iamRole string) (err error) {
 		}
 	}
 
-	u, _ = url.Parse(BaseURL)
+	u, _ = url.Parse(GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, GetApigeeOrg(), "environments", GetApigeeEnv()+":setIamPolicy")
 
 	removeIamPolicyBody, err := json.Marshal(removeIamPolicy)

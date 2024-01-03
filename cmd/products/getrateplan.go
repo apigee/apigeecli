@@ -28,6 +28,7 @@ var GetRatePlanCmd = &cobra.Command{
 	Short: "Get a rate plan associated with an API Product",
 	Long:  "Get a rate plan associated with an API Product",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
@@ -39,7 +40,7 @@ var GetRatePlanCmd = &cobra.Command{
 func init() {
 	GetRatePlanCmd.Flags().StringVarP(&name, "name", "n",
 		"", "name of the API Product")
-	GetRatePlanCmd.Flags().StringVarP(&rateplan, "rateplan", "r",
+	GetRatePlanCmd.Flags().StringVarP(&rateplan, "rateplan", "p",
 		"", "name of the API Product")
 
 	_ = GetRatePlanCmd.MarkFlagRequired("name")

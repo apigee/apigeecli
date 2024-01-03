@@ -47,6 +47,7 @@ var CreateCmd = &cobra.Command{
 		if selfFile != "" && !utils.FileExists(selfFile) {
 			return fmt.Errorf("selfsigned JSON file was not found")
 		}
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

@@ -26,13 +26,15 @@ var Cmd = &cobra.Command{
 	Long:    "Manage Key Aliases",
 }
 
-var org, env, name, keystoreName, aliasName string
+var org, env, name, keystoreName, aliasName, region string
 
 func init() {
 	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
 	Cmd.PersistentFlags().StringVarP(&env, "env", "e",
 		"", "Apigee environment name")
+	Cmd.PersistentFlags().StringVarP(&region, "region", "r",
+		"", "Apigee control plane region name; default is https://apigee.googleapis.com")
 
 	_ = Cmd.MarkPersistentFlagRequired("env")
 

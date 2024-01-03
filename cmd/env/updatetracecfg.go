@@ -46,7 +46,7 @@ func init() {
 		"", "Trace endpoint, used only with JAEGER")
 	UpdateTraceConfigCmd.Flags().StringVarP(&sampler, "sampler", "s",
 		"PROBABILITY", "Sampler can be set to PROBABILITY or OFF")
-	UpdateTraceConfigCmd.Flags().StringVarP(&sampleRate, "rate", "r",
+	UpdateTraceConfigCmd.Flags().StringVarP(&sampleRate, "rate", "",
 		"", "Sampler Rate")
 
 	_ = UpdateTraceConfigCmd.MarkFlagRequired("exporter")

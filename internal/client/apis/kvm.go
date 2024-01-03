@@ -24,7 +24,7 @@ import (
 
 // CreateProxyKVM
 func CreateProxyKVM(proxyName string, name string, encrypted bool) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apis", proxyName, "keyvaluemaps")
 	payload := "{\"name\":\"" + name + "\", \"encrypted\": \"" + strconv.FormatBool(encrypted) + "\"}"
 	respBody, err = apiclient.HttpClient(u.String(), payload)
@@ -33,7 +33,7 @@ func CreateProxyKVM(proxyName string, name string, encrypted bool) (respBody []b
 
 // DeleteProxyKVM
 func DeleteProxyKVM(proxyName string, name string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apis", name, "keyvaluemaps", name)
 	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
 	return respBody, err
@@ -41,7 +41,7 @@ func DeleteProxyKVM(proxyName string, name string) (respBody []byte, err error) 
 
 // ListProxyKVM
 func ListProxyKVM(proxyName string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apis", proxyName, "keyvaluemaps")
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err

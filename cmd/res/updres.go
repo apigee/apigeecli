@@ -29,6 +29,7 @@ var UpdateCmd = &cobra.Command{
 	Long:  "Update a resource file",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetApigeeEnv(env)
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
@@ -41,7 +42,7 @@ func init() {
 		"", "Name of the resource file")
 	UpdateCmd.Flags().StringVarP(&resType, "type", "p",
 		"", "Resource type. Valid types include java, js, jsc, properties, py, wsdl, xsd, or xsl.")
-	UpdateCmd.Flags().StringVarP(&resPath, "respath", "r",
+	UpdateCmd.Flags().StringVarP(&resPath, "respath", "",
 		"", "Resource Path")
 
 	_ = UpdateCmd.MarkFlagRequired("name")

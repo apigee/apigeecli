@@ -25,11 +25,13 @@ var Cmd = &cobra.Command{
 	Long:  "Manage Key Value Maps",
 }
 
-var org, env, name, proxyName string
+var org, env, name, proxyName, region string
 
 func init() {
 	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
+	Cmd.PersistentFlags().StringVarP(&region, "region", "r",
+		"", "Apigee control plane region name; default is https://apigee.googleapis.com")
 
 	Cmd.AddCommand(ListCmd)
 	Cmd.AddCommand(DelCmd)

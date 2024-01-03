@@ -27,6 +27,7 @@ var ListCmd = &cobra.Command{
 	Short: "Returns a list of data stores in the org",
 	Long:  "Returns a list of data stores in the org",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

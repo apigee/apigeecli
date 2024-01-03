@@ -29,6 +29,7 @@ var ListCmd = &cobra.Command{
 	Long:  "Lists all shared flows in the organization.",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetApigeeEnv(env)
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
@@ -42,6 +43,6 @@ var includeRevisions bool
 func init() {
 	ListCmd.Flags().StringVarP(&env, "env", "e",
 		"", "Apigee environment name")
-	ListCmd.Flags().BoolVarP(&includeRevisions, "rev", "r",
+	ListCmd.Flags().BoolVarP(&includeRevisions, "rev", "v",
 		false, "Include revisions")
 }

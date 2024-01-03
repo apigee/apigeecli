@@ -35,6 +35,7 @@ var SwaggerCreateCmd = &cobra.Command{
 		if swaggerFile == "" && swaggerURI == "" {
 			return fmt.Errorf("either swaggerfile or swaggeruri must be passed")
 		}
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

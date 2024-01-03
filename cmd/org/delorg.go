@@ -41,6 +41,6 @@ var retention string
 func init() {
 	DelCmd.Flags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
-	DelCmd.Flags().StringVarP(&retention, "retension", "r",
+	DelCmd.Flags().StringVarP(&retention, "retension", "",
 		"", "Retention period for soft-delete; Must be MINIMUM or DELETION_RETENTION_UNSPECIFIED")
 }

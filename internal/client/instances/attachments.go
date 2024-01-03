@@ -30,7 +30,7 @@ func Attach(name string, environment string) (respBody []byte, err error) {
 	envgroup = append(envgroup, "\"environment\":\""+environment+"\"")
 	payload := "{" + strings.Join(envgroup, ",") + "}"
 
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "instances", name, "attachments")
 	respBody, err = apiclient.HttpClient(u.String(), payload)
 	return respBody, err
@@ -39,7 +39,7 @@ func Attach(name string, environment string) (respBody []byte, err error) {
 // DetachEnv
 func DetachEnv(instance string) (respBody []byte, err error) {
 	var attachmentName string
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 
 	if attachmentName, err = getAttachmentName(instance); err != nil {
 		return nil, err
@@ -57,7 +57,7 @@ func DetachEnv(instance string) (respBody []byte, err error) {
 // func GetEnv
 func GetEnv(instance string) (respBody []byte, err error) {
 	var attachmentName string
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 
 	if attachmentName, err = getAttachmentName(instance); err != nil {
 		return nil, err
@@ -74,7 +74,7 @@ func GetEnv(instance string) (respBody []byte, err error) {
 
 // Detach
 func Detach(name string, instanceName string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "instances", instanceName, "attachments", name)
 	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
 	return respBody, err
@@ -82,7 +82,7 @@ func Detach(name string, instanceName string) (respBody []byte, err error) {
 
 // GetAttach
 func GetAttach(name string, instanceName string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "instances", instanceName, "attachments", name)
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
@@ -90,7 +90,7 @@ func GetAttach(name string, instanceName string) (respBody []byte, err error) {
 
 // ListAttach
 func ListAttach(name string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "instances", name, "attachments")
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err

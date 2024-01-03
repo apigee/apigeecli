@@ -36,6 +36,7 @@ var CreateCmd = &cobra.Command{
 			return fmt.Errorf("invalid URI string for fwdProxyURI: %v", err)
 		}
 		apiclient.SetApigeeEnv(environment)
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

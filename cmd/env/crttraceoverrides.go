@@ -29,6 +29,7 @@ var CrtTraceOverridesCmd = &cobra.Command{
 	Long:  "Create a new Distributed Trace config override",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetApigeeEnv(environment)
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
@@ -48,7 +49,7 @@ func init() {
 		"", "Trace endpoint, used only with JAEGER")
 	CrtTraceOverridesCmd.Flags().StringVarP(&sampler, "sampler", "s",
 		"PROBABILITY", "Sampler can be set to PROBABILITY or OFF")
-	CrtTraceOverridesCmd.Flags().StringVarP(&sampleRate, "rate", "r",
+	CrtTraceOverridesCmd.Flags().StringVarP(&sampleRate, "rate", "",
 		"", "Sampler Rate")
 
 	_ = CrtTraceOverridesCmd.MarkFlagRequired("exporter")

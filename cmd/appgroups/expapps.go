@@ -33,6 +33,7 @@ var ExpAppCmd = &cobra.Command{
 		if name == "" && !all {
 			return fmt.Errorf("either all must be set to true or a name must be passed")
 		}
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

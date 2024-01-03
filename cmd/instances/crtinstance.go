@@ -32,6 +32,7 @@ var CreateCmd = &cobra.Command{
 	Short: "Create an Instance",
 	Long:  "Create an Instance",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

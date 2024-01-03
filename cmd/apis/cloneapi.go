@@ -53,6 +53,7 @@ var CloneCmd = &cobra.Command{
 		if !strings.HasPrefix(basePath, "/") {
 			return fmt.Errorf("basePath must start with /")
 		}
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

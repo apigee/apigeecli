@@ -61,7 +61,7 @@ const (
 
 // Get
 func Get(name string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "operations", name)
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
@@ -69,7 +69,7 @@ func Get(name string) (respBody []byte, err error) {
 
 // List
 func List(state string, completeState OperationCompleteState) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "operations")
 	if state != "" {
 		apiclient.ClientPrintHttpResponse.Set(false)

@@ -25,7 +25,7 @@ import (
 
 // List
 func List() (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sites")
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err

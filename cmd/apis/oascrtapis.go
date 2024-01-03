@@ -48,6 +48,7 @@ var OasCreateCmd = &cobra.Command{
 		if (targetURL != "" || targetURLRef != "") && (integration != "" || apitrigger != "") {
 			return fmt.Errorf("integration or apitrigger cannot be set if targetURL or targetURLRef is set")
 		}
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

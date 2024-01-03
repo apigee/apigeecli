@@ -61,7 +61,7 @@ func CreateSecurityAction(name string, content []byte) (respBody []byte, err err
 	if err = json.Unmarshal(content, &sa); err != nil {
 		return nil, err
 	}
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments",
 		apiclient.GetApigeeEnv(), "securityActions")
 	respBody, err = apiclient.HttpClient(u.String(), string(content))
@@ -70,7 +70,7 @@ func CreateSecurityAction(name string, content []byte) (respBody []byte, err err
 
 // DisableSecurityAction
 func DisableSecurityAction(name string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments",
 		apiclient.GetApigeeEnv(), "securityActions", name+":disable")
 	respBody, err = apiclient.HttpClient(u.String(), "")
@@ -79,7 +79,7 @@ func DisableSecurityAction(name string) (respBody []byte, err error) {
 
 // EnableSecurityAction
 func EnableSecurityAction(name string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments",
 		apiclient.GetApigeeEnv(), "securityActions", name+":enable")
 	respBody, err = apiclient.HttpClient(u.String(), "")
@@ -88,7 +88,7 @@ func EnableSecurityAction(name string) (respBody []byte, err error) {
 
 // GetSecurityAction
 func GetSecurityAction(name string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments",
 		apiclient.GetApigeeEnv(), "securityActions", name)
 	respBody, err = apiclient.HttpClient(u.String())
@@ -97,7 +97,7 @@ func GetSecurityAction(name string) (respBody []byte, err error) {
 
 // ListSecurityActions
 func ListSecurityActions(pageSize int, pageToken string, filter string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments",
 		apiclient.GetApigeeEnv(), "securityActions")
 	q := u.Query()

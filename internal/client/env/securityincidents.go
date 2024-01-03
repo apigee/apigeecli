@@ -24,7 +24,7 @@ import (
 
 // GetSecurityIncident
 func GetSecurityIncident(name string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments",
 		apiclient.GetApigeeEnv(), "securityIncidents", name)
 	respBody, err = apiclient.HttpClient(u.String())
@@ -33,7 +33,7 @@ func GetSecurityIncident(name string) (respBody []byte, err error) {
 
 // ListSecurityIncidents
 func ListSecurityIncidents(pageSize int, pageToken string, filter string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments",
 		apiclient.GetApigeeEnv(), "securityIncidents")
 	q := u.Query()

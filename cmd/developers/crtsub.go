@@ -28,6 +28,7 @@ var CreateSubCmd = &cobra.Command{
 	Short: "Create a subcription for a developer",
 	Long:  "Create a developer",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

@@ -24,7 +24,7 @@ import (
 
 // GetSecurityReportView
 func GetSecurityReportView(reportID string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments",
 		apiclient.GetApigeeEnv(), "securityReports", reportID, "resultView")
 	respBody, err = apiclient.HttpClient(u.String())
@@ -33,7 +33,7 @@ func GetSecurityReportView(reportID string) (respBody []byte, err error) {
 
 // GetSecurityReportResult
 func GetSecurityReportResult(reportID string, name string) (err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments",
 		apiclient.GetApigeeEnv(), "securityReports", reportID, "result")
 	err = apiclient.DownloadResource(u.String(), name, ".zip", true)
@@ -42,7 +42,7 @@ func GetSecurityReportResult(reportID string, name string) (err error) {
 
 // GetSecurityReport
 func GetSecurityReport(reportID string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments",
 		apiclient.GetApigeeEnv(), "securityReports", reportID)
 	respBody, err = apiclient.HttpClient(u.String())
@@ -53,7 +53,7 @@ func GetSecurityReport(reportID string) (respBody []byte, err error) {
 func ListSecurityReports(pageSize int, pageToken string, dataset string, to string,
 	from string, status string, submittedBy string,
 ) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments",
 		apiclient.GetApigeeEnv(), "securityReports")
 	q := u.Query()

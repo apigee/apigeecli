@@ -40,6 +40,7 @@ var UpdateDocCmd = &cobra.Command{
 		if graphQLPath != "" && endpointUri == "" {
 			return fmt.Errorf("The flags graphQLPath and endpointUri must be set together")
 		}
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

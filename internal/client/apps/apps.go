@@ -93,7 +93,7 @@ func Create(name string, email string, expires string, callback string, apiProdu
 
 // Delete
 func Delete(name string, developerID string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", developerID, "apps", name)
 	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
 	return respBody, err
@@ -101,7 +101,7 @@ func Delete(name string, developerID string) (respBody []byte, err error) {
 
 // Get
 func Get(appID string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apps", appID)
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
@@ -113,7 +113,7 @@ func Update(name string, email string, expires string, callback string, apiProdu
 }
 
 func createOrUpdate(name string, email string, expires string, callback string, apiProducts []string, scopes []string, attrs map[string]string, action Action) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 
 	app := []string{}
 
@@ -163,7 +163,7 @@ func Manage(appID string, developerEmail string, action string) (respBody []byte
 		return nil, fmt.Errorf("invalid action. action must be revoke or approve")
 	}
 
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", developerEmail, "apps", appID)
 	q := u.Query()
 	q.Set("action", action)
@@ -178,7 +178,7 @@ func SearchApp(name string) (respBody []byte, err error) {
 	apiclient.ClientPrintHttpResponse.Set(false)
 	defer apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
 
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apps")
 	q := u.Query()
 	q.Set("filter", "appName="+name)
@@ -202,7 +202,7 @@ func List(includeCred bool, expand bool, count int, status string, startKey stri
 	ids string, keyStatus string, apiProduct string, pageSize int,
 	pageToken string, filter string,
 ) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apps")
 	q := u.Query()
 	if expand {
@@ -247,7 +247,7 @@ func List(includeCred bool, expand bool, count int, status string, startKey stri
 
 // ListApps
 func ListApps(productName string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apps")
 	q := u.Query()
 	q.Set("apiProduct", productName)
@@ -258,7 +258,7 @@ func ListApps(productName string) (respBody []byte, err error) {
 
 // GenerateKey
 func GenerateKey(name string, developerID string, apiProducts []string, callback string, expires string, scopes []string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 
 	key := []string{}
 
@@ -293,7 +293,7 @@ func Export(conn int) (payload [][]byte, err error) {
 	var mu sync.Mutex
 	const entityType = "apps"
 
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), entityType)
 
 	respBody, err := apiclient.HttpClient(u.String())
@@ -421,7 +421,7 @@ func batchExport(entities []app, entityType string, pwg *sync.WaitGroup, mu *syn
 	bwg.Add(len(entities))
 
 	for _, entity := range entities {
-		u, _ := url.Parse(apiclient.BaseURL)
+		u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), entityType, entity.AppID)
 		go apiclient.GetAsyncEntity(u.String(), &bwg, mu)
 	}
@@ -448,7 +448,7 @@ func createAsyncApp(app application, developerEntities developers.Appdevelopers,
 	// importing an app will be a two step process.
 	// 1. create the app without the credential
 	// 2. create/import the credential
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	if app.DeveloperID == nil {
 		clilog.Error.Println("developer id was not found")
 		return
@@ -499,7 +499,7 @@ func createAsyncApp(app application, developerEntities developers.Appdevelopers,
 		return
 	}
 
-	createDeveloperAppUrl, _ := url.Parse(apiclient.BaseURL)
+	createDeveloperAppUrl, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	createDeveloperAppUrl.Path = path.Join(createDeveloperAppUrl.Path, apiclient.GetApigeeOrg(), "developers", developerID, "apps", app.Name, "keys")
 	for _, credential := range credentials {
 
@@ -529,7 +529,7 @@ func createAsyncApp(app application, developerEntities developers.Appdevelopers,
 
 		if len(products) > 0 {
 			// updateDeveloperApp
-			updateDeveloperAppUrl, _ := url.Parse(apiclient.BaseURL)
+			updateDeveloperAppUrl, _ := url.Parse(apiclient.GetApigeeBaseURL())
 			updateDeveloperAppUrl.Path = path.Join(updateDeveloperAppUrl.Path, apiclient.GetApigeeOrg(), "developers", developerID, "apps", app.Name, "keys", credential.ConsumerKey)
 
 			updateCred := importCredential{}

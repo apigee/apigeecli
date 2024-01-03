@@ -26,7 +26,7 @@ var Cmd = &cobra.Command{
 	Long:    "Manage References. References must refer to a keystore that also exists in the env.",
 }
 
-var org, env, name, description, refers, resourceType string
+var org, env, name, description, refers, resourceType, region string
 
 func init() {
 	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
@@ -34,6 +34,9 @@ func init() {
 
 	Cmd.PersistentFlags().StringVarP(&env, "env", "e",
 		"", "Apigee environment name")
+
+	Cmd.PersistentFlags().StringVarP(&region, "region", "r",
+		"", "Apigee control plane region name; default is https://apigee.googleapis.com")
 
 	_ = Cmd.MarkPersistentFlagRequired("env")
 

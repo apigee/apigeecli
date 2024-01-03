@@ -53,7 +53,7 @@ func init() {
 		"", "Service Account Name")
 	CallCmd.Flags().BoolVarP(&generateName, "gen", "g",
 		false, "Generate account name")
-	CallCmd.Flags().StringVarP(&roleType, "role", "r",
+	CallCmd.Flags().StringVarP(&roleType, "role", "",
 		"", "IAM Role Type, must be one of: "+strings.Join(roles, ", "))
 
 	_ = CallCmd.MarkFlagRequired("prj")

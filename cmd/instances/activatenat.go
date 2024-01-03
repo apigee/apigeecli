@@ -29,6 +29,7 @@ var ActivateNatCmd = &cobra.Command{
 	Long:  "Activate NAT IP for an Apigee instance",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetApigeeEnv(environment)
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

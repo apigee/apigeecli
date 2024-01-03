@@ -60,6 +60,7 @@ var CreateArchiveCmd = &cobra.Command{
 			return fmt.Errorf("both zipfile and folder path cannot be passed")
 		}
 		apiclient.SetApigeeEnv(environment)
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

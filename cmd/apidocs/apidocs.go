@@ -25,13 +25,15 @@ var Cmd = &cobra.Command{
 	Long:  "Manage Apigee API catalog item through ApiDoc",
 }
 
-var org, siteid, id, name string
+var org, siteid, id, name, region string
 
 func init() {
 	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
 	Cmd.PersistentFlags().StringVarP(&siteid, "siteid", "s",
 		"", "Name or siteid of the portal")
+	Cmd.PersistentFlags().StringVarP(&region, "region", "r",
+		"", "Apigee control plane region name; default is https://apigee.googleapis.com")
 
 	Cmd.AddCommand(ListCmd)
 	Cmd.AddCommand(GetCmd)

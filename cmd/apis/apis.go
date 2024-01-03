@@ -26,8 +26,8 @@ var Cmd = &cobra.Command{
 }
 
 var (
-	org, env, name string
-	conn, revision int
+	org, region, env, name string
+	conn, revision         int
 )
 
 const zipExt = ".zip"
@@ -35,6 +35,8 @@ const zipExt = ".zip"
 func init() {
 	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
+	Cmd.PersistentFlags().StringVarP(&region, "region", "r",
+		"", "Apigee control plane region name; default is https://apigee.googleapis.com")
 
 	Cmd.AddCommand(ListCmd)
 	Cmd.AddCommand(ListDepCmd)

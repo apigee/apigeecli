@@ -28,6 +28,7 @@ var DelProdKeyCmd = &cobra.Command{
 	Short: "Deletes a product from an App in an AppGroup app",
 	Long:  "Deletes a product from an App in an AppGroup app",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

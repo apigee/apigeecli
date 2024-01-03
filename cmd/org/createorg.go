@@ -66,7 +66,7 @@ var (
 func init() {
 	CreateCmd.Flags().StringVarP(&description, "desc", "d",
 		"", "Apigee org description")
-	CreateCmd.Flags().StringVarP(&analyticsRegion, "reg", "r",
+	CreateCmd.Flags().StringVarP(&analyticsRegion, "reg", "",
 		"", "Analytics region name")
 	CreateCmd.Flags().BoolVarP(&disableVpcPeering, "disable-vpc-peering", "",
 		true, "Disable VPC Peering; default true")

@@ -31,6 +31,7 @@ var ImpCmd = &cobra.Command{
 	Short: "Import a folder containing Security Profiles",
 	Long:  "Import a folder containing Security Profiles",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

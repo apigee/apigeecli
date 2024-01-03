@@ -55,7 +55,7 @@ func Create(siteid string, name string) (respBody []byte, err error) {
 	apicategories = append(apicategories, "\"siteId\":"+"\""+siteid+"\"")
 	apicategories = append(apicategories, "\"name\":"+"\""+name+"\"")
 	payload := "{" + strings.Join(apicategories, ",") + "}"
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sites", siteid, "apicategories")
 	respBody, err = apiclient.HttpClient(u.String(), payload)
 	return respBody, err
@@ -63,7 +63,7 @@ func Create(siteid string, name string) (respBody []byte, err error) {
 
 // Get
 func Get(siteid string, name string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sites", siteid, "apicategories", name)
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
@@ -71,7 +71,7 @@ func Get(siteid string, name string) (respBody []byte, err error) {
 
 // List
 func List(siteid string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sites", siteid, "apicategories")
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
@@ -79,7 +79,7 @@ func List(siteid string) (respBody []byte, err error) {
 
 // Delete
 func Delete(siteid string, name string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sites", siteid, "apicategories", name)
 	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
 	return respBody, err
@@ -91,7 +91,7 @@ func Update(siteid string, name string) (respBody []byte, err error) {
 	apicategories = append(apicategories, "\"siteId\":"+"\""+siteid+"\"")
 	apicategories = append(apicategories, "\"name\":"+"\""+name+"\"")
 	payload := "{" + strings.Join(apicategories, ",") + "}"
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sites", siteid, "apicategories")
 	respBody, err = apiclient.HttpClient(u.String(), payload, "PATCH")
 	return respBody, err

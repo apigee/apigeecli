@@ -41,7 +41,7 @@ var GhCreateCmd = &cobra.Command{
 		if ok := re.Match([]byte(ghPath)); !ok {
 			return fmt.Errorf("github path must end with /apiproxy")
 		}
-
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
@@ -67,7 +67,7 @@ func init() {
 		"", "API Proxy name")
 	GhCreateCmd.Flags().StringVarP(&ghOwner, "owner", "u",
 		"", "The github organization or username. ex: In https://github.com/apigee, apigee is the owner name")
-	GhCreateCmd.Flags().StringVarP(&ghRepo, "repo", "r",
+	GhCreateCmd.Flags().StringVarP(&ghRepo, "repo", "",
 		"", "The github repo name. ex: https://github.com/apigee/api-platform-samples, api-platform-samples is the repo")
 	GhCreateCmd.Flags().StringVarP(&ghPath, "proxy-path", "p",
 		"", "The path in the repo to the apiproxy folder. ex: sample-proxies/apikey/apiproxy")

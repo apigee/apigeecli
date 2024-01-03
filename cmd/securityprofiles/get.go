@@ -27,6 +27,7 @@ var GetCmd = &cobra.Command{
 	Short: "Returns a security profile by name",
 	Long:  "Returns a security profile by name",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
@@ -40,7 +41,7 @@ var name string
 func init() {
 	GetCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of the security profile")
-	GetCmd.Flags().StringVarP(&revision, "revision", "r",
+	GetCmd.Flags().StringVarP(&revision, "revision", "v",
 		"", "Revision of the security profile")
 	_ = GetCmd.MarkFlagRequired("name")
 }

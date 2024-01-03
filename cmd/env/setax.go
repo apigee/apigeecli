@@ -52,7 +52,7 @@ func init() {
 		"", "Member Name, example Service Account Name")
 	SetAxCmd.Flags().StringVarP(&memberType, "memberType", "m",
 		"serviceAccount", "memberType must be serviceAccount, user or group")
-	SetAxCmd.Flags().StringVarP(&role, "memberRole", "r",
+	SetAxCmd.Flags().StringVarP(&role, "memberRole", "",
 		"analyticsAgent", "memberRole must be analyticsViewer or analyticsAgent")
 	_ = SetAxCmd.MarkFlagRequired("name")
 }

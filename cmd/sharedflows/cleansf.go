@@ -28,6 +28,7 @@ var CleanCmd = &cobra.Command{
 	Short: "Deletes undeployed/unused reivisions of a Sharedflow",
 	Long:  "Deletes undeployed/unused reivisions of a Sharedflow",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

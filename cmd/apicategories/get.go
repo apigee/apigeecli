@@ -39,6 +39,7 @@ var GetCmd = &cobra.Command{
 		if name != "" && id != "" {
 			return fmt.Errorf("name and id cannot be set as a parameter")
 		}
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

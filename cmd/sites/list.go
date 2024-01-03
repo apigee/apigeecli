@@ -27,6 +27,7 @@ var ListCmd = &cobra.Command{
 	Short: "Returns the API Portals associated with the org",
 	Long:  "Returns the API Portals associated with the org",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

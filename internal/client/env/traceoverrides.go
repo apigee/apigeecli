@@ -34,28 +34,28 @@ func CreateTraceOverrides(apiproxy string, exporter string, endpoint string, sam
 
 	payload := "{" + strings.Join(traceConfig, ",") + "}"
 
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "traceConfig", "overrides")
 	respBody, err = apiclient.HttpClient(u.String(), payload)
 	return respBody, err
 }
 
 func GetTraceOverrides(name string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "traceConfig", "overrides", name)
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
 func DeleteTraceOverrides(name string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "traceConfig", "overrides", name)
 	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
 	return respBody, err
 }
 
 func ListTraceOverrides() (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "traceConfig", "overrides")
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err

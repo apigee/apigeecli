@@ -27,6 +27,7 @@ var ListCmd = &cobra.Command{
 	Short: "Returns the security profiles in the org",
 	Long:  "Returns the security profiles in the org",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

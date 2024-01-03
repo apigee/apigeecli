@@ -33,6 +33,7 @@ var ImpCmd = &cobra.Command{
 	Short: "Import KVM Entries from a folder containing KVM files",
 	Long:  "Import KVM Entries from a folder containing KVM files",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

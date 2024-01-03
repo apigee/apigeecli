@@ -47,6 +47,7 @@ var GqlCreateCmd = &cobra.Command{
 		if targetURL != "" && targetURLRef != "" {
 			return fmt.Errorf("either target-url or target-url-ref must be passed, not both")
 		}
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

@@ -27,6 +27,7 @@ var DelAppCmd = &cobra.Command{
 	Short: "Delete an App in an AppGroup",
 	Long:  "Delete an in an AppGroup",
 	Args: func(cmd *cobra.Command, args []string) error {
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

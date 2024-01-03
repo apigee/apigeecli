@@ -40,6 +40,7 @@ var ListDepCmd = &cobra.Command{
 		if name != "" && revision == -1 && apiclient.GetApigeeEnv() != "" {
 			return fmt.Errorf("revision must be supplied with sharedflow name and env")
 		}
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
@@ -61,6 +62,6 @@ func init() {
 		"", "Shareflow name")
 	ListDepCmd.Flags().StringVarP(&env, "env", "e",
 		"", "Apigee environment name")
-	ListDepCmd.Flags().IntVarP(&revision, "rev", "r",
+	ListDepCmd.Flags().IntVarP(&revision, "rev", "v",
 		-1, "Shareflow revision")
 }

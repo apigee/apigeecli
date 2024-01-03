@@ -53,7 +53,7 @@ var SetCustCmd = &cobra.Command{
 func init() {
 	SetCustCmd.Flags().StringVarP(&memberName, "name", "n",
 		"", "Member Name, example Service Account Name")
-	SetCustCmd.Flags().StringVarP(&role, "role", "r",
+	SetCustCmd.Flags().StringVarP(&role, "role", "",
 		"", "Custom IAM role in the format projects/{project-id}/roles/{role}")
 	SetCustCmd.Flags().StringVarP(&memberType, "memberType", "m",
 		"serviceAccount", "memberType must be serviceAccount, user or group")

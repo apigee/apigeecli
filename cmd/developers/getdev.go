@@ -28,6 +28,7 @@ var GetCmd = &cobra.Command{
 	Short: "Returns the profile for a developer by email address or ID",
 	Long:  "Returns the profile for a developer by email address or ID",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

@@ -34,8 +34,8 @@ var Cmd = &cobra.Command{
 }
 
 var (
-	org, name string
-	conn      int
+	org, name, region string
+	conn              int
 )
 
 var (
@@ -47,6 +47,8 @@ var (
 func init() {
 	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
+	Cmd.PersistentFlags().StringVarP(&region, "region", "r",
+		"", "Apigee control plane region name; default is https://apigee.googleapis.com")
 
 	Cmd.AddCommand(ListCmd)
 	Cmd.AddCommand(GetCmd)

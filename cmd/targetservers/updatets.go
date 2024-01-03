@@ -47,6 +47,7 @@ var UpdateCmd = &cobra.Command{
 				return fmt.Errorf("ignoreValidationErrors must be set to  true or false")
 			}
 		}
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

@@ -28,7 +28,7 @@ func ReserveNatIP(name string, natid string) (respBody []byte, err error) {
 	reserveNat = append(reserveNat, "\"name\":\""+natid+"\"")
 	payload := "{" + strings.Join(reserveNat, ",") + "}"
 
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "instances", name, "natAddresses")
 	respBody, err = apiclient.HttpClient(u.String(), payload)
 	return respBody, err
@@ -37,7 +37,7 @@ func ReserveNatIP(name string, natid string) (respBody []byte, err error) {
 // ActivateNatIP
 func ActivateNatIP(name string, natid string) (respBody []byte, err error) {
 	payload := "{}"
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "instances", name, "natAddresses", natid, ":activate")
 	respBody, err = apiclient.HttpClient(u.String(), payload)
 	return respBody, err
@@ -45,7 +45,7 @@ func ActivateNatIP(name string, natid string) (respBody []byte, err error) {
 
 // DeleteNatIP
 func DeleteNatIP(name string, natid string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "instances", name, "natAddresses", natid)
 	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
 	return respBody, err
@@ -53,7 +53,7 @@ func DeleteNatIP(name string, natid string) (respBody []byte, err error) {
 
 // ListNatIPs
 func ListNatIPs(name string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "instances", name, "natAddresses")
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err

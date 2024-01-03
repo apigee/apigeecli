@@ -28,6 +28,7 @@ var ManageCmd = &cobra.Command{
 	Short: "Approve or revoke a developer app",
 	Long:  "Approve or revoke a developer app",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

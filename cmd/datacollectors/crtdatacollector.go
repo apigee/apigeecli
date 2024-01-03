@@ -33,6 +33,7 @@ var CreateCmd = &cobra.Command{
 		if !isValidType() {
 			return fmt.Errorf("invalid collector type %s. Valid types are %s", collectorType, allowedTypes)
 		}
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

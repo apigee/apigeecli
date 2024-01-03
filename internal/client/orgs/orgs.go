@@ -95,20 +95,12 @@ func Create(description string, analyticsRegion string, authorizedNetwork string
 	portalDisabled bool, apiConsumerDataEncryptionKeyName string, controlPlaneEncryptionKeyName string,
 	apiConsumerDataLocation string,
 ) (respBody []byte, err error) {
-	const baseURL = "https://apigee.googleapis.com/v1/organizations"
-	stageBaseURL := "https://staging-apigee.sandbox.googleapis.com/v1/organizations/"
-
 	if !validRegion(analyticsRegion) {
 		return respBody, fmt.Errorf("invalid analytics region."+
 			" Analytics region must be one of : %v", analyticsRegions)
 	}
 
-	var u *url.URL
-	if apiclient.GetStaging() {
-		u, _ = url.Parse(stageBaseURL)
-	} else {
-		u, _ = url.Parse(baseURL)
-	}
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 
 	u.Path = path.Join(u.Path)
 	q := u.Query()
@@ -162,7 +154,7 @@ func Create(description string, analyticsRegion string, authorizedNetwork string
 
 // Get
 func Get() (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg())
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
@@ -170,7 +162,7 @@ func Get() (respBody []byte, err error) {
 
 // Delete
 func Delete(retension string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	if retension != "" {
 		q := u.Query()
 		q.Set("retention", retension)
@@ -183,7 +175,7 @@ func Delete(retension string) (respBody []byte, err error) {
 
 // GetOrgField
 func GetOrgField(key string) (value string, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg())
 
 	orgBody, err := apiclient.HttpClient(u.String())
@@ -201,7 +193,7 @@ func GetOrgField(key string) (value string, err error) {
 
 // GetAddOn
 func GetAddOn(addon string) (enabled bool) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg())
 
 	apiclient.DisableCmdPrintHttpResponse()
@@ -234,14 +226,14 @@ func GetAddOn(addon string) (enabled bool) {
 
 // List
 func List() (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
 // GetDeployedIngressConfig
 func GetDeployedIngressConfig(view bool) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	if view {
 		q := u.Query()
 		q.Set("view", "full")
@@ -254,7 +246,7 @@ func GetDeployedIngressConfig(view bool) (respBody []byte, err error) {
 
 // GetlDeployments
 func GetDeployments(sharedflows bool) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	if sharedflows {
 		q := u.Query()
 		q.Set("sharedFlows", "true")
@@ -291,7 +283,7 @@ func GetAllDeployments() (respBody []byte, err error) {
 
 // SetOrgProperty is used to set org properties
 func SetOrgProperty(name string, value string) (err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg())
 	// get org details
 	apiclient.ClientPrintHttpResponse.Set(false)
@@ -332,7 +324,7 @@ func SetOrgProperty(name string, value string) (err error) {
 		return err
 	}
 
-	u, _ = url.Parse(apiclient.BaseURL)
+	u, _ = url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg())
 	_, err = apiclient.HttpClient(u.String(), string(newOrgBody), "PUT")
 
@@ -367,7 +359,7 @@ func Update(description string, authorizedNetwork string) (respBody []byte, err 
 		return nil, err
 	}
 
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg())
 	respBody, err = apiclient.HttpClient(u.String(), string(newOrgBody), "PUT")
 
@@ -420,7 +412,7 @@ func SetAddons(advancedApiOpsConfig bool, integrationConfig bool, monetizationCo
 
 	payload := "{\"addonsConfig\":{" + strings.Join(addonPayload, ",") + "}}"
 
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg()+":setAddons")
 
 	respBody, err = apiclient.HttpClient(u.String(), payload)

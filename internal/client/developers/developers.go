@@ -55,7 +55,7 @@ type Attribute struct {
 
 // Create
 func Create(email string, firstName string, lastName string, username string, attrs map[string]string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 
 	developer := []string{}
 
@@ -81,7 +81,7 @@ func Create(email string, firstName string, lastName string, username string, at
 
 // Delete
 func Delete(email string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", url.QueryEscape(email)) // since developer emails can have +
 	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
 	return respBody, err
@@ -89,7 +89,7 @@ func Delete(email string) (respBody []byte, err error) {
 
 // Get
 func Get(email string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", url.QueryEscape(email)) // since developer emails can have +
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
@@ -147,14 +147,14 @@ func Update(email string, firstName string, lastName string, username string, st
 		return nil, err
 	}
 
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", url.QueryEscape(email))
 	respBody, err = apiclient.HttpClient(u.String(), string(reqBody), "PUT")
 	return respBody, err
 }
 
 func setDeveloperStatus(email string, action string) (err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", url.QueryEscape(email))
 	q := u.Query()
 	q.Set("action", action)
@@ -169,7 +169,7 @@ func GetDeveloperId(email string) (developerId string, err error) {
 	apiclient.ClientPrintHttpResponse.Set(false)
 	defer apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
 	var developerMap map[string]interface{}
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", url.QueryEscape(email)) // since developer emails can have +
 	respBody, err := apiclient.HttpClient(u.String())
 	if err != nil {
@@ -185,7 +185,7 @@ func GetDeveloperId(email string) (developerId string, err error) {
 
 // GetApps
 func GetApps(name string, expand bool) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	if expand {
 		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", name, "apps")
 		q := u.Query()
@@ -200,7 +200,7 @@ func GetApps(name string, expand bool) (respBody []byte, err error) {
 
 // List
 func List(count int, expand bool, ids string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers")
 	q := u.Query()
 	if expand {
@@ -222,7 +222,7 @@ func List(count int, expand bool, ids string) (respBody []byte, err error) {
 
 // Export
 func Export() (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers")
 
 	q := u.Query()
@@ -288,7 +288,7 @@ func Import(conn int, filePath string) error {
 
 func createAsyncDeveloper(wg *sync.WaitGroup, jobs <-chan Appdeveloper, errs chan<- error) {
 	defer wg.Done()
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers")
 
 	for {

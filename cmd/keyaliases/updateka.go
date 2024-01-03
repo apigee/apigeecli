@@ -35,6 +35,7 @@ var UpdateCmd = &cobra.Command{
 		if certFile != "" && !utils.FileExists(certFile) {
 			return fmt.Errorf("certFile was not found")
 		}
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
