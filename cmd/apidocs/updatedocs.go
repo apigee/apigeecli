@@ -87,7 +87,7 @@ func init() {
 		"", "Path to a file containing OpenAPI Specification documentation")
 	UpdateDocCmd.Flags().StringVarP(&graphQLPath, "graphql", "q",
 		"", "Path to a file containing GraphQL documentation")
-	UpdateDocCmd.Flags().StringVarP(&endpointUri, "endpointUri", "e",
+	UpdateDocCmd.Flags().StringVarP(&endpointUri, "endpoint-uri", "e",
 		"", "URI for the GraphQL proxy")
 
 	_ = UpdateDocCmd.MarkFlagRequired("id")

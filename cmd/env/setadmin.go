@@ -45,7 +45,7 @@ var SetAdminCmd = &cobra.Command{
 func init() {
 	SetAdminCmd.Flags().StringVarP(&memberName, "name", "n",
 		"", "Member Name, example Service Account Name")
-	SetAdminCmd.Flags().StringVarP(&memberType, "memberType", "m",
+	SetAdminCmd.Flags().StringVarP(&memberType, "member-type", "m",
 		"serviceAccount", "memberType must be serviceAccount, user or group")
 
 	_ = SetAdminCmd.MarkFlagRequired("name")

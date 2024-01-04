@@ -50,7 +50,7 @@ func init() {
 		-1, "Number of apps; limit is 1000")
 	ListCmd.Flags().BoolVarP(&expand, "expand", "x",
 		false, "Expand Details")
-	ListCmd.Flags().BoolVarP(&includeCred, "inclCred", "i",
+	ListCmd.Flags().BoolVarP(&includeCred, "incl-cred", "i",
 		false, "Include Credentials")
 	ListCmd.Flags().StringVarP(&status, "status", "s",
 		"", "Filter by the status of the app. Valid values are approved or revoked")

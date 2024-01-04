@@ -62,6 +62,6 @@ var (
 func init() {
 	ListCmd.Flags().StringVarP(&state, "state", "s",
 		"", "filter by operation state: FINISHED, ERROR, IN_PROGRESS")
-	ListCmd.Flags().StringVarP(&completeState, "completeState", "c",
+	ListCmd.Flags().StringVarP(&completeState, "complete-state", "c",
 		"", "filter by operation compeleted state: Success, Failed or Both")
 }

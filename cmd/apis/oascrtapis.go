@@ -156,7 +156,7 @@ func init() {
 		false, "Skip adding the OAS Validate policy")
 	OasCreateCmd.Flags().BoolVarP(&addCORS, "add-cors", "",
 		false, "Add a CORS policy")
-	OasCreateCmd.Flags().BoolVarP(&formatValidation, "formatValidation", "",
+	OasCreateCmd.Flags().BoolVarP(&formatValidation, "format-validation", "",
 		true, "disables validation of schema type formats")
 
 	_ = OasCreateCmd.MarkFlagRequired("name")

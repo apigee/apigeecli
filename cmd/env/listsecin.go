@@ -42,9 +42,9 @@ var (
 )
 
 func init() {
-	ListSecInCmd.Flags().IntVarP(&pageSize, "pageSize", "",
+	ListSecInCmd.Flags().IntVarP(&pageSize, "page-size", "",
 		-1, "The maximum number of versions to return")
-	ListSecInCmd.Flags().StringVarP(&pageToken, "pageToken", "",
+	ListSecInCmd.Flags().StringVarP(&pageToken, "page-token", "",
 		"", "A page token, received from a previous call")
 	ListSecInCmd.Flags().StringVarP(&filter, "filter", "",
 		"", "Filter results")

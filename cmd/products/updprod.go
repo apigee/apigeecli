@@ -71,7 +71,7 @@ var UpdateCmd = &cobra.Command{
 func init() {
 	UpdateCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of the API Product")
-	UpdateCmd.Flags().StringVarP(&displayName, "displayname", "m",
+	UpdateCmd.Flags().StringVarP(&displayName, "display-name", "m",
 		"", "Display Name of the API Product")
 	UpdateCmd.Flags().StringVarP(&description, "desc", "d",
 		"", "Description for the API Product")
