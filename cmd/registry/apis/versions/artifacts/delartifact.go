@@ -46,4 +46,8 @@ func init() {
 		"", "API Version")
 	DelArtifactCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Artifact Name")
+
+	_ = DelArtifactCmd.MarkFlagRequired("api-name")
+	_ = DelArtifactCmd.MarkFlagRequired("api-version")
+	_ = DelArtifactCmd.MarkFlagRequired("name")
 }

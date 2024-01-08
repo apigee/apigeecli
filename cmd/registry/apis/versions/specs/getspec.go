@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package artifacts
+package specs
 
 import (
 	"internal/apiclient"
@@ -23,39 +23,42 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// ListArtifactCmd to get instance
-var ListArtifactCmd = &cobra.Command{
-	Use:   "list",
-	Short: "List all artifacts in Apigee Registry",
-	Long:  "List all artifacts in Apigee Registry",
+// GetSpecCmd to get instance
+var GetSpecCmd = &cobra.Command{
+	Use:   "get",
+	Short: "Get the spec details for an API version",
+	Long:  "Get the spec details for an API version in Apigee Registry",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetProjectID(utils.ProjectID)
 		apiclient.SetRegion(utils.Region)
 		return apiclient.SetApigeeOrg(utils.Org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = versions.ListArtifacts(apiName, apiVersion, pageSize, pageToken, filter, orderBy)
+		if content {
+			_, err = versions.GetSpecContents(apiName, apiVersion, name)
+			return err
+		}
+		_, err = versions.GetSpec(apiName, apiVersion, name)
 		return
 	},
 }
 
 var (
-	pageToken, filter, orderBy string
-	pageSize                   int
+	name    string
+	content bool
 )
 
 func init() {
-	ListArtifactCmd.Flags().StringVarP(&apiName, "api-name", "",
+	GetSpecCmd.Flags().StringVarP(&apiName, "api-name", "",
 		"", "API Name")
-	ListArtifactCmd.Flags().StringVarP(&apiVersion, "api-version", "",
+	GetSpecCmd.Flags().StringVarP(&apiVersion, "api-version", "",
 		"", "API Version")
-	ListArtifactCmd.Flags().StringVarP(&pageToken, "page-token", "",
-		"", "A page token, received from a previous list call")
-	ListArtifactCmd.Flags().StringVarP(&filter, "filter", "",
-		"", "An expression that can be used to filter the list")
-	ListArtifactCmd.Flags().StringVarP(&orderBy, "order-by", "",
-		"", "A comma-separated list of fields to be sorted; ex: foo desc")
+	GetSpecCmd.Flags().StringVarP(&name, "name", "n",
+		"", "Name of the Spec")
+	GetSpecCmd.Flags().BoolVarP(&content, "content", "c",
+		false, "If set to true, returns artifact contents")
 
-	_ = ListArtifactCmd.MarkFlagRequired("api-name")
-	_ = ListArtifactCmd.MarkFlagRequired("api-version")
+	_ = GetSpecCmd.MarkFlagRequired("api-name")
+	_ = GetSpecCmd.MarkFlagRequired("api-version")
+	_ = GetSpecCmd.MarkFlagRequired("name")
 }

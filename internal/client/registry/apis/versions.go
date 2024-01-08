@@ -29,7 +29,7 @@ func CreateVersion(apiVersionId string, name string, displayName string,
 	annotations map[string]string, primarySpec string,
 ) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.GetApigeeRegistryURL())
-	u.Path = path.Join(u.Path, "apis", apiVersionId, "versions")
+	u.Path = path.Join(u.Path, "apis", name, "versions")
 	apiVersionContent := []string{}
 	apiVersionContent = append(apiVersionContent, "\"name\":"+"\""+name+"\"")
 	if displayName != "" {
@@ -59,6 +59,11 @@ func CreateVersion(apiVersionId string, name string, displayName string,
 		apiVersionContent = append(apiVersionContent, annotationStr)
 	}
 	payload := "{" + strings.Join(apiVersionContent, ",") + "}"
+
+	q := u.Query()
+	q.Set("apiVersionId", apiVersionId)
+	u.RawQuery = q.Encode()
+
 	respBody, err = apiclient.HttpClient(u.String(), payload)
 	return respBody, err
 }

@@ -63,6 +63,8 @@ func init() {
 		nil, "Annotations attach non-identifying metadata to resources")
 
 	_ = CreateArtifactCmd.MarkFlagRequired("id")
+	_ = CreateArtifactCmd.MarkFlagRequired("api-name")
+	_ = CreateArtifactCmd.MarkFlagRequired("api-version")
 	_ = CreateArtifactCmd.MarkFlagRequired("name")
 	_ = CreateArtifactCmd.MarkFlagRequired("file")
 }

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package artifacts
+package specs
 
 import (
 	"internal/apiclient"
@@ -23,39 +23,31 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// ListArtifactCmd to get instance
-var ListArtifactCmd = &cobra.Command{
-	Use:   "list",
-	Short: "List all artifacts in Apigee Registry",
-	Long:  "List all artifacts in Apigee Registry",
+// DeleteSpecCmd to get instance
+var DeleteSpecCmd = &cobra.Command{
+	Use:   "delete",
+	Short: "Delete a spec associated with an API version",
+	Long:  "Delete a spec associated with an API version in Apigee Registry",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetProjectID(utils.ProjectID)
 		apiclient.SetRegion(utils.Region)
 		return apiclient.SetApigeeOrg(utils.Org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = versions.ListArtifacts(apiName, apiVersion, pageSize, pageToken, filter, orderBy)
+		_, err = versions.DeleteSpec(apiName, apiVersion, name)
 		return
 	},
 }
 
-var (
-	pageToken, filter, orderBy string
-	pageSize                   int
-)
-
 func init() {
-	ListArtifactCmd.Flags().StringVarP(&apiName, "api-name", "",
+	DeleteSpecCmd.Flags().StringVarP(&apiName, "api-name", "",
 		"", "API Name")
-	ListArtifactCmd.Flags().StringVarP(&apiVersion, "api-version", "",
+	DeleteSpecCmd.Flags().StringVarP(&apiVersion, "api-version", "",
 		"", "API Version")
-	ListArtifactCmd.Flags().StringVarP(&pageToken, "page-token", "",
-		"", "A page token, received from a previous list call")
-	ListArtifactCmd.Flags().StringVarP(&filter, "filter", "",
-		"", "An expression that can be used to filter the list")
-	ListArtifactCmd.Flags().StringVarP(&orderBy, "order-by", "",
-		"", "A comma-separated list of fields to be sorted; ex: foo desc")
+	DeleteSpecCmd.Flags().StringVarP(&name, "name", "n",
+		"", "Name of the Spec")
 
-	_ = ListArtifactCmd.MarkFlagRequired("api-name")
-	_ = ListArtifactCmd.MarkFlagRequired("api-version")
+	_ = DeleteSpecCmd.MarkFlagRequired("api-name")
+	_ = DeleteSpecCmd.MarkFlagRequired("api-version")
+	_ = DeleteSpecCmd.MarkFlagRequired("name")
 }

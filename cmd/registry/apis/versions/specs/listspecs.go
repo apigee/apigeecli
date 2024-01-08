@@ -55,4 +55,7 @@ func init() {
 		"", "An expression that can be used to filter the list")
 	ListSpecCmd.Flags().StringVarP(&orderBy, "order-by", "",
 		"", "A comma-separated list of fields to be sorted; ex: foo desc")
+
+	_ = ListSpecCmd.MarkFlagRequired("api-name")
+	_ = ListSpecCmd.MarkFlagRequired("api-version")
 }

@@ -53,4 +53,8 @@ func init() {
 		"", "Artifact Name")
 	GetArtifactCmd.Flags().BoolVarP(&content, "content", "c",
 		false, "If set to true, returns artifact contents")
+
+	_ = GetArtifactCmd.MarkFlagRequired("api-name")
+	_ = GetArtifactCmd.MarkFlagRequired("api-version")
+	_ = GetArtifactCmd.MarkFlagRequired("name")
 }
