@@ -31,4 +31,5 @@ func init() {
 	ArtifactCmd.AddCommand(DelArtifactCmd)
 	ArtifactCmd.AddCommand(GetArtifactCmd)
 	ArtifactCmd.AddCommand(ListArtifactCmd)
+	ArtifactCmd.AddCommand(CreateArtifactCmd)
 }

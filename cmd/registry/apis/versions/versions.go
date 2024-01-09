@@ -16,6 +16,7 @@ package versions
 
 import (
 	"github.com/apigee/apigeecli/cmd/registry/apis/versions/artifacts"
+	"github.com/apigee/apigeecli/cmd/registry/apis/versions/specs"
 	"github.com/spf13/cobra"
 )
 
@@ -32,4 +33,5 @@ func init() {
 	APIVersionCmd.AddCommand(GetVersionCmd)
 	APIVersionCmd.AddCommand(DelVersionCmd)
 	APIVersionCmd.AddCommand(artifacts.ArtifactCmd)
+	APIVersionCmd.AddCommand(specs.SpecCmd)
 }

@@ -15,7 +15,6 @@
 package artifacts
 
 import (
-	"github.com/apigee/apigeecli/cmd/registry/apis/versions/specs"
 	"github.com/spf13/cobra"
 )
 
@@ -33,5 +32,4 @@ func init() {
 	ArtifactCmd.AddCommand(ListArtifactCmd)
 	ArtifactCmd.AddCommand(GetArtifactCmd)
 	ArtifactCmd.AddCommand(DelArtifactCmd)
-	ArtifactCmd.AddCommand(specs.SpecCmd)
 }
