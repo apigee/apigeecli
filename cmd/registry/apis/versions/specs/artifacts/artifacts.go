@@ -12,22 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package specs
+package artifacts
 
 import (
-	"github.com/apigee/apigeecli/cmd/registry/apis/versions/specs/artifacts"
 	"github.com/spf13/cobra"
 )
 
-// SpecCmd to manage apis
-var SpecCmd = &cobra.Command{
-	Use:   "specs",
-	Short: "Manage specs for an API version",
-	Long:  "Manage specs for an API version in Apigee Registry",
+// ArtifactCmd to manage apis
+var ArtifactCmd = &cobra.Command{
+	Use:   "artifacts",
+	Short: "Manage artifacts for an API version's spec",
+	Long:  "Manage artifacts for an API version in Apigee Registry",
 }
 
+var apiName, apiVersion, specName, name string
+
 func init() {
-	SpecCmd.AddCommand(ListSpecCmd)
-	SpecCmd.AddCommand(GetSpecCmd)
-	SpecCmd.AddCommand(artifacts.ArtifactCmd)
+	ArtifactCmd.AddCommand(DelArtifactCmd)
+	ArtifactCmd.AddCommand(GetArtifactCmd)
+	ArtifactCmd.AddCommand(ListArtifactCmd)
 }
