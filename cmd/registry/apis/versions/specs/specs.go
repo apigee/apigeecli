@@ -29,5 +29,7 @@ var SpecCmd = &cobra.Command{
 func init() {
 	SpecCmd.AddCommand(ListSpecCmd)
 	SpecCmd.AddCommand(GetSpecCmd)
+	SpecCmd.AddCommand(DeleteSpecCmd)
+	SpecCmd.AddCommand(CreateSpecCmd)
 	SpecCmd.AddCommand(artifacts.ArtifactCmd)
 }
