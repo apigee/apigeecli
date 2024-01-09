@@ -38,21 +38,23 @@ var CreateSpecCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		_, err = versions.CreateSpec(apiName, apiVersion, apiSpecId,
+		_, err = versions.CreateSpec(apiName, apiVersion, apiSpecID,
 			name, fileName, description, sourceURI, string(fileContents), labels, annotations)
 		return
 	},
 }
 
-var labels, annotations map[string]string
-var apiSpecId, fileName, description, sourceURI, filePath string
+var (
+	labels, annotations                                   map[string]string
+	apiSpecID, fileName, description, sourceURI, filePath string
+)
 
 func init() {
 	CreateSpecCmd.Flags().StringVarP(&apiName, "api-name", "",
 		"", "API Name")
 	CreateSpecCmd.Flags().StringVarP(&apiVersion, "api-version", "",
 		"", "API Version")
-	CreateSpecCmd.Flags().StringVarP(&apiVersion, "api-specid", "",
+	CreateSpecCmd.Flags().StringVarP(&apiSpecID, "api-specid", "",
 		"", "API Spec Id")
 	CreateSpecCmd.Flags().StringVarP(&name, "name", "n",
 		"", "API Version Spec name")
