@@ -16,6 +16,7 @@ package specs
 
 import (
 	"encoding/base64"
+
 	"internal/apiclient"
 
 	"internal/client/registry/apis/versions"
