@@ -60,11 +60,10 @@ func GetArtifact(apiName string, deploymentName string, name string) (respBody [
 }
 
 // GetArtifactContents
-func GetArtifactContents(apiName string, deploymentName string, name string) (respBody []byte, err error) {
+func GetArtifactContents(apiName string, deploymentName string, name string) (err error) {
 	u, _ := url.Parse(apiclient.GetApigeeRegistryURL())
 	u.Path = path.Join(u.Path, "apis", apiName, "deployments", deploymentName, "artifacts", name+":getContents")
-	respBody, err = apiclient.HttpClient(u.String())
-	return respBody, err
+	return apiclient.DownloadResource(u.String(), name+".txt", "", true)
 }
 
 // ListArtifacts

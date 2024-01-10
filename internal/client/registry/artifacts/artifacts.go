@@ -53,11 +53,10 @@ func Get(name string) (respBody []byte, err error) {
 }
 
 // GetContents
-func GetContents(name string) (respBody []byte, err error) {
+func GetContents(name string) (err error) {
 	u, _ := url.Parse(apiclient.GetApigeeRegistryURL())
 	u.Path = path.Join(u.Path, "artifacts", name+":getContents")
-	respBody, err = apiclient.HttpClient(u.String())
-	return respBody, err
+	return apiclient.DownloadResource(u.String(), name+".txt", "", true)
 }
 
 // List

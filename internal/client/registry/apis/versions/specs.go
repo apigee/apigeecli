@@ -113,11 +113,10 @@ func GetSpec(apiName string, apiVersion string, name string) (respBody []byte, e
 }
 
 // GetSpecContents
-func GetSpecContents(apiName string, apiVersion string, name string) (respBody []byte, err error) {
+func GetSpecContents(apiName string, apiVersion string, name string) (err error) {
 	u, _ := url.Parse(apiclient.GetApigeeRegistryURL())
 	u.Path = path.Join(u.Path, "apis", apiName, "versions", apiVersion, "specs", name+":getContents")
-	respBody, err = apiclient.HttpClient(u.String())
-	return respBody, err
+	return apiclient.DownloadResource(u.String(), name+".txt", "", true)
 }
 
 // ListSpecs
