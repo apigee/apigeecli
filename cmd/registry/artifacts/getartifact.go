@@ -35,8 +35,7 @@ var GetArtifactCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		if content {
-			_, err = artifacts.GetContents(name)
-			return err
+			return artifacts.GetContents(name)
 		}
 		_, err = artifacts.Get(name)
 		return

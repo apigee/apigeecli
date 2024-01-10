@@ -15,6 +15,7 @@
 package specs
 
 import (
+	"encoding/base64"
 	"internal/apiclient"
 
 	"internal/client/registry/apis/versions"
@@ -38,8 +39,9 @@ var CreateSpecCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		contents := base64.URLEncoding.EncodeToString(fileContents)
 		_, err = versions.CreateSpec(apiName, apiVersion, apiSpecID,
-			name, fileName, description, sourceURI, string(fileContents), labels, annotations)
+			name, fileName, description, sourceURI, contents, labels, annotations)
 		return
 	},
 }

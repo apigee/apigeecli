@@ -35,7 +35,7 @@ var GetSpecCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		if content {
-			_, err = versions.GetSpecContents(apiName, apiVersion, name)
+			err = versions.GetSpecContents(apiName, apiVersion, name)
 			return err
 		}
 		_, err = versions.GetSpec(apiName, apiVersion, name)
