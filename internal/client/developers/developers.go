@@ -37,9 +37,13 @@ type Appdeveloper struct {
 	FirstName   string      `json:"firstName,omitempty"`
 	LastName    string      `json:"lastName,omitempty"`
 	Attributes  []Attribute `json:"attributes,omitempty"`
+	Apps        []string    `json:"apps,omitempty"`
+	Companies   []string    `json:"companies,omitempty"`
 	Username    string      `json:"userName,omitempty"`
 	DeveloperId string      `json:"developerId,omitempty"`
 	Status      *string     `json:"status,omitempty"`
+	AccessType  string      `json:"accessType,omitempty"`
+	AppFamily   string      `json:"appFamily,omitempty"`
 }
 
 // Appdevelopers hold an array of developers
@@ -199,7 +203,8 @@ func GetApps(name string, expand bool) (respBody []byte, err error) {
 }
 
 // List
-func List(count int, expand bool, ids string) (respBody []byte, err error) {
+func List(count int, expand bool, ids string, startKey string,
+	app string, includeCompany bool) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers")
 	q := u.Query()
@@ -214,6 +219,12 @@ func List(count int, expand bool, ids string) (respBody []byte, err error) {
 	if ids != "" {
 		q.Set("ids", ids)
 	}
+	if includeCompany {
+		q.Set("includeCompany", "true")
+	}
+	if startKey != "" {
+		q.Set("startKey", startKey)
+	}
 
 	u.RawQuery = q.Encode()
 	respBody, err = apiclient.HttpClient(u.String())
@@ -222,17 +233,35 @@ func List(count int, expand bool, ids string) (respBody []byte, err error) {
 
 // Export
 func Export() (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
-	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers")
 
-	q := u.Query()
-	q.Set("expand", "true")
-
-	u.RawQuery = q.Encode()
 	// don't print to sysout
 	apiclient.ClientPrintHttpResponse.Set(false)
-	defer apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
-	respBody, err = apiclient.HttpClient(u.String())
+	devs := Appdevelopers{}
+	startKey := ""
+	for {
+		d := Appdevelopers{}
+		respBody, err := List(-1, true, "", startKey, "", false)
+		if err != nil {
+			return nil, err
+		}
+		err = json.Unmarshal(respBody, &d)
+		if err != nil {
+			return nil, err
+		}
+		if len(d.Developer) > 1 {
+			devs.Developer = append(devs.Developer, d.Developer...)
+			startKey = devs.Developer[len(devs.Developer)-1].EMail
+		} else {
+			break
+		}
+	}
+
+	apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
+	respBody, err = json.Marshal(&devs)
+	if err != nil {
+		return nil, err
+	}
+	respBody, err = apiclient.PrettifyJSON(respBody)
 	return respBody, err
 }
 
