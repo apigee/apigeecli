@@ -1,6 +1,6 @@
 module github.com/apigee/apigeecli
 
-go 1.20
+go 1.21
 
 require internal/apiclient v1.0.0
 
