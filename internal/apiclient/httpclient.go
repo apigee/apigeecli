@@ -275,21 +275,21 @@ func HttpClient(params ...string) (respBody []byte, err error) {
 		return nil, err
 	}
 
-	clilog.Debug.Println("Connecting to: ", params[0])
-
 	switch paramLen := len(params); paramLen {
 	case 1:
+		clilog.Debug.Printf("Connecting to: %s - %s", http.MethodGet, params[0])
 		req, err = http.NewRequest(http.MethodGet, params[0], nil)
 	case 2:
+		clilog.Debug.Printf("Connecting to: %s - %s", http.MethodPost, params[0])
 		payload := []byte(params[1])
 		if len(payload) > 0 {
-			//attempt to convert to json
+			// attempt to convert to json
 			jsonPayload, err := PrettifyJSON([]byte(params[1]))
 			if err != nil {
-				//payload is not json, print as-is
+				// payload is not json, print as-is
 				clilog.Debug.Println("Payload: ", string(payload))
 			} else {
-				//print json
+				// print json
 				clilog.Debug.Println("Payload: ", string(jsonPayload))
 			}
 		}
@@ -356,7 +356,7 @@ func PrettifyJSON(body []byte) ([]byte, error) {
 	var prettyJSON bytes.Buffer
 	err := json.Indent(&prettyJSON, body, "", "\t")
 	if err != nil {
-		//fail silently
+		// fail silently
 		return nil, err
 	}
 	return prettyJSON.Bytes(), nil
@@ -415,6 +415,7 @@ func GetHttpClient() (err error) {
 }
 
 func getRequest(params []string) (req *http.Request, err error) {
+	clilog.Debug.Printf("Connecting to: %s - %s", params[2], params[0])
 	if params[2] == "DELETE" {
 		req, err = http.NewRequest(http.MethodDelete, params[0], nil)
 	} else if params[2] == "PUT" {

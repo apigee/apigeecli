@@ -30,6 +30,7 @@ var ExpCmd = &cobra.Command{
 	Short: "Export API Categories across all sites",
 	Long:  "Export API Categories across all sites",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

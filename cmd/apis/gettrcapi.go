@@ -29,6 +29,7 @@ var GetTrcCmd = &cobra.Command{
 	Long:  "Get a debug session for an API proxy revision deployed in an environment",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetApigeeEnv(env)
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

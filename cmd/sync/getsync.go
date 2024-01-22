@@ -28,6 +28,7 @@ var GetCmd = &cobra.Command{
 	Short: "Show the list of identities with access to control plane resources",
 	Long:  "Show the list of identities with access to control plane resources",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

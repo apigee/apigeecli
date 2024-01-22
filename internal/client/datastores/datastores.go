@@ -85,7 +85,7 @@ func createOrTestorUpdate(id string, displayName string, targetType string, proj
 	bucketName string, gcsPath string, datasetName string,
 	tablePrefix string, action Action,
 ) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 
 	ds := []string{}
 
@@ -129,7 +129,7 @@ func createOrTestorUpdate(id string, displayName string, targetType string, proj
 
 // Delete
 func Delete(id string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "analytics", "datastores", id)
 	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
 	return respBody, err
@@ -137,7 +137,7 @@ func Delete(id string) (respBody []byte, err error) {
 
 // Get
 func Get(id string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "analytics", "datastores", id)
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
@@ -200,7 +200,7 @@ func GetVersion(name string) (version string, err error) {
 
 // List
 func List(targetType string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "analytics", "datastores")
 	if (targetType != "") && (targetType != "gcs" && targetType != "bigquery") {
 		return nil, fmt.Errorf("invalid targetType. Must be gcs or bigquery")

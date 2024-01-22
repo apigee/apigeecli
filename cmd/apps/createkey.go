@@ -31,6 +31,7 @@ var CreateKeyCmd = &cobra.Command{
 	Short: "Create a developer app key",
 	Long:  "Create a a developer app key",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
@@ -47,7 +48,7 @@ var CreateKeyCmd = &cobra.Command{
 func init() {
 	CreateKeyCmd.Flags().StringVarP(&key, "key", "k",
 		"", "Developer app consumer key")
-	CreateKeyCmd.Flags().StringVarP(&secret, "secret", "r",
+	CreateKeyCmd.Flags().StringVarP(&secret, "secret", "c",
 		"", "Developer app consumer secret")
 	CreateKeyCmd.Flags().StringArrayVarP(&apiProducts, "prods", "p",
 		[]string{}, "A list of api products")

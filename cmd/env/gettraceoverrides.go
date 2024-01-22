@@ -29,6 +29,7 @@ var GetTraceOverridesCmd = &cobra.Command{
 	Long:  "Get Distributed Trace config overrides",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetApigeeEnv(environment)
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

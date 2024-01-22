@@ -28,6 +28,7 @@ var GetCmd = &cobra.Command{
 	Short: "Get a service endpoint",
 	Long:  "Get a service endpoint",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

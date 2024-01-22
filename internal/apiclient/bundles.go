@@ -205,7 +205,7 @@ func FetchAsyncBundle(entityType string, folder string, name string, revision st
 func FetchBundle(entityType string, folder string, name string, revision string, allRevisions bool) error {
 	var proxyName string
 
-	u, _ := url.Parse(BaseURL)
+	u, _ := url.Parse(GetApigeeBaseURL())
 	q := u.Query()
 	q.Set("format", "bundle")
 	u.RawQuery = q.Encode()
@@ -252,7 +252,7 @@ func ImportBundle(entityType string, name string, bundlePath string) (respBody [
 		name = names[0]
 	}
 
-	u, _ := url.Parse(BaseURL)
+	u, _ := url.Parse(GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, GetApigeeOrg(), entityType)
 
 	q := u.Query()

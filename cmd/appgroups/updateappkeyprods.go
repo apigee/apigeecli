@@ -27,6 +27,7 @@ var UpdateKeyProdCmd = &cobra.Command{
 	Short: "Update products in an app key contained in an AppGroup",
 	Long:  "Update products in an app key contained in an AppGroup",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

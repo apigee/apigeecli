@@ -28,6 +28,7 @@ var UpdateCmd = &cobra.Command{
 	Short: "Update an existing Security Profile",
 	Long:  "Update an existing Security Profile",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

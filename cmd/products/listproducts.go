@@ -37,6 +37,7 @@ var ListCmd = &cobra.Command{
 			return fmt.Errorf("invalid filter options. Filter option must be proxies, " +
 				"expand must be set to true and count cannot be set")
 		}
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

@@ -25,7 +25,7 @@ import (
 
 // CreateKey
 func CreateKey(name string, appName string, consumerKey string, consumerSecret string, expiresInSeconds string, apiProducts []string, scopes []string, attrs map[string]string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 
 	key := []string{}
 
@@ -74,7 +74,7 @@ func CreateKey(name string, appName string, consumerKey string, consumerSecret s
 
 // GetKey
 func GetKey(name string, appName string, key string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "appgroups", name, "apps", appName, "keys", key)
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
@@ -82,7 +82,7 @@ func GetKey(name string, appName string, key string) (respBody []byte, err error
 
 // DeleteKey
 func DeleteKey(name string, appName string, key string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "appgroups", name, "apps", appName, "keys", key)
 	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
 	return respBody, err
@@ -94,7 +94,7 @@ func ManageKey(name string, appName string, consumerKey string, action string) (
 		return nil, fmt.Errorf("invalid action. action must be revoke or approve")
 	}
 
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "appgroups", name, "apps", appName, "keys", consumerKey)
 	q := u.Query()
 	q.Set("action", action)
@@ -106,7 +106,7 @@ func ManageKey(name string, appName string, consumerKey string, action string) (
 
 // UpdateKeyProducts
 func UpdateKeyProducts(name string, appName string, consumerKey string, apiProducts []string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 
 	key := []string{}
 	key = append(key, "\"apiProducts\":[\""+getArrayStr(apiProducts)+"\"]")
@@ -121,7 +121,7 @@ func UpdateKeyProducts(name string, appName string, consumerKey string, apiProdu
 
 // DeleteKeyProduct
 func DeleteKeyProduct(name string, appName string, consumerKey string, productName string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "appgroups", name, "apps", appName, "keys", consumerKey, "apiproducts", productName)
 	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
 	return respBody, err

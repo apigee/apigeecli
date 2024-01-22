@@ -31,6 +31,7 @@ var CreateCmd = &cobra.Command{
 	Short: "Create a Developer App",
 	Long:  "Create a Developer App",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

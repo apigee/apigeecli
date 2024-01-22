@@ -45,7 +45,7 @@ var SetDepCmd = &cobra.Command{
 func init() {
 	SetDepCmd.Flags().StringVarP(&memberName, "name", "n",
 		"", "Member Name, example Service Account Name")
-	SetDepCmd.Flags().StringVarP(&memberType, "memberType", "m",
+	SetDepCmd.Flags().StringVarP(&memberType, "member-type", "m",
 		"serviceAccount", "memberType must be serviceAccount, user or group")
 
 	_ = SetDepCmd.MarkFlagRequired("name")

@@ -40,7 +40,7 @@ type ref struct {
 
 // Create references
 func Create(name string, description string, resourceType string, refers string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 
 	reference := []string{}
 
@@ -62,7 +62,7 @@ func Create(name string, description string, resourceType string, refers string)
 
 // Get a reference
 func Get(name string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "references", name)
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
@@ -70,7 +70,7 @@ func Get(name string) (respBody []byte, err error) {
 
 // Delete a reference
 func Delete(name string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "references", name)
 	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
 	return respBody, err
@@ -78,7 +78,7 @@ func Delete(name string) (respBody []byte, err error) {
 
 // List references
 func List() (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "references")
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
@@ -86,7 +86,7 @@ func List() (respBody []byte, err error) {
 
 // Update references
 func Update(name string, description string, resourceType string, refers string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 
 	reference := []string{}
 
@@ -212,7 +212,7 @@ func Import(conn int, filePath string) (err error) {
 	clilog.Debug.Printf("Found %d references in the file\n", len(references))
 	clilog.Debug.Printf("Create references with %d connections\n", conn)
 
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "references")
 	err = apiclient.GetHttpClient()
 	if err != nil {
@@ -304,7 +304,7 @@ func importReferences(knownRefs map[string]bool, wg *sync.WaitGroup, jobs <-chan
 			continue
 		}
 
-		u, _ := url.Parse(apiclient.BaseURL)
+		u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "references")
 		method := http.MethodPost
 		if knownRefs[job.Name] {

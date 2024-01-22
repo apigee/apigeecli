@@ -36,6 +36,7 @@ var GetCmd = &cobra.Command{
 		if appID != "" && name != "" {
 			return fmt.Errorf("name and appId cannot be used together")
 		}
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

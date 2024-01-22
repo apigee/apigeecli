@@ -27,6 +27,7 @@ var CreditCmd = &cobra.Command{
 	Use:   "credit",
 	Short: "Credits the account balance for the developer",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	Long: "Credits the account balance for the developer",

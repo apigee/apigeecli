@@ -42,7 +42,7 @@ type keyvalueentries struct {
 
 // CreateEntry
 func CreateEntry(proxyName string, mapName string, keyName string, value string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	if apiclient.GetApigeeEnv() != "" {
 		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "keyvaluemaps", mapName, "entries")
 	} else if proxyName != "" {
@@ -57,7 +57,7 @@ func CreateEntry(proxyName string, mapName string, keyName string, value string)
 
 // DeleteEntry
 func DeleteEntry(proxyName string, mapName string, keyName string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	if apiclient.GetApigeeEnv() != "" {
 		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "keyvaluemaps", mapName, "entries", keyName)
 	} else if proxyName != "" {
@@ -71,7 +71,7 @@ func DeleteEntry(proxyName string, mapName string, keyName string) (respBody []b
 
 // GetEntry
 func GetEntry(proxyName string, mapName string, keyName string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	if apiclient.GetApigeeEnv() != "" {
 		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "keyvaluemaps", mapName, "entries", keyName)
 	} else if proxyName != "" {
@@ -85,7 +85,7 @@ func GetEntry(proxyName string, mapName string, keyName string) (respBody []byte
 
 // ListEntries
 func ListEntries(proxyName string, mapName string, pageSize int, pageToken string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 
 	if pageToken != "" || pageSize != -1 {
 		q := u.Query()
@@ -209,7 +209,7 @@ func ExportEntries(proxyName string, mapName string) (payload [][]byte, err erro
 func ImportEntries(proxyName string, mapName string, conn int, filePath string) (err error) {
 	var pwg sync.WaitGroup
 
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	if apiclient.GetApigeeEnv() != "" {
 		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "keyvaluemaps", mapName, "entries")
 	} else if proxyName != "" {

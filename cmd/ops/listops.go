@@ -39,6 +39,7 @@ var ListCmd = &cobra.Command{
 		if state != "IN_PROGRESS" && state != "FINISHED" && state != "ERROR" {
 			return fmt.Errorf("state must be oneOf IN_PROGRESS, FINISHED or ERROR")
 		}
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
@@ -61,6 +62,6 @@ var (
 func init() {
 	ListCmd.Flags().StringVarP(&state, "state", "s",
 		"", "filter by operation state: FINISHED, ERROR, IN_PROGRESS")
-	ListCmd.Flags().StringVarP(&completeState, "completeState", "c",
+	ListCmd.Flags().StringVarP(&completeState, "complete-state", "c",
 		"", "filter by operation compeleted state: Success, Failed or Both")
 }

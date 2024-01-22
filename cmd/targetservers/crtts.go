@@ -47,6 +47,7 @@ var CreateCmd = &cobra.Command{
 				return fmt.Errorf("ignoreValidationErrors must be set to  true or false")
 			}
 		}
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
@@ -80,18 +81,18 @@ func init() {
 	CreateCmd.Flags().BoolVarP(&enable, "enable", "b",
 		true, "Enabling/disabling a TargetServer")
 
-	CreateCmd.Flags().StringVarP(&keyStore, "keyStore", "",
+	CreateCmd.Flags().StringVarP(&keyStore, "keystore", "",
 		"", "Key store for the target server")
-	CreateCmd.Flags().StringVarP(&keyAlias, "keyAlias", "",
+	CreateCmd.Flags().StringVarP(&keyAlias, "keyalias", "",
 		"", "Key alias for the target server")
-	CreateCmd.Flags().StringVarP(&trustStore, "trustStore", "",
+	CreateCmd.Flags().StringVarP(&trustStore, "truststore", "",
 		"", "Trust store for the target server")
 
 	CreateCmd.Flags().StringVarP(&tlsenabled, "tls", "",
 		"", "Enable TLS for the target server")
-	CreateCmd.Flags().StringVarP(&clientAuthEnabled, "clientAuth", "c",
+	CreateCmd.Flags().StringVarP(&clientAuthEnabled, "client-auth", "c",
 		"", "Enable mTLS for the target server")
-	CreateCmd.Flags().StringVarP(&ignoreValidationErrors, "ignoreErr", "i",
+	CreateCmd.Flags().StringVarP(&ignoreValidationErrors, "ignore-err", "i",
 		"", "Ignore TLS validation errors for the target server")
 
 	CreateCmd.Flags().IntVarP(&port, "port", "p",

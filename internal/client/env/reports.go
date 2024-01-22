@@ -88,7 +88,7 @@ func TotalAPICallsInMonth(environment string, month int, year int) (total int, e
 	apiclient.SetRate(apiclient.ApigeeAnalyticsAPI)
 	defer apiclient.SetRate(getDefaultRate)
 
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 
 	timeRange := fmt.Sprintf("%d/01/%d 00:00~%d/%d/%d 23:59", month, year, month, daysIn(time.Month(month), year), year)
 

@@ -31,7 +31,7 @@ func Create(name string, serviceAttachment string, location string) (respBody []
 
 	payload := "{" + strings.Join(endpointAttachment, ",") + "}"
 
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "endpointAttachments")
 
 	q := u.Query()
@@ -44,7 +44,7 @@ func Create(name string, serviceAttachment string, location string) (respBody []
 
 // Get
 func Get(name string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "endpointAttachments", name)
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
@@ -52,7 +52,7 @@ func Get(name string) (respBody []byte, err error) {
 
 // Delete
 func Delete(name string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "endpointAttachments", name)
 	respBody, err = apiclient.HttpClient(u.String(), "DELETE")
 	return respBody, err
@@ -60,7 +60,7 @@ func Delete(name string) (respBody []byte, err error) {
 
 // List
 func List() (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "endpointAttachments")
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err

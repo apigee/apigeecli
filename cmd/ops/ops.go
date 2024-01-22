@@ -26,11 +26,13 @@ var Cmd = &cobra.Command{
 	Long:    "View Apigee Operations",
 }
 
-var org string
+var org, region string
 
 func init() {
 	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
+	Cmd.PersistentFlags().StringVarP(&region, "region", "r",
+		"", "Apigee control plane region name; default is https://apigee.googleapis.com")
 
 	Cmd.AddCommand(ListCmd)
 	Cmd.AddCommand(GetCmd)

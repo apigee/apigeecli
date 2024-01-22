@@ -131,7 +131,7 @@ func createOrUpdate(action string, targetsvr targetserver, name string, descript
 		return nil, err
 	}
 
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	if action == "create" {
 		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "targetservers")
 		respBody, err = apiclient.HttpClient(u.String(), string(reqBody))
@@ -145,7 +145,7 @@ func createOrUpdate(action string, targetsvr targetserver, name string, descript
 
 // Get
 func Get(name string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "targetservers", name)
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
@@ -153,7 +153,7 @@ func Get(name string) (respBody []byte, err error) {
 
 // Delete
 func Delete(name string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "targetservers", name)
 	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
 	return respBody, err
@@ -161,7 +161,7 @@ func Delete(name string) (respBody []byte, err error) {
 
 // List
 func List() (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "targetservers")
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
@@ -269,7 +269,7 @@ func Import(conn int, filePath string) (err error) {
 	clilog.Debug.Printf("Found %d target servers in the file\n", len(targetservers))
 	clilog.Debug.Printf("Create target servers with %d connections\n", conn)
 
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "targetservers")
 	err = apiclient.GetHttpClient()
 	if err != nil {
@@ -360,7 +360,7 @@ func importServers(knownServers map[string]bool, wg *sync.WaitGroup, jobs <-chan
 			continue
 		}
 
-		u, _ := url.Parse(apiclient.BaseURL)
+		u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "targetservers")
 		method := http.MethodPost
 		if knownServers[job.Name] {

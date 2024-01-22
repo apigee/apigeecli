@@ -45,7 +45,7 @@ var SetSyncCmd = &cobra.Command{
 func init() {
 	SetSyncCmd.Flags().StringVarP(&memberName, "name", "n",
 		"", "Member Name, example Service Account Name")
-	SetSyncCmd.Flags().StringVarP(&memberType, "memberType", "m",
+	SetSyncCmd.Flags().StringVarP(&memberType, "member-type", "m",
 		"serviceAccount", "memberType must be serviceAccount, user or group")
 
 	_ = SetSyncCmd.MarkFlagRequired("name")

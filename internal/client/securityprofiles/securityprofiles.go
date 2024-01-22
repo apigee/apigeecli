@@ -125,7 +125,7 @@ func Create(name string, content []byte) (respBody []byte, err error) {
 	if err = json.Unmarshal(content, &sc); err != nil {
 		return nil, err
 	}
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "securityProfiles")
 	q := u.Query()
 	q.Set("securityProfileId", name)
@@ -136,7 +136,7 @@ func Create(name string, content []byte) (respBody []byte, err error) {
 
 // Attach
 func Attach(name string, revision string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "securityProfiles", name, "environments")
 	attachProfile := []string{}
 	attachProfile = append(attachProfile, "\"name\":"+"\""+apiclient.GetApigeeEnv()+"\"")
@@ -148,7 +148,7 @@ func Attach(name string, revision string) (respBody []byte, err error) {
 
 // Detach
 func Detach(name string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "securityProfiles",
 		name, "environments", apiclient.GetApigeeEnv())
 	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
@@ -157,7 +157,7 @@ func Detach(name string) (respBody []byte, err error) {
 
 // Delete
 func Delete(name string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "securityProfiles", name)
 	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
 	return respBody, err
@@ -165,7 +165,7 @@ func Delete(name string) (respBody []byte, err error) {
 
 // Get
 func Get(name string, revision string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	if revision != "" {
 		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "securityProfiles", name+"@"+revision)
 	} else {
@@ -177,7 +177,7 @@ func Get(name string, revision string) (respBody []byte, err error) {
 
 // ListRevisions
 func ListRevisions(name string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "securityProfiles", name+":listRevisions")
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
@@ -185,7 +185,7 @@ func ListRevisions(name string) (respBody []byte, err error) {
 
 // List
 func List(pageSize int, pageToken string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "securityProfiles")
 	q := u.Query()
 	if pageSize != -1 {
@@ -206,7 +206,7 @@ func Update(name string, content []byte) (respBody []byte, err error) {
 	if err = json.Unmarshal(content, &sc); err != nil {
 		return nil, err
 	}
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "securityProfiles", name)
 	q := u.Query()
 	q.Set("updateMask", "description,profileConfig")
@@ -247,7 +247,7 @@ func Compute(name string, startTime string, endTime string, filters []string,
 			return nil, err
 		}
 
-		u, _ := url.Parse(apiclient.BaseURL)
+		u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "securityProfiles",
 			name, "environments", apiclient.GetApigeeEnv()+":computeEnvironmentScores")
 

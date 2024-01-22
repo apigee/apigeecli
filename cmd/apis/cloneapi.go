@@ -53,6 +53,7 @@ var CloneCmd = &cobra.Command{
 		if !strings.HasPrefix(basePath, "/") {
 			return fmt.Errorf("basePath must start with /")
 		}
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
@@ -101,13 +102,13 @@ func init() {
 
 	CloneCmd.Flags().StringVarP(&proxyZip, "proxy-zip", "p",
 		"", "Path to the Sharedflow bundle/zip file")
-	CloneCmd.Flags().StringVarP(&basePath, "base-path", "b",
+	CloneCmd.Flags().StringVarP(&basePath, "basepath", "b",
 		"", "A new basePath for the cloned proxy")
 	CloneCmd.Flags().StringVarP(&proxyFolder, "proxy-folder", "f",
 		"", "Path to the Sharedflow Bundle; ex: ./test/apiproxy")
 
 	_ = CloneCmd.MarkFlagRequired("name")
-	_ = CloneCmd.MarkFlagRequired("base-path")
+	_ = CloneCmd.MarkFlagRequired("basepath")
 }
 
 func copyDirectory() (tmpDir string, err error) {

@@ -28,6 +28,7 @@ var AttachCmd = &cobra.Command{
 	Long:  "Attach a security profile to an environment",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetApigeeEnv(environment)
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
@@ -43,7 +44,7 @@ func init() {
 		"", "Name of the security profile")
 	AttachCmd.Flags().StringVarP(&environment, "env", "e",
 		"", "Apigee environment name")
-	AttachCmd.Flags().StringVarP(&revision, "rev", "r",
+	AttachCmd.Flags().StringVarP(&revision, "rev", "v",
 		"", "Security Profile revision id")
 	_ = AttachCmd.MarkFlagRequired("name")
 	_ = AttachCmd.MarkFlagRequired("env")

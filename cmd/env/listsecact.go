@@ -37,9 +37,9 @@ var ListSecActCmd = &cobra.Command{
 }
 
 func init() {
-	ListSecActCmd.Flags().IntVarP(&pageSize, "pageSize", "",
+	ListSecActCmd.Flags().IntVarP(&pageSize, "page-size", "",
 		-1, "The maximum number of versions to return")
-	ListSecActCmd.Flags().StringVarP(&pageToken, "pageToken", "",
+	ListSecActCmd.Flags().StringVarP(&pageToken, "page-token", "",
 		"", "A page token, received from a previous call")
 	ListSecActCmd.Flags().StringVarP(&filter, "filter", "",
 		"", "Filter results")

@@ -29,6 +29,7 @@ var ListArchiveCmd = &cobra.Command{
 	Long:  "List archives deployed to the environment",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetApigeeEnv(environment)
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

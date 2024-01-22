@@ -27,6 +27,7 @@ var GetCmd = &cobra.Command{
 	Short: "Get AppGroup in an Organization by AppGroup Name",
 	Long:  "Returns the app group details for the specified app group name",
 	Args: func(cmd *cobra.Command, args []string) error {
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

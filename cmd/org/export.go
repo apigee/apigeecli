@@ -304,14 +304,14 @@ func init() {
 		4, "Number of connections")
 	/*ExportCmd.Flags().StringVarP(&folder, "folder", "f",
 	"", "Folder to export org data")*/
-	ExportCmd.Flags().BoolVarP(&exportEntries, "exportEntries", "",
+	ExportCmd.Flags().BoolVarP(&exportEntries, "export-entries", "",
 		true, "Export all KVM entries")
 	ExportCmd.Flags().BoolVarP(&cleanPath, "clean", "",
 		false, "clean folder or files and directories before export")
 	ExportCmd.Flags().BoolVarP(&allRevisions, "all", "",
 		false, "Export all revisions, default=false. Exports the latest revision."+
 			"Applies to proxies, sf and sec profiles")
-	ExportCmd.Flags().BoolVarP(&continueOnErr, "continueOnError", "",
+	ExportCmd.Flags().BoolVarP(&continueOnErr, "continue-on-error", "",
 		false, "Ignore errors and continue exporting data")
 }
 

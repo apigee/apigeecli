@@ -28,7 +28,7 @@ import (
 func generateUploadURL() (respBody []byte, err error) {
 	apiclient.ClientPrintHttpResponse.Set(false)
 	defer apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "archiveDeployments:generateUploadUrl")
 	respBody, err = apiclient.HttpClient(u.String(), "")
 	return respBody, err
@@ -71,7 +71,7 @@ func CreateArchive(name string, zipfile string) (respBody []byte, err error) {
 
 	payload := "{" + strings.Join(archive, ",") + "}"
 
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "archiveDeployments")
 	respBody, err = apiclient.HttpClient(u.String(), payload)
 	return respBody, err
@@ -79,7 +79,7 @@ func CreateArchive(name string, zipfile string) (respBody []byte, err error) {
 
 // GetArchive
 func GetArchive(name string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "archiveDeployments", name)
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
@@ -87,7 +87,7 @@ func GetArchive(name string) (respBody []byte, err error) {
 
 // ListArchives
 func ListArchives() (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "archiveDeployments")
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
@@ -95,7 +95,7 @@ func ListArchives() (respBody []byte, err error) {
 
 // DeleteArchive
 func DeleteArchive(name string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "archiveDeployments", name)
 	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
 	return respBody, err

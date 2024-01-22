@@ -47,6 +47,7 @@ var UpdateCmd = &cobra.Command{
 		if siteid == "" {
 			return fmt.Errorf("siteid is a mandatory parameter")
 		}
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

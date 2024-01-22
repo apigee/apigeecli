@@ -28,6 +28,7 @@ var ExpCmd = &cobra.Command{
 	Short: "Export Developer Apps to a file",
 	Long:  "Export Developer Apps to a file",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

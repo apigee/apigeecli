@@ -49,6 +49,7 @@ var BundleCreateCmd = &cobra.Command{
 		if env != "" {
 			apiclient.SetApigeeEnv(env)
 		}
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
@@ -110,7 +111,7 @@ func init() {
 
 	BundleCreateCmd.Flags().StringVarP(&env, "env", "e",
 		"", "Name of the environment to deploy the proxy")
-	BundleCreateCmd.Flags().BoolVarP(&overrides, "ovr", "r",
+	BundleCreateCmd.Flags().BoolVarP(&overrides, "ovr", "",
 		false, "Forces deployment of the new revision")
 	BundleCreateCmd.Flags().BoolVarP(&wait, "wait", "",
 		false, "Waits for the deployment to finish, with success or error")

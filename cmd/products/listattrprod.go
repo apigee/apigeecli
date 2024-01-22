@@ -28,6 +28,7 @@ var ListAttrCmd = &cobra.Command{
 	Short: "List attributes of an API product",
 	Long:  "List attributes of an API product",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

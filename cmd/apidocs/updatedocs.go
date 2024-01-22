@@ -40,6 +40,7 @@ var UpdateDocCmd = &cobra.Command{
 		if graphQLPath != "" && endpointUri == "" {
 			return fmt.Errorf("The flags graphQLPath and endpointUri must be set together")
 		}
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
@@ -86,7 +87,7 @@ func init() {
 		"", "Path to a file containing OpenAPI Specification documentation")
 	UpdateDocCmd.Flags().StringVarP(&graphQLPath, "graphql", "q",
 		"", "Path to a file containing GraphQL documentation")
-	UpdateDocCmd.Flags().StringVarP(&endpointUri, "endpointUri", "e",
+	UpdateDocCmd.Flags().StringVarP(&endpointUri, "endpoint-uri", "e",
 		"", "URI for the GraphQL proxy")
 
 	_ = UpdateDocCmd.MarkFlagRequired("id")

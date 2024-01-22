@@ -50,7 +50,7 @@ func init() {
 		"", "Description for the reference")
 	CreateCmd.Flags().StringVarP(&resourceType, "restype", "s",
 		"", "Resource type must be KeyStore or TrustStore")
-	CreateCmd.Flags().StringVarP(&refers, "refers", "r",
+	CreateCmd.Flags().StringVarP(&refers, "refers", "",
 		"", "The id of the resource to which this reference refers")
 
 	_ = CreateCmd.MarkFlagRequired("name")

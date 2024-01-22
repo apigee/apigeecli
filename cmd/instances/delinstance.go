@@ -28,6 +28,7 @@ var DeleteCmd = &cobra.Command{
 	Short: "Delete an Instance",
 	Long:  "Delete an Instance",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

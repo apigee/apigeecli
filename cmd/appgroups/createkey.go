@@ -33,6 +33,7 @@ var CreateKeyCmd = &cobra.Command{
 		if (key != "" && secret == "") || (secret != "" && key == "") {
 			return fmt.Errorf("key and secret must both be passed or neither must be sent")
 		}
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
@@ -55,7 +56,7 @@ func init() {
 		"", "Name of the app")
 	CreateKeyCmd.Flags().StringVarP(&key, "key", "k",
 		"", "Import an existing AppGroup app consumer key")
-	CreateKeyCmd.Flags().StringVarP(&secret, "secret", "r",
+	CreateKeyCmd.Flags().StringVarP(&secret, "secret", "c",
 		"", "Import an existing AppGroup app consumer secret")
 	CreateKeyCmd.Flags().StringVarP(&expires, "expires", "x",
 		"", "A setting, in seconds, for the lifetime of the consumer key")

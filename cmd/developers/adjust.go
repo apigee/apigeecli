@@ -27,6 +27,7 @@ var AdjustCmd = &cobra.Command{
 	Use:   "adjust",
 	Short: "Adjust the prepaid balance for the developer",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	Long: "Adjust the prepaid balance for the developer",

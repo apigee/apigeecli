@@ -24,7 +24,7 @@ import (
 
 // GetDebug
 func GetDebug() (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "debugmask")
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
@@ -38,7 +38,7 @@ func SetDebug(maskConfig string) (respBody []byte, err error) {
 	if err != nil {
 		return respBody, err
 	}
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "debugmask")
 	respBody, err = apiclient.HttpClient(u.String(), maskConfig)
 	return respBody, err

@@ -29,6 +29,7 @@ var DepCmd = &cobra.Command{
 	Long:  "Deploys a revision of an existing Sharedflow to an environment in an organization",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetApigeeEnv(env)
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
@@ -62,7 +63,7 @@ func init() {
 		"", "Apigee environment name")
 	DepCmd.Flags().IntVarP(&revision, "rev", "v",
 		-1, "Sharedflow revision. If not set, the highest revision is used")
-	DepCmd.Flags().BoolVarP(&overrides, "ovr", "r",
+	DepCmd.Flags().BoolVarP(&overrides, "ovr", "",
 		false, "Forces deployment of the new revision")
 	DepCmd.Flags().BoolVarP(&wait, "wait", "",
 		false, "Waits for the deployment to finish, with success or error")

@@ -22,11 +22,14 @@ import (
 	"internal/clilog"
 )
 
-// BaseURL is the Apigee control plane endpoint
-var (
-	BaseURL      = "https://apigee.googleapis.com/v1/organizations/"
-	StageBaseURL = "https://staging-apigee.sandbox.googleapis.com/v1/organizations/"
-)
+// baseURL is the Apigee control plane endpoint
+const baseURL = "https://apigee.googleapis.com/v1/organizations/"
+
+// registryBaseURL is the Apigee API Hub control plane endpoint
+const registryBaseURL = "https://apigeeregistry.googleapis.com/v1/projects/%s/locations/%s"
+
+// baseDRZURL is the Apigee control plane endpoint
+const baseDRZURL = "https://%s-apigee.googleapis.com/v1/organizations/"
 
 // ApigeeClientOptions is the base struct to hold all command arguments
 type ApigeeClientOptions struct {
@@ -43,6 +46,7 @@ type ApigeeClientOptions struct {
 	ProxyUrl       string // use a proxy url
 	MetadataToken  bool   // use metadata outh2 token
 	APIRate        Rate   // throttle api calls to Apigee
+	Region         string // control plane region
 }
 
 var options *ApigeeClientOptions
@@ -66,6 +70,8 @@ type clientPrintHttpResponse struct {
 
 var ClientPrintHttpResponse = &clientPrintHttpResponse{enable: true}
 
+const registryRegion = "global"
+
 // NewApigeeClient sets up options to invoke Apigee APIs
 func NewApigeeClient(o ApigeeClientOptions) {
 	if options == nil {
@@ -81,9 +87,13 @@ func NewApigeeClient(o ApigeeClientOptions) {
 	if o.ServiceAccount != "" {
 		options.ServiceAccount = o.ServiceAccount
 	}
+	// if a project is not explicitly set, use the org name as project id
 	if o.ProjectID != "" {
 		options.ProjectID = o.ProjectID
+	} else {
+		options.ProjectID = o.Org
 	}
+
 	if o.Env != "" {
 		options.Env = o.Env
 	}
@@ -101,11 +111,6 @@ func NewApigeeClient(o ApigeeClientOptions) {
 	_ = ReadPreferencesFile()
 }
 
-// UseStaging
-func UseStaging() {
-	BaseURL = StageBaseURL
-}
-
 // SetApigeeOrg sets the org variable
 func SetApigeeOrg(org string) (err error) {
 	if org == "" {
@@ -115,6 +120,9 @@ func SetApigeeOrg(org string) (err error) {
 		return nil
 	}
 	options.Org = org
+	if options.ProjectID == "" {
+		options.ProjectID = org
+	}
 	return nil
 }
 
@@ -141,6 +149,18 @@ func SetApigeeToken(token string) {
 // GetApigeeToken get the access token value in client opts (does not generate it)
 func GetApigeeToken() string {
 	return options.Token
+}
+
+// GetRegion gets the control plane region
+func GetRegion() string {
+	return options.Region
+}
+
+// SetRegion
+func SetRegion(r string) {
+	if r != "" {
+		options.Region = r
+	}
 }
 
 // SetProjectID sets the project id
@@ -260,4 +280,25 @@ func SetRate(r Rate) {
 // GetRate
 func GetRate() Rate {
 	return apiRate
+}
+
+// GetRegistryRegion
+func GetRegistryRegion() string {
+	return registryRegion
+}
+
+// GetApigeeRegistryURL
+func GetApigeeRegistryURL() (registryURL string) {
+	if options.ProjectID == "" {
+		options.ProjectID = options.Org
+	}
+	return fmt.Sprintf(registryBaseURL, options.ProjectID, registryRegion)
+}
+
+// GetApigeeBaseURL
+func GetApigeeBaseURL() string {
+	if options.Region != "" {
+		return fmt.Sprintf(baseDRZURL, options.Region)
+	}
+	return baseURL
 }

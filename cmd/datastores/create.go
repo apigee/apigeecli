@@ -31,6 +31,7 @@ var CreateCmd = &cobra.Command{
 			tablePrefix, datasetName); err != nil {
 			return err
 		}
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

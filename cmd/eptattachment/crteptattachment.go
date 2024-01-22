@@ -31,6 +31,7 @@ var CreateCmd = &cobra.Command{
 	Short: "Create a new service endpoint",
 	Long:  "Create a new service endpoint in Apigee for a service attachment",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

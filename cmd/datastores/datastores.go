@@ -27,11 +27,13 @@ var Cmd = &cobra.Command{
 	Long:  "Manage data stores to export analytics data",
 }
 
-var org, name, targetType string
+var org, name, targetType, region string
 
 func init() {
 	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
+	Cmd.PersistentFlags().StringVarP(&region, "region", "r",
+		"", "Apigee control plane region name; default is https://apigee.googleapis.com")
 
 	Cmd.AddCommand(ListCmd)
 	Cmd.AddCommand(GetCmd)

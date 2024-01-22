@@ -35,6 +35,7 @@ var RemoveCmd = &cobra.Command{
 			return fmt.Errorf("identity[0] must have .iam.gserviceaccount.com suffix"+
 				" and should not be a Google managed service account: %s", identity)
 		}
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

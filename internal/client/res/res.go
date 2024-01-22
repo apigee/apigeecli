@@ -27,7 +27,7 @@ func Create(name string, resPath string, resourceType string) (respBody []byte, 
 	if !validate(resourceType) {
 		return respBody, fmt.Errorf("invalid resource type")
 	}
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "resourcefiles")
 	if resourceType != "" {
 		q := u.Query()
@@ -47,7 +47,7 @@ func Delete(name string, resourceType string) (respBody []byte, err error) {
 	if !validate(resourceType) {
 		return respBody, fmt.Errorf("invalid resource type")
 	}
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "resourcefiles", resourceType, name)
 	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
 	return respBody, err
@@ -58,7 +58,7 @@ func Get(name string, resourceType string) (err error) {
 	if !validate(resourceType) {
 		return fmt.Errorf("invalid resource type")
 	}
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "resourcefiles", resourceType, name)
 	err = apiclient.DownloadResource(u.String(), name, resourceType, true)
 	return
@@ -69,7 +69,7 @@ func Update(name string, resPath string, resourceType string) (err error) {
 	if !validate(resourceType) {
 		return fmt.Errorf("invalid resource type")
 	}
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "resourcefiles", resourceType, name)
 	formParams := map[string]string{
 		"file": resPath,
@@ -86,7 +86,7 @@ func List(resourceType string) (respBody []byte, err error) {
 		}
 	}
 
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "resourcefiles")
 
 	if resourceType != "" {

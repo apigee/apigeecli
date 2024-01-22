@@ -28,6 +28,7 @@ var UpdateCmd = &cobra.Command{
 	Short: "Update an API product",
 	Long:  "Update an API product",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
@@ -70,7 +71,7 @@ var UpdateCmd = &cobra.Command{
 func init() {
 	UpdateCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of the API Product")
-	UpdateCmd.Flags().StringVarP(&displayName, "displayname", "m",
+	UpdateCmd.Flags().StringVarP(&displayName, "display-name", "m",
 		"", "Display Name of the API Product")
 	UpdateCmd.Flags().StringVarP(&description, "desc", "d",
 		"", "Description for the API Product")

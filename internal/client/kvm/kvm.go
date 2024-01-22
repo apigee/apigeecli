@@ -25,7 +25,7 @@ import (
 
 // Create
 func Create(proxyName string, name string, encrypt bool) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	kvm := []string{}
 
 	kvm = append(kvm, "\"name\":\""+name+"\"")
@@ -48,7 +48,7 @@ func Create(proxyName string, name string, encrypt bool) (respBody []byte, err e
 
 // Delete
 func Delete(proxyName string, name string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 
 	if apiclient.GetApigeeEnv() != "" {
 		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "keyvaluemaps", name)
@@ -64,7 +64,7 @@ func Delete(proxyName string, name string) (respBody []byte, err error) {
 
 // List
 func List(proxyName string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	if apiclient.GetApigeeEnv() != "" {
 		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "keyvaluemaps")
 	} else if proxyName != "" {

@@ -28,6 +28,7 @@ var ListAttachCmd = &cobra.Command{
 	Short: "List attachments of an Environment Group",
 	Long:  "List attachments of an Environment Group",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

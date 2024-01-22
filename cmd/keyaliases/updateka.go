@@ -35,6 +35,7 @@ var UpdateCmd = &cobra.Command{
 		if certFile != "" && !utils.FileExists(certFile) {
 			return fmt.Errorf("certFile was not found")
 		}
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
@@ -61,7 +62,7 @@ func init() {
 		false, "Ignore expiry validation")
 	UpdateCmd.Flags().BoolVarP(&ignoreNewLine, "nl", "w",
 		false, "Ignore new line in cert chain")
-	UpdateCmd.Flags().StringVarP(&certFile, "certFilePath", "",
+	UpdateCmd.Flags().StringVarP(&certFile, "cert-filepath", "",
 		"", "Path to the X509 certificate in PEM format")
 
 	_ = UpdateCmd.MarkFlagRequired("alias")

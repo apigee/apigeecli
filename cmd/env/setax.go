@@ -50,9 +50,9 @@ var SetAxCmd = &cobra.Command{
 func init() {
 	SetAxCmd.Flags().StringVarP(&memberName, "name", "n",
 		"", "Member Name, example Service Account Name")
-	SetAxCmd.Flags().StringVarP(&memberType, "memberType", "m",
+	SetAxCmd.Flags().StringVarP(&memberType, "member-type", "m",
 		"serviceAccount", "memberType must be serviceAccount, user or group")
-	SetAxCmd.Flags().StringVarP(&role, "memberRole", "r",
+	SetAxCmd.Flags().StringVarP(&role, "member-role", "",
 		"analyticsAgent", "memberRole must be analyticsViewer or analyticsAgent")
 	_ = SetAxCmd.MarkFlagRequired("name")
 }

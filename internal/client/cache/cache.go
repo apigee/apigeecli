@@ -23,7 +23,7 @@ import (
 
 // Delete
 func Delete(name string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "caches", name)
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
@@ -31,7 +31,7 @@ func Delete(name string) (respBody []byte, err error) {
 
 // List
 func List() (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "caches")
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err

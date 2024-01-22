@@ -28,6 +28,7 @@ var GetKeyCmd = &cobra.Command{
 	Short: "Gets details for a consumer key for a AppGroup app",
 	Long:  "Gets details for a consumer key for a AppGroup app",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

@@ -27,6 +27,7 @@ var DeleteCmd = &cobra.Command{
 	Short: "Deletes a security profile",
 	Long:  "Deletes a security profile",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

@@ -25,6 +25,15 @@ import (
 	"internal/clilog"
 )
 
+// Org variable is used within the registry cmd
+var Org string
+
+// ProjectID variable is used within the registry cmd
+var ProjectID string
+
+// Region variable is used within the registry cmd
+var Region string
+
 func ListKVMFiles(folder string) (orgKVMFileList map[string]string,
 	envKVMFileList map[string]string, proxyKVMFileList map[string]string, err error,
 ) {

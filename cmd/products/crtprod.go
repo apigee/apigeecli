@@ -28,6 +28,7 @@ var CreateCmd = &cobra.Command{
 	Short: "Create an API product",
 	Long:  "Create an API product",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
@@ -72,7 +73,7 @@ var operationGroupFile, gqlOperationGroupFile, grpcOperationGroupFile string
 func init() {
 	CreateCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of the API Product")
-	CreateCmd.Flags().StringVarP(&displayName, "displayname", "m",
+	CreateCmd.Flags().StringVarP(&displayName, "display-name", "m",
 		"", "Display Name of the API Product")
 	CreateCmd.Flags().StringVarP(&description, "desc", "d",
 		"", "Description for the API Product")

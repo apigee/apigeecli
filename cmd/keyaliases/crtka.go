@@ -47,6 +47,7 @@ var CreateCmd = &cobra.Command{
 		if selfFile != "" && !utils.FileExists(selfFile) {
 			return fmt.Errorf("selfsigned JSON file was not found")
 		}
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
@@ -100,13 +101,13 @@ func init() {
 		false, "Ignore expiry validation")
 	CreateCmd.Flags().BoolVarP(&ignoreNewLine, "nl", "w",
 		false, "Ignore new line in cert chain")
-	CreateCmd.Flags().StringVarP(&certFile, "certFilePath", "",
+	CreateCmd.Flags().StringVarP(&certFile, "cert-filepath", "",
 		"", "Path to the X509 certificate in PEM format")
-	CreateCmd.Flags().StringVarP(&keyFile, "keyFilePath", "",
+	CreateCmd.Flags().StringVarP(&keyFile, "key-filepath", "",
 		"", "Path to the X509 key in PEM format")
-	CreateCmd.Flags().StringVarP(&pfxFile, "pfxFilePath", "",
+	CreateCmd.Flags().StringVarP(&pfxFile, "pfx-filepath", "",
 		"", "Path to the PFX file")
-	CreateCmd.Flags().StringVarP(&selfFile, "selfsignedFilePath", "",
+	CreateCmd.Flags().StringVarP(&selfFile, "selfsigned-filepath", "",
 		"", "Path to a JSON file containing details for a self signed certificate")
 
 	_ = CreateCmd.MarkFlagRequired("alias")

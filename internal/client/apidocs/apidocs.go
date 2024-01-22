@@ -124,7 +124,7 @@ func createOrUpdate(siteid string, id string, title string, description string, 
 	anonAllowed string, apiProductName string, requireCallbackUrl string, imageUrl string,
 	categoryIds []string, action Action,
 ) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 
 	apidoc := []string{}
 
@@ -171,7 +171,7 @@ func createOrUpdate(siteid string, id string, title string, description string, 
 
 // GetDocumentation
 func GetDocumentation(siteid string, id string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sites", siteid, "apidocs", id, "documentation")
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
@@ -179,7 +179,7 @@ func GetDocumentation(siteid string, id string) (respBody []byte, err error) {
 
 // Get
 func Get(siteid string, id string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sites", siteid, "apidocs", id)
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
@@ -220,7 +220,7 @@ func GetByTitle(siteid string, title string) (respBody []byte, err error) {
 
 // List
 func List(siteid string, pageSize int, pageToken string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sites", siteid, "apidocs")
 	q := u.Query()
 	if pageSize != -1 {
@@ -237,7 +237,7 @@ func List(siteid string, pageSize int, pageToken string) (respBody []byte, err e
 
 // Delete
 func Delete(siteid string, id string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sites", siteid, "apidocs", id)
 	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
 	return respBody, err
@@ -279,7 +279,7 @@ func UpdateDocumentation(siteid string, id string, displayName string,
 	}
 	payload := string(jsonData)
 
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sites", siteid, "apidocs", id, "documentation")
 	respBody, err = apiclient.HttpClient(u.String(), payload, "PATCH")
 

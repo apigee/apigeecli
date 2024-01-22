@@ -47,7 +47,7 @@ func Create(name string, location string, diskEncryptionKeyName string, ipRange 
 
 	payload := "{" + strings.Join(instance, ",") + "}"
 
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "instances")
 	respBody, err = apiclient.HttpClient(u.String(), payload)
 	return respBody, err
@@ -55,7 +55,7 @@ func Create(name string, location string, diskEncryptionKeyName string, ipRange 
 
 // Get
 func Get(name string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "instances", name)
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
@@ -63,7 +63,7 @@ func Get(name string) (respBody []byte, err error) {
 
 // Delete
 func Delete(name string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "instances", name)
 	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
 	return respBody, err
@@ -71,7 +71,7 @@ func Delete(name string) (respBody []byte, err error) {
 
 // List
 func List() (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "instances")
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
@@ -81,7 +81,7 @@ func List() (respBody []byte, err error) {
 func Update(name string, consumerAcceptList []string) (respBody []byte, err error) {
 	instance := []string{}
 
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "instances", name)
 
 	if len(consumerAcceptList) > 0 {

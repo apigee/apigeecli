@@ -30,6 +30,7 @@ var ExpCmd = &cobra.Command{
 	Short: "Export Security Profiles to a file",
 	Long:  "Export Security Profiles to a file",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

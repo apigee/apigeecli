@@ -44,13 +44,19 @@ var SetCmd = &cobra.Command{
 			}
 		}
 
-		return apiclient.SetStaging(usestage)
+		if region != "" {
+			if err = apiclient.WriteDefaultRegion(region); err != nil {
+				return err
+			}
+		}
+
+		return nil
 	},
 }
 
 var (
-	org, proxyURL, gitHubURL string
-	usestage, nocheck        bool
+	org, region, proxyURL, gitHubURL string
+	usestage, nocheck                bool
 )
 
 func init() {
@@ -68,4 +74,7 @@ func init() {
 
 	SetCmd.Flags().StringVarP(&gitHubURL, "github", "g",
 		"", "On premises Github URL")
+
+	SetCmd.Flags().StringVarP(&region, "region", "r",
+		"", "Apigee control plane region")
 }

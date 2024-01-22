@@ -129,7 +129,7 @@ func Update(p APIProduct) (respBody []byte, err error) {
 
 // Get
 func Get(name string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts", name)
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
@@ -137,7 +137,7 @@ func Get(name string) (respBody []byte, err error) {
 
 // Delete
 func Delete(name string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts", name)
 	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
 	return respBody, err
@@ -145,7 +145,7 @@ func Delete(name string) (respBody []byte, err error) {
 
 // upsert - use Action to control if upsert is enabled
 func upsert(p APIProduct, a Action) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 
 	var createNew bool // default false
 
@@ -182,7 +182,7 @@ func upsert(p APIProduct, a Action) (respBody []byte, err error) {
 
 // UpdateAttribute
 func UpdateAttribute(name string, key string, value string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts", name, "attributes", key)
 	payload := "{ \"name\":\"" + key + "\",\"value\":\"" + value + "\"}"
 	respBody, err = apiclient.HttpClient(u.String(), payload)
@@ -191,7 +191,7 @@ func UpdateAttribute(name string, key string, value string) (respBody []byte, er
 
 // DeleteAttribute
 func DeleteAttribute(name string, key string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts", name, "attributes", key)
 	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
 	return respBody, err
@@ -199,7 +199,7 @@ func DeleteAttribute(name string, key string) (respBody []byte, err error) {
 
 // GetAttribute
 func GetAttribute(name string, key string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts", name, "attributes", key)
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
@@ -207,7 +207,7 @@ func GetAttribute(name string, key string) (respBody []byte, err error) {
 
 // ListAttributes
 func ListAttributes(name string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts", name, "attributes")
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
@@ -215,7 +215,7 @@ func ListAttributes(name string) (respBody []byte, err error) {
 
 // List
 func List(count int, startKey string, expand bool) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts")
 	q := u.Query()
 	if expand {
@@ -312,7 +312,7 @@ func Export(conn int) (payload [][]byte, err error) {
 	var mu sync.Mutex
 	const entityType = "apiproducts"
 
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), entityType)
 	// don't print to sysout
 	apiclient.ClientPrintHttpResponse.Set(false)
@@ -422,7 +422,7 @@ func batchExport(entities []APIProduct, entityType string, pwg *sync.WaitGroup, 
 	bwg.Add(len(entities))
 
 	for _, entity := range entities {
-		u, _ := url.Parse(apiclient.BaseURL)
+		u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), entityType, url.PathEscape(entity.Name))
 		go apiclient.GetAsyncEntity(u.String(), &bwg, mu)
 	}

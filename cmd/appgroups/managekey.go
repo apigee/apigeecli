@@ -27,6 +27,7 @@ var ManageKeyCmd = &cobra.Command{
 	Short: "Approve or revoke an app key",
 	Long:  "Approve or revoke an app key",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

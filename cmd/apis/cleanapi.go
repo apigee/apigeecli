@@ -28,6 +28,7 @@ var CleanCmd = &cobra.Command{
 	Short: "Deletes undeployed/unused revisions of an API proxy",
 	Long:  "Deletes undeployed/unused revisions of an API proxy",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

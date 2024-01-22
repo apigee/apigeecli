@@ -40,9 +40,9 @@ var ListSecReportCmd = &cobra.Command{
 var from, to, dataset, status, submittedBy string
 
 func init() {
-	ListSecReportCmd.Flags().IntVarP(&pageSize, "pageSize", "",
+	ListSecReportCmd.Flags().IntVarP(&pageSize, "page-size", "",
 		-1, "The maximum number of versions to return")
-	ListSecReportCmd.Flags().StringVarP(&pageToken, "pageToken", "",
+	ListSecReportCmd.Flags().StringVarP(&pageToken, "page-token", "",
 		"", "A page token, received from a previous call")
 	ListSecReportCmd.Flags().StringVarP(&from, "from", "f",
 		"", "Filter response list by returning security reports that created after this date time")

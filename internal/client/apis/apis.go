@@ -86,7 +86,7 @@ func CreateProxy(name string, proxy string) (respBody []byte, err error) {
 		respBody, err = apiclient.ImportBundle("apis", name, proxy)
 		return respBody, err
 	}
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apis")
 	proxyName := "{\"name\":\"" + name + "\"}"
 	respBody, err = apiclient.HttpClient(u.String(), proxyName)
@@ -95,7 +95,7 @@ func CreateProxy(name string, proxy string) (respBody []byte, err error) {
 
 // DeleteProxy
 func DeleteProxy(name string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apis", name)
 	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
 	return respBody, err
@@ -103,7 +103,7 @@ func DeleteProxy(name string) (respBody []byte, err error) {
 
 // DeleteProxyRevision
 func DeleteProxyRevision(name string, revision int) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apis", name, "revisions", strconv.Itoa(revision))
 	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
 	return respBody, err
@@ -127,7 +127,7 @@ func DeployProxy(name string, revision int, overrides bool, sequencedRollout boo
 		}
 	}
 
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 
 	q := u.Query()
 	q.Set("sequencedRollout", strconv.FormatBool(sequencedRollout))
@@ -156,7 +156,7 @@ func FetchProxy(name string, revision int) (err error) {
 
 // GetProxy
 func GetProxy(name string, revision int) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	if revision != -1 {
 		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apis", name, "revisions", strconv.Itoa(revision))
 	} else {
@@ -171,7 +171,7 @@ func GetHighestProxyRevision(name string) (version int, err error) {
 	apiclient.ClientPrintHttpResponse.Set(false)
 	defer apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
 
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apis", name)
 	respBody, err := apiclient.HttpClient(u.String())
 	if err != nil {
@@ -191,7 +191,7 @@ func GetHighestProxyRevision(name string) (version int, err error) {
 
 // GenerateDeployChangeReport
 func GenerateDeployChangeReport(name string, revision int, overrides bool) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	if apiclient.GetApigeeEnv() == "" {
 		return respBody, fmt.Errorf("environment name missing")
 	}
@@ -212,7 +212,7 @@ func GenerateDeployChangeReport(name string, revision int, overrides bool) (resp
 
 // GenerateUndeployChangeReport
 func GenerateUndeployChangeReport(name string, revision int) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	if apiclient.GetApigeeEnv() == "" {
 		return respBody, fmt.Errorf("environment name missing")
 	}
@@ -225,7 +225,7 @@ func GenerateUndeployChangeReport(name string, revision int) (respBody []byte, e
 
 // ListProxies
 func ListProxies(includeRevisions bool) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	if includeRevisions {
 		q := u.Query()
 		q.Set("includeRevisions", strconv.FormatBool(includeRevisions))
@@ -238,7 +238,7 @@ func ListProxies(includeRevisions bool) (respBody []byte, err error) {
 
 // ListEnvDeployments
 func ListEnvDeployments() (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	if apiclient.GetApigeeEnv() == "" {
 		return respBody, fmt.Errorf("environment name missing")
 	}
@@ -249,7 +249,7 @@ func ListEnvDeployments() (respBody []byte, err error) {
 
 // ListProxyDeployments
 func ListProxyDeployments(name string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apis", name, "deployments")
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
@@ -257,7 +257,7 @@ func ListProxyDeployments(name string) (respBody []byte, err error) {
 
 // ListProxyRevisionDeployments
 func ListProxyRevisionDeployments(name string, revision int) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	if apiclient.GetApigeeEnv() == "" {
 		return respBody, fmt.Errorf("environment name missing")
 	}
@@ -284,7 +284,7 @@ func UndeployProxy(name string, revision int, safeUndeploy bool) (respBody []byt
 			return nil, fmt.Errorf("Undeployment conflicts detected. Here are the conflicts: %s", string(safeResp))
 		}
 	}
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(),
 		"apis", name, "revisions", strconv.Itoa(revision), "deployments")
 	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
@@ -294,7 +294,7 @@ func UndeployProxy(name string, revision int, safeUndeploy bool) (respBody []byt
 // Update
 func Update(name string, labels map[string]string) (respBody []byte, err error) {
 	if len(labels) != 0 {
-		u, _ := url.Parse(apiclient.BaseURL)
+		u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 		q := u.Query()
 		q.Set("updateMask", "labels")
 		u.RawQuery = q.Encode()
@@ -415,7 +415,7 @@ func CleanProxy(name string, reportOnly bool, keepList []string) (err error) {
 
 // ExportProxies
 func ExportProxies(conn int, folder string, allRevisions bool) (err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	q := u.Query()
 	q.Set("includeRevisions", "true")
 	u.RawQuery = q.Encode()
@@ -571,7 +571,7 @@ func importAPIProxies(wg *sync.WaitGroup, jobs <-chan string, errs chan<- error)
 			return
 		}
 
-		u, _ := url.Parse(apiclient.BaseURL)
+		u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 		q := u.Query()
 		q.Set("name", strings.TrimSuffix(filepath.Base(job), ".zip"))
 		q.Set("action", "import")

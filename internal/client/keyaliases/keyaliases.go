@@ -44,7 +44,7 @@ type subject struct {
 }
 
 func CreateOrUpdateSelfSigned(keystoreName string, name string, update bool, ignoreExpiry bool, ignoreNewLine bool, selfsignedFile string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(),
 		"keystores", keystoreName, "aliases")
 
@@ -134,7 +134,7 @@ func CreateOrUpdateKeyCert(keystoreName string, name string, update bool, ignore
 }
 
 func createOrUpdate(keystoreName string, name string, format string, password string, update bool, ignoreExpiry bool, ignoreNewLine bool, formParams map[string]string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 
 	q := u.Query()
 	q.Set("format", format)
@@ -164,7 +164,7 @@ func createOrUpdate(keystoreName string, name string, format string, password st
 
 // CreateCSR
 func CreateCSR(keystoreName string, name string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(),
 		"keystores", keystoreName, "aliases", name, "csr")
 	respBody, err = apiclient.HttpClient(u.String())
@@ -173,7 +173,7 @@ func CreateCSR(keystoreName string, name string) (respBody []byte, err error) {
 
 // GetCert
 func GetCert(keystoreName string, name string) (err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(),
 		"keystores", keystoreName, "aliases", name, "certificate")
 	err = apiclient.DownloadResource(u.String(), name+".crt", "", true)
@@ -182,7 +182,7 @@ func GetCert(keystoreName string, name string) (err error) {
 
 // Get
 func Get(keystoreName string, name string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(),
 		"keystores", keystoreName, "aliases", name)
 	respBody, err = apiclient.HttpClient(u.String())
@@ -191,7 +191,7 @@ func Get(keystoreName string, name string) (respBody []byte, err error) {
 
 // Delete
 func Delete(keystoreName string, name string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "keystores",
 		keystoreName, "aliases", name)
 	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
@@ -200,7 +200,7 @@ func Delete(keystoreName string, name string) (respBody []byte, err error) {
 
 // List
 func List(keystoreName string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(),
 		"keystores", keystoreName, "aliases")
 	respBody, err = apiclient.HttpClient(u.String())

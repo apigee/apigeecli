@@ -27,7 +27,7 @@ var validMemberTypes = []string{"serviceAccount", "group", "user", "domain"}
 
 // GetIAM
 func GetIAM() (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv()+":getIamPolicy")
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
@@ -53,7 +53,7 @@ func RemoveIAM(memberName string, role string) (err error) {
 // TestIAM
 func TestIAM(resource string, verb string) (respBody []byte, err error) {
 	permission := "apigee." + resource + "." + verb
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv()+":testIamPermissions")
 	payload := "{\"permissions\":[\"" + permission + "\"]}"
 	respBody, err = apiclient.HttpClient(u.String(), payload)

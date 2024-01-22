@@ -228,9 +228,9 @@ func init() {
 		4, "Number of connections")
 	ImportCmd.Flags().StringVarP(&folder, "folder", "f",
 		"", "folder containing API proxy bundles")
-	ImportCmd.Flags().BoolVarP(&importTrace, "importTrace", "",
+	ImportCmd.Flags().BoolVarP(&importTrace, "import-trace", "",
 		false, "Import distributed trace configuration; default false")
-	ImportCmd.Flags().BoolVarP(&importDebugmask, "importDebugmask", "",
+	ImportCmd.Flags().BoolVarP(&importDebugmask, "import-debugmask", "",
 		false, "Import debugmask configuration; default false")
 
 	_ = ImportCmd.MarkFlagRequired("folder")

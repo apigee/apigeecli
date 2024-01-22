@@ -37,7 +37,7 @@ type samplingCfg struct {
 
 // GetTraceConfig
 func GetTraceConfig() (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "traceConfig")
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
@@ -63,14 +63,14 @@ func UpdateTraceConfig(exporter string, endpoint string, sampler string, sample_
 
 	payload := "{" + strings.Join(traceConfig, ",") + "}"
 
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "traceConfig")
 	respBody, err = apiclient.HttpClient(u.String(), payload, "PATCH")
 	return respBody, err
 }
 
 func ImportTraceConfig(payload string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "traceConfig")
 	respBody, err = apiclient.HttpClient(u.String(), payload, "PATCH")
 	return respBody, err
@@ -102,7 +102,7 @@ func DisableTraceConfig() (respBody []byte, err error) {
 		return nil, err
 	}
 
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "traceConfig")
 	respBody, err = apiclient.HttpClient(u.String(), string(payload), "PATCH")
 	return respBody, err

@@ -35,6 +35,7 @@ var DeleteCmd = &cobra.Command{
 		if name != "" && id != "" {
 			return fmt.Errorf("id and name cannot be passed together")
 		}
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

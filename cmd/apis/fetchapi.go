@@ -28,6 +28,7 @@ var FetCmd = &cobra.Command{
 	Short: "Returns a zip-formatted proxy bundle ",
 	Long:  "Returns a zip-formatted proxy bundle of code and config files",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

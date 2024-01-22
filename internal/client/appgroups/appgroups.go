@@ -60,7 +60,7 @@ var maxPageSize = 1000
 
 // Create
 func Create(name string, channelURI string, channelID string, displayName string, attrs map[string]string, devs map[string]string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 
 	app := []string{}
 
@@ -157,7 +157,7 @@ func Update(name string, channelURI string, channelID string, displayName string
 		return nil, err
 	}
 
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "appgroups", name)
 	respBody, err = apiclient.HttpClient(u.String(), string(reqBody), "PUT")
 	return respBody, err
@@ -165,7 +165,7 @@ func Update(name string, channelURI string, channelID string, displayName string
 
 // Get
 func Get(name string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "appgroups", name)
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
@@ -173,7 +173,7 @@ func Get(name string) (respBody []byte, err error) {
 
 // Delete
 func Delete(name string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "appgroups", name)
 	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
 	return respBody, err
@@ -185,7 +185,7 @@ func Manage(name string, action string) (respBody []byte, err error) {
 		return nil, fmt.Errorf("invalid action. action must be active or inactive")
 	}
 
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "appgroups", name)
 	q := u.Query()
 	q.Set("action", action)
@@ -197,7 +197,7 @@ func Manage(name string, action string) (respBody []byte, err error) {
 
 // List
 func List(pageSize int, pageToken string, filter string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.BaseURL)
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "appgroups")
 	q := u.Query()
 	if pageSize != -1 {

@@ -28,6 +28,7 @@ var DelCmd = &cobra.Command{
 	Short: "Deletes a Developer App from an organization",
 	Long:  "Deletes a Developer Appfrom an organization",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

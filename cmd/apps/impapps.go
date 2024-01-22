@@ -28,6 +28,7 @@ var ImpCmd = &cobra.Command{
 	Short: "Import a file containing Developer Apps",
 	Long:  "Import a file containing Developer Apps",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {

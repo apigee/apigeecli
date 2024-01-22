@@ -27,6 +27,7 @@ var ExpSubCmd = &cobra.Command{
 	Use:   "expire",
 	Short: "Expires a Developer subscription",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	Long: "Expires a Developer subscription",

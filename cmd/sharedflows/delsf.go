@@ -29,6 +29,7 @@ var DelCmd = &cobra.Command{
 	Long: "Deletes a shared flow and all associated policies, resources, and revisions." +
 		"The flow must be undeployed first.",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetRegion(region)
 		apiclient.SetApigeeEnv(env)
 		return apiclient.SetApigeeOrg(org)
 	},

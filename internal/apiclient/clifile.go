@@ -35,10 +35,10 @@ type apigeeCLI struct {
 	Token     string `json:"token,omitempty"`
 	LastCheck string `json:"lastCheck,omitempty"`
 	Org       string `json:"defaultOrg,omitempty"`
-	Staging   bool   `json:"staging,omitempty"`
 	ProxyURL  string `json:"proxyUrl,omitempty"`
 	GithubURL string `json:"githubURL,omitempty"`
 	Nocheck   bool   `json:"nocheck,omitempty" default:"false"`
+	Region    string `json:"region,omitempty"`
 }
 
 var cliPref *apigeeCLI //= apigeeCLI{}
@@ -66,10 +66,6 @@ func ReadPreferencesFile() (err error) {
 		return DeletePreferencesFile()
 	}
 
-	if cliPref.Staging {
-		UseStaging()
-	}
-
 	if cliPref.ProxyURL != "" {
 		SetProxyURL(cliPref.ProxyURL)
 	}
@@ -78,9 +74,15 @@ func ReadPreferencesFile() (err error) {
 		SetGithubURL(cliPref.GithubURL)
 	}
 
+	if cliPref.Region != "" {
+		SetRegion(cliPref.Region)
+	}
+
 	if cliPref.Org != "" {
+		SetProjectID(cliPref.Org)
 		return SetApigeeOrg(cliPref.Org)
 	}
+
 	return nil
 }
 
@@ -177,24 +179,6 @@ func WriteDefaultOrg(org string) (err error) {
 	return WritePerferencesFile(data)
 }
 
-func SetStaging(usestage bool) (err error) {
-	if usestage == cliPref.Staging {
-		return nil
-	}
-	cliPref.Staging = usestage
-	data, err := json.Marshal(&cliPref)
-	if err != nil {
-		clilog.Debug.Printf("Error marshalling: %v\n", err)
-		return err
-	}
-	clilog.Debug.Println("Writing ", string(data))
-	return WritePerferencesFile(data)
-}
-
-func GetStaging() bool {
-	return cliPref.Staging
-}
-
 func SetProxy(url string) (err error) {
 	if url == "" {
 		return nil
@@ -227,6 +211,18 @@ func SetGithubURL(url string) (err error) {
 
 func GetGithubURL() string {
 	return cliPref.GithubURL
+}
+
+func WriteDefaultRegion(r string) (err error) {
+	clilog.Debug.Println("Default control plane region: ", r)
+	cliPref.Region = r
+	data, err := json.Marshal(&cliPref)
+	if err != nil {
+		clilog.Debug.Printf("Error marshalling: %v\n", err)
+		return err
+	}
+	clilog.Debug.Println("Writing ", string(data))
+	return WritePerferencesFile(data)
 }
 
 func GetPreferences() (err error) {

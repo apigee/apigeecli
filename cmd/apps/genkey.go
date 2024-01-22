@@ -31,6 +31,7 @@ var GenKeyCmd = &cobra.Command{
 	Short: "Generate a new developer KeyPair",
 	Long:  "Generate a new developer KeyPair",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

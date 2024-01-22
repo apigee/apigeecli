@@ -28,6 +28,7 @@ var GetCmd = &cobra.Command{
 	Short: "Get an Instance",
 	Long:  "Get an Instance",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
