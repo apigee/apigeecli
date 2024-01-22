@@ -15,6 +15,8 @@
 package versions
 
 import (
+	"encoding/json"
+	"fmt"
 	"net/url"
 	"path"
 	"strconv"
@@ -114,9 +116,26 @@ func GetSpec(apiName string, apiVersion string, name string) (respBody []byte, e
 
 // GetSpecContents
 func GetSpecContents(apiName string, apiVersion string, name string) (err error) {
+	apiclient.ClientPrintHttpResponse.Set(false)
+	var specMap map[string]interface{}
+	var specFileName string
+	respBody, err := GetSpec(apiName, apiVersion, name)
+	if err != nil {
+		return err
+	}
+	err = json.Unmarshal(respBody, &specMap)
+	if err != nil {
+		return err
+	}
+	if specMap["filename"] != "" {
+		specFileName = fmt.Sprintf("%s", specMap["filename"])
+	} else {
+		specFileName = name + ".txt"
+	}
+	apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
 	u, _ := url.Parse(apiclient.GetApigeeRegistryURL())
 	u.Path = path.Join(u.Path, "apis", apiName, "versions", apiVersion, "specs", name+":getContents")
-	return apiclient.DownloadResource(u.String(), name+".txt", "", true)
+	return apiclient.DownloadResource(u.String(), specFileName, "", true)
 }
 
 // ListSpecs

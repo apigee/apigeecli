@@ -16,6 +16,7 @@ package specs
 
 import (
 	"encoding/base64"
+	"path/filepath"
 
 	"internal/apiclient"
 
@@ -40,6 +41,7 @@ var CreateSpecCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		fileName := filepath.Base(filePath)
 		contents := base64.URLEncoding.EncodeToString(fileContents)
 		_, err = versions.CreateSpec(apiName, apiVersion, apiSpecID,
 			name, fileName, description, sourceURI, contents, labels, annotations)
@@ -48,8 +50,8 @@ var CreateSpecCmd = &cobra.Command{
 }
 
 var (
-	labels, annotations                                   map[string]string
-	apiSpecID, fileName, description, sourceURI, filePath string
+	labels, annotations                         map[string]string
+	apiSpecID, description, sourceURI, filePath string
 )
 
 func init() {
@@ -61,8 +63,6 @@ func init() {
 		"", "API Spec Id")
 	CreateSpecCmd.Flags().StringVarP(&name, "name", "n",
 		"", "API Version Spec name")
-	CreateSpecCmd.Flags().StringVarP(&fileName, "file-name", "",
-		"", "A possibly-hierarchical name used to refer to the spec from other specs")
 	CreateSpecCmd.Flags().StringVarP(&description, "desc", "d",
 		"", "A detailed description for the spec")
 	CreateSpecCmd.Flags().StringVarP(&filePath, "file-path", "f",
