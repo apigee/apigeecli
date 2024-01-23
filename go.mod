@@ -2,8 +2,6 @@ module github.com/apigee/apigeecli
 
 go 1.21
 
-toolchain go1.21.6
-
 require internal/apiclient v1.0.0
 
 replace internal/apiclient => ./internal/apiclient
