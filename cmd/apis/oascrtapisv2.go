@@ -50,6 +50,9 @@ var OasCreatev2Cmd = &cobra.Command{
 		if (targetURL != "" || targetURLRef != "") && (integration != "" || apitrigger != "") {
 			return fmt.Errorf("integration or apitrigger cannot be set if targetURL or targetURLRef is set")
 		}
+		if env != "" {
+			apiclient.SetApigeeEnv(env)
+		}
 		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
