@@ -35,7 +35,9 @@ jobs:
           git config --global user.email "apigeecli-bot@noreply.apigee.com"
 
           GOBIN=/tmp/ go install github.com/google/go-licenses@latest
-          /tmp/go-licenses report github.com/apigee/apigeecli > third-party-licenses.txt || echo "Ignore warnings"
+          /tmp/go-licenses report github.com/apigee/apigeecli > tmp.txt || echo "Ignore warnings"
+          grep -v "Unknown" tmp.txt > third-party-licenses.txt || echo "Ignore warnings"
+          rm tmp.txt || echo "Ignore warnings"
           /tmp/go-licenses save . --save_path=third-party || echo "Ignore warnings"
           git add third-party third-party-licenses.txt
           git commit -m "generate licenses - $GITHUB_SHA" || echo "No Changes in license"
