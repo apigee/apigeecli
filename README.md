@@ -128,7 +128,7 @@ docker run -ti ghcr.io/apigee/apigeecli:latest orgs list -t $token
 
 ### Using apigeecli with Cloud Build
 
-To execute apigeecli commands in cloud build, 
+To execute apigeecli commands in cloud build,
 
 ```
 steps:
@@ -143,6 +143,7 @@ steps:
 ```
 
 If you need the response from the previous command as input to the next, then take advantage of `sh` and `jq` like so:
+
 ```yaml
 steps:
 - id: 'Run apigeecli commands'
@@ -194,18 +195,20 @@ The following environment variables may be set to control the behavior of `apige
 
 `apigeecli` can generate API proxies from:
 
-* OpenAPI 3.0 Specification
+* OpenAPI 3.0/3.1 Specification
 * GraphQL Schema
 * A template/stub for Application Integration
 * Cloud Endpoints/API Gateway OpenAPI 2.0 specification
 
 ### Generating API Proxies from OpenAPI Specs
 
-`apigeecli` allows the user to generate Apigee API Proxy bundles from an OpenAPI spec (only 3.0.x supported). The Apigee control plane does not support custom formats (ex: uuid). If you spec contains custom formats, consider the following flags
+`apigeecli` allows the user to generate Apigee API Proxy bundles from an OpenAPI spec (3.0.x and 3.1.x are supported). The Apigee control plane does not support custom formats (ex: uuid). If you spec contains custom formats, consider the following flags
 
 * `--add-cors=true`: Add a CORS policy
 * `--formatValidation=false`: this disables validation for custom formats.
 * `--skip-policy=false`: By default the OAS policy is added to the proxy (to validate API requests). By setting this to false, schema validation is not enabled and the control plane will not reject the bundle due to custom formats.
+
+**NOTE**: The Apigee runtime does not support OAS 3.1.x (specifically the OpenAPI Validation policy). When using OAS 3.1.x, `apigeecli` generates the proxy, but does not include the OAS validation policy.
 
 The following actions are automatically implemented when the API Proxy bundle is generated:
 
