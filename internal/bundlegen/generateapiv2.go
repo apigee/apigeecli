@@ -197,7 +197,11 @@ func GenerateAPIProxyDefFromOASv2(name string,
 			generateSetTarget = true
 		}
 
-		proxies.NewProxyEndpoint(u.Path, true)
+		if basePath != "" {
+			proxies.NewProxyEndpoint(basePath, true)
+		} else {
+			proxies.NewProxyEndpoint(u.Path, true)
+		}
 	}
 
 	// add any preflow security schemes
