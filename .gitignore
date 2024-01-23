@@ -26,3 +26,7 @@ remote-service.*
 
 #json files
 *.json
+
+!test/*.json
+!test/*.yaml
+!test/*.zip
