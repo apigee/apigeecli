@@ -36,7 +36,7 @@ var OasCreatev2Cmd = &cobra.Command{
 	Long:    "Creates an API proxy from an OpenAPI Specification",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		if oasFile == "" && oasURI == "" {
-			return fmt.Errorf("either oasfile or oasuri must be passed")
+			return fmt.Errorf("either oas-base-folderpath or oas-base-uri must be passed")
 		}
 		if targetURL != "" && targetURLRef != "" {
 			return fmt.Errorf("either target-url or target-url-ref must be passed, not both")
