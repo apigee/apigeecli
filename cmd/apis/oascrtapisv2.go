@@ -120,6 +120,9 @@ var OasCreatev2Cmd = &cobra.Command{
 
 		if importProxy {
 			respBody, err := apis.CreateProxy(name, name+zipExt)
+			if err != nil {
+				return err
+			}
 			if env != "" {
 				clilog.Info.Printf("Deploying the API Proxy %s to environment %s\n", name, env)
 				if revision, err = GetRevision(respBody); err != nil {
@@ -184,8 +187,7 @@ func init() {
 	OasCreatev2Cmd.Flags().BoolVarP(&sequencedRollout, "sequencedrollout", "",
 		false, "If set to true, the routing rules will be rolled out in a safe order; default is false")
 	OasCreatev2Cmd.Flags().BoolVarP(&safeDeploy, "safedeploy", "",
-		true, "When set to true, generateDeployChangeReport will be executed and "+
-			"deployment will proceed if there are no conflicts; default is true")
+		true, deploymentMsg)
 	OasCreatev2Cmd.Flags().StringVarP(&serviceAccountName, "sa", "s",
 		"", "The format must be {ACCOUNT_ID}@{PROJECT}.iam.gserviceaccount.com.")
 
