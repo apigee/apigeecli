@@ -34,7 +34,7 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -buildvcs=true -a -
 FROM ghcr.io/jqlang/jq:latest as jq
 
 # use debug because it includes busybox
-FROM gcr.io/distroless/static-debian11:debug
+FROM gcr.io/distroless/static-debian11:debug-nonroot
 LABEL org.opencontainers.image.url='https://github.com/apigee/apigeecli' \
       org.opencontainers.image.documentation='https://github.com/apigee/apigeecli' \
       org.opencontainers.image.source='https://github.com/apigee/apigeecli' \
