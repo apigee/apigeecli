@@ -118,8 +118,7 @@ func init() {
 	BundleCreateCmd.Flags().BoolVarP(&sequencedRollout, "sequencedrollout", "",
 		false, "If set to true, the routing rules will be rolled out in a safe order; default is false")
 	BundleCreateCmd.Flags().BoolVarP(&safeDeploy, "safedeploy", "",
-		true, "When set to true, generateDeployChangeReport will be executed and "+
-			"deployment will proceed if there are no conflicts; default is true")
+		true, deploymentMsg)
 	BundleCreateCmd.Flags().StringVarP(&serviceAccountName, "sa", "s",
 		"", "The format must be {ACCOUNT_ID}@{PROJECT}.iam.gserviceaccount.com.")
 

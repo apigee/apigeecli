@@ -31,7 +31,9 @@ var (
 )
 
 func init() {
-	CreateCmd.AddCommand(OasCreateCmd)
+	// disable v1 of OasCreate
+	// CreateCmd.AddCommand(OasCreateCmd)
+	CreateCmd.AddCommand(OasCreatev2Cmd)
 	CreateCmd.AddCommand(GhCreateCmd)
 	CreateCmd.AddCommand(BundleCreateCmd)
 	CreateCmd.AddCommand(GqlCreateCmd)
