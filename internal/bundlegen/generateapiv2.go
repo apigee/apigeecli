@@ -21,7 +21,6 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
-	"regexp"
 	"strings"
 
 	"internal/apiclient"
@@ -29,7 +28,6 @@ import (
 	"internal/bundlegen/policies"
 	"internal/bundlegen/proxies"
 	targets "internal/bundlegen/targets"
-	"internal/clilog"
 
 	"github.com/pb33f/libopenapi"
 	validator "github.com/pb33f/libopenapi-validator"
@@ -100,6 +98,14 @@ func LoadDocument(specBasePath string, specBaseURL string, specName string, vali
 	return specBytes, nil
 }
 
+func GetModelVersion() string {
+	if docModel.Model.Version != "" {
+		return docModel.Model.Version
+	} else {
+		return ""
+	}
+}
+
 func GenerateAPIProxyDefFromOASv2(name string,
 	basePath string,
 	oasDocName string,
@@ -135,15 +141,8 @@ func GenerateAPIProxyDefFromOASv2(name string,
 	} else {
 		apiproxy.AddTargetEndpoint(NoAuthTargetName)
 	}
-	apiproxy.AddProxyEndpoint("default")
 
-	if docModel.Model.Version != "" {
-		re, _ := regexp.Compile(`3\.1\.[0-9]`)
-		if re.MatchString(docModel.Model.Version) {
-			clilog.Warning.Println("OpenAPI 3.1 detected. Skipping policy validation.")
-			skipPolicy = true
-		}
-	}
+	apiproxy.AddProxyEndpoint("default")
 
 	if !skipPolicy {
 		apiproxy.AddResource(oasDocName, "oas")

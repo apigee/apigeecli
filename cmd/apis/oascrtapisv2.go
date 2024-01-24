@@ -17,6 +17,7 @@ package apis
 import (
 	"fmt"
 	"os"
+	"regexp"
 
 	"internal/apiclient"
 	"internal/clilog"
@@ -71,6 +72,15 @@ var OasCreatev2Cmd = &cobra.Command{
 		content, err = bundle.LoadDocument(oasFile, oasURI, specName, validateSpec)
 		if err != nil {
 			return err
+		}
+
+		version := bundle.GetModelVersion()
+		if version != "" {
+			re, _ := regexp.Compile(`3\.1\.[0-9]`)
+			if re.MatchString(version) {
+				clilog.Warning.Println("OpenAPI 3.1 detected. Skipping policy validation.")
+				skipPolicy = true
+			}
 		}
 
 		targetOptions := bundle.TargetOptions{
