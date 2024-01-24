@@ -76,7 +76,7 @@ var OasCreatev2Cmd = &cobra.Command{
 
 		version := bundle.GetModelVersion()
 		if version != "" {
-			re, _ := regexp.Compile(`3\.1\.[0-9]`)
+			re := regexp.MustCompile(`3\.1\.[0-9]`)
 			if re.MatchString(version) {
 				clilog.Warning.Println("OpenAPI 3.1 detected. Skipping policy validation.")
 				skipPolicy = true
