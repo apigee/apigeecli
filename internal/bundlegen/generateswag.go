@@ -34,7 +34,8 @@ import (
 	"internal/bundlegen/proxies"
 	"internal/bundlegen/targets"
 
-	"github.com/apigee/apigeecli/cmd/utils"
+	"internal/cmd/utils"
+
 	"github.com/getkin/kin-openapi/openapi2"
 	"github.com/ghodss/yaml"
 )
