@@ -2,21 +2,25 @@ module github.com/apigee/apigeecli
 
 go 1.21
 
-require internal/apiclient v1.0.0
+require internal/apiclient v1.0.0 // indirect
 
 replace internal/apiclient => ./internal/apiclient
 
-require internal/client v1.0.0
+require internal/client v1.0.0 // indirect
 
 replace internal/client => ./internal/client
 
-require internal/bundlegen v1.0.0
+require internal/bundlegen v1.0.0 // indirect
 
 replace internal/bundlegen => ./internal/bundlegen
 
-require internal/clilog v1.0.0
+require internal/clilog v1.0.0 // indirect
 
 replace internal/clilog => ./internal/clilog
+
+require internal/cmd v1.0.0
+
+replace internal/cmd => ./internal/cmd
 
 require github.com/spf13/cobra v1.6.1
 

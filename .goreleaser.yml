@@ -22,7 +22,7 @@ before:
 
 builds:
   - id: apigeecli
-    main: ./main.go
+    main: ./cmd/apigeecli/apigeecli.go
     binary: apigeecli
     goos:
       - linux
