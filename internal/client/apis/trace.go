@@ -69,8 +69,8 @@ func GetTraceSession(name string, revision int, sessionID string, messageID stri
 	return respBody, err
 }
 
-// ListTracceSession
-func ListTracceSession(name string, revision int) (respBody []byte, err error) {
+// ListTraceSession
+func ListTraceSession(name string, revision int) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(),
 		"apis", name, "revisions", strconv.Itoa(revision), "debugsessions")
