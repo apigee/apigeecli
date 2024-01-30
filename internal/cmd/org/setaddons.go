@@ -28,6 +28,7 @@ var SetAddonCmd = &cobra.Command{
 	Short: "Enable addons for an Apigee organization",
 	Long:  "Enable addons for an Apigee organization",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

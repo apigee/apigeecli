@@ -34,6 +34,7 @@ var MonthlyCmd = &cobra.Command{
 	Short: "Report monthly usage for an Apigee Org",
 	Long:  "Report monthly usage for an Apigee Org",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

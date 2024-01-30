@@ -52,6 +52,7 @@ var ImportCmd = &cobra.Command{
 	Short: "Import Apigee Configuration",
 	Long:  "Import Apigee Configuration",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

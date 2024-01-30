@@ -34,6 +34,7 @@ var UpdateCmd = &cobra.Command{
 			return fmt.Errorf("runtime type must be CLOUD or HYBRID")
 		}
 		apiclient.SetProjectID(projectID)
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(projectID)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

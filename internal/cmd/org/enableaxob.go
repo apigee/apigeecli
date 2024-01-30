@@ -28,6 +28,7 @@ var ObCmd = &cobra.Command{
 	Short: "Obfuscate analytics fields",
 	Long:  "Obfuscate analytics fields before sending to control plane",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

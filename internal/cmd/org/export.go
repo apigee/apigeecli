@@ -54,6 +54,7 @@ var ExportCmd = &cobra.Command{
 	Short: "Export Apigee Configuration",
 	Long:  "Export Apigee Configuration",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

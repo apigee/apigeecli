@@ -45,6 +45,7 @@ var CreateCmd = &cobra.Command{
 			return fmt.Errorf("billing type must be %s or %s", SUBSCRIPTION, EVALUATION)
 		}
 		apiclient.SetProjectID(projectID)
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(projectID)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

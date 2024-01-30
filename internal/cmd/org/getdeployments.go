@@ -28,6 +28,7 @@ var GetDeployCmd = &cobra.Command{
 	Short: "Get deployments for an Apigee org",
 	Long:  "Get deployments for an Apigee org",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
