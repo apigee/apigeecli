@@ -62,6 +62,10 @@ var UpdateCmd = &cobra.Command{
 
 		p.Attributes = getAttributes(attrs)
 
+		if quotaCounterScope != "" {
+			p.QuotaCounterScope = quotaCounterScope
+		}
+
 		_, err = products.Update(p)
 
 		return err
@@ -97,6 +101,8 @@ func init() {
 		"", "File containing GraphQL Operation Group JSON. See samples for how to create the file")
 	UpdateCmd.Flags().StringVarP(&grpcOperationGroupFile, "grpcopgrp", "",
 		"", "File containing gRPC Operation Group JSON. See samples for how to create the file")
+	UpdateCmd.Flags().StringVarP(&quotaCounterScope, "quota-counter-scope", "",
+		"", "Scope of the quota decides how the quota counter gets applied; can be PROXY or OPERATION")
 	// TODO: apiresource -r later
 
 	_ = UpdateCmd.MarkFlagRequired("name")
