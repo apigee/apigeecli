@@ -12,45 +12,65 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package apis
+package targetservers
 
 import (
 	"internal/client/clienttest"
 	"testing"
 )
 
-func TestListTracceSession(t *testing.T) {
+const name = "test"
+
+func TestCreate(t *testing.T) {
+	description := "test"
+	host := "api.exmaple.com"
+	port := 80
+
 	if err := clienttest.TestSetup(clienttest.ENV_REQD,
 		clienttest.SITEID_NOT_REQD, clienttest.CLIPATH_NOT_REQD); err != nil {
 		t.Fatalf("%v", err)
 	}
-	if _, err := CreateProxy(proxyName, ""); err != nil {
-		t.Fatalf("%v", err)
-	}
-	if _, err := DeployProxy(proxyName, 1, false, false, false, ""); err != nil {
-		t.Fatalf("%v", err)
-	}
-	if _, err := ListTraceSession(proxyName, 1); err != nil {
+	if _, err := Create(name, description, host, port, true, "http", "", "", "", "false", "false", "true"); err != nil {
 		t.Fatalf("%v", err)
 	}
 }
 
-func TestCreateTraceSession(t *testing.T) {
+func TestGet(t *testing.T) {
 	if err := clienttest.TestSetup(clienttest.ENV_REQD,
 		clienttest.SITEID_NOT_REQD, clienttest.CLIPATH_NOT_REQD); err != nil {
 		t.Fatalf("%v", err)
 	}
-	if _, err := CreateTraceSession(proxyName, 1, nil); err != nil {
+	if _, err := Get(name); err != nil {
 		t.Fatalf("%v", err)
 	}
 }
 
-func TestCleanupTrace(t *testing.T) {
-	if err := clienttest.TestSetup(clienttest.ENV_NOT_REQD,
+func TestList(t *testing.T) {
+	if err := clienttest.TestSetup(clienttest.ENV_REQD,
 		clienttest.SITEID_NOT_REQD, clienttest.CLIPATH_NOT_REQD); err != nil {
 		t.Fatalf("%v", err)
 	}
-	if _, err := DeleteProxy(proxyName); err != nil {
+	if _, err := List(); err != nil {
+		t.Fatalf("%v", err)
+	}
+}
+
+func TestExport(t *testing.T) {
+	if err := clienttest.TestSetup(clienttest.ENV_REQD,
+		clienttest.SITEID_NOT_REQD, clienttest.CLIPATH_NOT_REQD); err != nil {
+		t.Fatalf("%v", err)
+	}
+	if _, err := Export(4); err != nil {
+		t.Fatalf("%v", err)
+	}
+}
+
+func TestDelete(t *testing.T) {
+	if err := clienttest.TestSetup(clienttest.ENV_REQD,
+		clienttest.SITEID_NOT_REQD, clienttest.CLIPATH_NOT_REQD); err != nil {
+		t.Fatalf("%v", err)
+	}
+	if _, err := Delete(name); err != nil {
 		t.Fatalf("%v", err)
 	}
 }

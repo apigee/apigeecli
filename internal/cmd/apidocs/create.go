@@ -30,19 +30,33 @@ var CreateCmd = &cobra.Command{
 	Short: "Create a new catalog item",
 	Long:  "Create a new catalog item",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		_, err = strconv.ParseBool(published)
-		if err != nil {
-			return fmt.Errorf("published must be a boolean value: %v", err)
-		}
-		_, err = strconv.ParseBool(anonAllowed)
-		if err != nil {
-			return fmt.Errorf("allow-anon must be a boolean value: %v", err)
+		if published != "" {
+			_, err = strconv.ParseBool(published)
+			if err != nil {
+				return fmt.Errorf("published must be a boolean value: %v", err)
+			}
+		} else {
+			published = "false"
 		}
 
-		_, err = strconv.ParseBool(requireCallbackUrl)
-		if err != nil {
-			return fmt.Errorf("require-callback-url must be a boolean value: %v", err)
+		if anonAllowed != "" {
+			_, err = strconv.ParseBool(anonAllowed)
+			if err != nil {
+				return fmt.Errorf("allow-anon must be a boolean value: %v", err)
+			}
+		} else {
+			anonAllowed = "false"
 		}
+
+		if requireCallbackUrl != "" {
+			_, err = strconv.ParseBool(requireCallbackUrl)
+			if err != nil {
+				return fmt.Errorf("require-callback-url must be a boolean value: %v", err)
+			}
+		} else {
+			requireCallbackUrl = "false"
+		}
+
 		if siteid == "" {
 			return fmt.Errorf("siteid is a mandatory parameter")
 		}
@@ -68,13 +82,13 @@ func init() {
 	CreateCmd.Flags().StringVarP(&description, "desc", "d",
 		"", "Description of the catalog item")
 	CreateCmd.Flags().StringVarP(&published, "published", "p",
-		"", "Denotes whether the catalog item is published to the portal or is in a draft state")
+		"false", "Denotes whether the catalog item is published to the portal or is in a draft state")
 	CreateCmd.Flags().StringVarP(&anonAllowed, "allow-anon", "",
-		"", "Boolean flag that manages user access to the catalog item")
+		"false", "Boolean flag that manages user access to the catalog item")
 	CreateCmd.Flags().StringVarP(&apiProductName, "api-product", "",
 		"", "The name field of the associated API product")
 	CreateCmd.Flags().StringVarP(&requireCallbackUrl, "require-callback-url", "",
-		"", "Whether a callback URL is required when this catalog item's developer app is created")
+		"false", "Whether a callback URL is required when this catalog item's developer app is created")
 	CreateCmd.Flags().StringVarP(&imageUrl, "image-url", "",
 		"", "Location of the image used for the catalog item in the catalog")
 

@@ -12,45 +12,58 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package apis
+package appgroups
 
 import (
 	"internal/client/clienttest"
 	"testing"
 )
 
-func TestListTracceSession(t *testing.T) {
-	if err := clienttest.TestSetup(clienttest.ENV_REQD,
-		clienttest.SITEID_NOT_REQD, clienttest.CLIPATH_NOT_REQD); err != nil {
-		t.Fatalf("%v", err)
+func TestCreateKey(t *testing.T) {
+	scopes := []string{"test"}
+	apiProducts := []string{"test"}
+	attrs := map[string]string{
+		"test": "test",
 	}
-	if _, err := CreateProxy(proxyName, ""); err != nil {
-		t.Fatalf("%v", err)
-	}
-	if _, err := DeployProxy(proxyName, 1, false, false, false, ""); err != nil {
-		t.Fatalf("%v", err)
-	}
-	if _, err := ListTraceSession(proxyName, 1); err != nil {
-		t.Fatalf("%v", err)
-	}
-}
-
-func TestCreateTraceSession(t *testing.T) {
-	if err := clienttest.TestSetup(clienttest.ENV_REQD,
-		clienttest.SITEID_NOT_REQD, clienttest.CLIPATH_NOT_REQD); err != nil {
-		t.Fatalf("%v", err)
-	}
-	if _, err := CreateTraceSession(proxyName, 1, nil); err != nil {
-		t.Fatalf("%v", err)
-	}
-}
-
-func TestCleanupTrace(t *testing.T) {
 	if err := clienttest.TestSetup(clienttest.ENV_NOT_REQD,
 		clienttest.SITEID_NOT_REQD, clienttest.CLIPATH_NOT_REQD); err != nil {
 		t.Fatalf("%v", err)
 	}
-	if _, err := DeleteProxy(proxyName); err != nil {
+
+	TestCreateApp(t)
+
+	if _, err := CreateKey(name, appName, "key1", "key1-secret", "-1", apiProducts, scopes, attrs); err != nil {
 		t.Fatalf("%v", err)
 	}
+}
+
+func TestGetKey(t *testing.T) {
+	if err := clienttest.TestSetup(clienttest.ENV_NOT_REQD,
+		clienttest.SITEID_NOT_REQD, clienttest.CLIPATH_NOT_REQD); err != nil {
+		t.Fatalf("%v", err)
+	}
+	if _, err := GetKey(name, appName, "key1"); err != nil {
+		t.Fatalf("%v", err)
+	}
+}
+
+func TestManageKey(t *testing.T) {
+	if err := clienttest.TestSetup(clienttest.ENV_NOT_REQD,
+		clienttest.SITEID_NOT_REQD, clienttest.CLIPATH_NOT_REQD); err != nil {
+		t.Fatalf("%v", err)
+	}
+	if _, err := ManageKey(name, appName, "key1", "approve"); err != nil {
+		t.Fatalf("%v", err)
+	}
+}
+
+func TestDeleteKey(t *testing.T) {
+	if err := clienttest.TestSetup(clienttest.ENV_NOT_REQD,
+		clienttest.SITEID_NOT_REQD, clienttest.CLIPATH_NOT_REQD); err != nil {
+		t.Fatalf("%v", err)
+	}
+	if _, err := DeleteKey(name, appName, "key1"); err != nil {
+		t.Fatalf("%v", err)
+	}
+	TestDeleteApp(t)
 }

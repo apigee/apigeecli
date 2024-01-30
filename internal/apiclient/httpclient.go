@@ -56,7 +56,7 @@ var apigeeAnalyticsAPIRateLimit = rate.NewLimiter(rate.Every(time.Second), 1)
 // disable rate limit
 var noAPIRateLimit = rate.NewLimiter(rate.Inf, 1)
 
-// PostHttpZip method is used to send resources, proxy bundles, shared flows etc.
+// PostHttpZip method is used to archives to Apigee control plane.
 func PostHttpZip(auth bool, method string, url string, headers map[string]string, zipfile string) (err error) {
 	var req *http.Request
 

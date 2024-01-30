@@ -14,14 +14,18 @@
 
 package apis
 
-import "testing"
+import (
+	"internal/client/clienttest"
+	"testing"
+)
 
 const (
 	kvmName = "test"
 )
 
 func TestCreateProxyKVM(t *testing.T) {
-	if err := setup(false); err != nil {
+	if err := clienttest.TestSetup(clienttest.ENV_NOT_REQD,
+		clienttest.SITEID_NOT_REQD, clienttest.CLIPATH_NOT_REQD); err != nil {
 		t.Fatalf("%v", err)
 	}
 	if _, err := CreateProxy(proxyName, ""); err != nil {
@@ -33,7 +37,8 @@ func TestCreateProxyKVM(t *testing.T) {
 }
 
 func TestListProxyKVM(t *testing.T) {
-	if err := setup(false); err != nil {
+	if err := clienttest.TestSetup(clienttest.ENV_NOT_REQD,
+		clienttest.SITEID_NOT_REQD, clienttest.CLIPATH_NOT_REQD); err != nil {
 		t.Fatalf("%v", err)
 	}
 	if _, err := ListProxyKVM(proxyName); err != nil {
@@ -42,7 +47,8 @@ func TestListProxyKVM(t *testing.T) {
 }
 
 func TestDeleteProxyKVM(t *testing.T) {
-	if err := setup(false); err != nil {
+	if err := clienttest.TestSetup(clienttest.ENV_NOT_REQD,
+		clienttest.SITEID_NOT_REQD, clienttest.CLIPATH_NOT_REQD); err != nil {
 		t.Fatalf("%v", err)
 	}
 	if _, err := DeleteProxyKVM(proxyName, kvmName); err != nil {

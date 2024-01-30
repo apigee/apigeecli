@@ -12,45 +12,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package apis
+package sites
 
 import (
 	"internal/client/clienttest"
 	"testing"
 )
 
-func TestListTracceSession(t *testing.T) {
+func TestListSites(t *testing.T) {
 	if err := clienttest.TestSetup(clienttest.ENV_REQD,
 		clienttest.SITEID_NOT_REQD, clienttest.CLIPATH_NOT_REQD); err != nil {
 		t.Fatalf("%v", err)
 	}
-	if _, err := CreateProxy(proxyName, ""); err != nil {
-		t.Fatalf("%v", err)
-	}
-	if _, err := DeployProxy(proxyName, 1, false, false, false, ""); err != nil {
-		t.Fatalf("%v", err)
-	}
-	if _, err := ListTraceSession(proxyName, 1); err != nil {
+	if _, err := List(); err != nil {
 		t.Fatalf("%v", err)
 	}
 }
 
-func TestCreateTraceSession(t *testing.T) {
+func TestGetSiteIDs(t *testing.T) {
 	if err := clienttest.TestSetup(clienttest.ENV_REQD,
 		clienttest.SITEID_NOT_REQD, clienttest.CLIPATH_NOT_REQD); err != nil {
 		t.Fatalf("%v", err)
 	}
-	if _, err := CreateTraceSession(proxyName, 1, nil); err != nil {
-		t.Fatalf("%v", err)
-	}
-}
-
-func TestCleanupTrace(t *testing.T) {
-	if err := clienttest.TestSetup(clienttest.ENV_NOT_REQD,
-		clienttest.SITEID_NOT_REQD, clienttest.CLIPATH_NOT_REQD); err != nil {
-		t.Fatalf("%v", err)
-	}
-	if _, err := DeleteProxy(proxyName); err != nil {
+	if _, err := GetSiteIDs(); err != nil {
 		t.Fatalf("%v", err)
 	}
 }
