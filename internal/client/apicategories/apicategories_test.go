@@ -110,7 +110,7 @@ func TestDelete(t *testing.T) {
 	if err != nil {
 		t.Errorf("setup failed: %v", err)
 	}
-	if _, err := Delete(siteID, categoryName); err != nil {
+	if _, err := Delete(siteID, aPICategoryID); err != nil {
 		t.Fatalf("%v", err)
 	}
 }
