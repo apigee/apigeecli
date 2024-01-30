@@ -46,9 +46,11 @@ func LoadDocument(specBasePath string, specBaseURL string, specName string, vali
 	var errs []error
 	if specBasePath != "" {
 		config = datamodel.DocumentConfiguration{
-			AllowFileReferences:   true,
-			AllowRemoteReferences: true,
-			BasePath:              specBasePath,
+			AllowFileReferences:     true,
+			AllowRemoteReferences:   true,
+			BasePath:                specBasePath,
+			BundleInlineRefs:        true,
+			ExtractRefsSequentially: true,
 		}
 		specBytes, err = os.ReadFile(filepath.Join(specBasePath, specName))
 		if err != nil {
@@ -57,9 +59,11 @@ func LoadDocument(specBasePath string, specBaseURL string, specName string, vali
 	} else {
 		baseURL, _ := url.Parse(specBaseURL)
 		config = datamodel.DocumentConfiguration{
-			AllowFileReferences:   true,
-			AllowRemoteReferences: true,
-			BaseURL:               baseURL,
+			AllowFileReferences:     true,
+			AllowRemoteReferences:   true,
+			BaseURL:                 baseURL,
+			BundleInlineRefs:        true,
+			ExtractRefsSequentially: true,
 		}
 		specURL, _ := url.JoinPath(specBaseURL, specName)
 		resp, err := apiclient.DownloadFile(specURL, false)
