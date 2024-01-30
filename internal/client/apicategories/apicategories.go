@@ -78,9 +78,9 @@ func List(siteid string) (respBody []byte, err error) {
 }
 
 // Delete
-func Delete(siteid string, name string) (respBody []byte, err error) {
+func Delete(siteid string, id string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
-	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sites", siteid, "apicategories", name)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sites", siteid, "apicategories", id)
 	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
 	return respBody, err
 }
