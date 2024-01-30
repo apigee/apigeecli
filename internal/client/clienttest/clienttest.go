@@ -32,8 +32,16 @@ const (
 )
 
 func TestSetup(envReqd TestRequirements, siteIdReqd TestRequirements, cliPathReqd TestRequirements) (err error) {
+	apiclient.NewApigeeClient(apiclient.ApigeeClientOptions{
+		TokenCheck:  true,
+		PrintOutput: true,
+		NoOutput:    false,
+		DebugLog:    true,
+		SkipCache:   false,
+	})
+
 	org := os.Getenv("APIGEE_ORG")
-	if org == "" {
+	if err = apiclient.SetApigeeOrg(org); err != nil {
 		return fmt.Errorf("APIGEE_ORG not set")
 	}
 
@@ -42,6 +50,7 @@ func TestSetup(envReqd TestRequirements, siteIdReqd TestRequirements, cliPathReq
 		if env == "" {
 			return fmt.Errorf("APIGEE_ENV not set")
 		}
+		apiclient.SetApigeeEnv(env)
 	}
 
 	if siteIdReqd == SITEID_REQD {
@@ -51,16 +60,9 @@ func TestSetup(envReqd TestRequirements, siteIdReqd TestRequirements, cliPathReq
 		}
 	}
 
-	apiclient.NewApigeeClient(apiclient.ApigeeClientOptions{
-		TokenCheck:  true,
-		PrintOutput: true,
-		NoOutput:    false,
-		DebugLog:    true,
-		SkipCache:   false,
-	})
-
-	if err = apiclient.SetApigeeOrg(org); err != nil {
-		return fmt.Errorf("APIGEE_ORG not set")
+	region := os.Getenv("APIGEE_REGION")
+	if region != "" {
+		apiclient.SetRegion(region)
 	}
 
 	if apiclient.GetApigeeToken() == "" {
