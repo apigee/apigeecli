@@ -50,6 +50,9 @@ func TestCleanupTrace(t *testing.T) {
 		clienttest.SITEID_NOT_REQD, clienttest.CLIPATH_NOT_REQD); err != nil {
 		t.Fatalf("%v", err)
 	}
+	if _, err := UndeployProxy(proxyName, 1, false); err != nil {
+		t.Fatalf("%v", err)
+	}
 	if _, err := DeleteProxy(proxyName); err != nil {
 		t.Fatalf("%v", err)
 	}
