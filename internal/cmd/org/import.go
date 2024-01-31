@@ -202,7 +202,7 @@ var ImportCmd = &cobra.Command{
 			if importDebugmask {
 				if utils.FileExists(path.Join(folder, environment+debugmaskFileName)) {
 					clilog.Info.Println("\tImporting Debug Mask configuration...")
-					debugMask, _ := readEntityFileAsString(path.Join(folder, environment+debugmaskFileName))
+					debugMask, _ := utils.ReadFile(path.Join(folder, environment+debugmaskFileName))
 					if _, err = env.SetDebug(debugMask); err != nil {
 						return err
 					}
