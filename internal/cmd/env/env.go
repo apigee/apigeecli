@@ -48,4 +48,5 @@ func init() {
 	Cmd.AddCommand(SecInCmd)
 	Cmd.AddCommand(SecActCmd)
 	Cmd.AddCommand(SecActCfgCmd)
+	Cmd.AddCommand(ExpCmd)
 }

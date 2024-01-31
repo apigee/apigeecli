@@ -16,8 +16,11 @@ package env
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
+	"io"
 	"net/url"
+	"os"
 	"path"
 	"strings"
 
@@ -25,8 +28,27 @@ import (
 	"internal/clilog"
 )
 
+type environments struct {
+	Environment []environment `json:"environment,omitempty"`
+}
+
+type environment struct {
+	Name            string     `json:"name,omitempty"`
+	DisplayName     string     `json:"displayName,omitempty"`
+	DeploymentType  string     `json:"deploymentType,omitempty"`
+	ApiProxyType    string     `json:"apiProxyType,omitempty"`
+	ForwardProxyUri string     `json:"forwardProxyUri,omitempty"`
+	Type            string     `json:"type,omitempty"`
+	Properties      []property `json:"properties,omitempty"`
+}
+
+type property struct {
+	Name  string `json:"name,omitempty"`
+	Value string `json:"value,omitempty"`
+}
+
 // Create
-func Create(deploymentType string, fwdProxyURI string) (respBody []byte, err error) {
+func Create(envType string, deploymentType string, fwdProxyURI string) (respBody []byte, err error) {
 	environment := []string{}
 	environment = append(environment, "\"name\":\""+apiclient.GetApigeeEnv()+"\"")
 
@@ -39,6 +61,10 @@ func Create(deploymentType string, fwdProxyURI string) (respBody []byte, err err
 
 	if fwdProxyURI != "" {
 		environment = append(environment, "\"forwardProxyUri\":\""+fwdProxyURI+"\"")
+	}
+
+	if envType != "" {
+		environment = append(environment, "\"type\":\""+envType+"\"")
 	}
 
 	payload := "{" + strings.Join(environment, ",") + "}"
@@ -271,4 +297,89 @@ func UpdateSecurityActionsConfig(action bool) (respBody []byte, err error) {
 
 	respBody, err = apiclient.HttpClient(u.String(), payload, "PATCH")
 	return respBody, err
+}
+
+// Export
+func Export() (respBody []byte, err error) {
+	apiclient.ClientPrintHttpResponse.Set(false)
+	defer apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
+
+	var envList []string
+	environmentList := environments{}
+
+	envRespBody, err := List()
+	if err != nil {
+		return nil, err
+	}
+	err = json.Unmarshal(envRespBody, &envList)
+	if err != nil {
+		return nil, err
+	}
+	for _, e := range envList {
+		apiclient.SetApigeeEnv(e)
+		envRespBody, err := Get(false)
+		if err != nil {
+			return nil, err
+		}
+		environ := environment{}
+		err = json.Unmarshal(envRespBody, &environ)
+		if err != nil {
+			return nil, err
+		}
+		environmentList.Environment = append(environmentList.Environment, environ)
+	}
+	respBody, err = json.Marshal(&environmentList)
+	if err != nil {
+		return nil, err
+	}
+	respBody, err = apiclient.PrettifyJSON(respBody)
+	return respBody, err
+}
+
+func Import(filePath string) (err error) {
+	entities, err := readEnvironmentsFile(filePath)
+	var errs []error
+	if err != nil {
+		clilog.Error.Println("Error reading file: ", err)
+		return err
+	}
+
+	numEntities := len(entities.Environment)
+	clilog.Debug.Printf("Found %d environments in the file\n", numEntities)
+
+	for _, entity := range entities.Environment {
+		clilog.Info.Printf("Creating environment %s\n", entity.Name)
+		apiclient.SetApigeeEnv(entity.Name)
+		_, err = Create(entity.Type, entity.DeploymentType, entity.ForwardProxyUri)
+		if err != nil {
+			errs = append(errs, err)
+		}
+	}
+	if len(errs) > 0 {
+		return errors.Join(errs...)
+	}
+	return nil
+}
+
+func readEnvironmentsFile(filePath string) (environmentList environments, err error) {
+	environmentList = environments{}
+
+	jsonFile, err := os.Open(filePath)
+	if err != nil {
+		return environmentList, err
+	}
+
+	defer jsonFile.Close()
+
+	byteValue, err := io.ReadAll(jsonFile)
+	if err != nil {
+		return environmentList, err
+	}
+
+	err = json.Unmarshal(byteValue, &environmentList)
+	if err != nil {
+		return environmentList, err
+	}
+
+	return environmentList, nil
 }

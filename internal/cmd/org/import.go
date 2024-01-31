@@ -138,6 +138,12 @@ var ImportCmd = &cobra.Command{
 		}
 
 		var envRespBody []byte
+		if utils.FileExists(path.Join(folder, envFileName)) {
+			if env.Import(path.Join(folder, envFileName)); err != nil {
+				return err
+			}
+		}
+
 		if envRespBody, err = env.List(); err != nil {
 			return err
 		}

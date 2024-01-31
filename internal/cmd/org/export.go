@@ -205,7 +205,19 @@ var ExportCmd = &cobra.Command{
 			}
 		}
 
-		var envRespBody []byte
+		var envRespBody, envDetailsRespBody []byte
+		clilog.Info.Println("Exporting list of environments...")
+
+		if envDetailsRespBody, err = env.Export(); proceedOnError(err) != nil {
+			return err
+		}
+
+		if err = apiclient.WriteByteArrayToFile(
+			envFileName,
+			false, envDetailsRespBody); proceedOnError(err) != nil {
+			return err
+		}
+
 		if envRespBody, err = env.List(); proceedOnError(err) != nil {
 			return err
 		}

@@ -29,6 +29,7 @@ const (
 	debugmaskFileName     = "_debugmask.json"
 	tracecfgFileName      = "_tracecfg.json"
 	referencesFileName    = "references.json"
+	envFileName           = "envs.json"
 
 	proxiesFolderName          = "proxies"
 	sharedFlowsFolderName      = "sharedflows"
