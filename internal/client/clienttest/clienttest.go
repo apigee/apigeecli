@@ -44,6 +44,7 @@ func TestSetup(envReqd TestRequirements, siteIdReqd TestRequirements, cliPathReq
 	if err = apiclient.SetApigeeOrg(org); err != nil {
 		return fmt.Errorf("APIGEE_ORG not set")
 	}
+	apiclient.SetProjectID(org)
 
 	if envReqd == ENV_REQD {
 		env := os.Getenv("APIGEE_ENV")
