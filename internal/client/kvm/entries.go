@@ -83,6 +83,21 @@ func GetEntry(proxyName string, mapName string, keyName string) (respBody []byte
 	return respBody, err
 }
 
+// UpdateEntry
+func UpdateEntry(proxyName string, mapName string, keyName string, value string) (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
+	if apiclient.GetApigeeEnv() != "" {
+		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "keyvaluemaps", mapName, "entries")
+	} else if proxyName != "" {
+		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apis", proxyName, "keyvaluemaps", mapName, "entries")
+	} else {
+		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "keyvaluemaps", mapName, "entries")
+	}
+	payload := "{\"name\":\"" + keyName + "\",\"value\":\"" + value + "\"}"
+	respBody, err = apiclient.HttpClient(u.String(), payload, "PUT")
+	return respBody, err
+}
+
 // ListEntries
 func ListEntries(proxyName string, mapName string, pageSize int, pageToken string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.GetApigeeBaseURL())

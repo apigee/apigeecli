@@ -77,6 +77,30 @@ func TestGetEntry(t *testing.T) {
 	// TODO: assert values
 }
 
+func TestUpdateEntry(t *testing.T) {
+
+	env := apiclient.GetApigeeEnv()
+	apiclient.SetApigeeEnv("")
+
+	updatedValue := "updatedTest"
+
+	// add entry to org kvm
+	if _, err := UpdateEntry("", kvmName, keyName, updatedValue); err != nil {
+		t.Fatalf("%v", err)
+	}
+
+	// add entry to proxy kvm
+	if _, err := UpdateEntry(proxyName, kvmName, keyName, updatedValue); err != nil {
+		t.Fatalf("%v", err)
+	}
+
+	// add entry to env kvm
+	apiclient.SetApigeeEnv(env)
+	if _, err := UpdateEntry("", kvmName, keyName, updatedValue); err != nil {
+		t.Fatalf("%v", err)
+	}
+}
+
 func TestListEntries(t *testing.T) {
 
 	if err := clienttest.TestSetup(clienttest.ENV_REQD,
