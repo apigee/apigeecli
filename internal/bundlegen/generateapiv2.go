@@ -15,6 +15,7 @@
 package bundlegen
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"io"
@@ -28,6 +29,7 @@ import (
 	"internal/bundlegen/policies"
 	"internal/bundlegen/proxies"
 	targets "internal/bundlegen/targets"
+	"internal/clilog"
 
 	"github.com/pb33f/libopenapi"
 	validator "github.com/pb33f/libopenapi-validator"
@@ -44,11 +46,15 @@ func LoadDocument(specBasePath string, specBaseURL string, specName string, vali
 	config := datamodel.DocumentConfiguration{}
 	var specBytes []byte
 	var errs []error
+	references := []byte("$ref")
+
 	if specBasePath != "" {
 		config = datamodel.DocumentConfiguration{
-			AllowFileReferences:   true,
-			AllowRemoteReferences: true,
-			BasePath:              specBasePath,
+			AllowFileReferences:     true,
+			AllowRemoteReferences:   true,
+			BasePath:                specBasePath,
+			BundleInlineRefs:        true,
+			ExtractRefsSequentially: true,
 		}
 		specBytes, err = os.ReadFile(filepath.Join(specBasePath, specName))
 		if err != nil {
@@ -57,9 +63,11 @@ func LoadDocument(specBasePath string, specBaseURL string, specName string, vali
 	} else {
 		baseURL, _ := url.Parse(specBaseURL)
 		config = datamodel.DocumentConfiguration{
-			AllowFileReferences:   true,
-			AllowRemoteReferences: true,
-			BaseURL:               baseURL,
+			AllowFileReferences:     true,
+			AllowRemoteReferences:   true,
+			BaseURL:                 baseURL,
+			BundleInlineRefs:        true,
+			ExtractRefsSequentially: true,
 		}
 		specURL, _ := url.JoinPath(specBaseURL, specName)
 		resp, err := apiclient.DownloadFile(specURL, false)
@@ -75,6 +83,10 @@ func LoadDocument(specBasePath string, specBaseURL string, specName string, vali
 	document, err := libopenapi.NewDocumentWithConfiguration(specBytes, &config)
 	if err != nil {
 		return nil, err
+	}
+	if index := bytes.Index(specBytes, references); index != -1 && validate {
+		clilog.Warning.Println("found references in the spec. disabling validation.")
+		validate = false
 	}
 	if validate {
 		docValidator, err := validator.NewValidator(document)
@@ -118,7 +130,6 @@ func GenerateAPIProxyDefFromOASv2(name string,
 	oasTargetURLRef string,
 	targetURL string,
 ) (err error) {
-
 	if docModel == nil {
 		return fmt.Errorf("the Open API document not loaded")
 	}

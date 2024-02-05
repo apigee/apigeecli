@@ -58,6 +58,7 @@ type APIProduct struct {
 	QuotaInterval         string                 `json:"quotaInterval,omitempty"`
 	QuotaTimeUnit         string                 `json:"quotaTimeUnit,omitempty"`
 	Scopes                []string               `json:"scopes,omitempty"`
+	QuotaCounterScope     string                 `json:"quotaCounterScope,omitempty"`
 }
 
 type OperationGroup struct {

@@ -22,7 +22,7 @@ import (
 
 	"internal/apiclient"
 
-	"github.com/apigee/apigeecli/cmd/utils"
+	"internal/cmd/utils"
 )
 
 type certificate struct {

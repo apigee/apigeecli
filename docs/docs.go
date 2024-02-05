@@ -19,7 +19,7 @@ import (
 	"os"
 	"path/filepath"
 
-	cmd "github.com/apigee/apigeecli/cmd"
+	cmd "internal/cmd"
 
 	"github.com/spf13/cobra/doc"
 )

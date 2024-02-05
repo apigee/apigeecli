@@ -15,87 +15,47 @@
 package apis
 
 import (
-	"fmt"
 	"os"
 	"path"
 	"testing"
 
-	"internal/apiclient"
+	"internal/client/clienttest"
 )
+
+// go test internal/client/apis
 
 const (
 	proxyName  = "test"
 	testFolder = "test"
 )
 
-func setup() (err error) {
-	org := os.Getenv("APIGEE_ORG")
-	if org == "" {
-		return fmt.Errorf("APIGEE_ORG not set")
-	}
-
-	if err = apiclient.SetApigeeOrg(org); err != nil {
-		return fmt.Errorf("APIGEE_ORG not set")
-	}
-
-	token := os.Getenv("APIGEE_TOKEN")
-	if token == "" {
-		return fmt.Errorf("APIGEE_TOKEN not set")
-	}
-	apiclient.SetApigeeToken(token)
-	return nil
-}
-
-func getApigeecliHome() (cliPath string, err error) {
-	cliPath = os.Getenv("APIGEECLI_PATH")
-	if cliPath == "" {
-		return "", fmt.Errorf("APIGEECLI_PATH not set")
-	}
-	return cliPath, err
-}
+var cliPath = os.Getenv("APIGEECLI_PATH")
 
 func TestCreateProxy(t *testing.T) {
-	if err := setup(); err != nil {
+	if err := clienttest.TestSetup(clienttest.ENV_NOT_REQD,
+		clienttest.SITEID_NOT_REQD, clienttest.CLIPATH_REQD); err != nil {
 		t.Fatalf("%v", err)
 	}
-	cliPath, err := getApigeecliHome()
-	if err != nil {
-		t.Fatalf("%v", err)
-	}
-	if _, err = CreateProxy(proxyName, path.Join(cliPath, testFolder, "test_proxy.zip")); err != nil {
-		t.Fatalf("%v", err)
-	}
-}
 
-func TestDeleteProxy(t *testing.T) {
-	if err := setup(); err != nil {
-		t.Fatalf("%v", err)
-	}
-	if _, err := DeleteProxy(proxyName); err != nil {
-		t.Fatalf("%v", err)
-	}
-}
-
-func TestDeleteProxyRevision(t *testing.T) {
-	if err := setup(); err != nil {
-		t.Fatalf("%v", err)
-	}
-	if _, err := DeleteProxyRevision(proxyName, 1); err != nil {
+	if _, err := CreateProxy(proxyName, path.Join(cliPath, testFolder, "test_proxy.zip")); err != nil {
 		t.Fatalf("%v", err)
 	}
 }
 
 func TestFetchProxy(t *testing.T) {
-	if err := setup(); err != nil {
+	if err := clienttest.TestSetup(clienttest.ENV_NOT_REQD,
+		clienttest.SITEID_NOT_REQD, clienttest.CLIPATH_NOT_REQD); err != nil {
 		t.Fatalf("%v", err)
 	}
 	if err := FetchProxy(proxyName, 1); err != nil {
 		t.Fatalf("%v", err)
 	}
+	os.Remove(proxyName + ".zip")
 }
 
 func TestGetProxy(t *testing.T) {
-	if err := setup(); err != nil {
+	if err := clienttest.TestSetup(clienttest.ENV_NOT_REQD,
+		clienttest.SITEID_NOT_REQD, clienttest.CLIPATH_NOT_REQD); err != nil {
 		t.Fatalf("%v", err)
 	}
 	if _, err := GetProxy(proxyName, 1); err != nil {
@@ -107,10 +67,121 @@ func TestGetProxy(t *testing.T) {
 }
 
 func TestGetHighestProxyRevision(t *testing.T) {
-	if err := setup(); err != nil {
+	if err := clienttest.TestSetup(clienttest.ENV_NOT_REQD,
+		clienttest.SITEID_NOT_REQD, clienttest.CLIPATH_NOT_REQD); err != nil {
 		t.Fatalf("%v", err)
 	}
 	if _, err := GetHighestProxyRevision(proxyName); err != nil {
+		t.Fatalf("%v", err)
+	}
+}
+
+func TestGenerateDeployChangeReport(t *testing.T) {
+	if err := clienttest.TestSetup(clienttest.ENV_REQD,
+		clienttest.SITEID_NOT_REQD, clienttest.CLIPATH_NOT_REQD); err != nil {
+		t.Fatalf("%v", err)
+	}
+	if _, err := GenerateDeployChangeReport(proxyName, 1, false); err != nil {
+		t.Fatalf("%v", err)
+	}
+}
+
+func TestDeployProxy(t *testing.T) {
+	if err := clienttest.TestSetup(clienttest.ENV_REQD,
+		clienttest.SITEID_NOT_REQD, clienttest.CLIPATH_NOT_REQD); err != nil {
+		t.Fatalf("%v", err)
+	}
+	if _, err := DeployProxy(proxyName, 1, false, false, false, ""); err != nil {
+		t.Fatalf("%v", err)
+	}
+	Wait(proxyName, 1)
+}
+
+func TestListProxies(t *testing.T) {
+	if err := clienttest.TestSetup(clienttest.ENV_NOT_REQD,
+		clienttest.SITEID_NOT_REQD, clienttest.CLIPATH_NOT_REQD); err != nil {
+		t.Fatalf("%v", err)
+	}
+	if _, err := ListProxies(true); err != nil {
+		t.Fatalf("%v", err)
+	}
+}
+
+func TestListProxyDeployments(t *testing.T) {
+	if err := clienttest.TestSetup(clienttest.ENV_NOT_REQD,
+		clienttest.SITEID_NOT_REQD, clienttest.CLIPATH_NOT_REQD); err != nil {
+		t.Fatalf("%v", err)
+	}
+	if _, err := ListProxyDeployments(proxyName); err != nil {
+		t.Fatalf("%v", err)
+	}
+}
+
+func TestListProxyRevisionDeployments(t *testing.T) {
+	if err := clienttest.TestSetup(clienttest.ENV_NOT_REQD,
+		clienttest.SITEID_NOT_REQD, clienttest.CLIPATH_NOT_REQD); err != nil {
+		t.Fatalf("%v", err)
+	}
+	if _, err := ListProxyRevisionDeployments(proxyName, 1); err != nil {
+		t.Fatalf("%v", err)
+	}
+}
+
+func TestGenerateUndeployChangeReport(t *testing.T) {
+	if err := clienttest.TestSetup(clienttest.ENV_REQD,
+		clienttest.SITEID_NOT_REQD, clienttest.CLIPATH_NOT_REQD); err != nil {
+		t.Fatalf("%v", err)
+	}
+	if _, err := GenerateUndeployChangeReport(proxyName, 1); err != nil {
+		t.Fatalf("%v", err)
+	}
+}
+
+func TestUndeployProxy(t *testing.T) {
+	if err := clienttest.TestSetup(clienttest.ENV_REQD,
+		clienttest.SITEID_NOT_REQD, clienttest.CLIPATH_NOT_REQD); err != nil {
+		t.Fatalf("%v", err)
+	}
+	if _, err := UndeployProxy(proxyName, 1, false); err != nil {
+		t.Fatalf("%v", err)
+	}
+}
+
+func TestUpdate(t *testing.T) {
+	labels := map[string]string{
+		"label1": "value1",
+		"label2": "value2",
+	}
+	if err := clienttest.TestSetup(clienttest.ENV_NOT_REQD,
+		clienttest.SITEID_NOT_REQD, clienttest.CLIPATH_NOT_REQD); err != nil {
+		t.Fatalf("%v", err)
+	}
+	if _, err := Update(proxyName, labels); err != nil {
+		t.Fatalf("%v", err)
+	}
+}
+
+// TODO: CleanProxy, ExportProxies
+
+func TestDeleteProxyRevision(t *testing.T) {
+	if err := clienttest.TestSetup(clienttest.ENV_NOT_REQD,
+		clienttest.SITEID_NOT_REQD, clienttest.CLIPATH_NOT_REQD); err != nil {
+		t.Fatalf("%v", err)
+	}
+	if _, err := CreateProxy(proxyName, ""); err != nil {
+		t.Fatalf("%v", err)
+	}
+	if _, err := DeleteProxyRevision(proxyName, 2); err != nil {
+		t.Fatalf("%v", err)
+	}
+}
+
+func TestDeleteProxy(t *testing.T) {
+	if err := clienttest.TestSetup(clienttest.ENV_NOT_REQD,
+		clienttest.SITEID_NOT_REQD, clienttest.CLIPATH_NOT_REQD); err != nil {
+		t.Fatalf("%v", err)
+	}
+	if _, err := DeleteProxy(proxyName); err != nil {
 		t.Fatalf("%v", err)
 	}
 }

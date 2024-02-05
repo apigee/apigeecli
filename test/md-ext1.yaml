@@ -18,12 +18,12 @@ info:
   title: Masterdata microservice
   description: |
     Masterdata microservice
-servers: 
+servers:
   - url: https://my.example.com/md
 security:
-  - ApiKeyAuth: []  
+  - ApiKeyAuth: []
 
-x-google-ratelimit: 
+x-google-ratelimit:
   - name: md
     rate-literal: 10pm
     identifier-ref: request.header.url #optional

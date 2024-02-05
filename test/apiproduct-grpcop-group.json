@@ -1,0 +1,22 @@
+{
+    "operationConfigs": [
+        {
+            "apiSource": "petservice",
+            "methods": [
+                "com.petstore.PetService"
+            ],
+            "quota": {
+                "limit": "1",
+                "interval": "1",
+                "timeUnit": "second"
+            },
+            "attributes": [
+                {
+                    "name": "key1",
+                    "value": "value1"
+                }
+            ],
+            "service": "petservice"
+        }
+    ]
+}
