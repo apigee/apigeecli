@@ -27,8 +27,10 @@ const (
 	categoryName = "test"
 )
 
-var siteID = os.Getenv("APIGEE_SITEID")
-var aPICategoryID string
+var (
+	siteID        = os.Getenv("APIGEE_SITEID")
+	aPICategoryID string
+)
 
 func TestCreate(t *testing.T) {
 	var respBody []byte

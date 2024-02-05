@@ -15,11 +15,12 @@
 package references
 
 import (
+	"testing"
+
 	"internal/apiclient"
 	"internal/client/clienttest"
 	"internal/client/env"
 	"internal/client/keystores"
-	"testing"
 )
 
 const (

@@ -130,7 +130,6 @@ func GenerateAPIProxyDefFromOASv2(name string,
 	oasTargetURLRef string,
 	targetURL string,
 ) (err error) {
-
 	if docModel == nil {
 		return fmt.Errorf("the Open API document not loaded")
 	}

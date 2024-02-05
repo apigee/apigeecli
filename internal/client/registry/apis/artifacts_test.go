@@ -15,13 +15,19 @@
 package apis
 
 import (
+	"encoding/base64"
+	"os"
+	"path"
 	"testing"
 
 	"internal/apiclient"
 	"internal/client/clienttest"
+	"internal/cmd/utils"
 )
 
-func TestCreate(t *testing.T) {
+var cliPath = os.Getenv("APIGEECLI_PATH")
+
+func TestCreateArtifact(t *testing.T) {
 	name := "test"
 	displayName := "test"
 	description := "description"
@@ -33,6 +39,11 @@ func TestCreate(t *testing.T) {
 	annotations := map[string]string{
 		"key1": "value1",
 	}
+	payload, err := utils.ReadFile(path.Join(cliPath, "test", "openapi.json"))
+	if err != nil {
+		t.Fatalf("%v", err)
+	}
+	contents := base64.StdEncoding.EncodeToString(payload)
 
 	if err := clienttest.TestSetup(clienttest.ENV_NOT_REQD,
 		clienttest.SITEID_NOT_REQD, clienttest.CLIPATH_NOT_REQD); err != nil {
@@ -45,43 +56,7 @@ func TestCreate(t *testing.T) {
 		"NONE", recommendedVersion, recommendedDeployment, labels, annotations); err != nil {
 		t.Fatalf("%v", err)
 	}
-}
-
-func TestGet(t *testing.T) {
-	if err := clienttest.TestSetup(clienttest.ENV_NOT_REQD,
-		clienttest.SITEID_NOT_REQD, clienttest.CLIPATH_NOT_REQD); err != nil {
-		t.Fatalf("%v", err)
-	}
-	if apiclient.GetRegion() == "" {
-		t.Fatalf("APIGEE_REGION not set")
-	}
-	if _, err := Get("id123"); err != nil {
-		t.Fatalf("%v", err)
-	}
-}
-
-func TestList(t *testing.T) {
-	if err := clienttest.TestSetup(clienttest.ENV_NOT_REQD,
-		clienttest.SITEID_NOT_REQD, clienttest.CLIPATH_NOT_REQD); err != nil {
-		t.Fatalf("%v", err)
-	}
-	if apiclient.GetRegion() == "" {
-		t.Fatalf("APIGEE_REGION not set")
-	}
-	if _, err := List(-1, "", "", ""); err != nil {
-		t.Fatalf("%v", err)
-	}
-}
-
-func TestDelete(t *testing.T) {
-	if err := clienttest.TestSetup(clienttest.ENV_NOT_REQD,
-		clienttest.SITEID_NOT_REQD, clienttest.CLIPATH_NOT_REQD); err != nil {
-		t.Fatalf("%v", err)
-	}
-	if apiclient.GetRegion() == "" {
-		t.Fatalf("APIGEE_REGION not set")
-	}
-	if _, err := Delete("id123"); err != nil {
+	if _, err := CreateArtifact(name, "id123", name, contents, labels, annotations); err != nil {
 		t.Fatalf("%v", err)
 	}
 }

@@ -15,8 +15,9 @@
 package sites
 
 import (
-	"internal/client/clienttest"
 	"testing"
+
+	"internal/client/clienttest"
 )
 
 func TestListSites(t *testing.T) {

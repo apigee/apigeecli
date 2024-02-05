@@ -15,11 +15,12 @@
 package flowhooks
 
 import (
-	"internal/client/clienttest"
-	"internal/client/sharedflows"
 	"os"
 	"path"
 	"testing"
+
+	"internal/client/clienttest"
+	"internal/client/sharedflows"
 )
 
 var cliPath = os.Getenv("APIGEECLI_PATH")

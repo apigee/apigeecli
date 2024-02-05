@@ -15,10 +15,11 @@
 package appgroups
 
 import (
-	"internal/client/clienttest"
-	"internal/client/products"
 	"os"
 	"testing"
+
+	"internal/client/clienttest"
+	"internal/client/products"
 )
 
 const (

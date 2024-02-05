@@ -15,8 +15,9 @@
 package operations
 
 import (
-	"internal/client/clienttest"
 	"testing"
+
+	"internal/client/clienttest"
 )
 
 func TestList(t *testing.T) {

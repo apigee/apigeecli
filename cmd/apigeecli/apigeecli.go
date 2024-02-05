@@ -1,4 +1,4 @@
-// Copyright 2024 Google LLC
+// Copyright 2020 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,20 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package cache
+package main
 
 import (
-	"testing"
+	"fmt"
+	"os"
 
-	"internal/client/clienttest"
+	"internal/cmd"
 )
 
-func TestList(t *testing.T) {
-	if err := clienttest.TestSetup(clienttest.ENV_REQD,
-		clienttest.SITEID_NOT_REQD, clienttest.CLIPATH_NOT_REQD); err != nil {
-		t.Fatalf("%v", err)
-	}
-	if _, err := List(); err != nil {
-		t.Fatalf("%v", err)
+// https://goreleaser.com/cookbooks/using-main.version/?h=ldflags
+var (
+	version = "dev"
+	commit  = "none"
+	date    = "unknown"
+)
+
+func main() {
+	rootCmd := cmd.GetRootCmd()
+	rootCmd.Version = fmt.Sprintf("%s date: %s [commit: %.7s]", version, date, commit)
+
+	if err := rootCmd.Execute(); err != nil {
+		os.Exit(1)
 	}
 }

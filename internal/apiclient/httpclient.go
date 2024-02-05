@@ -93,6 +93,9 @@ func PostHttpZip(auth bool, method string, url string, headers map[string]string
 		}
 	}
 
+	printHeaders(req.Header)
+
+	// Send the request
 	resp, err := ApigeeAPIClient.Do(req)
 	if err != nil {
 		clilog.Error.Println("error connecting: ", err)
@@ -217,6 +220,7 @@ func DownloadFile(url string, auth bool) (resp *http.Response, err error) {
 		clilog.Error.Println("error in response: Response was null")
 		return nil, fmt.Errorf("error in response: Response was null")
 	}
+	printHeaders(resp.Header)
 	return resp, err
 }
 
@@ -323,7 +327,7 @@ func HttpClient(params ...string) (respBody []byte, err error) {
 	if DryRun() {
 		return nil, nil
 	}
-
+	printHeaders(req.Header)
 	resp, err := ApigeeAPIClient.Do(req)
 	if err != nil {
 		clilog.Error.Println("error connecting: ", err)
@@ -439,7 +443,6 @@ func SetAuthHeader(req *http.Request) (*http.Request, error) {
 			return nil, err
 		}
 	}
-	clilog.Debug.Println("Setting token : ", GetApigeeToken())
 	req.Header.Add("Authorization", "Bearer "+GetApigeeToken())
 	return req, nil
 }
@@ -453,6 +456,8 @@ func handleResponse(resp *http.Response) (respBody []byte, err error) {
 		clilog.Error.Println("error in response: Response was null")
 		return nil, nil
 	}
+
+	printHeaders(resp.Header)
 
 	respBody, err = io.ReadAll(resp.Body)
 	if err != nil {
@@ -496,4 +501,15 @@ func getErrorMessage(statusCode int) string {
 	default:
 		return "unknown error"
 	}
+}
+
+func printHeaders(httpHeaders http.Header) {
+	headers := make(map[string]string)
+	for headerName, headerValues := range httpHeaders {
+		for _, value := range headerValues {
+			headers[headerName] = value
+		}
+	}
+	jsonHeaders, _ := json.Marshal(headers)
+	clilog.Debug.Println(string(jsonHeaders))
 }

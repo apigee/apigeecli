@@ -15,9 +15,10 @@
 package kvm
 
 import (
+	"testing"
+
 	"internal/apiclient"
 	"internal/client/clienttest"
-	"testing"
 )
 
 const (
@@ -49,7 +50,6 @@ func TestCreateEntry(t *testing.T) {
 }
 
 func TestGetEntry(t *testing.T) {
-
 	if err := clienttest.TestSetup(clienttest.ENV_REQD,
 		clienttest.SITEID_NOT_REQD, clienttest.CLIPATH_REQD); err != nil {
 		t.Fatalf("%v", err)
@@ -78,7 +78,6 @@ func TestGetEntry(t *testing.T) {
 }
 
 func TestUpdateEntry(t *testing.T) {
-
 	env := apiclient.GetApigeeEnv()
 	apiclient.SetApigeeEnv("")
 
@@ -102,7 +101,6 @@ func TestUpdateEntry(t *testing.T) {
 }
 
 func TestListEntries(t *testing.T) {
-
 	if err := clienttest.TestSetup(clienttest.ENV_REQD,
 		clienttest.SITEID_NOT_REQD, clienttest.CLIPATH_REQD); err != nil {
 		t.Fatalf("%v", err)
@@ -131,7 +129,6 @@ func TestListEntries(t *testing.T) {
 }
 
 func TestDeleteEntry(t *testing.T) {
-
 	if err := clienttest.TestSetup(clienttest.ENV_REQD,
 		clienttest.SITEID_NOT_REQD, clienttest.CLIPATH_REQD); err != nil {
 		t.Fatalf("%v", err)

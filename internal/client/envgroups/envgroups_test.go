@@ -15,9 +15,10 @@
 package envgroups
 
 import (
-	"internal/client/clienttest"
 	"os"
 	"testing"
+
+	"internal/client/clienttest"
 )
 
 const name = "test"

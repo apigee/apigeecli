@@ -15,8 +15,9 @@
 package targetservers
 
 import (
-	"internal/client/clienttest"
 	"testing"
+
+	"internal/client/clienttest"
 )
 
 const name = "test"

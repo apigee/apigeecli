@@ -16,19 +16,22 @@ package bundlegen
 
 import (
 	"fmt"
-	"internal/client/clienttest"
 	"os"
 	"path"
 	"regexp"
 	"testing"
+
+	"internal/client/clienttest"
 )
 
 var cliPath = os.Getenv("APIGEECLI_PATH")
 
-var specNames = []string{"petstore-v3.1.yaml",
+var specNames = []string{
+	"petstore-v3.1.yaml",
 	"md-ext1.yaml",
 	"windfarm3-quota.yaml",
-	"open_weather_api.yaml"}
+	"open_weather_api.yaml",
+}
 
 func TestSpecs(t *testing.T) {
 	for _, specName := range specNames {

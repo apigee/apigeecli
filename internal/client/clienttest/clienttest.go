@@ -16,8 +16,9 @@ package clienttest
 
 import (
 	"fmt"
-	"internal/apiclient"
 	"os"
+
+	"internal/apiclient"
 )
 
 type TestRequirements uint8

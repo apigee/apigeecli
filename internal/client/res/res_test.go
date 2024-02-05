@@ -15,10 +15,11 @@
 package res
 
 import (
-	"internal/client/clienttest"
 	"os"
 	"path"
 	"testing"
+
+	"internal/client/clienttest"
 )
 
 var cliPath = os.Getenv("APIGEECLI_PATH")

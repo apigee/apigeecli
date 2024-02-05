@@ -15,9 +15,10 @@
 package env
 
 import (
+	"testing"
+
 	"internal/apiclient"
 	"internal/client/clienttest"
-	"testing"
 )
 
 const name = "unittest-env"

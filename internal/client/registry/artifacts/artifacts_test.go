@@ -16,12 +16,13 @@ package artifacts
 
 import (
 	"encoding/base64"
-	"internal/apiclient"
-	"internal/client/clienttest"
-	"internal/cmd/utils"
 	"os"
 	"path"
 	"testing"
+
+	"internal/apiclient"
+	"internal/client/clienttest"
+	"internal/cmd/utils"
 )
 
 var cliPath = os.Getenv("APIGEECLI_PATH")

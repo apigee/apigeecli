@@ -15,11 +15,12 @@
 package keyaliases
 
 import (
-	"internal/client/clienttest"
-	"internal/client/keystores"
 	"os"
 	"path"
 	"testing"
+
+	"internal/client/clienttest"
+	"internal/client/keystores"
 )
 
 const (

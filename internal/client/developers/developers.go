@@ -204,7 +204,8 @@ func GetApps(name string, expand bool) (respBody []byte, err error) {
 
 // List
 func List(count int, expand bool, ids string, startKey string,
-	app string, includeCompany bool) (respBody []byte, err error) {
+	app string, includeCompany bool,
+) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers")
 	q := u.Query()
@@ -233,7 +234,6 @@ func List(count int, expand bool, ids string, startKey string,
 
 // Export
 func Export() (respBody []byte, err error) {
-
 	// don't print to sysout
 	apiclient.ClientPrintHttpResponse.Set(false)
 	devs := Appdevelopers{}

@@ -30,3 +30,5 @@ remote-service.*
 !test/*.json
 !test/*.yaml
 !test/*.zip
+!cmd/apigeecli*
+!internal/apigeecli*
