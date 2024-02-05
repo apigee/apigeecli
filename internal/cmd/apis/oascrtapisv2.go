@@ -146,7 +146,7 @@ var OasCreatev2Cmd = &cobra.Command{
 					return err
 				}
 				if wait {
-					return Wait(name, revision)
+					return apis.Wait(name, revision)
 				}
 			}
 		}

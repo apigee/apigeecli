@@ -91,7 +91,7 @@ var BundleCreateCmd = &cobra.Command{
 				return err
 			}
 			if wait {
-				return Wait(name, revision)
+				return apis.Wait(name, revision)
 			}
 		}
 		return err

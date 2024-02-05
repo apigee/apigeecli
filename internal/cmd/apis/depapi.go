@@ -49,7 +49,7 @@ var DepCmd = &cobra.Command{
 		}
 
 		if wait {
-			err = Wait(name, revision)
+			err = apis.Wait(name, revision)
 		}
 		return err
 	},
@@ -59,8 +59,6 @@ var (
 	overrides, wait, sequencedRollout, safeDeploy bool
 	serviceAccountName                            string
 )
-
-const interval = 10
 
 func init() {
 	DepCmd.Flags().StringVarP(&name, "name", "n",

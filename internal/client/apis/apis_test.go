@@ -86,14 +86,15 @@ func TestGenerateDeployChangeReport(t *testing.T) {
 	}
 }
 
-func TestGenerateUndeployChangeReport(t *testing.T) {
+func TestDeployProxy(t *testing.T) {
 	if err := clienttest.TestSetup(clienttest.ENV_REQD,
 		clienttest.SITEID_NOT_REQD, clienttest.CLIPATH_NOT_REQD); err != nil {
 		t.Fatalf("%v", err)
 	}
-	if _, err := GenerateUndeployChangeReport(proxyName, 1); err != nil {
+	if _, err := DeployProxy(proxyName, 1, false, false, false, ""); err != nil {
 		t.Fatalf("%v", err)
 	}
+	Wait(proxyName, 1)
 }
 
 func TestListProxies(t *testing.T) {
@@ -126,12 +127,12 @@ func TestListProxyRevisionDeployments(t *testing.T) {
 	}
 }
 
-func TestDeployProxy(t *testing.T) {
+func TestGenerateUndeployChangeReport(t *testing.T) {
 	if err := clienttest.TestSetup(clienttest.ENV_REQD,
 		clienttest.SITEID_NOT_REQD, clienttest.CLIPATH_NOT_REQD); err != nil {
 		t.Fatalf("%v", err)
 	}
-	if _, err := DeployProxy(proxyName, 1, false, false, false, ""); err != nil {
+	if _, err := GenerateUndeployChangeReport(proxyName, 1); err != nil {
 		t.Fatalf("%v", err)
 	}
 }
@@ -141,7 +142,7 @@ func TestUndeployProxy(t *testing.T) {
 		clienttest.SITEID_NOT_REQD, clienttest.CLIPATH_NOT_REQD); err != nil {
 		t.Fatalf("%v", err)
 	}
-	if _, err := UndeployProxy(proxyName, 1, true); err != nil {
+	if _, err := UndeployProxy(proxyName, 1, false); err != nil {
 		t.Fatalf("%v", err)
 	}
 }
@@ -170,7 +171,7 @@ func TestDeleteProxyRevision(t *testing.T) {
 	if _, err := CreateProxy(proxyName, ""); err != nil {
 		t.Fatalf("%v", err)
 	}
-	if _, err := DeleteProxyRevision(proxyName, 1); err != nil {
+	if _, err := DeleteProxyRevision(proxyName, 2); err != nil {
 		t.Fatalf("%v", err)
 	}
 }

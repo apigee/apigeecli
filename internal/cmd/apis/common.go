@@ -18,11 +18,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
-	"time"
-
-	"internal/apiclient"
-	"internal/client/apis"
-	"internal/clilog"
 )
 
 const deploymentMsg = "When set to true, generateDeployChangeReport will be executed and " +
@@ -40,41 +35,4 @@ func GetRevision(respBody []byte) (revision int, err error) {
 		return -1, err
 	}
 	return apiProxyRev, nil
-}
-
-func Wait(name string, revision int) error {
-	var err error
-
-	clilog.Info.Printf("Checking deployment status in %d seconds\n", interval)
-
-	apiclient.DisableCmdPrintHttpResponse()
-
-	stop := apiclient.Every(interval*time.Second, func(time.Time) bool {
-		var respBody []byte
-		respMap := make(map[string]interface{})
-		if respBody, err = apis.ListProxyRevisionDeployments(name, revision); err != nil {
-			clilog.Error.Printf("Error fetching proxy revision status: %v", err)
-			return false
-		}
-
-		if err = json.Unmarshal(respBody, &respMap); err != nil {
-			return true
-		}
-
-		switch respMap["state"] {
-		case "PROGRESSING":
-			clilog.Info.Printf("Proxy deployment status is: %s. Waiting %d seconds.\n", respMap["state"], interval)
-			return true
-		case "READY":
-			clilog.Info.Println("Proxy deployment completed with status: ", respMap["state"])
-		default:
-			clilog.Info.Println("Proxy deployment failed with status: ", respMap["state"])
-		}
-
-		return false
-	})
-
-	<-stop
-
-	return err
 }
