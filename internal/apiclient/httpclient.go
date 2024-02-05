@@ -205,7 +205,7 @@ func DownloadFile(url string, auth bool) (resp *http.Response, err error) {
 			return nil, err
 		}
 	}
-
+	printHeaders(req.Header)
 	resp, err = ApigeeAPIClient.Do(req)
 
 	if err != nil {
@@ -321,7 +321,6 @@ func HttpClient(params ...string) (respBody []byte, err error) {
 		return nil, err
 	}
 
-	clilog.Debug.Println("Content-Type : ", contentType)
 	req.Header.Set("Content-Type", contentType)
 
 	if DryRun() {
