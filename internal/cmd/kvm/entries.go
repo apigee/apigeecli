@@ -34,4 +34,5 @@ func init() {
 	EntryCmd.AddCommand(ListEntryCmd)
 	EntryCmd.AddCommand(ExpEntryCmd)
 	EntryCmd.AddCommand(ImpEntryCmd)
+	EntryCmd.AddCommand(UpdateEntryCmd)
 }
