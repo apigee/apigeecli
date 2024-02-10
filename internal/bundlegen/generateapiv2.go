@@ -123,12 +123,7 @@ func GenerateAPIProxyDefFromOASv2(name string,
 	oasDocName string,
 	skipPolicy bool,
 	addCORS bool,
-	integrationEndpoint bool,
-	oasGoogleAcessTokenScopeLiteral string,
-	oasGoogleIDTokenAudLiteral string,
-	oasGoogleIDTokenAudRef string,
-	oasTargetURLRef string,
-	targetURL string,
+	targetOptions TargetOptions,
 ) (err error) {
 	if docModel == nil {
 		return fmt.Errorf("the Open API document not loaded")
@@ -147,13 +142,13 @@ func GenerateAPIProxyDefFromOASv2(name string,
 	apiproxy.SetCreatedAt()
 	apiproxy.SetLastModifiedAt()
 	apiproxy.SetConfigurationVersion()
-	if integrationEndpoint {
-		apiproxy.AddIntegrationEndpoint("default")
+	if targetOptions.IntegrationBackend.IntegrationName != "" {
+		apiproxy.AddIntegrationEndpoint(DEFAULT)
 	} else {
-		apiproxy.AddTargetEndpoint(NoAuthTargetName)
+		apiproxy.AddTargetEndpoint(DEFAULT)
 	}
 
-	apiproxy.AddProxyEndpoint("default")
+	apiproxy.AddProxyEndpoint(DEFAULT)
 
 	if !skipPolicy {
 		apiproxy.AddResource(oasDocName, "oas")
@@ -177,32 +172,44 @@ func GenerateAPIProxyDefFromOASv2(name string,
 	}
 
 	// decide on the type of target
-	if integrationEndpoint { // assume an integration endpoint
+	if targetOptions.IntegrationBackend.IntegrationName != "" { // assume an integration endpoint
 		proxies.AddStepToPreFlowRequest("set-integration-request")
 		apiproxy.AddPolicy("set-integration-request")
 		proxies.NewProxyEndpoint(u.Path, false)
 	} else {
-		// if target is not set, derive it from the OAS file
-		if targetURL == "" {
-			targets.NewTargetEndpoint(NoAuthTargetName,
+		// step 1. check for target server
+		if targetOptions.HttpBackend.TargetServerName != "" {
+			targets.NewTargetEndpoint(DEFAULT,
+				"",
+				u.Path,
+				targetOptions.HttpBackend.TargetServerName,
+				targetOptions.HttpBackend.OasGoogleAcessTokenScopeLiteral,
+				targetOptions.HttpBackend.OasGoogleIDTokenAudLiteral,
+				targetOptions.HttpBackend.OasGoogleIDTokenAudRef)
+		} else if targetOptions.HttpBackend.TargetURL == "" { // step 2. check for target url
+			targets.NewTargetEndpoint(DEFAULT,
 				u.Scheme+"://"+u.Hostname()+u.Path,
-				oasGoogleAcessTokenScopeLiteral,
-				oasGoogleIDTokenAudLiteral,
-				oasGoogleIDTokenAudRef)
+				"",
+				"",
+				targetOptions.HttpBackend.OasGoogleAcessTokenScopeLiteral,
+				targetOptions.HttpBackend.OasGoogleIDTokenAudLiteral,
+				targetOptions.HttpBackend.OasGoogleIDTokenAudRef)
 		} else { // an explicit target url is set
-			if _, err = url.Parse(targetURL); err != nil {
+			if _, err = url.Parse(targetOptions.HttpBackend.TargetURL); err != nil {
 				return fmt.Errorf("invalid target url: %v", err)
 			}
-			targets.NewTargetEndpoint(NoAuthTargetName,
-				targetURL,
-				oasGoogleAcessTokenScopeLiteral,
-				oasGoogleIDTokenAudLiteral,
-				oasGoogleIDTokenAudRef)
+			targets.NewTargetEndpoint(DEFAULT,
+				targetOptions.HttpBackend.TargetURL,
+				"",
+				"",
+				targetOptions.HttpBackend.OasGoogleAcessTokenScopeLiteral,
+				targetOptions.HttpBackend.OasGoogleIDTokenAudLiteral,
+				targetOptions.HttpBackend.OasGoogleIDTokenAudRef)
 		}
 
 		// set a dynamic target url
-		if oasTargetURLRef != "" {
-			targets.AddStepToPreFlowRequest("Set-Target-1", NoAuthTargetName)
+		if targetOptions.HttpBackend.OasTargetURLRef != "" {
+			targets.AddStepToPreFlowRequest("Set-Target-1", DEFAULT)
 			apiproxy.AddPolicy("Set-Target-1")
 			generateSetTarget = true
 		}

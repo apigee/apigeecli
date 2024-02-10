@@ -38,6 +38,7 @@ import (
 
 	"github.com/getkin/kin-openapi/openapi2"
 	"github.com/ghodss/yaml"
+	"github.com/mitchellh/mapstructure"
 )
 
 type backendDef struct {
@@ -48,30 +49,39 @@ type backendDef struct {
 	Deadline        int // seconds
 }
 
+type quotaConfiguration struct {
+	Limits []limit `json:"limits"`
+}
+
+type limit struct {
+	Name   string             `json:"name"`
+	Metric string             `json:"metric"`
+	Unit   string             `json:"unit"`
+	Values map[string]float64 `json:"values"`
+}
+
+type metricsConfiguration struct {
+	Metrics []metric `json:"metrics"`
+}
+
+type metric struct {
+	Name        string `json:"name"`
+	DisplayName string `json:"displayName"`
+	ValueType   string `json:"valueType"`
+	MetricKind  string `json:"metricKind"`
+}
+
 type googleManagementDef struct {
-	Metrics interface{}
-	Quota   googleLimitsDef
-}
-
-type googleLimitsDef struct {
-	Limits []googleLimitDef
-}
-
-type googleLimitDef struct {
-	Name   string
-	Metric string
-	Unit   string
-	Value  ValueDef
-}
-
-type ValueDef struct {
-	Standard string
+	//Quota   quotaConfiguration   `json:"quota"`
+	Quota map[interface{}]interface{} `json:"quota"`
+	//Metrics metricsConfiguration `json:"metrics"`
+	Metrics map[interface{}]interface{} `json:"metrics"`
 }
 
 var doc2 *openapi2.T
 
 const (
-	NoAuthTargetName     = "default"
+	DEFAULT              = "default"
 	GoogleAuthTargetName = "google-auth"
 )
 
@@ -535,16 +545,16 @@ func generateSwaggerFlows(paths map[string]*openapi2.PathItem) (err error) {
 				if pathDetail.Backend != (backendDef{}) {
 					if pathDetail.Backend.JwtAudience != "" {
 						if !targets.IsExists(GoogleAuthTargetName) {
-							targets.NewTargetEndpoint(GoogleAuthTargetName, pathDetail.Backend.Address, "", pathDetail.Backend.JwtAudience, "")
+							targets.NewTargetEndpoint(GoogleAuthTargetName, pathDetail.Backend.Address, "", "", "", pathDetail.Backend.JwtAudience, "")
 						}
 						if err = targets.AddFlow(GoogleAuthTargetName, pathDetail.OperationID, replacePathWithWildCard(pathName), method, pathDetail.Description); err != nil {
 							return err
 						}
 					} else {
-						if !targets.IsExists(NoAuthTargetName) {
-							targets.NewTargetEndpoint(NoAuthTargetName, pathDetail.Backend.Address, "", "", "")
+						if !targets.IsExists(DEFAULT) {
+							targets.NewTargetEndpoint(DEFAULT, pathDetail.Backend.Address, "", "", "", "", "")
 						}
-						if err = targets.AddFlow(NoAuthTargetName, pathDetail.OperationID, replacePathWithWildCard(pathName), method, pathDetail.Description); err != nil {
+						if err = targets.AddFlow(DEFAULT, pathDetail.OperationID, replacePathWithWildCard(pathName), method, pathDetail.Description); err != nil {
 							return err
 						}
 					}
@@ -557,7 +567,7 @@ func generateSwaggerFlows(paths map[string]*openapi2.PathItem) (err error) {
 							return err
 						}
 					} else {
-						if err = targets.AddStepToFlowRequest(NoAuthTargetName, "AM-"+pathDetail.OperationID, pathDetail.OperationID); err != nil {
+						if err = targets.AddStepToFlowRequest(DEFAULT, "AM-"+pathDetail.OperationID, pathDetail.OperationID); err != nil {
 							return err
 						}
 					}
@@ -592,7 +602,7 @@ func generateSwaggerFlows(paths map[string]*openapi2.PathItem) (err error) {
 				}
 			}
 			// TODO: assumes only 1 quota policy
-			if pathDetail.Quota[0].QuotaEnabled {
+			if len(pathDetail.Quota) > 0 && pathDetail.Quota[0].QuotaEnabled {
 				if err = proxies.AddStepToFlowRequest("Quota-"+pathDetail.Quota[0].QuotaName, pathDetail.OperationID); err != nil {
 					return err
 				}
@@ -606,11 +616,10 @@ func parseBackendExtension(i interface{}, operation bool) (backendDef, error) {
 	backend := backendDef{}
 	var jsonMap map[string]interface{}
 	var disableAuth string
+	var ok bool
 
-	str := fmt.Sprintf("%s", i)
-
-	if err := json.Unmarshal([]byte(str), &jsonMap); err != nil {
-		return backendDef{}, err
+	if jsonMap, ok = i.(map[string]interface{}); !ok {
+		return backend, fmt.Errorf("error parsing backend extension %s: %v", i, ok)
 	}
 
 	if jsonMap["address"] != "" {
@@ -688,34 +697,52 @@ func parseApiExtension(i interface{}) (string, error) {
 }
 
 func parseManagementExtension(i interface{}) error {
-	googMgmt = googleManagementDef{}
-	str := fmt.Sprintf("%s", i)
+	var googMgmt map[string]interface{}
+	var ok bool
 
-	clilog.Debug.Printf("Raw x-google-management: %s\n", str)
-
-	if err := json.Unmarshal([]byte(str), &googMgmt); err != nil {
-		return err
+	if googMgmt, ok = i.(map[string]interface{}); !ok {
+		return fmt.Errorf("error parsing management extension %s: %v", fmt.Sprintf("%s", i), ok)
 	}
 
-	for _, limit := range googMgmt.Quota.Limits {
-		quota := quotaDef{}
-		quota.QuotaName = limit.Metric
-		quota.QuotaTimeUnitLiteral = "minute"
-		quota.QuotaIntervalLiteral = "1"
-		quota.QuotaAllowLiteral = limit.Value.Standard
-		clilog.Debug.Printf("Found quota definition: %v\n", quota)
-		quotaList = append(quotaList, quota)
+	if googMgmt["quota"] != nil {
+		var limitMap map[string]interface{}
+		if limitMap, ok = googMgmt["quota"].(map[string]interface{}); !ok {
+			return fmt.Errorf("error parsing quota extension %s: %v", fmt.Sprintf("%s", googMgmt["quota"]), ok)
+		}
+		qc := quotaConfiguration{}
+		if err := mapstructure.Decode(limitMap, &qc); err != nil {
+			return fmt.Errorf("error parsing limits in quota extension %s: %v", fmt.Sprintf("%s", limitMap), ok)
+		}
+		for _, limit := range qc.Limits {
+			quota := quotaDef{}
+			quota.QuotaName = limit.Metric
+			quota.QuotaTimeUnitLiteral = "minute"
+			quota.QuotaIntervalLiteral = "1"
+			quota.QuotaAllowLiteral = fmt.Sprintf("%.0f", limit.Values["STANDARD"])
+			quota.QuotaAllowRef = "Allow"
+			quota.QuotaConfigStepName = "Quota-" + quota.QuotaName
+			clilog.Debug.Printf("Found quota definition: %v\n", quota)
+			quotaList = append(quotaList, quota)
+		}
+	}
+	if googMgmt["metrics"] != nil {
+		mc := []metricsConfiguration{}
+		if err := mapstructure.Decode(googMgmt["metrics"], &mc); err != nil {
+			return fmt.Errorf("error parsing metrics extension %s: %v", fmt.Sprintf("%s", googMgmt["metrics"]), err)
+		}
+		clilog.Debug.Printf("Found metrics definition: %v\n", mc)
 	}
 	return nil
 }
 
 func parseQuotaExtension(i interface{}) (quotaDef, error) {
 	var jsonMap map[string]interface{}
+	var ok bool
 
 	str := fmt.Sprintf("%s", i)
 
-	if err := json.Unmarshal([]byte(str), &jsonMap); err != nil {
-		return quotaDef{}, err
+	if jsonMap, ok = i.(map[string]interface{}); !ok {
+		return quotaDef{}, fmt.Errorf("error parsing quota extension: %s", str)
 	}
 
 	// search defined quota
@@ -767,7 +794,7 @@ func processPathSwaggerExtensions(extensions map[string]interface{}, pathDetail 
 			if backend.JwtAudience != "" {
 				proxies.AddRoute(pathDetail.OperationID, GoogleAuthTargetName, getConditionString(pathDetail.Path, pathDetail.Verb))
 			} else {
-				proxies.AddRoute(pathDetail.OperationID, NoAuthTargetName, getConditionString(pathDetail.Path, pathDetail.Verb))
+				proxies.AddRoute(pathDetail.OperationID, DEFAULT, getConditionString(pathDetail.Path, pathDetail.Verb))
 			}
 			pathDetail.AssignMessage = policies.AddSetTargetEndpoint("AM-"+pathDetail.OperationID, backend.Address, backend.PathTranslation)
 			setAMPolicy(pathDetail.OperationID, pathDetail.AssignMessage)
@@ -813,7 +840,7 @@ func addBackend(backend backendDef) (err error) {
 		if !targets.IsExists(GoogleAuthTargetName) {
 			clilog.Debug.Println("Adding Google Auth Target Server")
 			apiproxy.AddTargetEndpoint(GoogleAuthTargetName)
-			targets.NewTargetEndpoint(GoogleAuthTargetName, backend.Address, "", backend.JwtAudience, "")
+			targets.NewTargetEndpoint(GoogleAuthTargetName, backend.Address, "", "", "", backend.JwtAudience, "")
 			// at the moment one cannot have different deadlines per target.
 			if backend.Deadline > 0 {
 				targets.AddTargetEndpointProperty(GoogleAuthTargetName, "connect.timeout.millis", fmt.Sprintf("%d", backend.Deadline*1000))
@@ -822,13 +849,13 @@ func addBackend(backend backendDef) (err error) {
 			clilog.Debug.Println("Google Auth Target Server already exists")
 		}
 	} else {
-		if !targets.IsExists(NoAuthTargetName) {
+		if !targets.IsExists(DEFAULT) {
 			clilog.Debug.Println("Adding Default Target Server")
-			apiproxy.AddTargetEndpoint(NoAuthTargetName)
-			targets.NewTargetEndpoint(NoAuthTargetName, backend.Address, "", "", "")
+			apiproxy.AddTargetEndpoint(DEFAULT)
+			targets.NewTargetEndpoint(DEFAULT, backend.Address, "", "", "", "", "")
 			// at the moment one cannot have different deadlines per target.
 			if backend.Deadline > 0 {
-				targets.AddTargetEndpointProperty(NoAuthTargetName, "connect.timeout.millis", fmt.Sprintf("%d", backend.Deadline*1000))
+				targets.AddTargetEndpointProperty(DEFAULT, "connect.timeout.millis", fmt.Sprintf("%d", backend.Deadline*1000))
 			}
 		} else {
 			clilog.Debug.Println("Default Target Server already exists")

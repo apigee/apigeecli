@@ -122,7 +122,7 @@ var OasCreateCmd = &cobra.Command{
 }
 
 var (
-	oasFile, oasURI, targetURL                                                          string
+	oasFile, oasURI, targetURL, targetServerName                                        string
 	oasGoogleAcessTokenScopeLiteral, oasGoogleIDTokenAudLiteral, oasGoogleIDTokenAudRef string
 	validateSpec, formatValidation                                                      bool
 )

@@ -36,8 +36,8 @@ func GenerateAPIProxyDefFromGQL(name string,
 	apiproxy.SetCreatedAt()
 	apiproxy.SetLastModifiedAt()
 	apiproxy.SetConfigurationVersion()
-	apiproxy.AddTargetEndpoint(NoAuthTargetName)
-	apiproxy.AddProxyEndpoint("default")
+	apiproxy.AddTargetEndpoint(DEFAULT)
+	apiproxy.AddProxyEndpoint(DEFAULT)
 
 	apiproxy.SetDescription("Generated API Proxy from " + gqlDocName)
 
@@ -55,17 +55,17 @@ func GenerateAPIProxyDefFromGQL(name string,
 
 	// if target is not set, add a default/fake endpoint
 	if targetUrl == "" {
-		targets.NewTargetEndpoint(NoAuthTargetName, "https://api.example.com", "", "", "")
+		targets.NewTargetEndpoint(DEFAULT, "https://api.example.com", "", "", "", "", "")
 	} else { // an explicit target url is set
 		if _, err = url.Parse(targetUrl); err != nil {
 			return fmt.Errorf("invalid target url: %v", err)
 		}
-		targets.NewTargetEndpoint(NoAuthTargetName, targetUrl, "", "", "")
+		targets.NewTargetEndpoint(DEFAULT, targetUrl, "", "", "", "", "")
 	}
 
 	// set a dynamic target url
 	if targetUrlRef != "" {
-		targets.AddStepToPreFlowRequest("Set-Target-1", NoAuthTargetName)
+		targets.AddStepToPreFlowRequest("Set-Target-1", DEFAULT)
 		apiproxy.AddPolicy("Set-Target-1")
 		generateSetTarget = true
 	}

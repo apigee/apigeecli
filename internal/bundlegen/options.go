@@ -25,6 +25,7 @@ type HttpBackendOptions struct {
 	OasGoogleIDTokenAudRef          string
 	OasTargetURLRef                 string
 	TargetURL                       string
+	TargetServerName                string
 }
 
 type TargetOptions struct {

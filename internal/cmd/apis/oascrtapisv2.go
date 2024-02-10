@@ -51,6 +51,10 @@ var OasCreatev2Cmd = &cobra.Command{
 		if (targetURL != "" || targetURLRef != "") && (integration != "" || apitrigger != "") {
 			return fmt.Errorf("integration or apitrigger cannot be set if targetURL or targetURLRef is set")
 		}
+		if targetURL != "" && targetServerName != "" {
+			return fmt.Errorf("targetURL and targetServerName cannot be set at the same time")
+		}
+
 		if env != "" {
 			apiclient.SetApigeeEnv(env)
 		}
@@ -59,8 +63,6 @@ var OasCreatev2Cmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		var content []byte
-
-		integrationEndpoint := false
 
 		if oasFile != "" {
 			err = checkFolder()
@@ -94,12 +96,8 @@ var OasCreatev2Cmd = &cobra.Command{
 				OasGoogleIDTokenAudRef:          oasGoogleIDTokenAudRef,
 				OasTargetURLRef:                 targetURLRef,
 				TargetURL:                       targetURL,
+				TargetServerName:                targetServerName,
 			},
-		}
-
-		// check if integrationEndpoint is selected
-		if integration != "" {
-			integrationEndpoint = true
 		}
 
 		// Generate the apiproxy struct
@@ -108,12 +106,7 @@ var OasCreatev2Cmd = &cobra.Command{
 			specName,
 			skipPolicy,
 			addCORS,
-			integrationEndpoint,
-			oasGoogleAcessTokenScopeLiteral,
-			oasGoogleIDTokenAudLiteral,
-			oasGoogleIDTokenAudRef,
-			targetURLRef,
-			targetURL)
+			targetOptions)
 
 		if err != nil {
 			return err
@@ -178,6 +171,8 @@ func init() {
 		"", "Set a reference variable containing the target endpoint")
 	OasCreatev2Cmd.Flags().StringVarP(&targetURL, "target-url", "",
 		"", "Set a target URL for the target endpoint")
+	OasCreatev2Cmd.Flags().StringVarP(&targetServerName, "target-server-name", "",
+		"", "Set a target server name for the target endpoint")
 	OasCreatev2Cmd.Flags().StringVarP(&integration, "integration", "i",
 		"", "Integration name")
 	OasCreatev2Cmd.Flags().StringVarP(&apitrigger, "trigger", "",
