@@ -13,3 +13,46 @@
 // limitations under the License.
 
 package bundlegen
+
+import (
+	"fmt"
+	"internal/client/clienttest"
+	"path"
+	"testing"
+)
+
+var swagSpecNames = []string{
+	"dynamicroute_swagger.json",
+	"endpoints1.yaml",
+	"endpoints2.yaml",
+}
+
+var oasDocName string
+
+func TestSwagSpecs(t *testing.T) {
+	for _, specName := range swagSpecNames {
+		fmt.Println("Testing " + specName + " ...")
+		testLoadSwaggerFromFile(specName, t)
+		testGenerateAPIProxyFromSwagger(t)
+	}
+}
+
+func testLoadSwaggerFromFile(specName string, t *testing.T) {
+	var err error
+	if err = clienttest.TestSetup(clienttest.ENV_NOT_REQD,
+		clienttest.SITEID_NOT_REQD, clienttest.CLIPATH_REQD); err != nil {
+		t.Fatalf("%v", err)
+	}
+	if oasDocName, _, err = LoadSwaggerFromFile(path.Join(cliPath, "test", specName)); err != nil {
+		t.Fatalf("%v", err)
+	}
+}
+
+func testGenerateAPIProxyFromSwagger(t *testing.T) {
+	name := "test"
+	basePath := ""
+	addCORS := true
+	if _, err := GenerateAPIProxyFromSwagger(name, oasDocName, basePath, addCORS); err != nil {
+		t.Fatalf("%v", err)
+	}
+}
