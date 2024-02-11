@@ -45,7 +45,7 @@ type properties struct {
 
 type httpTargetConnectionDef struct {
 	Authentication *authenticationDef `xml:"Authentication"`
-	URL            string             `xml:"URL"`
+	URL            *string            `xml:"URL"`
 	LoadBalancer   *loadBalancerDef   `xml:"LoadBalancer,omitempty"`
 	Path           *string            `xml:"Path,omitempty"`
 	Properties     properties         `xml:"Properties"`
@@ -123,7 +123,8 @@ func NewTargetEndpoint(name string, endpoint string, targetServerBasePath string
 	targetEndpoint.PostFlow.Name = "PostFlow"
 
 	if endpoint != "" {
-		targetEndpoint.HTTPTargetConnection.URL = endpoint
+		targetEndpoint.HTTPTargetConnection.URL = new(string)
+		*targetEndpoint.HTTPTargetConnection.URL = endpoint
 	} else if targetServerName != "" {
 		targetEndpoint.HTTPTargetConnection.LoadBalancer = new(loadBalancerDef)
 		targetEndpoint.HTTPTargetConnection.LoadBalancer.Server = make([]serverDef, 1)
