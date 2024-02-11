@@ -35,6 +35,12 @@ x-google-management:
         unit: "1/min/{project}"
         values:
           STANDARD: 100
+  metrics:
+    # Define a metric for read requests.
+    - name: "read-requests"
+      displayName: "Read requests"
+      valueType: INT64
+      metricKind: DELTA
 securityDefinitions:
   microsoft:
     authorizationUrl: ""

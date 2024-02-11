@@ -1,4 +1,4 @@
-// Copyright 2023 Google LLC
+// Copyright 2024 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,21 +14,27 @@
 
 package bundlegen
 
-type IntegrationBackendOptions struct {
-	IntegrationName string
-	TriggerName     string
-}
+import (
+	"testing"
+)
 
-type HttpBackendOptions struct {
-	OasGoogleAcessTokenScopeLiteral string
-	OasGoogleIDTokenAudLiteral      string
-	OasGoogleIDTokenAudRef          string
-	OasTargetURLRef                 string
-	TargetURL                       string
-	TargetServerName                string
-}
-
-type TargetOptions struct {
-	IntegrationBackend IntegrationBackendOptions
-	HttpBackend        HttpBackendOptions
+func TestGenerateAPIProxyDefFromGQL(t *testing.T) {
+	skipPolicy := false
+	name := "test"
+	gqlDocName := "schema"
+	apiKeyLocation := "request.header.x-api-key"
+	addCORS := true
+	basePath := ""
+	targetURL := "http://api.example.com"
+	targetURLRef := ""
+	if err := GenerateAPIProxyDefFromGQL(name,
+		gqlDocName,
+		basePath,
+		apiKeyLocation,
+		skipPolicy,
+		addCORS,
+		targetURLRef,
+		targetURL); err != nil {
+		t.Fatalf("%v", err)
+	}
 }

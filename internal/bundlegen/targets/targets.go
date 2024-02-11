@@ -45,8 +45,20 @@ type properties struct {
 
 type httpTargetConnectionDef struct {
 	Authentication *authenticationDef `xml:"Authentication"`
-	URL            string             `xml:"URL"`
+	URL            *string            `xml:"URL"`
+	LoadBalancer   *loadBalancerDef   `xml:"LoadBalancer,omitempty"`
+	Path           *string            `xml:"Path,omitempty"`
 	Properties     properties         `xml:"Properties"`
+}
+
+type loadBalancerDef struct {
+	XMLName xml.Name    `xml:"LoadBalancer"`
+	Server  []serverDef `xml:"Server"`
+}
+
+type serverDef struct {
+	XMLName xml.Name `xml:"Server"`
+	Name    string   `xml:"name,attr"`
 }
 
 type authenticationDef struct {
@@ -102,12 +114,24 @@ func GetTargetEndpoint(targetEndpoint targetEndpointDef) (string, error) {
 	return string(targetBody), nil
 }
 
-func NewTargetEndpoint(name string, endpoint string, oasGoogleAcessTokenScopeLiteral string, oasGoogleIdTokenAudLiteral string, oasGoogleIdTokenAudRef string) {
+func NewTargetEndpoint(name string, endpoint string, targetServerBasePath string, targetServerName string,
+	oasGoogleAcessTokenScopeLiteral string, oasGoogleIdTokenAudLiteral string,
+	oasGoogleIdTokenAudRef string) {
 	targetEndpoint := targetEndpointDef{}
 	targetEndpoint.Name = name
 	targetEndpoint.PreFlow.Name = "PreFlow"
 	targetEndpoint.PostFlow.Name = "PostFlow"
-	targetEndpoint.HTTPTargetConnection.URL = endpoint
+
+	if endpoint != "" {
+		targetEndpoint.HTTPTargetConnection.URL = new(string)
+		*targetEndpoint.HTTPTargetConnection.URL = endpoint
+	} else if targetServerName != "" {
+		targetEndpoint.HTTPTargetConnection.LoadBalancer = new(loadBalancerDef)
+		targetEndpoint.HTTPTargetConnection.LoadBalancer.Server = make([]serverDef, 1)
+		targetEndpoint.HTTPTargetConnection.LoadBalancer.Server[0].Name = targetServerName
+		targetEndpoint.HTTPTargetConnection.Path = new(string)
+		*targetEndpoint.HTTPTargetConnection.Path = targetServerBasePath
+	}
 
 	if oasGoogleAcessTokenScopeLiteral != "" {
 		targetEndpoint.HTTPTargetConnection.Authentication = new(authenticationDef)

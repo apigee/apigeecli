@@ -1,4 +1,4 @@
-// Copyright 2023 Google LLC
+// Copyright 2024 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,21 +14,12 @@
 
 package bundlegen
 
-type IntegrationBackendOptions struct {
-	IntegrationName string
-	TriggerName     string
-}
+import "testing"
 
-type HttpBackendOptions struct {
-	OasGoogleAcessTokenScopeLiteral string
-	OasGoogleIDTokenAudLiteral      string
-	OasGoogleIDTokenAudRef          string
-	OasTargetURLRef                 string
-	TargetURL                       string
-	TargetServerName                string
-}
-
-type TargetOptions struct {
-	IntegrationBackend IntegrationBackendOptions
-	HttpBackend        HttpBackendOptions
+func TestGenerateIntegrationAPIProxy(t *testing.T) {
+	name := "test"
+	apiTrigger := "test"
+	if err := GenerateIntegrationAPIProxy(name, apiTrigger); err != nil {
+		t.Fatalf("%v", err)
+	}
 }

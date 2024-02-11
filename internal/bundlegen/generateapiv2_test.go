@@ -37,7 +37,7 @@ func TestSpecs(t *testing.T) {
 	for _, specName := range specNames {
 		fmt.Println("Testing " + specName + " ...")
 		testLoadDocument(specName, t)
-		testGenerateAPIProxyDefFromOASv2(specName, t)
+		TestGenerateAPIProxyDefFromOASv2(specName, t)
 	}
 }
 
@@ -51,7 +51,7 @@ func testLoadDocument(specName string, t *testing.T) {
 	}
 }
 
-func testGenerateAPIProxyDefFromOASv2(specName string, t *testing.T) {
+func TestGenerateAPIProxyDefFromOASv2(specName string, t *testing.T) {
 	skipPolicy := false
 	name := "test"
 	addCORS := true
