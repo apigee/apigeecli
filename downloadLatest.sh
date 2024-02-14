@@ -27,7 +27,6 @@ fi
 # Determine the latest apigeecli version by version number ignoring alpha, beta, and rc versions.
 if [ "${APIGEECLI_VERSION}" = "" ] ; then
   APIGEECLI_VERSION="$(curl -si  https://api.github.com/repos/apigee/apigeecli/releases/latest | grep tag_name | sed -E 's/.*"([^"]+)".*/\1/')"
-  APIGEECLI_VERSION="${APIGEECLI_VERSION##*/}"
 fi
 
 LOCAL_ARCH=$(uname -m)
