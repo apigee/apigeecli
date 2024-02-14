@@ -27,7 +27,7 @@ fi
 # Determine the latest apigeecli version by version number ignoring alpha, beta, and rc versions.
 if [ "${APIGEECLI_VERSION}" = "" ] ; then
   APIGEECLI_VERSION="$(curl -sL https://github.com/apigee/apigeecli/releases/latest | \
-                  grep -i release | grep -E -i -o 'v[0-9]\.\d+\.[0-9]' | tail -1)"
+                  grep -i release | grep -E -i -o 'v[0-9]\.[0-9]+\.[0-9]' | tail -1)"
   APIGEECLI_VERSION="${APIGEECLI_VERSION##*/}"
 fi
 
