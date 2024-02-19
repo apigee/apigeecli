@@ -31,7 +31,7 @@ var (
 )
 
 // Init function initializes the logger objects
-func Init(debug bool, print bool, NoOutput bool) {
+func Init(debug bool, print bool, NoOutput bool, NoWarnings bool) {
 	debugHandle := io.Discard
 	infoHandle := io.Discard
 	var warningHandle, errorHandle, responseHandle io.Writer
@@ -51,7 +51,12 @@ func Init(debug bool, print bool, NoOutput bool) {
 		warningHandle = io.Discard
 	} else {
 		responseHandle = os.Stdout
-		warningHandle = os.Stdout
+		if NoWarnings {
+			warningHandle = io.Discard
+		} else {
+			// see https://github.com/kubernetes/kubeadm/issues/2632
+			warningHandle = os.Stderr
+		}
 		errorHandle = os.Stderr
 	}
 
