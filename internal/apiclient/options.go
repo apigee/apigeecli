@@ -274,6 +274,11 @@ func GetNoOutput() bool {
 	return options.NoOutput
 }
 
+// GetNoWarnings
+func GetNoWarnings() bool {
+	return options.NoWarnings
+}
+
 // SetRate
 func SetRate(r Rate) {
 	apiRate = r
