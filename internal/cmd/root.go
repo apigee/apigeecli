@@ -123,8 +123,8 @@ func Execute() {
 }
 
 var (
-	accessToken, serviceAccount                                      string
-	disableCheck, printOutput, noOutput, metadataToken, defaultToken bool
+	accessToken, serviceAccount                                                  string
+	disableCheck, printOutput, noOutput, metadataToken, defaultToken, noWarnings bool
 )
 
 const ENABLED = "true"
@@ -146,6 +146,9 @@ func init() {
 
 	RootCmd.PersistentFlags().BoolVarP(&noOutput, "no-output", "",
 		false, "Disable printing all statements to stdout")
+
+	RootCmd.PersistentFlags().BoolVarP(&noWarnings, "no-warnings", "",
+		false, "Disable printing warnings to stderr")
 
 	RootCmd.PersistentFlags().BoolVarP(&metadataToken, "metadata-token", "",
 		false, "Metadata OAuth2 access token")
@@ -207,6 +210,7 @@ func initConfig() {
 		NoOutput:    noOutput,
 		DebugLog:    debug,
 		SkipCache:   skipCache,
+		NoWarnings:  noWarnings,
 	})
 
 	if os.Getenv("APIGEECLI_ENABLE_RATELIMIT") == ENABLED {

@@ -43,6 +43,7 @@ type ApigeeClientOptions struct {
 	SkipCache      bool   // skip writing access token to file
 	PrintOutput    bool   // prints output from http calls
 	NoOutput       bool   // Disable all statements to stdout
+	NoWarnings     bool   // Disable printing warnings to stderr
 	ProxyUrl       string // use a proxy url
 	MetadataToken  bool   // use metadata outh2 token
 	APIRate        Rate   // throttle api calls to Apigee
@@ -103,9 +104,10 @@ func NewApigeeClient(o ApigeeClientOptions) {
 	options.DebugLog = o.DebugLog
 	options.PrintOutput = o.PrintOutput
 	options.NoOutput = o.NoOutput
+	options.NoWarnings = o.NoWarnings
 
 	// initialize logs
-	clilog.Init(options.DebugLog, options.PrintOutput, options.NoOutput)
+	clilog.Init(options.DebugLog, options.PrintOutput, options.NoOutput, options.NoWarnings)
 
 	// read preference file
 	_ = ReadPreferencesFile()
@@ -270,6 +272,11 @@ func SetNoOutput(b bool) {
 // GetNoOutput
 func GetNoOutput() bool {
 	return options.NoOutput
+}
+
+// GetNoWarnings
+func GetNoWarnings() bool {
+	return options.NoWarnings
 }
 
 // SetRate
