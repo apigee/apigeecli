@@ -1,0 +1,22 @@
+{
+    "operationConfigs": [
+        {
+            "apiSource": "orders",
+            "operations": [
+                {
+                    "resource": "/",
+                    "methods": [
+                        "GET",
+                        "POST"
+                    ]
+                }
+            ],
+            "quota": {
+                "limit": "1",
+                "interval": "1",
+                "timeUnit": "second"
+            }
+        }
+    ],
+    "operationConfigType": "proxy"
+}

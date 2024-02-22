@@ -1,0 +1,21 @@
+{
+    "operationConfigs": [
+        {
+            "apiSource": "orders-gql",
+            "operations": [
+                {
+                    "operationTypes": [
+                        "query"
+                    ],
+                    "operation": "getOrder"
+                }
+            ],
+            "quota": {
+                "limit": "1",
+                "interval": "1",
+                "timeUnit": "second"
+            }
+        }
+    ],
+    "operationConfigType": "proxy"
+}
