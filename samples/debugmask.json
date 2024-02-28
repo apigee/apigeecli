@@ -1,0 +1,6 @@
+{
+    "variables": [
+        "request.header.x-api-key",
+        "request.header.x-apikey"
+    ]
+}
