@@ -1,0 +1,11 @@
+{
+    "developer": [
+        {
+            "attributes": [],
+            "email": "sample@example.com",
+            "firstName": "Sample",
+            "lastName": "Developer",
+            "userName": "sample"
+        }
+    ]
+}

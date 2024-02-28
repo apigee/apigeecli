@@ -1,0 +1,12 @@
+[
+    {
+        "name": "TS-Mock",
+        "host": "mocktarget.apigee.net",
+        "isEnabled": true,
+        "port": 443,
+        "sSLInfo": {
+            "enabled": true
+        },
+        "protocol": "HTTP"
+    }
+]
