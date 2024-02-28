@@ -1,0 +1,9 @@
+{
+  "dataCollectors": [
+    {
+      "name": "dc_sampleCollector",
+      "description": "Sample",
+      "type": "STRING"
+    }
+  ]
+}
