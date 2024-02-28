@@ -361,7 +361,7 @@ func readAppGroupsFile(filePath string) ([]appgroup, error) {
 }
 
 func getMapAttributes(attrs []attribute) map[string]string {
-	var custAttrs map[string]string
+	custAttrs := make(map[string]string, len(attrs))
 	for _, a := range attrs {
 		custAttrs[a.Name] = a.Value
 	}
