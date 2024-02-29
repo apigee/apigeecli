@@ -1,0 +1,12 @@
+{
+  "keyValueEntries": [
+    {
+      "name": "foo",
+      "value": "bar"
+    },
+    {
+      "name": "hello",
+      "value": "world"
+    }
+  ]
+}

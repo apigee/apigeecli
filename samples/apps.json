@@ -1,0 +1,31 @@
+[
+  {
+    "attributes": [
+      {
+        "name": "DisplayName",
+        "value": "SampleApp"
+      },
+      {
+        "name": "Foo",
+        "value": "Bar"
+      }
+    ],
+    "credentials": [
+      {
+        "apiProducts": [
+          {
+            "apiproduct": "MockProduct",
+            "status": "approved"
+          }
+        ],
+        "consumerKey": "blah",
+        "consumerSecret": "blah",
+        "expiresAt": "-1",
+        "status": "approved"
+      }
+    ],
+    "developerId": "13a4ebde-79c6-4b33-848e-31a64f9d2145",
+    "name": "SampleApp",
+    "status": "approved"
+  }
+]

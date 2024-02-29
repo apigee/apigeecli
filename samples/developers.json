@@ -1,0 +1,12 @@
+{
+	"developer": [
+		{
+			"email": "sample@example.com",
+			"firstName": "Sample",
+			"lastName": "Developer",
+			"userName": "sample",
+			"developerId": "13a4ebde-79c6-4b33-848e-31a64f9d2145",
+			"status": "active"
+		}
+	]
+}

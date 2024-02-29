@@ -1,0 +1,22 @@
+[
+	{
+		"name": "sampleAppGroup1",
+		"channelUri": "channel1",
+		"channelId": "1",
+		"displayName": "Sample App Group 1",
+		"status": "active",
+		"attributes": [
+			{
+				"name": "foo",
+				"value": "bar"
+			}
+		]
+	},
+	{
+		"name": "sampleAppGroup2",
+		"channelUri": "channel2",
+		"channelId": "2",
+		"displayName": "Sample App Group 2",
+		"status": "active"
+	}
+]

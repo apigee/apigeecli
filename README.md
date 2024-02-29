@@ -388,6 +388,27 @@ x-google-jwt-locations:
 
 query parameters are ignored. By default, if no location is specified, the JWT location is the `Authorization` header and value_prefix is `Bearer <token>`
 
+## How do I import entities using apigeecli?
+
+The table below illustrates how you can import different entities into Apigee. It refers to the [samples](./samples/) directory.
+
+
+| Operations | Import command |
+|---|---|
+| apicategories | `apigeecli apicategories import -o $org -t $token -f samples/apicategories.json -s $siteId` |
+| apis | `apigeecli apis import -f samples/apis -o $org -t $token` |
+| appgroups | `apigeecli appgroups import -f samples/appgroups.json -o $org -t $token` |
+| datacollectors | `apigeecli datacollectors import -f samples/datacollectors.json -o $org -t $token` |
+| developers | `apigeecli developers import -f samples/developers.json -o $org -t $token` |
+| kvms | `apigeecli kvms import -f samples/kvms -o $org -t $token` (Rename the files under samples/kvms to match your Apigee setup)  |
+| products | `apigeecli products import -f samples/apiproduct-legacy.json -o $org -t $token`  `apigeecli products import -f samples/apiproduct-gqlgroup.json -o $org -t $token`  `apigeecli products import -f samples/apiproduct-op-group.json -o $org -t $token` |
+| sharedflows | `apigeecli sharedflows import -f samples/sharedflows -o $org -t $token` |
+| targetservers | `apigeecli targetservers import -f samples/targetservers.json -o $org -t $token -e $env` |
+| keystores | `apigeecli keystores import -f samples/keystores.json -o $org -t $token -e $env` |
+| references | `apigeecli references import -f samples/references.json -o $org -t $token -e $env` |
+| apps | `apigeecli apps import -f samples/references.json -d samples/developers.json -o $org -t $token` (better used when the developers and apps are exported using the export) |
+| apidocs | `apigeecli apidocs import -f samples/apidocs -o $org -t $token -s $siteId` (Rename the files under samples/apidocs to match your Apigee setup for siteId) |
+
 ## How do I verify the binary?
 
 All artifacts are signed by [cosign](https://github.com/sigstore/cosign). We recommend verifying any artifact before using them.
