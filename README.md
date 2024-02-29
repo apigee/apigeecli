@@ -390,6 +390,9 @@ query parameters are ignored. By default, if no location is specified, the JWT l
 
 ## How do I import entities using apigeecli?
 
+The table below illustrates how you can import different entities into Apigee. It refers to the [samples](./samples/) directory.
+
+
 | Operations | Import command |
 |---|---|
 | apicategories | `apigeecli apicategories import -o $org -t $token -f samples/apicategories.json -s $siteId` |
