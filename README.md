@@ -392,7 +392,9 @@ query parameters are ignored. By default, if no location is specified, the JWT l
 
 | Operations | Import command |
 |---|---|
-| apicategories | `apigeecli apicategories import -o $org -t $token -f samples/apicategories.json -s $siteId` |
+| apicategories | ```sh
+apigeecli apicategories import -o $org -t $token -f samples/apicategories.json -s $siteId
+``` |
 | apis | apigeecli apis import -f samples/apis -o $org -t $token |
 | appgroups | apigeecli appgroups import -f samples/appgroups.json -o $org -t $token |
 | datacollectors | apigeecli datacollectors import -f samples/datacollectors.json -o $org -t $token |
