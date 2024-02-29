@@ -406,7 +406,7 @@ The table below illustrates how you can import different entities into Apigee. I
 | targetservers | `apigeecli targetservers import -f samples/targetservers.json -o $org -t $token -e $env` |
 | keystores | `apigeecli keystores import -f samples/keystores.json -o $org -t $token -e $env` |
 | references | `apigeecli references import -f samples/references.json -o $org -t $token -e $env` |
-| apps | #416 |
+| apps | [#416](https://github.com/apigee/apigeecli/issues/416) |
 | apidocs | `Work In Progress` |
 
 ## How do I verify the binary?
