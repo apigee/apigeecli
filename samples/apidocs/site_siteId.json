@@ -1,0 +1,12 @@
+[
+	{
+		"id": "id",
+		"title": "MockProduct",
+		"description": "MockProduct",
+		"published": true,
+		"anonAllowed": true,
+		"apiProductName": "MockProduct",
+		"visibility": true,
+		"edgeAPIProductName": "MockProduct"
+	}
+]
