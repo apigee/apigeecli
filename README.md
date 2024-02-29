@@ -397,7 +397,7 @@ query parameters are ignored. By default, if no location is specified, the JWT l
 | appgroups | `apigeecli appgroups import -f samples/appgroups.json -o $org -t $token` |
 | datacollectors | `apigeecli datacollectors import -f samples/datacollectors.json -o $org -t $token` |
 | developers | `apigeecli developers import -f samples/developers.json -o $org -t $token` |
-| kvms | Rename the files under samples/kvms to match your Apigee setup   `apigeecli kvms import -f samples/kvms -o $org -t $token` |
+| kvms | `apigeecli kvms import -f samples/kvms -o $org -t $token` (Rename the files under samples/kvms to match your Apigee setup)  |
 | products | `apigeecli products import -f samples/apiproduct-legacy.json -o $org -t $token`  `apigeecli products import -f samples/apiproduct-gqlgroup.json -o $org -t $token`  `apigeecli products import -f samples/apiproduct-op-group.json -o $org -t $token` |
 | sharedflows | `apigeecli sharedflows import -f samples/sharedflows -o $org -t $token` |
 | targetservers | `apigeecli targetservers import -f samples/targetservers.json -o $org -t $token -e $env` |
