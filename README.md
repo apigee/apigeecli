@@ -388,7 +388,7 @@ x-google-jwt-locations:
 
 query parameters are ignored. By default, if no location is specified, the JWT location is the `Authorization` header and value_prefix is `Bearer <token>`
 
-## How do I import entities using apigeecli
+## How do I import entities using apigeecli?
 
 | Operations | Import command |
 |---|---|
