@@ -1,4 +1,4 @@
-// Copyright 2020 Google LLC
+// Copyright 2020-2024 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -49,7 +49,7 @@ func init() {
 	GetTrcCmd.Flags().StringVarP(&name, "name", "n",
 		"", "API proxy name")
 	GetTrcCmd.Flags().IntVarP(&revision, "rev", "v",
-		-1, "API Proxy revision")
+		-1, "API Proxy revision. If not set, the highest revision is used")
 	GetTrcCmd.Flags().StringVarP(&sessionID, "ses", "s",
 		"", "Debug session Id")
 	GetTrcCmd.Flags().StringVarP(&messageID, "msg", "m",
