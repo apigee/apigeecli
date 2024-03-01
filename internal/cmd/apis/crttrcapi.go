@@ -54,5 +54,4 @@ func init() {
 		nil, "Filter Conditions; format is name1=value1,name2=value2...")
 
 	_ = CreateTrcCmd.MarkFlagRequired("name")
-	//_ = CreateTrcCmd.MarkFlagRequired("rev")
 }

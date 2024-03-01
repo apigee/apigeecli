@@ -33,6 +33,11 @@ var GetTrcCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		if revision == -1 {
+			if revision, err = apis.GetHighestProxyRevision(name); err != nil {
+				return err
+			}
+		}
 		_, err = apis.GetTraceSession(name, revision, sessionID, messageID)
 		return
 	},
@@ -51,6 +56,5 @@ func init() {
 		"", "Debug session Id")
 
 	_ = GetTrcCmd.MarkFlagRequired("name")
-	_ = GetTrcCmd.MarkFlagRequired("rev")
 	_ = GetTrcCmd.MarkFlagRequired("ses")
 }
