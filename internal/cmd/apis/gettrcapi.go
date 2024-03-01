@@ -53,7 +53,7 @@ func init() {
 	GetTrcCmd.Flags().StringVarP(&sessionID, "ses", "s",
 		"", "Debug session Id")
 	GetTrcCmd.Flags().StringVarP(&messageID, "msg", "m",
-		"", "Debug session Id")
+		"", "Debug transaction Id")
 
 	_ = GetTrcCmd.MarkFlagRequired("name")
 	_ = GetTrcCmd.MarkFlagRequired("ses")
