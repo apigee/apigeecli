@@ -1,4 +1,4 @@
-// Copyright 2020 Google LLC
+// Copyright 2020-2024 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -33,6 +33,11 @@ var GetTrcCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		if revision == -1 {
+			if revision, err = apis.GetHighestProxyRevision(name); err != nil {
+				return err
+			}
+		}
 		_, err = apis.GetTraceSession(name, revision, sessionID, messageID)
 		return
 	},
@@ -44,13 +49,12 @@ func init() {
 	GetTrcCmd.Flags().StringVarP(&name, "name", "n",
 		"", "API proxy name")
 	GetTrcCmd.Flags().IntVarP(&revision, "rev", "v",
-		-1, "API Proxy revision")
+		-1, "API Proxy revision. If not set, the highest revision is used")
 	GetTrcCmd.Flags().StringVarP(&sessionID, "ses", "s",
 		"", "Debug session Id")
 	GetTrcCmd.Flags().StringVarP(&messageID, "msg", "m",
-		"", "Debug session Id")
+		"", "Debug transaction Id")
 
 	_ = GetTrcCmd.MarkFlagRequired("name")
-	_ = GetTrcCmd.MarkFlagRequired("rev")
 	_ = GetTrcCmd.MarkFlagRequired("ses")
 }
