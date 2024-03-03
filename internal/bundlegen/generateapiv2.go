@@ -22,6 +22,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 
 	"internal/apiclient"
@@ -697,4 +698,13 @@ func processPathExtensionsv2(extensions *orderedmap.Map[string, *yaml.Node], pat
 		}
 	}
 	return pathDetail, errors.Join(errs...)
+}
+
+func replacePathWithWildCard(keyPath string) string {
+	re := regexp.MustCompile(`{(.*?)}`)
+	if strings.ContainsAny(keyPath, "{") {
+		return re.ReplaceAllLiteralString(keyPath, "*")
+	} else {
+		return keyPath
+	}
 }

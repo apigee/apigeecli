@@ -863,3 +863,26 @@ func addBackend(backend backendDef) (err error) {
 	}
 	return nil
 }
+
+func GenerateSetTargetPolicy() bool {
+	return generateSetTarget
+}
+
+func GetSecuritySchemesList() []securitySchemesDef {
+	return securitySchemesList.SecuritySchemes
+}
+
+func GetSpikeArrestPolicies() map[string]string {
+	return spikeArrestPolicyContent
+}
+
+func GetQuotaPolicies() map[string]string {
+	return quotaPolicyContent
+}
+
+func isFileYaml(name string) bool {
+	if filepath.Ext(name) == ".yaml" || filepath.Ext(name) == ".yml" {
+		return true
+	}
+	return false
+}

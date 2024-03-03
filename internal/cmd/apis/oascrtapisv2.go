@@ -148,7 +148,11 @@ var OasCreatev2Cmd = &cobra.Command{
 	},
 }
 
-var specName string
+var (
+	specName, oasFile, oasURI, targetURL, targetServerName                              string
+	oasGoogleAcessTokenScopeLiteral, oasGoogleIDTokenAudLiteral, oasGoogleIDTokenAudRef string
+	validateSpec, formatValidation                                                      bool
+)
 
 func init() {
 	OasCreatev2Cmd.Flags().StringVarP(&name, "name", "n",
