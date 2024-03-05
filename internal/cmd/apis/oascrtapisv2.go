@@ -184,7 +184,7 @@ func init() {
 	OasCreatev2Cmd.Flags().BoolVarP(&importProxy, "import", "",
 		true, "Import API Proxy after generation from spec")
 	OasCreatev2Cmd.Flags().BoolVarP(&validateSpec, "validate", "",
-		true, "Validate Spec before generating proxy")
+		false, "Validate Spec before generating proxy")
 	OasCreatev2Cmd.Flags().BoolVarP(&skipPolicy, "skip-policy", "",
 		false, "Skip adding the OAS Validate policy")
 	OasCreatev2Cmd.Flags().BoolVarP(&addCORS, "add-cors", "",
