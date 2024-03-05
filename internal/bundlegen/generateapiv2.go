@@ -131,7 +131,9 @@ func GenerateAPIProxyDefFromOASv2(name string,
 	}
 
 	// load security schemes
-	loadSecurityRequirementsv2(docModel.Model.Components.SecuritySchemes)
+	if docModel.Model.Components != nil && docModel.Model.Components.SecuritySchemes != nil {
+		loadSecurityRequirementsv2(docModel.Model.Components.SecuritySchemes)
+	}
 
 	apiproxy.SetDisplayName(name)
 	if docModel.Model.Info != nil {
@@ -274,6 +276,9 @@ func GenerateAPIProxyDefFromOASv2(name string,
 }
 
 func loadSecurityRequirementsv2(securitySchemes *orderedmap.Map[string, *v3.SecurityScheme]) (err error) {
+	if securitySchemes == nil {
+		return nil
+	}
 	for first := securitySchemes.First(); first != nil; first = first.Next() {
 		securityScheme := first.Value()
 		securitySchemesList.SecuritySchemes = append(securitySchemesList.SecuritySchemes, loadSecurityTypev2(first.Key(), securityScheme))
@@ -488,6 +493,9 @@ func getQuotaDefinitionv2(extension *yaml.Node) ([]quotaDef, error) {
 }
 
 func generateFlowsv2(paths *v3.Paths) (err error) {
+	if paths == nil {
+		return nil
+	}
 	for first := paths.PathItems.First(); first != nil; first = first.Next() {
 		pathMap, err := getHTTPMethodv2(first.Value(), first.Key())
 		if err != nil {
