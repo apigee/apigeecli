@@ -13,12 +13,13 @@
 # limitations under the License.
 
 openapi: 3.0.2
-info:
-  version: 0.0.1
-  title: Minimal Spec
 servers:
   - url: https://my.example.com/api
-x-google-ratelimit:
-  - name: test1_test
-    rate-literal: 10ps
-    identifier-ref: request.header.url #optional
+components:
+  securitySchemes:
+    proxy_auth:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: 'https://api.example.com/oauth/token'
+          refreshUrl: 'https://api.example.com/oauth/refresh'
