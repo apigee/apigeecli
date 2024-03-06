@@ -73,8 +73,9 @@ type googleAccessTokenDef struct {
 }
 
 type googleIdTokenDef struct {
-	XMLName  xml.Name     `xml:"GoogleIDToken"`
-	Audience *audienceDef `xml:"Audience"`
+	XMLName      xml.Name     `xml:"GoogleIDToken"`
+	IncludeEmail string       `xml:"IncludeEmail"`
+	Audience     *audienceDef `xml:"Audience"`
 }
 
 type audienceDef struct {
@@ -143,6 +144,7 @@ func NewTargetEndpoint(name string, endpoint string, targetServerBasePath string
 		targetEndpoint.HTTPTargetConnection.Authentication = new(authenticationDef)
 		targetEndpoint.HTTPTargetConnection.Authentication.GoogleIDToken = new(googleIdTokenDef)
 
+		targetEndpoint.HTTPTargetConnection.Authentication.GoogleIDToken.IncludeEmail = "true"
 		targetEndpoint.HTTPTargetConnection.Authentication.GoogleIDToken.Audience = new(audienceDef)
 
 		if oasGoogleIdTokenAudLiteral != "" {

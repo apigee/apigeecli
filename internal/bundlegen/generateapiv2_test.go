@@ -55,13 +55,13 @@ func TestGenerateAPIProxyDefFromOASv2(specName string, t *testing.T) {
 	skipPolicy := false
 	name := "test"
 	addCORS := true
-	integrationEndpoint := false
 	basePath := ""
 	oasGoogleAcessTokenScopeLiteral := ""
 	targetURL := "http://api.example.com"
 	oasGoogleIDTokenAudLiteral := ""
 	oasGoogleIDTokenAudRef := ""
 	targetURLRef := ""
+	targetServerName := ""
 	version := GetModelVersion()
 	if version != "" {
 		re := regexp.MustCompile(`3\.1\.[0-9]`)
@@ -69,17 +69,25 @@ func TestGenerateAPIProxyDefFromOASv2(specName string, t *testing.T) {
 			skipPolicy = true
 		}
 	}
+
+	targetOptions := TargetOptions{
+		IntegrationBackend: IntegrationBackendOptions{},
+		HttpBackend: HttpBackendOptions{
+			OasGoogleAcessTokenScopeLiteral: oasGoogleAcessTokenScopeLiteral,
+			OasGoogleIDTokenAudLiteral:      oasGoogleIDTokenAudLiteral,
+			OasGoogleIDTokenAudRef:          oasGoogleIDTokenAudRef,
+			OasTargetURLRef:                 targetURLRef,
+			TargetURL:                       targetURL,
+			TargetServerName:                targetServerName,
+		},
+	}
+
 	if err := GenerateAPIProxyDefFromOASv2(name,
 		basePath,
 		specName,
 		skipPolicy,
 		addCORS,
-		integrationEndpoint,
-		oasGoogleAcessTokenScopeLiteral,
-		oasGoogleIDTokenAudLiteral,
-		oasGoogleIDTokenAudRef,
-		targetURLRef,
-		targetURL); err != nil {
+		targetOptions); err != nil {
 		t.Fatalf("%v", err)
 	}
 }
