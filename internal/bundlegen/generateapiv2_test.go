@@ -55,7 +55,6 @@ func TestGenerateAPIProxyDefFromOASv2(specName string, t *testing.T) {
 	skipPolicy := false
 	name := "test"
 	addCORS := true
-	integrationEndpoint := false
 	basePath := ""
 	oasGoogleAcessTokenScopeLiteral := ""
 	targetURL := "http://api.example.com"
