@@ -101,7 +101,7 @@ func List(resourceType string) (respBody []byte, err error) {
 // validate returns true is the resource type is valid
 func validate(resType string) bool {
 	// validResourceTypes contains a list of valid resources
-	validResourceTypes := [7]string{"js", "jsc", "properties", "java", "wsdl", "xsd", "py"}
+	validResourceTypes := [10]string{"js", "jsc", "properties", "java", "wsdl", "xsd", "py", "xslt", "oas", "graphql"}
 
 	for _, n := range validResourceTypes {
 		if n == resType {
