@@ -35,10 +35,10 @@ if [ "${TARGET_ARCH}" ]; then
 fi
 
 case "${LOCAL_ARCH}" in
-  x86_64|amd64|arm64)
+  x86_64|amd64)
     APIGEECLI_ARCH=x86_64
     ;;
-  armv8*|aarch64*)
+  arm64|armv8*|aarch64*)
     APIGEECLI_ARCH=arm64
     ;;
   *)
