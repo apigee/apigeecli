@@ -191,6 +191,52 @@ The following environment variables may be set to control the behavior of `apige
 * `APIGEECLI_NO_ERRORS=true` does not print error messages from the CLI (control plane error messages are displayed)
 * `APIGEECLI_DRYRUN=true` does not execute Apigee control plane APIs
 
+## Version 2.x.x Breaking Changes
+The following command line flags have changed to follow a more consistent naming convention. The previous flag name and shorthand character are left of `==>` and the new flag name and shorthand are to the right.
+For example:  `"flagName", "f" ==> "flag-name", "f"`
+
+Some changes merely drop the shorthand character.
+
+```
+"base-path", "b"         ==> "basepath", "b"
+"certFilePath", ""       ==> "cert-filepath", ""
+"clientAuth", "c"        ==> "client-auth", "c"
+"completeState", "c"     ==> "complete-state", "c"
+"continueOnError", ""    ==> "continue-on-error", ""
+"displayname", "m"       ==> "display-name", "m"
+"endpoint", "p"          ==> "endpoint-uri", "p"
+"endpointUri", "e"       ==> "endpoint-uri", "e"
+"exportEntries", ""      ==> "export-entries", ""
+"repo", "r"              ==> "repo", ""
+"ignoreErr", "i"         ==> "ignore-err", "i"
+"importDebugmask", ""    ==> "import-debugmask", ""
+"importTrace", ""        ==> "import-trace", ""
+"inclCred", "i"          ==> "incl-cred", "i"
+"rev", "r"               ==> "rev", "v"
+"keyAlias", ""           ==> "keyalias", ""
+"keyFilePath", ""        ==> "key-filepath", ""
+"keyStore", ""           ==> "keystore", ""
+"memberType", "m"        ==> "member-type", "m"
+"ovr", "r"               ==> "ovr", ""
+"pageSize", ""           ==> "page-size", ""
+"pageToken", ""          ==> "page-token", ""
+"pfxFilePath", ""        ==> "pfx-filepath", ""
+"rateplan", "r"          ==> "rateplan", "p"
+"respath", "r"           ==> "respath", ""
+"rev", "r"               ==> "rev", "v"
+"revision", "r"          ==> "revision", "v"
+"memberRole", "r"        ==> "member-role", ""
+"secret", "r"            ==> "secret", "c"
+"selfsignedFilePath", "" ==> "selfsigned-filepath", ""
+"trustStore", ""         ==> "truststore", ""
+```
+
+## Version 2.0.0 New Changes
+A new flag was introduced to control output from apigeecli, that may impact your output if used in an automation pipeline.
+```
+--no-warnings      Disable printing warnings to stderr
+```
+
 ## Generating API Proxies
 
 `apigeecli` can generate API proxies from:
