@@ -117,7 +117,8 @@ func GetTargetEndpoint(targetEndpoint targetEndpointDef) (string, error) {
 
 func NewTargetEndpoint(name string, endpoint string, targetServerBasePath string, targetServerName string,
 	oasGoogleAcessTokenScopeLiteral string, oasGoogleIdTokenAudLiteral string,
-	oasGoogleIdTokenAudRef string) {
+	oasGoogleIdTokenAudRef string,
+) {
 	targetEndpoint := targetEndpointDef{}
 	targetEndpoint.Name = name
 	targetEndpoint.PreFlow.Name = "PreFlow"

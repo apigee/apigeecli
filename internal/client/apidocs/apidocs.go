@@ -27,6 +27,7 @@ import (
 
 	"internal/apiclient"
 	"internal/client/sites"
+	"internal/cmd/utils"
 )
 
 type Action uint8
@@ -387,7 +388,7 @@ func Import(siteid string, useSrcSiteID string, folder string) (err error) {
 			apiDocsName := fmt.Sprintf("apidocs_%s_%s.json", useSrcSiteID, doc.ID)
 			documentationFileName = path.Join(folder, apiDocsName)
 		} else {
-			documentationFileName = path.Join(folder, "apidocs_"+siteid+"_"+doc.ID+".json")
+			documentationFileName = path.Join(folder, "apidocs_"+siteid+utils.DefaultFileSplitter+doc.ID+".json")
 		}
 		apidocument, err := readAPIDocumentationFile(documentationFileName)
 		if err != nil {

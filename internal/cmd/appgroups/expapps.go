@@ -17,6 +17,8 @@ package appgroups
 import (
 	"fmt"
 
+	"internal/cmd/utils"
+
 	"internal/apiclient"
 
 	"internal/client/appgroups"
@@ -37,7 +39,7 @@ var ExpAppCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		exportFileName := name + "_" + "apps.json"
+		exportFileName := name + utils.DefaultFileSplitter + "apps.json"
 
 		apiclient.DisableCmdPrintHttpResponse()
 

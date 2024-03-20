@@ -28,6 +28,7 @@ import (
 	"internal/client/apis"
 
 	"internal/clilog"
+	"internal/cmd/utils"
 )
 
 type keyvalueentry struct {
@@ -171,9 +172,9 @@ func ExportAllEntries() (err error) {
 				if err != nil {
 					return err
 				}
-				fileName := strings.Join([]string{"proxy", programmableProxy, proxyKVM, "kvmfile"}, "_")
+				fileName := strings.Join([]string{"proxy", programmableProxy, proxyKVM, "kvmfile"}, utils.DefaultFileSplitter)
 				for i := range proxyKVMEntries {
-					if err = apiclient.WriteByteArrayToFile(fileName+"_"+strconv.Itoa(i)+".json", false, proxyKVMEntries[i]); err != nil {
+					if err = apiclient.WriteByteArrayToFile(fileName+utils.DefaultFileSplitter+strconv.Itoa(i)+".json", false, proxyKVMEntries[i]); err != nil {
 						return err
 					}
 				}

@@ -34,6 +34,8 @@ var ProjectID string
 // Region variable is used within the registry cmd
 var Region string
 
+const DefaultFileSplitter = "__"
+
 func ListKVMFiles(folder string) (orgKVMFileList map[string]string,
 	envKVMFileList map[string]string, proxyKVMFileList map[string]string, err error,
 ) {
@@ -41,9 +43,9 @@ func ListKVMFiles(folder string) (orgKVMFileList map[string]string,
 	envKVMFileList = map[string]string{}
 	proxyKVMFileList = map[string]string{}
 
-	renv := regexp.MustCompile(`env_(\S*)_kvmfile_[0-9]+\.json`)
-	rorg := regexp.MustCompile(`org_(\S*)_kvmfile_[0-9]+\.json`)
-	rproxy := regexp.MustCompile(`proxy_(\S*)_kvmfile_[0-9]+\.json`)
+	renv := regexp.MustCompile(`env` + DefaultFileSplitter + `(\S*)` + DefaultFileSplitter + `kvmfile` + DefaultFileSplitter + `[0-9]+\.json`)
+	rorg := regexp.MustCompile(`org` + DefaultFileSplitter + `(\S*)` + DefaultFileSplitter + `kvmfile` + DefaultFileSplitter + `[0-9]+\.json`)
+	rproxy := regexp.MustCompile(`proxy` + DefaultFileSplitter + `(\S*)` + DefaultFileSplitter + `kvmfile` + DefaultFileSplitter + `[0-9]+\.json`)
 
 	err = filepath.Walk(folder, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -53,19 +55,19 @@ func ListKVMFiles(folder string) (orgKVMFileList map[string]string,
 			kvmFile := filepath.Base(path)
 			switch {
 			case renv.MatchString(kvmFile):
-				envKVMFileSplit := strings.Split(kvmFile, "_")
+				envKVMFileSplit := strings.Split(kvmFile, DefaultFileSplitter)
 				if len(envKVMFileSplit) > 2 {
 					clilog.Info.Printf("Map name %s, path %s\n", envKVMFileSplit[2], kvmFile)
 					envKVMFileList[envKVMFileSplit[2]] = path
 				}
 			case rproxy.MatchString(kvmFile):
-				proxyKVMFileSplit := strings.Split(kvmFile, "_")
+				proxyKVMFileSplit := strings.Split(kvmFile, DefaultFileSplitter)
 				if len(proxyKVMFileSplit) > 2 {
 					clilog.Info.Printf("Map name %s, path %s\n", proxyKVMFileSplit[2], kvmFile)
 					proxyKVMFileList[proxyKVMFileSplit[2]] = path
 				}
 			case rorg.MatchString(kvmFile):
-				orgKVMFileSplit := strings.Split(kvmFile, "_")
+				orgKVMFileSplit := strings.Split(kvmFile, DefaultFileSplitter)
 				if len(orgKVMFileSplit) > 1 {
 					clilog.Info.Printf("Map name %s, path %s\n", orgKVMFileSplit[1], kvmFile)
 					orgKVMFileList[orgKVMFileSplit[1]] = path

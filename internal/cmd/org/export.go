@@ -22,6 +22,8 @@ import (
 	"strings"
 	"syscall"
 
+	"internal/cmd/utils"
+
 	"internal/apiclient"
 
 	"internal/clilog"
@@ -100,7 +102,7 @@ var ExportCmd = &cobra.Command{
 			return err
 		}
 		if err = apiclient.WriteByteArrayToFile(
-			org+"_"+kvmFileName,
+			org+utils.DefaultFileSplitter+kvmFileName,
 			false, listKVMBytes); proceedOnError(err) != nil {
 			return err
 		}
@@ -235,7 +237,7 @@ var ExportCmd = &cobra.Command{
 				return err
 			}
 			if err = apiclient.WriteArrayByteArrayToFile(
-				environment+"_"+targetServerFileName,
+				environment+utils.DefaultFileSplitter+targetServerFileName,
 				false,
 				targetServerResponse); proceedOnError(err) != nil {
 				return err
@@ -246,7 +248,7 @@ var ExportCmd = &cobra.Command{
 				return err
 			}
 			if err = apiclient.WriteByteArrayToFile(
-				environment+"_"+kvmFileName,
+				environment+utils.DefaultFileSplitter+kvmFileName,
 				false,
 				listKVMBytes); proceedOnError(err) != nil {
 				return err
@@ -263,7 +265,7 @@ var ExportCmd = &cobra.Command{
 				return err
 			}
 			if err = apiclient.WriteByteArrayToFile(
-				environment+"_"+keyStoresFileName,
+				environment+utils.DefaultFileSplitter+keyStoresFileName,
 				false,
 				respBody); proceedOnError(err) != nil {
 				return err
@@ -296,7 +298,7 @@ var ExportCmd = &cobra.Command{
 				return err
 			}
 			if err = apiclient.WriteArrayByteArrayToFile(
-				environment+"_"+referencesFileName,
+				environment+utils.DefaultFileSplitter+referencesFileName,
 				false,
 				referencesResponse); proceedOnError(err) != nil {
 				return err
@@ -358,15 +360,15 @@ func exportKVMEntries(scope string, env string, listKVMBytes []byte) (err error)
 		}
 
 		if scope == "org" {
-			fileName = strings.Join([]string{scope, mapName, "kvmfile"}, "_")
+			fileName = strings.Join([]string{scope, mapName, "kvmfile"}, utils.DefaultFileSplitter)
 		} else if scope == "env" {
-			fileName = strings.Join([]string{scope, env, mapName, "kvmfile"}, "_")
+			fileName = strings.Join([]string{scope, env, mapName, "kvmfile"}, utils.DefaultFileSplitter)
 		}
 
 		if len(kvmEntries) > 0 {
 			for i := range kvmEntries {
 				if err = apiclient.WriteByteArrayToFile(
-					fileName+"_"+strconv.Itoa(i)+".json",
+					fileName+utils.DefaultFileSplitter+strconv.Itoa(i)+".json",
 					false,
 					kvmEntries[i]); err != nil {
 					return err
