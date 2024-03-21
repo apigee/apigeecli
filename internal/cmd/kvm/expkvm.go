@@ -20,6 +20,8 @@ import (
 	"strconv"
 	"strings"
 
+	"internal/cmd/utils"
+
 	"internal/apiclient"
 	"internal/clilog"
 
@@ -70,15 +72,15 @@ var ExpCmd = &cobra.Command{
 			}
 
 			if env != "" {
-				fileName = strings.Join([]string{"env", env, mapName, "kvmfile"}, "_")
+				fileName = strings.Join([]string{"env", env, mapName, "kvmfile"}, utils.DefaultFileSplitter)
 			} else if proxyName != "" {
-				fileName = strings.Join([]string{"proxy", proxyName, mapName, "kvmfile"}, "_")
+				fileName = strings.Join([]string{"proxy", proxyName, mapName, "kvmfile"}, utils.DefaultFileSplitter)
 			} else {
-				fileName = strings.Join([]string{"org", mapName, "kvmfile"}, "_")
+				fileName = strings.Join([]string{"org", mapName, "kvmfile"}, utils.DefaultFileSplitter)
 			}
 
 			for i := range payload {
-				if err = apiclient.WriteByteArrayToFile(fileName+"_"+strconv.Itoa(i)+".json", false, payload[i]); err != nil {
+				if err = apiclient.WriteByteArrayToFile(fileName+utils.DefaultFileSplitter+strconv.Itoa(i)+".json", false, payload[i]); err != nil {
 					return err
 				}
 			}

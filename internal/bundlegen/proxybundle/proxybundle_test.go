@@ -15,12 +15,13 @@
 package proxybundle
 
 import (
-	"internal/bundlegen"
-	"internal/client/clienttest"
 	"os"
 	"path"
 	"regexp"
 	"testing"
+
+	"internal/bundlegen"
+	"internal/client/clienttest"
 )
 
 var specName = "petstore-v3.1.yaml"

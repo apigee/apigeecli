@@ -72,9 +72,9 @@ type metric struct {
 }
 
 type googleManagementDef struct {
-	//Quota   quotaConfiguration   `json:"quota"`
+	// Quota   quotaConfiguration   `json:"quota"`
 	Quota map[interface{}]interface{} `json:"quota"`
-	//Metrics metricsConfiguration `json:"metrics"`
+	// Metrics metricsConfiguration `json:"metrics"`
 	Metrics map[interface{}]interface{} `json:"metrics"`
 }
 

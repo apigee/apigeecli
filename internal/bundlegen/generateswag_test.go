@@ -16,9 +16,10 @@ package bundlegen
 
 import (
 	"fmt"
-	"internal/client/clienttest"
 	"path"
 	"testing"
+
+	"internal/client/clienttest"
 )
 
 var swagSpecNames = []string{

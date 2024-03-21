@@ -27,6 +27,7 @@ import (
 	"sync"
 
 	"internal/clilog"
+	"internal/cmd/utils"
 )
 
 // entityPayloadList stores list of entities
@@ -212,7 +213,7 @@ func FetchBundle(entityType string, folder string, name string, revision string,
 	u.Path = path.Join(u.Path, GetApigeeOrg(), entityType, name, "revisions", revision)
 
 	if allRevisions {
-		proxyName = name + "_" + revision
+		proxyName = name + utils.DefaultFileSplitter + revision
 	} else {
 		proxyName = name
 	}

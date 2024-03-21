@@ -77,9 +77,9 @@ var ImportCmd = &cobra.Command{
 		clilog.Info.Println("Check for files with KVM Entries")
 		orgKVMFileList, envKVMFileList, _, _ := utils.ListKVMFiles(folder)
 
-		if utils.FileExists(path.Join(folder, "org_"+org+"_"+kvmFileName)) {
+		if utils.FileExists(path.Join(folder, "org_"+org+utils.DefaultFileSplitter+kvmFileName)) {
 			clilog.Info.Println("Importing Org scoped KVMs...")
-			if kvmList, err = utils.ReadEntityFile(path.Join(folder, "org_"+org+"_"+kvmFileName)); err != nil {
+			if kvmList, err = utils.ReadEntityFile(path.Join(folder, "org_"+org+utils.DefaultFileSplitter+kvmFileName)); err != nil {
 				return err
 			}
 			for _, kvmName := range kvmList {
@@ -160,30 +160,30 @@ var ImportCmd = &cobra.Command{
 			clilog.Info.Println("Importing configuration for environment " + environment)
 			apiclient.SetApigeeEnv(environment)
 
-			if utils.FileExists(path.Join(folder, environment+"_"+keyStoresFileName)) {
+			if utils.FileExists(path.Join(folder, environment+utils.DefaultFileSplitter+keyStoresFileName)) {
 				clilog.Info.Println("\tImporting Keystore names...")
-				if err = keystores.Import(conn, path.Join(folder, environment+"_"+keyStoresFileName)); err != nil {
+				if err = keystores.Import(conn, path.Join(folder, environment+utils.DefaultFileSplitter+keyStoresFileName)); err != nil {
 					return err
 				}
 			}
 
-			if utils.FileExists(path.Join(folder, environment+"_"+targetServerFileName)) {
+			if utils.FileExists(path.Join(folder, environment+utils.DefaultFileSplitter+targetServerFileName)) {
 				clilog.Info.Println("\tImporting Target servers...")
-				if err = targetservers.Import(conn, path.Join(folder, environment+"_"+targetServerFileName)); err != nil {
+				if err = targetservers.Import(conn, path.Join(folder, environment+utils.DefaultFileSplitter+targetServerFileName)); err != nil {
 					return err
 				}
 			}
 
-			if utils.FileExists(path.Join(folder, environment+"_"+referencesFileName)) {
+			if utils.FileExists(path.Join(folder, environment+utils.DefaultFileSplitter+referencesFileName)) {
 				clilog.Info.Println("\tImporting References...")
-				if err = references.Import(conn, path.Join(folder, environment+"_"+referencesFileName)); err != nil {
+				if err = references.Import(conn, path.Join(folder, environment+utils.DefaultFileSplitter+referencesFileName)); err != nil {
 					return err
 				}
 			}
 
-			if utils.FileExists(path.Join(folder, "env_"+environment+"_"+kvmFileName)) {
+			if utils.FileExists(path.Join(folder, "env_"+environment+utils.DefaultFileSplitter+kvmFileName)) {
 				clilog.Info.Println("\tImporting KVM Names only...")
-				if kvmList, err = utils.ReadEntityFile(path.Join(folder, "env_"+environment+"_"+kvmFileName)); err != nil {
+				if kvmList, err = utils.ReadEntityFile(path.Join(folder, "env_"+environment+utils.DefaultFileSplitter+kvmFileName)); err != nil {
 					return err
 				}
 				for _, kvmName := range kvmList {
