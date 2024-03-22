@@ -16,6 +16,7 @@ package res
 
 import (
 	"internal/apiclient"
+	"strings"
 
 	"internal/client/res"
 
@@ -41,7 +42,7 @@ func init() {
 	UpdateCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of the resource file")
 	UpdateCmd.Flags().StringVarP(&resType, "type", "p",
-		"", "Resource type. Valid types include java, js, jsc, properties, py, wsdl, xsd, or xsl.")
+		"", "Resource type. Valid types include "+strings.Join(res.GetValidResourceTypes(), ", "))
 	UpdateCmd.Flags().StringVarP(&resPath, "respath", "",
 		"", "Resource Path")
 

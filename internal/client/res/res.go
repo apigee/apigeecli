@@ -22,6 +22,9 @@ import (
 	"internal/apiclient"
 )
 
+// validResourceTypes contains a list of valid resources
+var validResourceTypes = []string{"js", "jsc", "properties", "java", "wsdl", "xsd", "py", "xslt", "oas", "graphql"}
+
 // Create
 func Create(name string, resPath string, resourceType string) (respBody []byte, err error) {
 	if !validate(resourceType) {
@@ -100,13 +103,14 @@ func List(resourceType string) (respBody []byte, err error) {
 
 // validate returns true is the resource type is valid
 func validate(resType string) bool {
-	// validResourceTypes contains a list of valid resources
-	validResourceTypes := [10]string{"js", "jsc", "properties", "java", "wsdl", "xsd", "py", "xslt", "oas", "graphql"}
-
 	for _, n := range validResourceTypes {
 		if n == resType {
 			return true
 		}
 	}
 	return false
+}
+
+func GetValidResourceTypes() []string {
+	return validResourceTypes
 }

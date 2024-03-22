@@ -16,6 +16,7 @@ package res
 
 import (
 	"internal/apiclient"
+	"strings"
 
 	"internal/client/res"
 
@@ -42,7 +43,7 @@ func init() {
 	DelCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of the resource file")
 	DelCmd.Flags().StringVarP(&resType, "type", "p",
-		"", "Resource type")
+		"", "Resource type. Valid resource types include "+strings.Join(res.GetValidResourceTypes(), ", "))
 
 	_ = DelCmd.MarkFlagRequired("name")
 	_ = DelCmd.MarkFlagRequired("type")
