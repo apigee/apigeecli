@@ -192,6 +192,7 @@ The following environment variables may be set to control the behavior of `apige
 * `APIGEECLI_DRYRUN=true` does not execute Apigee control plane APIs
 
 ## Version 2.x.x Breaking Changes
+
 The following command line flags have changed to follow a more consistent naming convention. The previous flag name and shorthand character are left of `==>` and the new flag name and shorthand are to the right.
 For example:  `"flagName", "f" ==> "flag-name", "f"`
 
@@ -232,7 +233,9 @@ Some changes merely drop the shorthand character.
 ```
 
 ## Version 2.0.0 New Changes
+
 A new flag was introduced to control output from apigeecli, that may impact your output if used in an automation pipeline.
+
 ```
 --no-warnings      Disable printing warnings to stderr
 ```
@@ -434,26 +437,9 @@ x-google-jwt-locations:
 
 query parameters are ignored. By default, if no location is specified, the JWT location is the `Authorization` header and value_prefix is `Bearer <token>`
 
-## How do I import entities using apigeecli?
+## Samples
 
-The table below illustrates how you can import different entities into Apigee. It refers to the [samples](./samples/) directory.
-
-
-| Operations | Import command |
-|---|---|
-| apicategories | `apigeecli apicategories import -o $org -t $token -f samples/apicategories.json -s $siteId` |
-| apis | `apigeecli apis import -f samples/apis -o $org -t $token` |
-| appgroups | `apigeecli appgroups import -f samples/appgroups.json -o $org -t $token` |
-| datacollectors | `apigeecli datacollectors import -f samples/datacollectors.json -o $org -t $token` |
-| developers | `apigeecli developers import -f samples/developers.json -o $org -t $token` |
-| kvms | `apigeecli kvms import -f samples/kvms -o $org -t $token` (Rename the files under samples/kvms to match your Apigee setup)  |
-| products | `apigeecli products import -f samples/apiproduct-legacy.json -o $org -t $token`  `apigeecli products import -f samples/apiproduct-gqlgroup.json -o $org -t $token`  `apigeecli products import -f samples/apiproduct-op-group.json -o $org -t $token` |
-| sharedflows | `apigeecli sharedflows import -f samples/sharedflows -o $org -t $token` |
-| targetservers | `apigeecli targetservers import -f samples/targetservers.json -o $org -t $token -e $env` |
-| keystores | `apigeecli keystores import -f samples/keystores.json -o $org -t $token -e $env` |
-| references | `apigeecli references import -f samples/references.json -o $org -t $token -e $env` |
-| apps | `apigeecli apps import -f samples/references.json -d samples/developers.json -o $org -t $token` (better used when the developers and apps are exported using the export) |
-| apidocs | `apigeecli apidocs import -f samples/apidocs -o $org -t $token -s $siteId` (Rename the files under samples/apidocs to match your Apigee setup for siteId) |
+Please see [here](./samples/README.md)
 
 ## How do I verify the binary?
 

@@ -44,6 +44,22 @@ var (
 	attrs                                                               map[string]string
 )
 
+var examples = []string{`apigeecli products create --name $product_name \\
+--display-name $product_name \
+--opgrp $ops_file \
+--envs $env \
+--approval auto \
+--attrs access=public`, `apigeecli products create --name $product_name \
+--display-name $product_name \
+--opgrp $ops_file \
+--envs $env \
+--approval auto \
+--attrs access=public \
+--quota 100 --interval 1 --unit minute`,
+	`apigeecli products import -f samples/apiproduct-legacy.json`,
+	`apigeecli products import -f samples/apiproduct-gqlgroup.json`,
+	`apigeecli products import -f samples/apiproduct-op-group.json`}
+
 func init() {
 	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
@@ -135,4 +151,8 @@ func getAttributes(attrs map[string]string) []products.Attribute {
 	}
 
 	return nil
+}
+
+func GetExample(i int) string {
+	return examples[i]
 }
