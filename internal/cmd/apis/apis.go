@@ -32,6 +32,21 @@ var (
 
 const zipExt = ".zip"
 
+var examples = []string{"apigeecli apis import -f samples/apis",
+	`apigeecli apis create oas -n petstore \
+--oas-base-folderpath=./samples \
+--oas-name=petstore.yaml --add-cors=true \
+--google-idtoken-aud-literal=https://sample.run.app`,
+	`apigeecli apis create oas -n petstore \
+-f ./samples/petstore.yaml \
+--add-cors=true --env=$env --wait=true`,
+	"apigeecli apis create graphql -n petstore --action=parse_verify --add-cors=true",
+	"apigeecli apis create integration -n sample --trigger=sample",
+	`apigeecli apis create github --name=petstore \
+--owner=apigee \
+--repo=api-platform-samples \
+--proxy-path=sample-proxies/apikey`}
+
 func init() {
 	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
@@ -53,4 +68,8 @@ func init() {
 	Cmd.AddCommand(KvmCmd)
 	Cmd.AddCommand(UpdateCmd)
 	Cmd.AddCommand(CloneCmd)
+}
+
+func GetExample(i int) string {
+	return examples[i]
 }

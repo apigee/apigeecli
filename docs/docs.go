@@ -23,6 +23,7 @@ import (
 	apiclient "internal/apiclient"
 	"internal/cmd"
 	apicategories "internal/cmd/apicategories"
+	"internal/cmd/apis"
 	products "internal/cmd/products"
 
 	"github.com/spf13/cobra/doc"
@@ -34,7 +35,7 @@ Set up apigeecli with preferences: apigeecli prefs set -o $org -t $(gcloud auth 
 | Operations | Command |
 |---|---|
 | apicategories | ` + apicategories.GetExample(0) + `|
-| apis | apigeecli apis import -f samples/apis -o $org -t $token |
+| apis | ` + apis.GetExample(0) + ` |
 | appgroups | apigeecli appgroups import -f samples/appgroups.json -o $org -t $token |
 | datacollectors | apigeecli datacollectors import -f samples/datacollectors.json -o $org -t $token |
 | developers | apigeecli developers import -f samples/developers.json -o $org -t $token |
