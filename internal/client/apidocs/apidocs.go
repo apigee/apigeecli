@@ -15,6 +15,7 @@
 package apidocs
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -246,28 +247,28 @@ func Delete(siteid string, id string) (respBody []byte, err error) {
 
 // UpdateDocumentation
 func UpdateDocumentation(siteid string, id string, displayName string,
-	openAPIDoc string, graphQLDoc string, endpointUri string,
+	openAPIDoc []byte, graphQLDoc []byte, endpointUri string,
 ) (respBody []byte, err error) {
 	var data map[string]interface{}
 	// var payload string
-	if openAPIDoc != "" {
+	if openAPIDoc != nil {
 		data = map[string]interface{}{
 			"oasDocumentation": map[string]interface{}{
 				"spec": map[string]interface{}{
 					"displayName": displayName,
-					"contents":    openAPIDoc,
+					"contents":    base64.StdEncoding.EncodeToString(openAPIDoc),
 				},
 			},
 		}
 	}
 
-	if graphQLDoc != "" {
+	if graphQLDoc != nil {
 		data = map[string]interface{}{
 			"graphqlDocumentation": map[string]interface{}{
 				"endpointUri": endpointUri,
 				"schema": map[string]interface{}{
 					"displayName": displayName,
-					"contents":    graphQLDoc,
+					"contents":    base64.StdEncoding.EncodeToString(graphQLDoc),
 				},
 			},
 		}
@@ -317,7 +318,7 @@ func Export(folder string) (err error) {
 				if err != nil {
 					return err
 				}
-				docFileName := fmt.Sprintf("apidocs_%s_%s.json", siteid, data.ID)
+				docFileName := fmt.Sprintf("apidocs%s%s%s%s.json", utils.DefaultFileSplitter, siteid, utils.DefaultFileSplitter, data.ID)
 				if err = apiclient.WriteByteArrayToFile(path.Join(folder, docFileName), false, respDocsBody); err != nil {
 					return err
 				}
@@ -331,7 +332,7 @@ func Export(folder string) (err error) {
 			return err
 		}
 		respBody, _ = apiclient.PrettifyJSON(respBody)
-		if err = apiclient.WriteByteArrayToFile(path.Join(folder, "site_"+siteid+".json"), false, respBody); err != nil {
+		if err = apiclient.WriteByteArrayToFile(path.Join(folder, "site"+utils.DefaultFileSplitter+siteid+".json"), false, respBody); err != nil {
 			return err
 		}
 	}
@@ -357,9 +358,9 @@ func Import(siteid string, useSrcSiteID string, folder string) (err error) {
 	var docsList []data
 
 	if useSrcSiteID != "" {
-		docsList, err = readAPIDocsDataFile(path.Join(folder, "site_"+useSrcSiteID+".json"))
+		docsList, err = readAPIDocsDataFile(path.Join(folder, "site"+utils.DefaultFileSplitter+useSrcSiteID+".json"))
 	} else {
-		docsList, err = readAPIDocsDataFile(path.Join(folder, "site_"+siteid+".json"))
+		docsList, err = readAPIDocsDataFile(path.Join(folder, "site"+utils.DefaultFileSplitter+siteid+".json"))
 	}
 	if err != nil {
 		return err
@@ -385,10 +386,10 @@ func Import(siteid string, useSrcSiteID string, folder string) (err error) {
 		// 2. find the documentation associated with this site
 		var documentationFileName string
 		if useSrcSiteID != "" {
-			apiDocsName := fmt.Sprintf("apidocs_%s_%s.json", useSrcSiteID, doc.ID)
+			apiDocsName := fmt.Sprintf("apidocs%s%s%s%s.json", utils.DefaultFileSplitter, useSrcSiteID, utils.DefaultFileSplitter, doc.ID)
 			documentationFileName = path.Join(folder, apiDocsName)
 		} else {
-			documentationFileName = path.Join(folder, "apidocs_"+siteid+utils.DefaultFileSplitter+doc.ID+".json")
+			documentationFileName = path.Join(folder, "apidocs"+utils.DefaultFileSplitter+siteid+utils.DefaultFileSplitter+doc.ID+".json")
 		}
 		apidocument, err := readAPIDocumentationFile(documentationFileName)
 		if err != nil {
@@ -397,14 +398,14 @@ func Import(siteid string, useSrcSiteID string, folder string) (err error) {
 		}
 		if apidocument.Data.GraphqlDocumentation != nil {
 			_, err = UpdateDocumentation(siteid, response.Data.ID,
-				apidocument.Data.GraphqlDocumentation.Schema.DisplayName, "",
-				apidocument.Data.GraphqlDocumentation.Schema.Contents,
+				apidocument.Data.GraphqlDocumentation.Schema.DisplayName, nil,
+				[]byte(apidocument.Data.GraphqlDocumentation.Schema.Contents),
 				apidocument.Data.GraphqlDocumentation.EndpointUri)
 		} else {
 			_, err = UpdateDocumentation(siteid, response.Data.ID,
 				apidocument.Data.OasDocumentation.Spec.DisplayName,
-				apidocument.Data.OasDocumentation.Spec.Contents,
-				"", "")
+				[]byte(apidocument.Data.OasDocumentation.Spec.Contents),
+				nil, "")
 		}
 		if err != nil {
 			errs = append(errs, err.Error())

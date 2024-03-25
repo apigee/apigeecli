@@ -15,7 +15,6 @@
 package apidocs
 
 import (
-	"encoding/json"
 	"fmt"
 
 	"internal/apiclient"
@@ -46,16 +45,11 @@ var UpdateDocCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		var openAPIDoc, graphQLDoc []byte
-		var openAPI, graphQL string
 
 		if openAPIPath != "" {
 			if openAPIDoc, err = utils.ReadFile(openAPIPath); err != nil {
 				return err
 			}
-			if openAPIDoc, err = json.Marshal(openAPIDoc); err != nil {
-				return err
-			}
-			openAPI = string(openAPIDoc)
 		}
 
 		if graphQLPath != "" {
@@ -63,13 +57,9 @@ var UpdateDocCmd = &cobra.Command{
 			if err != nil {
 				return err
 			}
-			if graphQLDoc, err = json.Marshal(graphQLDoc); err != nil {
-				return err
-			}
-			graphQL = string(graphQLDoc)
 		}
 
-		_, err = apidocs.UpdateDocumentation(siteid, id, name, openAPI, graphQL, endpointUri)
+		_, err = apidocs.UpdateDocumentation(siteid, id, name, openAPIDoc, graphQLDoc, endpointUri)
 		return
 	},
 }
