@@ -27,6 +27,8 @@ var ImpCmd = &cobra.Command{
 	Use:   "import",
 	Short: "Import Environment References",
 	Long:  "Import Environment References",
+	Example: `Import Environment References from a file:
+` + GetExample(0),
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetApigeeEnv(env)
 		return apiclient.SetApigeeOrg(org)

@@ -27,6 +27,8 @@ var Cmd = &cobra.Command{
 
 var org, siteid, id, region string
 
+var examples = []string{"apigeecli apicategories import --file samples/apicategories.json --siteid $siteId  --default-token"}
+
 func init() {
 	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
@@ -46,4 +48,8 @@ func init() {
 
 	_ = Cmd.MarkFlagRequired("org")
 	_ = Cmd.MarkFlagRequired("siteid")
+}
+
+func GetExample(i int) string {
+	return examples[i]
 }

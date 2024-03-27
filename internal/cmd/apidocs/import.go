@@ -41,6 +41,14 @@ var ImpCmd = &cobra.Command{
 	Use:   "import",
 	Short: "Import from a folder containing apidocs",
 	Long:  "Import from a folder containing apidocs",
+	Example: `Assume data is exported from org1 which contains siteid site1. The fles are exported as
+	site_org1-site1.json and apidocs_org1-site1_00000.json
+
+	When importing this data into a new org, the siteid changes (since it is a combination of
+	org name and siteid).
+
+	Now import the data to org2 as
+` + GetExample(0),
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		if siteid == "" {
 			return fmt.Errorf("siteid is a mandatory parameter")

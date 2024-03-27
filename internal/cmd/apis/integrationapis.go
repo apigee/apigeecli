@@ -30,6 +30,8 @@ var IntegrationCmd = &cobra.Command{
 	Use:   "integration",
 	Short: "Creates an API proxy template for Application Integration",
 	Long:  "Creates an API proxy template for Application Integration with an API Trigger",
+	Example: `Create an API Proxy template for Application Integration:
+` + GetExample(4),
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)

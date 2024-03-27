@@ -28,6 +28,8 @@ var Cmd = &cobra.Command{
 
 var org, env, name, description, refers, resourceType, region string
 
+var examples = []string{"apigeecli references import -f samples/references.json  -e $env"}
+
 func init() {
 	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
@@ -47,4 +49,8 @@ func init() {
 	Cmd.AddCommand(GetCmd)
 	Cmd.AddCommand(ImpCmd)
 	Cmd.AddCommand(ExpCmd)
+}
+
+func GetExample(i int) string {
+	return examples[i]
 }

@@ -27,6 +27,8 @@ var ImpCmd = &cobra.Command{
 	Use:   "import",
 	Short: "Import a file containing target servers",
 	Long:  "Import a file containing target servers",
+	Example: `Import a file containing target servers:
+` + GetExample(0),
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetApigeeEnv(env)
 		apiclient.SetRegion(region)

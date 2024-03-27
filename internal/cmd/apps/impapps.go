@@ -27,6 +27,8 @@ var ImpCmd = &cobra.Command{
 	Use:   "import",
 	Short: "Import a file containing Developer Apps",
 	Long:  "Import a file containing Developer Apps",
+	Example: `Import a file containing Developer Apps from a file:
+` + GetExample(0),
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)

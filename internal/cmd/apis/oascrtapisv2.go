@@ -35,6 +35,11 @@ var OasCreatev2Cmd = &cobra.Command{
 	Aliases: []string{"oas"},
 	Short:   "Creates an API proxy from an OpenAPI Specification",
 	Long:    "Creates an API proxy from an OpenAPI Specification",
+	Example: `Create an Apigee API Proxy from an OpenAPI Specification for a service deployed on Cloud Run
+` + GetExample(1) + `
+
+Create an API Proxy from OAS and deploy the proxy to an environment:
+` + GetExample(2),
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		if oasFile == "" && oasURI == "" {
 			return fmt.Errorf("either oas-base-folderpath or oas-base-uri must be passed")

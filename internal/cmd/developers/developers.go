@@ -31,6 +31,8 @@ var (
 	expand             bool
 )
 
+var examples = []string{"apigeecli developers import -f samples/developers.json"}
+
 func init() {
 	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
@@ -48,4 +50,8 @@ func init() {
 	Cmd.AddCommand(SubCmd)
 	Cmd.AddCommand(AdjustCmd)
 	Cmd.AddCommand(CreditCmd)
+}
+
+func GetExample(i int) string {
+	return examples[i]
 }

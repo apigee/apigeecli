@@ -71,24 +71,10 @@ var CreateCmd = &cobra.Command{
 		return err
 	},
 	Example: `Create an API product, using externally defined operations, with auto approval and access=public:
-  apigeecli products create --name "$product_name" \
-		--display-name "$product_name" \
-		--opgrp "$ops_file" \
-		--envs "$env" \
-		--approval auto \
-		--attrs access=public \
-		--token $TOKEN
+` + GetExample(0) + `
 
 Create an API product, using externally defined operations, with auto approval and access=public, and a quota of 100/minute:
-  apigeecli products create --name "$product_name" \
-		--display-name "$product_name" \
-		--opgrp "$ops_file" \
-		--envs "$env" \
-		--approval auto \
-		--attrs access=public \
-		--quota 100 --interval 1 --unit minute \
-		--token $TOKEN
-`,
+` + GetExample(1),
 }
 
 var operationGroupFile, gqlOperationGroupFile, grpcOperationGroupFile, quotaCounterScope string

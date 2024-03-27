@@ -27,6 +27,8 @@ var ImpCmd = &cobra.Command{
 	Use:   "import",
 	Short: "Import Data Collectors",
 	Long:  "Import Data Collectors",
+	Example: `Import Data Collectors from a file:
+` + GetExample(0),
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)

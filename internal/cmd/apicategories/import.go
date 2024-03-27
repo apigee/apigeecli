@@ -33,6 +33,8 @@ var ImpCmd = &cobra.Command{
 		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
+	Example: `Import an existing apicategories from a file:
+	` + GetExample(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if siteid == "" {
 			return fmt.Errorf("siteid is a mandatory parameter")

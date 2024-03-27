@@ -28,6 +28,8 @@ var Cmd = &cobra.Command{
 
 var org, name, region string
 
+var examples = []string{"apigeecli datacollectors import -f samples/datacollectors.json --default-token"}
+
 func init() {
 	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
@@ -40,4 +42,8 @@ func init() {
 	Cmd.AddCommand(DelCmd)
 	Cmd.AddCommand(ImpCmd)
 	Cmd.AddCommand(ExpCmd)
+}
+
+func GetExample(i int) string {
+	return examples[i]
 }

@@ -30,6 +30,8 @@ var (
 	conn, revision         int
 )
 
+var examples = []string{"apigeecli sharedflows import -f samples/sharedflows"}
+
 func init() {
 	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
@@ -47,4 +49,8 @@ func init() {
 	Cmd.AddCommand(ImpCmd)
 	Cmd.AddCommand(CleanCmd)
 	Cmd.AddCommand(ListDepCmd)
+}
+
+func GetExample(i int) string {
+	return examples[i]
 }
