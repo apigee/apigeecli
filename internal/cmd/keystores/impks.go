@@ -27,6 +27,8 @@ var ImpCmd = &cobra.Command{
 	Use:   "import",
 	Short: "Import a file containing keystores",
 	Long:  "Import a file containing keystores",
+	Example: `Import a file containing keystores:
+` + GetExample(0),
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetApigeeEnv(env)
 		apiclient.SetRegion(region)

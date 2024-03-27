@@ -30,6 +30,8 @@ var ImpCmd = &cobra.Command{
 	Use:   "import",
 	Short: "Import a folder containing API proxy bundles",
 	Long:  "Import a folder containing API proxy bundles",
+	Example: `Import a folder containing API proxy bundles:
+` + GetExample(0),
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)

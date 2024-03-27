@@ -32,20 +32,20 @@ var (
 
 const zipExt = ".zip"
 
-var examples = []string{"apigeecli apis import -f samples/apis",
+var examples = []string{"apigeecli apis import -f samples/apis  --default-token",
 	`apigeecli apis create oas -n petstore \
 --oas-base-folderpath=./samples \
 --oas-name=petstore.yaml --add-cors=true \
---google-idtoken-aud-literal=https://sample.run.app`,
+--google-idtoken-aud-literal=https://sample.run.app  --default-token`,
 	`apigeecli apis create oas -n petstore \
 -f ./samples/petstore.yaml \
---add-cors=true --env=$env --wait=true`,
-	"apigeecli apis create graphql -n petstore --action=parse_verify --add-cors=true",
-	"apigeecli apis create integration -n sample --trigger=sample",
+--add-cors=true --env=$env --wait=true --default-token`,
+	"apigeecli apis create graphql -n petstore --action=parse_verify --add-cors=true  --default-token",
+	"apigeecli apis create integration -n sample --trigger=sample  --default-token",
 	`apigeecli apis create github --name=petstore \
 --owner=apigee \
 --repo=api-platform-samples \
---proxy-path=sample-proxies/apikey`}
+--proxy-path=sample-proxies/apikey  --default-token`}
 
 func init() {
 	Cmd.PersistentFlags().StringVarP(&org, "org", "o",

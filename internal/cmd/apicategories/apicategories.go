@@ -27,7 +27,7 @@ var Cmd = &cobra.Command{
 
 var org, siteid, id, region string
 
-var examples = []string{"apigeecli apicategories import --file samples/apicategories.json --siteid $siteId"}
+var examples = []string{"apigeecli apicategories import --file samples/apicategories.json --siteid $siteId  --default-token"}
 
 func init() {
 	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
