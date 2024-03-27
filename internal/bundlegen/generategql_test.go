@@ -21,6 +21,7 @@ import (
 func TestGenerateAPIProxyDefFromGQL(t *testing.T) {
 	skipPolicy := false
 	name := "test"
+	desc := "desc"
 	gqlDocName := "schema"
 	apiKeyLocation := "request.header.x-api-key"
 	addCORS := true
@@ -28,6 +29,7 @@ func TestGenerateAPIProxyDefFromGQL(t *testing.T) {
 	targetURL := "http://api.example.com"
 	targetURLRef := ""
 	if err := GenerateAPIProxyDefFromGQL(name,
+		desc,
 		gqlDocName,
 		basePath,
 		apiKeyLocation,

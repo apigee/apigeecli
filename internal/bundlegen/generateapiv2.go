@@ -120,6 +120,7 @@ func GetModelVersion() string {
 }
 
 func GenerateAPIProxyDefFromOASv2(name string,
+	description string,
 	basePath string,
 	oasDocName string,
 	skipPolicy bool,
@@ -136,10 +137,10 @@ func GenerateAPIProxyDefFromOASv2(name string,
 	}
 
 	apiproxy.SetDisplayName(name)
-	if docModel.Model.Info != nil {
-		if docModel.Model.Info.Description != "" {
-			apiproxy.SetDescription(docModel.Model.Info.Description)
-		}
+	if docModel.Model.Info != nil && docModel.Model.Info.Description != "" {
+		apiproxy.SetDescription(docModel.Model.Info.Description + " " + description)
+	} else if description != "" {
+		apiproxy.SetDescription(description)
 	}
 
 	apiproxy.SetCreatedAt()

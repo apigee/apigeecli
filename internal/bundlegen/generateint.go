@@ -19,7 +19,7 @@ import (
 	"internal/bundlegen/proxies"
 )
 
-func GenerateIntegrationAPIProxy(name string,
+func GenerateIntegrationAPIProxy(name string, description string,
 	apitrigger string,
 ) (err error) {
 	apiproxy.SetDisplayName(name)
@@ -29,6 +29,10 @@ func GenerateIntegrationAPIProxy(name string,
 	apiproxy.AddProxyEndpoint("default")
 	apiproxy.AddIntegrationEndpoint("default")
 	apiproxy.SetBasePath("/" + apitrigger)
+
+	if description != "" {
+		apiproxy.SetDescription(description)
+	}
 
 	proxies.NewProxyEndpoint("/"+apitrigger, false)
 
