@@ -53,7 +53,7 @@ func testGenerateAPIProxyFromSwagger(t *testing.T) {
 	name := "test"
 	basePath := ""
 	addCORS := true
-	if _, err := GenerateAPIProxyFromSwagger(name, oasDocName, basePath, addCORS); err != nil {
+	if _, err := GenerateAPIProxyFromSwagger(name, "desc", oasDocName, basePath, addCORS); err != nil {
 		t.Fatalf("%v", err)
 	}
 }

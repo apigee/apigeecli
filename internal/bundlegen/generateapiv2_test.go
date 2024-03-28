@@ -54,6 +54,7 @@ func testLoadDocument(specName string, t *testing.T) {
 func TestGenerateAPIProxyDefFromOASv2(specName string, t *testing.T) {
 	skipPolicy := false
 	name := "test"
+	desc := "Sample description"
 	addCORS := true
 	basePath := ""
 	oasGoogleAcessTokenScopeLiteral := ""
@@ -83,6 +84,7 @@ func TestGenerateAPIProxyDefFromOASv2(specName string, t *testing.T) {
 	}
 
 	if err := GenerateAPIProxyDefFromOASv2(name,
+		desc,
 		basePath,
 		specName,
 		skipPolicy,

@@ -18,8 +18,9 @@ import "testing"
 
 func TestGenerateIntegrationAPIProxy(t *testing.T) {
 	name := "test"
+	desc := "desc"
 	apiTrigger := "test"
-	if err := GenerateIntegrationAPIProxy(name, apiTrigger); err != nil {
+	if err := GenerateIntegrationAPIProxy(name, desc, apiTrigger); err != nil {
 		t.Fatalf("%v", err)
 	}
 }

@@ -42,7 +42,7 @@ var IntegrationCmd = &cobra.Command{
 
 		defer os.RemoveAll(tmpDir)
 
-		if err = bundlegen.GenerateIntegrationAPIProxy(name, apitrigger); err != nil {
+		if err = bundlegen.GenerateIntegrationAPIProxy(name, desc, apitrigger); err != nil {
 			return err
 		}
 
@@ -62,6 +62,8 @@ var integration, apitrigger string
 func init() {
 	IntegrationCmd.Flags().StringVarP(&name, "name", "n",
 		"", "API Proxy name")
+	IntegrationCmd.Flags().StringVarP(&desc, "desc", "d",
+		"", "API Proxy description")
 	IntegrationCmd.Flags().StringVarP(&integration, "integration", "i",
 		"", "Integration name")
 	IntegrationCmd.Flags().StringVarP(&apitrigger, "trigger", "",

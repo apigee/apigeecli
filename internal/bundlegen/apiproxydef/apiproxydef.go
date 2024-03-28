@@ -133,3 +133,21 @@ func SetConfigurationVersion() {
 func AddResource(name string, resType string) {
 	apiProxy.Resources.Resource = append(apiProxy.Resources.Resource, resType+"://"+name)
 }
+
+func SetDescriptionWithMarshal(contents []byte, description string) (resp []byte, err error) {
+	a := apiProxyDef{}
+	err = xml.Unmarshal(contents, &a)
+	if err != nil {
+		return nil, err
+	}
+	if a.Description != "" {
+		a.Description = a.Description + " " + description
+	} else {
+		a.Description = description
+	}
+	resp, err = xml.MarshalIndent(a, "", " ")
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}

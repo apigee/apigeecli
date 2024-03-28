@@ -154,6 +154,7 @@ func LoadSwaggerFromFile(filePath string) (string, []byte, error) {
 }
 
 func GenerateAPIProxyFromSwagger(name string,
+	description string,
 	oasDocName string,
 	basePath string,
 	addCORS bool,
@@ -181,7 +182,9 @@ func GenerateAPIProxyFromSwagger(name string,
 	}
 
 	if doc2.Info.Description != "" {
-		apiproxy.SetDescription(doc2.Info.Description)
+		apiproxy.SetDescription(doc2.Info.Description + " " + description)
+	} else if description != "" {
+		apiproxy.SetDescription(description)
 	}
 
 	apiproxy.SetCreatedAt()

@@ -69,6 +69,7 @@ var GqlCreateCmd = &cobra.Command{
 
 		// Generate the apiproxy struct
 		err = bundle.GenerateAPIProxyDefFromGQL(name,
+			desc,
 			gqlDocName,
 			basePath,
 			apiKeyLocation,
@@ -130,6 +131,8 @@ func init() {
 		false, "Skip adding the GraphQL Validate policy")
 	GqlCreateCmd.Flags().BoolVarP(&addCORS, "add-cors", "",
 		false, "Add a CORS policy")
+	GqlCreateCmd.Flags().StringVarP(&desc, "desc", "d",
+		"", "API Proxy description")
 
 	_ = GqlCreateCmd.MarkFlagRequired("name")
 	_ = GqlCreateCmd.MarkFlagRequired("basepath")
