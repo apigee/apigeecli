@@ -27,6 +27,8 @@ import (
 
 	"internal/client/apis"
 
+	cp "github.com/otiai10/copy"
+
 	"github.com/spf13/cobra"
 )
 
@@ -70,6 +72,22 @@ var BundleCreateCmd = &cobra.Command{
 			defer os.RemoveAll(tmpDir)
 
 			proxyBundlePath := path.Join(tmpDir, name+zipExt)
+
+			if desc != "" {
+				tmpProxyFolder := path.Join(tmpDir, "apiproxy")
+				// copy the apiproxy folder to a temporary location
+				err = cp.Copy(proxyFolder, tmpProxyFolder)
+				if err != nil {
+					return err
+				}
+				// set the description in the xml file
+				err = proxybundle.SetDescription(tmpProxyFolder, name, desc)
+				if err != nil {
+					return err
+				}
+				// use the apiproxy folder in the tmp location to create archive
+				proxyFolder = tmpProxyFolder
+			}
 
 			if err = proxybundle.GenerateArchiveBundle(proxyFolder, proxyBundlePath, false); err != nil {
 				return err
@@ -121,6 +139,8 @@ func init() {
 		true, deploymentMsg)
 	BundleCreateCmd.Flags().StringVarP(&serviceAccountName, "sa", "s",
 		"", "The format must be {ACCOUNT_ID}@{PROJECT}.iam.gserviceaccount.com.")
+	BundleCreateCmd.Flags().StringVarP(&desc, "desc", "d",
+		"", "API Proxy description")
 
 	_ = BundleCreateCmd.MarkFlagRequired("name")
 }
