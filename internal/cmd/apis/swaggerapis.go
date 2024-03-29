@@ -92,5 +92,5 @@ func init() {
 	SwaggerCreateCmd.Flags().BoolVarP(&addCORS, "add-cors", "",
 		false, "Add a CORS policy")
 	SwaggerCreateCmd.Flags().StringVarP(&desc, "desc", "d",
-		"", "API Proxy description")
+		"", "API Proxy description; Merges with the existing description in the spec.")
 }

@@ -140,7 +140,7 @@ func init() {
 	BundleCreateCmd.Flags().StringVarP(&serviceAccountName, "sa", "s",
 		"", "The format must be {ACCOUNT_ID}@{PROJECT}.iam.gserviceaccount.com.")
 	BundleCreateCmd.Flags().StringVarP(&desc, "desc", "d",
-		"", "API Proxy description")
+		"", "API Proxy description; Appends to the description if the description already exists")
 
 	_ = BundleCreateCmd.MarkFlagRequired("name")
 }
