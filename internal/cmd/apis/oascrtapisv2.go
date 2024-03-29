@@ -102,6 +102,7 @@ var OasCreatev2Cmd = &cobra.Command{
 
 		// Generate the apiproxy struct
 		err = bundle.GenerateAPIProxyDefFromOASv2(name,
+			desc,
 			basePath,
 			specName,
 			skipPolicy,
@@ -149,7 +150,7 @@ var OasCreatev2Cmd = &cobra.Command{
 }
 
 var (
-	specName, oasFile, oasURI, targetURL, targetServerName                              string
+	specName, oasFile, oasURI, targetURL, targetServerName, desc                        string
 	oasGoogleAcessTokenScopeLiteral, oasGoogleIDTokenAudLiteral, oasGoogleIDTokenAudRef string
 	validateSpec, formatValidation                                                      bool
 )
@@ -202,6 +203,8 @@ func init() {
 		true, deploymentMsg)
 	OasCreatev2Cmd.Flags().StringVarP(&serviceAccountName, "sa", "s",
 		"", "The format must be {ACCOUNT_ID}@{PROJECT}.iam.gserviceaccount.com.")
+	OasCreatev2Cmd.Flags().StringVarP(&desc, "desc", "d",
+		"", "API Proxy description; This will be merged with the OAS descrption")
 
 	_ = OasCreatev2Cmd.MarkFlagRequired("name")
 	_ = OasCreatev2Cmd.MarkFlagRequired("oas-name")

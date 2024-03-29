@@ -24,6 +24,7 @@ import (
 )
 
 func GenerateAPIProxyDefFromGQL(name string,
+	description string,
 	gqlDocName string,
 	basePath string,
 	apiKeyLocation string,
@@ -39,8 +40,11 @@ func GenerateAPIProxyDefFromGQL(name string,
 	apiproxy.AddTargetEndpoint(DEFAULT)
 	apiproxy.AddProxyEndpoint(DEFAULT)
 
-	apiproxy.SetDescription("Generated API Proxy from " + gqlDocName)
-
+	if description != "" {
+		apiproxy.SetDescription(description)
+	} else {
+		apiproxy.SetDescription("Generated API Proxy from " + gqlDocName)
+	}
 	if !skipPolicy {
 		apiproxy.AddResource(gqlDocName, "graphql")
 		apiproxy.AddPolicy("Validate-" + name + "-Schema")

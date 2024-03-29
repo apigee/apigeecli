@@ -52,6 +52,7 @@ require (
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826 // indirect
+	github.com/otiai10/copy v1.14.0 // indirect
 	github.com/pb33f/libopenapi v0.15.14 // indirect
 	github.com/pb33f/libopenapi-validator v0.0.42 // indirect
 	github.com/perimeterx/marshmallow v1.1.5 // indirect

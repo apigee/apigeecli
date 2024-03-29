@@ -19,6 +19,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"internal/bundlegen/apiproxydef"
 	"io"
 	"net/http"
 	"net/url"
@@ -758,6 +759,25 @@ func SharedflowCleanUp() {
 	if _, err := os.Stat(sfRootDir + ".zip"); err == nil {
 		_ = os.Remove(sfRootDir + ".zip")
 	}
+}
+
+func SetDescription(apiProxyFolder string, name string, description string) (err error) {
+	userFile, err := os.Open(path.Join(apiProxyFolder, name+".xml"))
+	if err != nil {
+		return err
+	}
+
+	byteValue, err := io.ReadAll(userFile)
+	if err != nil {
+		return err
+	}
+	userFile.Close()
+
+	byteValue, err = apiproxydef.SetDescriptionWithMarshal(byteValue, description)
+	if err != nil {
+		return err
+	}
+	return apiclient.WriteByteArrayToFile(path.Join(apiProxyFolder, name+".xml"), false, byteValue)
 }
 
 func downloadProxyFromRepo(client *github.Client, ctx context.Context, owner string, repo string, repopath string, sharedflow bool) (err error) {

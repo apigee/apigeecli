@@ -56,6 +56,7 @@ var SwaggerCreateCmd = &cobra.Command{
 
 		// Generate the apiproxy struct
 		name, err = bundle.GenerateAPIProxyFromSwagger(name,
+			desc,
 			oasDocName,
 			basePath,
 			addCORS)
@@ -90,4 +91,6 @@ func init() {
 		true, "Import API Proxy after generation from spec")
 	SwaggerCreateCmd.Flags().BoolVarP(&addCORS, "add-cors", "",
 		false, "Add a CORS policy")
+	SwaggerCreateCmd.Flags().StringVarP(&desc, "desc", "d",
+		"", "API Proxy description; Merges with the existing description in the spec.")
 }
