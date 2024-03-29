@@ -27,6 +27,8 @@ import (
 
 	"internal/client/sharedflows"
 
+	cp "github.com/otiai10/copy"
+
 	"github.com/spf13/cobra"
 )
 
@@ -73,6 +75,22 @@ var BundleCreateCmd = &cobra.Command{
 
 			sfBundlePath := path.Join(tmpDir, name+".zip")
 
+			if desc != "" {
+				tmpProxyFolder := path.Join(tmpDir, "sharedflowbundle")
+				// copy the apiproxy folder to a temporary location
+				err = cp.Copy(sfFolder, tmpProxyFolder)
+				if err != nil {
+					return err
+				}
+				// set the description in the xml file
+				err = proxybundle.SetSharedFlowDescription(tmpProxyFolder, name, desc)
+				if err != nil {
+					return err
+				}
+				// use the apiproxy folder in the tmp location to create archive
+				sfFolder = tmpProxyFolder
+			}
+
 			if err = proxybundle.GenerateArchiveBundle(sfFolder, sfBundlePath, true); err != nil {
 				return err
 			}
@@ -99,7 +117,7 @@ var BundleCreateCmd = &cobra.Command{
 	},
 }
 
-var sfZip, sfFolder string
+var sfZip, sfFolder, desc string
 
 func init() {
 	BundleCreateCmd.Flags().StringVarP(&name, "name", "n",
@@ -116,6 +134,8 @@ func init() {
 		false, "Waits for the deployment to finish, with success or error")
 	BundleCreateCmd.Flags().StringVarP(&serviceAccountName, "sa", "s",
 		"", "The format must be {ACCOUNT_ID}@{PROJECT}.iam.gserviceaccount.com.")
+	BundleCreateCmd.Flags().StringVarP(&desc, "desc", "d",
+		"", "API Proxy description; Appends to the description if the description already exists")
 
 	_ = BundleCreateCmd.MarkFlagRequired("name")
 }
