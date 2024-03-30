@@ -165,7 +165,7 @@ func init() {
 	OasCreatev2Cmd.Flags().StringVarP(&oasURI, "oas-base-uri", "u",
 		"", "Open API Specification URI Base location")
 	OasCreatev2Cmd.Flags().StringVarP(&specName, "oas-name", "",
-		"", "Open API 3.0/3.1 Specification Name; Used with oas-base-filepath or oas-base-uri")
+		"", "Open API 3.0/3.1 Specification Name; Used with oas-base-folderpath or oas-base-uri")
 	OasCreatev2Cmd.Flags().StringVarP(&oasGoogleAcessTokenScopeLiteral, "google-accesstoken-scope-literal", "",
 		"", "Generate Google Access token with target endpoint and set scope")
 	OasCreatev2Cmd.Flags().StringVarP(&oasGoogleIDTokenAudLiteral, "google-idtoken-aud-literal", "",

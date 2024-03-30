@@ -19,7 +19,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"internal/bundlegen/apiproxydef"
 	"io"
 	"net/http"
 	"net/url"
@@ -37,6 +36,7 @@ import (
 	apiproxy "internal/bundlegen/apiproxydef"
 	policies "internal/bundlegen/policies"
 	proxies "internal/bundlegen/proxies"
+	sf "internal/bundlegen/sharedflowdef"
 	"internal/bundlegen/targets"
 	target "internal/bundlegen/targets"
 
@@ -773,11 +773,31 @@ func SetDescription(apiProxyFolder string, name string, description string) (err
 	}
 	userFile.Close()
 
-	byteValue, err = apiproxydef.SetDescriptionWithMarshal(byteValue, description)
+	byteValue, err = apiproxy.SetDescriptionWithMarshal(byteValue, description)
 	if err != nil {
 		return err
 	}
 	return apiclient.WriteByteArrayToFile(path.Join(apiProxyFolder, name+".xml"), false, byteValue)
+}
+
+func SetSharedFlowDescription(sfFolder string, name string, description string) (err error) {
+	userFile, err := os.Open(path.Join(sfFolder, name+".xml"))
+	if err != nil {
+		return err
+	}
+
+	byteValue, err := io.ReadAll(userFile)
+	if err != nil {
+		return err
+	}
+	userFile.Close()
+
+	byteValue, err = sf.SetDescriptionWithMarshal(byteValue, description)
+	if err != nil {
+		return err
+	}
+	return apiclient.WriteByteArrayToFile(path.Join(sfFolder, name+".xml"), false, byteValue)
+
 }
 
 func downloadProxyFromRepo(client *github.Client, ctx context.Context, owner string, repo string, repopath string, sharedflow bool) (err error) {
