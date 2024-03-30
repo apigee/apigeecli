@@ -27,6 +27,11 @@ var ImpCmd = &cobra.Command{
 	Use:   "import",
 	Short: "Import a file containing API products",
 	Long:  "Import a file containing API products",
+	Example: `Import API Products from a file containing REST Operations
+` + GetExample(2) + `
+
+Import API Products from a file containing GraphQL Operations
+` + GetExample(3),
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)

@@ -31,6 +31,8 @@ var (
 	conn                     int
 )
 
+var examples = []string{"apigeecli apps import -f samples/references.json -d samples/developers.json"}
+
 func init() {
 	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
@@ -47,4 +49,8 @@ func init() {
 	Cmd.AddCommand(KeysCmd)
 	Cmd.AddCommand(ManageCmd)
 	Cmd.AddCommand(UpdateCmd)
+}
+
+func GetExample(i int) string {
+	return examples[i]
 }

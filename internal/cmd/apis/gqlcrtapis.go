@@ -40,6 +40,8 @@ var GqlCreateCmd = &cobra.Command{
 	Aliases: []string{"gql"},
 	Short:   "Creates an API proxy from a GraphQL schema",
 	Long:    "Creates an API proxy from a GraphQL schema",
+	Example: `Create an API Proxy from a GraphQL schema:
+` + GetExample(3),
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		if gqlFile == "" && gqlURI == "" {
 			return fmt.Errorf("either gqlfile or gqlurl must be passed")

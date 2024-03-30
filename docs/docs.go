@@ -15,30 +15,103 @@
 package main
 
 import (
+	"io"
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 
-	cmd "internal/cmd"
+	apiclient "internal/apiclient"
+	"internal/cmd"
+	apicategories "internal/cmd/apicategories"
+	"internal/cmd/apidocs"
+	"internal/cmd/apis"
+	"internal/cmd/appgroups"
+	"internal/cmd/apps"
+	"internal/cmd/datacollectors"
+	"internal/cmd/developers"
+	"internal/cmd/keystores"
+	"internal/cmd/kvm"
+	products "internal/cmd/products"
+	"internal/cmd/references"
+	"internal/cmd/sharedflows"
+	"internal/cmd/targetservers"
 
 	"github.com/spf13/cobra/doc"
 )
+
+const ENABLED = "true"
+
+var samples = `# apigeecli command Samples
+
+The following table contains some examples of apigeecli.
+
+Set up apigeecli with preferences: ` + getSingleLine("apigeecli prefs set -o $org") + `
+
+| Operations | Command |
+|---|---|
+| apicategories | ` + getSingleLine(apicategories.GetExample(0)) + `|
+| apis | ` + getSingleLine(apis.GetExample(0)) + ` |
+| apis | ` + getSingleLine(apis.GetExample(1)) + ` |
+| apis | ` + getSingleLine(apis.GetExample(2)) + ` |
+| appgroups | ` + getSingleLine(appgroups.GetExample(0)) + ` |
+| datacollectors | ` + getSingleLine(datacollectors.GetExample(0)) + `  |
+| developers | ` + getSingleLine(developers.GetExample(0)) + `  |
+| kvms | ` + getSingleLine(kvm.GetExample(0)) + `  |
+| products | ` + getSingleLine(products.GetExample(2)) + ` |
+| products | ` + getSingleLine(products.GetExample(3)) + ` |
+| products | ` + getSingleLine(products.GetExample(4)) + ` |
+| products | ` + getSingleLine(products.GetExample(0)) + ` |
+| products | ` + getSingleLine(products.GetExample(1)) + ` |
+| sharedflows | ` + getSingleLine(sharedflows.GetExample(0)) + ` |
+| targetservers | ` + getSingleLine(targetservers.GetExample(0)) + ` |
+| keystores | ` + getSingleLine(keystores.GetExample(0)) + ` |
+| references | ` + getSingleLine(references.GetExample(0)) + ` |
+| apps | ` + getSingleLine(apps.GetExample(0)) + ` |
+| apidocs | ` + getSingleLine(apidocs.GetExample(0)) + `  |
+
+
+NOTE: This file is auto-generated during a release. Do not modify.`
 
 func main() {
 	var err error
 	var docFiles []string
 
-	if docFiles, err = filepath.Glob("./docs/apigeecli*.md"); err != nil {
-		log.Fatal(err)
-	}
+	if os.Getenv("APIGEECLI_SKIP_DOCS") != ENABLED {
 
-	for _, docFile := range docFiles {
-		if err = os.Remove(docFile); err != nil {
+		if docFiles, err = filepath.Glob("./docs/apigeecli*.md"); err != nil {
+			log.Fatal(err)
+		}
+
+		for _, docFile := range docFiles {
+			if err = os.Remove(docFile); err != nil {
+				log.Fatal(err)
+			}
+		}
+
+		if err = doc.GenMarkdownTree(cmd.RootCmd, "./docs"); err != nil {
 			log.Fatal(err)
 		}
 	}
 
-	if err = doc.GenMarkdownTree(cmd.RootCmd, "./docs"); err != nil {
-		log.Fatal(err)
+	_ = apiclient.WriteByteArrayToFile("./samples/README.md", false, []byte(samples))
+}
+
+func WriteFile() (byteValue []byte, err error) {
+	userFile, err := os.Open("./samples/README.md")
+	if err != nil {
+		return nil, err
 	}
+
+	defer userFile.Close()
+
+	byteValue, err = io.ReadAll(userFile)
+	if err != nil {
+		return nil, err
+	}
+	return byteValue, err
+}
+
+func getSingleLine(s string) string {
+	return "`" + strings.ReplaceAll(strings.ReplaceAll(s, "\\", ""), "\n", "") + "`"
 }

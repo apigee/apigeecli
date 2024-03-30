@@ -27,6 +27,8 @@ var Cmd = &cobra.Command{
 
 var org, env, name, proxyName, region string
 
+var examples = []string{"apigeecli kvms import -f samples/kvms"}
+
 func init() {
 	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
@@ -39,4 +41,8 @@ func init() {
 	Cmd.AddCommand(ExpCmd)
 	Cmd.AddCommand(EntryCmd)
 	Cmd.AddCommand(ImpCmd)
+}
+
+func GetExample(i int) string {
+	return examples[i]
 }

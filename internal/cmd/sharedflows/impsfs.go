@@ -30,6 +30,8 @@ var ImpCmd = &cobra.Command{
 	Use:   "import",
 	Short: "Import a folder containing sharedflow bundles",
 	Long:  "Import a folder containing sharedflow bundles",
+	Example: `Import a folder containing sharedflow bundles:
+` + GetExample(0),
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetApigeeEnv(env)
 		apiclient.SetRegion(region)
