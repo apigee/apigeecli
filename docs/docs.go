@@ -23,41 +23,55 @@ import (
 
 	apiclient "internal/apiclient"
 	"internal/cmd"
+	apicategories "internal/cmd/apicategories"
+	"internal/cmd/apidocs"
+	"internal/cmd/apis"
+	"internal/cmd/appgroups"
+	"internal/cmd/apps"
+	"internal/cmd/datacollectors"
+	"internal/cmd/developers"
+	"internal/cmd/keystores"
+	"internal/cmd/kvm"
+	products "internal/cmd/products"
+	"internal/cmd/references"
+	"internal/cmd/sharedflows"
+	"internal/cmd/targetservers"
 
 	"github.com/spf13/cobra/doc"
 )
 
 const ENABLED = "true"
 
-// var samples = `# apigeecli command Samples
+var samples = `# apigeecli command Samples
 
-// The following table contains some examples of apigeecli. Set up apigeecli with preferences: apigeecli prefs set -o $org
+The following table contains some examples of apigeecli.
 
-// | Operations | Command |
-// |---|---|
-// | apicategories | ` + getSingleLine(apicategories.GetExample(0)) + `|
-// | apis | ` + getSingleLine(apis.GetExample(0)) + ` |
-// | apis | ` + getSingleLine(apis.GetExample(1)) + ` |
-// | apis | ` + getSingleLine(apis.GetExample(2)) + ` |
-// | appgroups | ` + getSingleLine(appgroups.GetExample(0)) + ` |
-// | datacollectors | ` + getSingleLine(datacollectors.GetExample(0)) + `  |
-// | developers | ` + getSingleLine(developers.GetExample(0)) + `  |
-// | kvms | ` + getSingleLine(kvm.GetExample(0)) + `  |
-// | products | ` + getSingleLine(products.GetExample(2)) + ` |
-// | products | ` + getSingleLine(products.GetExample(3)) + ` |
-// | products | ` + getSingleLine(products.GetExample(4)) + ` |
-// | products | ` + getSingleLine(products.GetExample(0)) + ` |
-// | products | ` + getSingleLine(products.GetExample(1)) + ` |
-// | sharedflows | ` + getSingleLine(sharedflows.GetExample(0)) + ` |
-// | targetservers | ` + getSingleLine(targetservers.GetExample(0)) + ` |
-// | keystores | `+getSingleLine(keystrores.GetExample(0)+` |
-// | references | `+getSingleLine(references.GetExample(0))+` |
-// | apps | `+getSingleLine(apps.GetExample(0))+` |
-// | apidocs | `+getSingleLine(apidocs.GetExample(0))+`  |
+Set up apigeecli with preferences: ` + getSingleLine("apigeecli prefs set -o $org") + `
 
-// NOTE: This file is auto-generated during a release. Do not modify.`
+| Operations | Command |
+|---|---|
+| apicategories | ` + getSingleLine(apicategories.GetExample(0)) + `|
+| apis | ` + getSingleLine(apis.GetExample(0)) + ` |
+| apis | ` + getSingleLine(apis.GetExample(1)) + ` |
+| apis | ` + getSingleLine(apis.GetExample(2)) + ` |
+| appgroups | ` + getSingleLine(appgroups.GetExample(0)) + ` |
+| datacollectors | ` + getSingleLine(datacollectors.GetExample(0)) + `  |
+| developers | ` + getSingleLine(developers.GetExample(0)) + `  |
+| kvms | ` + getSingleLine(kvm.GetExample(0)) + `  |
+| products | ` + getSingleLine(products.GetExample(2)) + ` |
+| products | ` + getSingleLine(products.GetExample(3)) + ` |
+| products | ` + getSingleLine(products.GetExample(4)) + ` |
+| products | ` + getSingleLine(products.GetExample(0)) + ` |
+| products | ` + getSingleLine(products.GetExample(1)) + ` |
+| sharedflows | ` + getSingleLine(sharedflows.GetExample(0)) + ` |
+| targetservers | ` + getSingleLine(targetservers.GetExample(0)) + ` |
+| keystores | ` + getSingleLine(keystores.GetExample(0)) + ` |
+| references | ` + getSingleLine(references.GetExample(0)) + ` |
+| apps | ` + getSingleLine(apps.GetExample(0)) + ` |
+| apidocs | ` + getSingleLine(apidocs.GetExample(0)) + `  |
 
-var samples = `# apigeecli command Samples`
+
+NOTE: This file is auto-generated during a release. Do not modify.`
 
 func main() {
 	var err error
