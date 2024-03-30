@@ -40,7 +40,7 @@ import (
 
 const ENABLED = "true"
 
-var samples = `# apigeecli Samples
+var samples = `# apigeecli command Samples
 
 The following table contains some examples of apigeecli. Set up apigeecli with preferences: apigeecli prefs set -o $org
 
