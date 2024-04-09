@@ -267,7 +267,7 @@ var ExportCmd = &cobra.Command{
 
 			if environment.Type != "BASE" {
 				clilog.Info.Printf("\tExporting KV Map names for environment %s...\n", environment)
-				if listKVMBytes, err = kvm.List(""); err != nil {
+				if listKVMBytes, err = kvm.List(""); proceedOnError(err) != nil {
 					return err
 				}
 				if err = apiclient.WriteByteArrayToFile(
@@ -284,7 +284,7 @@ var ExportCmd = &cobra.Command{
 				}
 
 				clilog.Info.Println("\tExporting debugmask configuration...")
-				if respBody, err = env.GetDebug(); err != nil {
+				if respBody, err = env.GetDebug(); proceedOnError(err) != nil {
 					return err
 				}
 				if err = apiclient.WriteByteArrayToFile(
@@ -295,7 +295,7 @@ var ExportCmd = &cobra.Command{
 				}
 
 				clilog.Info.Println("\tExporting traceconfig...")
-				if respBody, err = env.GetTraceConfig(); err != nil {
+				if respBody, err = env.GetTraceConfig(); proceedOnError(err) != nil {
 					return err
 				}
 				if err = apiclient.WriteByteArrayToFile(
