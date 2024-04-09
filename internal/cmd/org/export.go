@@ -207,7 +207,7 @@ var ExportCmd = &cobra.Command{
 			}
 		}
 
-		var envRespBody, envDetailsRespBody []byte
+		var _, envDetailsRespBody []byte
 		clilog.Info.Println("Exporting list of environments...")
 
 		if envDetailsRespBody, err = env.Export(); proceedOnError(err) != nil {
@@ -220,44 +220,27 @@ var ExportCmd = &cobra.Command{
 			return err
 		}
 
-		if envRespBody, err = env.List(); proceedOnError(err) != nil {
+		if _, err = env.List(); proceedOnError(err) != nil {
 			return err
 		}
 
-		environments := []string{}
-		if err = json.Unmarshal(envRespBody, &environments); proceedOnError(err) != nil {
+		environments, err := env.MarshalEnvironmentList(envDetailsRespBody)
+		if proceedOnError(err) != nil {
 			return err
 		}
 
-		for _, environment := range environments {
-			clilog.Info.Println("Exporting configuration for environment " + environment)
-			apiclient.SetApigeeEnv(environment)
+		for _, environment := range environments.Environment {
+			clilog.Info.Println("Exporting configuration for environment " + environment.Name)
+			apiclient.SetApigeeEnv(environment.Name)
 			clilog.Info.Println("\tExporting Target servers...")
 			if targetServerResponse, err = targetservers.Export(conn); proceedOnError(err) != nil {
 				return err
 			}
 			if err = apiclient.WriteArrayByteArrayToFile(
-				environment+utils.DefaultFileSplitter+targetServerFileName,
+				environment.Name+utils.DefaultFileSplitter+targetServerFileName,
 				false,
 				targetServerResponse); proceedOnError(err) != nil {
 				return err
-			}
-
-			clilog.Info.Printf("\tExporting KV Map names for environment %s...\n", environment)
-			if listKVMBytes, err = kvm.List(""); err != nil {
-				return err
-			}
-			if err = apiclient.WriteByteArrayToFile(
-				environment+utils.DefaultFileSplitter+kvmFileName,
-				false,
-				listKVMBytes); proceedOnError(err) != nil {
-				return err
-			}
-
-			if exportEntries {
-				if err = exportKVMEntries("env", environment, listKVMBytes); proceedOnError(err) != nil {
-					return err
-				}
 			}
 
 			clilog.Info.Println("\tExporting Key store names...")
@@ -265,29 +248,7 @@ var ExportCmd = &cobra.Command{
 				return err
 			}
 			if err = apiclient.WriteByteArrayToFile(
-				environment+utils.DefaultFileSplitter+keyStoresFileName,
-				false,
-				respBody); proceedOnError(err) != nil {
-				return err
-			}
-
-			clilog.Info.Println("\tExporting debugmask configuration...")
-			if respBody, err = env.GetDebug(); err != nil {
-				return err
-			}
-			if err = apiclient.WriteByteArrayToFile(
-				environment+debugmaskFileName,
-				false,
-				respBody); proceedOnError(err) != nil {
-				return err
-			}
-
-			clilog.Info.Println("\tExporting traceconfig...")
-			if respBody, err = env.GetTraceConfig(); err != nil {
-				return err
-			}
-			if err = apiclient.WriteByteArrayToFile(
-				environment+tracecfgFileName,
+				environment.Name+utils.DefaultFileSplitter+keyStoresFileName,
 				false,
 				respBody); proceedOnError(err) != nil {
 				return err
@@ -298,12 +259,52 @@ var ExportCmd = &cobra.Command{
 				return err
 			}
 			if err = apiclient.WriteArrayByteArrayToFile(
-				environment+utils.DefaultFileSplitter+referencesFileName,
+				environment.Name+utils.DefaultFileSplitter+referencesFileName,
 				false,
 				referencesResponse); proceedOnError(err) != nil {
 				return err
 			}
 
+			if environment.Type != "BASE" {
+				clilog.Info.Printf("\tExporting KV Map names for environment %s...\n", environment)
+				if listKVMBytes, err = kvm.List(""); err != nil {
+					return err
+				}
+				if err = apiclient.WriteByteArrayToFile(
+					environment.Name+utils.DefaultFileSplitter+kvmFileName,
+					false,
+					listKVMBytes); proceedOnError(err) != nil {
+					return err
+				}
+
+				if exportEntries {
+					if err = exportKVMEntries("env", environment.Name, listKVMBytes); proceedOnError(err) != nil {
+						return err
+					}
+				}
+
+				clilog.Info.Println("\tExporting debugmask configuration...")
+				if respBody, err = env.GetDebug(); err != nil {
+					return err
+				}
+				if err = apiclient.WriteByteArrayToFile(
+					environment.Name+debugmaskFileName,
+					false,
+					respBody); proceedOnError(err) != nil {
+					return err
+				}
+
+				clilog.Info.Println("\tExporting traceconfig...")
+				if respBody, err = env.GetTraceConfig(); err != nil {
+					return err
+				}
+				if err = apiclient.WriteByteArrayToFile(
+					environment.Name+tracecfgFileName,
+					false,
+					respBody); proceedOnError(err) != nil {
+					return err
+				}
+			}
 		}
 
 		return err
