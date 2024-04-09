@@ -28,21 +28,21 @@ import (
 	"internal/clilog"
 )
 
-type environments struct {
-	Environment []environment `json:"environment,omitempty"`
+type Environments struct {
+	Environment []Environment `json:"environment,omitempty"`
 }
 
-type environment struct {
+type Environment struct {
 	Name            string     `json:"name,omitempty"`
 	DisplayName     string     `json:"displayName,omitempty"`
 	DeploymentType  string     `json:"deploymentType,omitempty"`
 	ApiProxyType    string     `json:"apiProxyType,omitempty"`
 	ForwardProxyUri string     `json:"forwardProxyUri,omitempty"`
 	Type            string     `json:"type,omitempty"`
-	Properties      []property `json:"properties,omitempty"`
+	Properties      []Property `json:"properties,omitempty"`
 }
 
-type property struct {
+type Property struct {
 	Name  string `json:"name,omitempty"`
 	Value string `json:"value,omitempty"`
 }
@@ -305,7 +305,7 @@ func Export() (respBody []byte, err error) {
 	defer apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
 
 	var envList []string
-	environmentList := environments{}
+	environmentList := Environments{}
 
 	envRespBody, err := List()
 	if err != nil {
@@ -321,7 +321,7 @@ func Export() (respBody []byte, err error) {
 		if err != nil {
 			return nil, err
 		}
-		environ := environment{}
+		environ := Environment{}
 		err = json.Unmarshal(envRespBody, &environ)
 		if err != nil {
 			return nil, err
@@ -361,8 +361,8 @@ func Import(filePath string) (err error) {
 	return nil
 }
 
-func readEnvironmentsFile(filePath string) (environmentList environments, err error) {
-	environmentList = environments{}
+func readEnvironmentsFile(filePath string) (environmentList Environments, err error) {
+	environmentList = Environments{}
 
 	jsonFile, err := os.Open(filePath)
 	if err != nil {
@@ -382,4 +382,11 @@ func readEnvironmentsFile(filePath string) (environmentList environments, err er
 	}
 
 	return environmentList, nil
+}
+
+func MarshalEnvironmentList(contents []byte) (envronmentList Environments, err error) {
+	if err = json.Unmarshal(contents, &envronmentList); err != nil {
+		return envronmentList, err
+	}
+	return envronmentList, nil
 }
