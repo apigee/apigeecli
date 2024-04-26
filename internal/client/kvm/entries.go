@@ -167,7 +167,7 @@ func ExportAllEntries() (err error) {
 		if len(kvmList) > 0 {
 			clilog.Info.Printf("Found %d scoped KVMs for proxy %s\n", len(kvmList), programmableProxy)
 			for _, proxyKVM := range kvmList {
-				clilog.Info.Printf("Eporting entries for KVM %s of proxy %s\n", programmableProxy, proxyKVM)
+				clilog.Info.Printf("Exporting entries for KVM %s of proxy %s\n", proxyKVM, programmableProxy)
 				proxyKVMEntries, err := ExportEntries(programmableProxy, proxyKVM)
 				if err != nil {
 					return err
