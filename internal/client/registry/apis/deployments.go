@@ -25,11 +25,14 @@ import (
 
 // CreateDeployment
 func CreateDeployment(apiDeploymentID string, name string, displayName string, description string,
-	apiSpecRevsion string, endpointURI string, externalChannelURI string, intendedAudience string,
+	apiSpecRevision string, endpointURI string, externalChannelURI string, intendedAudience string,
 	accessGuidance string, labels map[string]string, annotations map[string]string,
 ) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.GetApigeeRegistryURL())
-	u.Path = path.Join(u.Path, "apis", apiDeploymentID, "deployment")
+	u.Path = path.Join(u.Path, "apis", apiDeploymentID, "deployments")
+	q := u.Query()
+	q.Set("apiDeploymentId", name)
+	u.RawQuery = q.Encode()
 	apiDeployment := []string{}
 	apiDeployment = append(apiDeployment, "\"name\":"+"\""+name+"\"")
 	if displayName != "" {
@@ -38,8 +41,8 @@ func CreateDeployment(apiDeploymentID string, name string, displayName string, d
 	if description != "" {
 		apiDeployment = append(apiDeployment, "\"description\":"+"\""+description+"\"")
 	}
-	if apiSpecRevsion != "" {
-		apiDeployment = append(apiDeployment, "\"apiSpecRevsion\":"+"\""+apiSpecRevsion+"\"")
+	if apiSpecRevision != "" {
+		apiDeployment = append(apiDeployment, "\"apiSpecRevision\":"+"\""+apiSpecRevision+"\"")
 	}
 	if endpointURI != "" {
 		apiDeployment = append(apiDeployment, "\"endpointUri\":"+"\""+endpointURI+"\"")
