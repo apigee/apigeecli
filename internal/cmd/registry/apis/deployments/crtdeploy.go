@@ -60,9 +60,9 @@ func init() {
 		"", "API Spec Revision")
 	CreateDeployCmd.Flags().StringVarP(&endpointURI, "endpoint-uri", "",
 		"", "Endpoint URI for the API")
-	CreateDeployCmd.Flags().StringVarP(&apiSpecRevision, "external-channel-uri", "",
+	CreateDeployCmd.Flags().StringVarP(&externalChannelURI, "external-channel-uri", "",
 		"", "External Channle URI")
-	CreateDeployCmd.Flags().StringVarP(&apiSpecRevision, "intended-audience", "",
+	CreateDeployCmd.Flags().StringVarP(&intendedAudience, "intended-audience", "",
 		"", "Intended Audience for the API")
 	CreateDeployCmd.Flags().StringVarP(&accessGuidance, "access-guidance", "",
 		"", "Guidance for accessing the API")
