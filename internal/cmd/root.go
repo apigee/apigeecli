@@ -51,7 +51,6 @@ import (
 	"internal/cmd/products"
 	"internal/cmd/projects"
 	"internal/cmd/references"
-	"internal/cmd/registry"
 	res "internal/cmd/res"
 	"internal/cmd/securityprofiles"
 	"internal/cmd/sharedflows"
@@ -187,7 +186,6 @@ func init() {
 	RootCmd.AddCommand(datastores.Cmd)
 	RootCmd.AddCommand(securityprofiles.Cmd)
 	RootCmd.AddCommand(sites.Cmd)
-	RootCmd.AddCommand(registry.Cmd)
 }
 
 func initConfig() {
