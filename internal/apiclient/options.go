@@ -137,7 +137,7 @@ func (a *API) Set(r string) error {
 	case "prod", "staging":
 		*a = API(r)
 	default:
-		return fmt.Errorf("must be one of %s,%s or %s", PROD, STAGING)
+		return fmt.Errorf("must be one of %s or %s", PROD, STAGING)
 	}
 	return nil
 }
