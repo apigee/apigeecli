@@ -23,7 +23,10 @@ import (
 )
 
 // baseURL is the Apigee control plane endpoint
-const baseURL = "https://apigee.googleapis.com/v1/organizations/"
+const (
+	baseURL        = "https://apigee.googleapis.com/v1/organizations/"
+	baseStagingURL = "https://staging-apigee.sandbox.googleapis.com/v1/organizations/"
+)
 
 // registryBaseURL is the Apigee API Hub control plane endpoint
 const registryBaseURL = "https://apigeeregistry.googleapis.com/v1/projects/%s/locations/%s"
@@ -33,6 +36,7 @@ const baseDRZURL = "https://%s-apigee.googleapis.com/v1/organizations/"
 
 // ApigeeClientOptions is the base struct to hold all command arguments
 type ApigeeClientOptions struct {
+	Api            API    // apigeecli can switch between prod and staging
 	Org            string // Apigee org
 	Env            string // Apigee environment
 	Token          string // Google OAuth access token
@@ -61,6 +65,13 @@ const (
 )
 
 var apiRate Rate
+
+type API string
+
+const (
+	PROD    API = "prod"
+	STAGING API = "staging"
+)
 
 var cmdPrintHttpResponses = true
 
@@ -99,6 +110,10 @@ func NewApigeeClient(o ApigeeClientOptions) {
 		options.Env = o.Env
 	}
 
+	if o.Api == "" {
+		options.Api = o.Api
+	}
+
 	options.TokenCheck = o.TokenCheck
 	options.SkipCache = o.SkipCache
 	options.DebugLog = o.DebugLog
@@ -111,6 +126,24 @@ func NewApigeeClient(o ApigeeClientOptions) {
 
 	// read preference file
 	_ = ReadPreferencesFile()
+}
+
+func (a *API) String() string {
+	return string(*a)
+}
+
+func (a *API) Set(r string) error {
+	switch r {
+	case "prod", "staging":
+		*a = API(r)
+	default:
+		return fmt.Errorf("must be one of %s or %s", PROD, STAGING)
+	}
+	return nil
+}
+
+func (a *API) Type() string {
+	return "api"
 }
 
 // SetApigeeOrg sets the org variable
@@ -307,5 +340,27 @@ func GetApigeeBaseURL() string {
 	if options.Region != "" {
 		return fmt.Sprintf(baseDRZURL, options.Region)
 	}
-	return baseURL
+	switch options.Api {
+	case PROD:
+		return baseURL
+	case STAGING:
+		return baseStagingURL
+	default:
+		return baseURL
+	}
+}
+
+// SetAPI
+func SetAPI(a API) {
+	// prod is the default
+	if a == "" {
+		options.Api = PROD
+	} else {
+		options.Api = a
+	}
+}
+
+// GetAPI
+func GetAPI() API {
+	return options.Api
 }

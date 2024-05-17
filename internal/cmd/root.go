@@ -94,6 +94,8 @@ var RootCmd = &cobra.Command{
 			}
 		}
 
+		apiclient.SetAPI(api)
+
 		if !metadataToken && !defaultToken {
 			apiclient.SetServiceAccount(serviceAccount)
 			apiclient.SetApigeeToken(accessToken)
@@ -124,6 +126,7 @@ func Execute() {
 var (
 	accessToken, serviceAccount                                                  string
 	disableCheck, printOutput, noOutput, metadataToken, defaultToken, noWarnings bool
+	api                                                                          apiclient.API
 )
 
 const ENABLED = "true"
@@ -154,6 +157,9 @@ func init() {
 
 	RootCmd.PersistentFlags().BoolVarP(&defaultToken, "default-token", "",
 		false, "Use Google default application credentials access token")
+
+	RootCmd.PersistentFlags().Var(&api, "api", "Sets the control plane API. Must be one of prod, "+
+		"or staging; default is prod")
 
 	RootCmd.AddCommand(apis.Cmd)
 	RootCmd.AddCommand(org.Cmd)
