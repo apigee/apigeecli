@@ -34,8 +34,11 @@ jobs:
           go-version-file: './go.mod'
           check-latest: true
 
-      - name: Reviewdog Lint
-        uses: reviewdog/action-golangci-lint@v2
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v3
+        with:
+          version: latest
+          args: --timeout=4m
 
       - name: Write private key to disk
         run: echo "${{ secrets.COSIGN_PRIVATE_KEY }}" > /tmp/cosign.key
