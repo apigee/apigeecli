@@ -77,9 +77,9 @@ var ImportCmd = &cobra.Command{
 		clilog.Info.Println("Check for files with KVM Entries")
 		orgKVMFileList, envKVMFileList, _, _ := utils.ListKVMFiles(folder)
 
-		if utils.FileExists(path.Join(folder, "org_"+org+utils.DefaultFileSplitter+kvmFileName)) {
+		if utils.FileExists(path.Join(folder, org+utils.DefaultFileSplitter+kvmFileName)) {
 			clilog.Info.Println("Importing Org scoped KVMs...")
-			if kvmList, err = utils.ReadEntityFile(path.Join(folder, "org_"+org+utils.DefaultFileSplitter+kvmFileName)); err != nil {
+			if kvmList, err = utils.ReadEntityFile(path.Join(folder, org+utils.DefaultFileSplitter+kvmFileName)); err != nil {
 				return err
 			}
 			for _, kvmName := range kvmList {
@@ -181,9 +181,9 @@ var ImportCmd = &cobra.Command{
 				}
 			}
 
-			if utils.FileExists(path.Join(folder, "env_"+environment+utils.DefaultFileSplitter+kvmFileName)) {
+			if utils.FileExists(path.Join(folder, environment+utils.DefaultFileSplitter+kvmFileName)) {
 				clilog.Info.Println("\tImporting KVM Names only...")
-				if kvmList, err = utils.ReadEntityFile(path.Join(folder, "env_"+environment+utils.DefaultFileSplitter+kvmFileName)); err != nil {
+				if kvmList, err = utils.ReadEntityFile(path.Join(folder, environment+utils.DefaultFileSplitter+kvmFileName)); err != nil {
 					return err
 				}
 				for _, kvmName := range kvmList {
@@ -235,7 +235,7 @@ func init() {
 	ImportCmd.Flags().IntVarP(&conn, "conn", "c",
 		4, "Number of connections")
 	ImportCmd.Flags().StringVarP(&folder, "folder", "f",
-		"", "folder containing API proxy bundles")
+		"", "folder containing organization resources from prior export")
 	ImportCmd.Flags().BoolVarP(&importTrace, "import-trace", "",
 		false, "Import distributed trace configuration; default false")
 	ImportCmd.Flags().BoolVarP(&importDebugmask, "import-debugmask", "",
