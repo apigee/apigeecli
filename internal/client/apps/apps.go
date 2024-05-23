@@ -492,7 +492,7 @@ func createAsyncApp(app application, developerEntities developers.Appdevelopers,
 	temporaryCredential := newAppCredentials[0].(map[string]interface{})
 
 	apiclient.ClientPrintHttpResponse.Set(false)
-	_, err = DeleteKey(developerEmail, newDeveloperApp["name"].(string), temporaryCredential["consumerKey"].(string))
+	_, err = DeleteKey(url.QueryEscape(developerEmail), newDeveloperApp["name"].(string), temporaryCredential["consumerKey"].(string))
 	apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
 	if err != nil {
 		clilog.Error.Println(err)
