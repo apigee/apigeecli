@@ -153,7 +153,7 @@ var ExportCmd = &cobra.Command{
 			return err
 		}
 		if err = apiclient.WriteArrayByteArrayToFile(
-			appsFileName,
+			appGroupsAppsFileName,
 			false, appGroupAppsResponse); proceedOnError(err) != nil {
 			return err
 		}
