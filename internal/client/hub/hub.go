@@ -16,13 +16,23 @@ package hub
 
 import (
 	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"net/url"
 	"path"
 	"strings"
 
 	"internal/apiclient"
+
+	enumdeclall "github.com/gogo/protobuf/test/enumdecl_all"
 )
+
+type allowedValues struct {
+	Id string `json:"id,omitempty"`
+	DisplayName string `json:"dispayName,omitempty"`
+	Description string `json:"description,omitempty"`
+	Immutable bool `json:"immutable"`
+}
 
 func CreateInstance(apiHubInstanceId string, cmekName string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.GetApigeeRegistryURL())
@@ -236,10 +246,13 @@ func CreateApiVersionsSpec(apiID string, versionID string, specID string, displa
 		if mimeType != "" {
 			if strings.Contains(mimeType, "yaml") || strings.Contains(mimeType, "yml") {
 				mime = "application/yaml"
+				specContent = append(specContent, "\"specType\":" + getAllowedValuesOpenAPI())
 			} else if strings.Contains(mimeType, "json") {
 				mime = "application/json"
+				specContent = append(specContent, "\"specType\":" + getAllowedValuesOpenAPI())
 			} else if strings.Contains(mimeType, "wsdl") {
 				mime = "application/wsdl"
+				specContent = append(specContent, "\"specType\":" + getAllowedValuesWSDL())
 			} else {
 				mime = "application/text"
 			}
@@ -262,4 +275,55 @@ func CreateApiVersionsSpec(apiID string, versionID string, specID string, displa
 	}
 
 	return respBody, err
+}
+
+func getAllowedValuesOpenAPI() string {
+	a := allowedValues(
+		Id: "openapi",
+		DisplayName: "OpenAPI Spec",
+		Description: "OpenAPI Spec",
+		Immutable: true,
+	)
+	return getSpecType(a)
+}
+
+func getAllowedValuesProto() string {
+	a := allowedValues(
+		Id: "proto",
+		DisplayName: "Proto",
+		Description: "Proto",
+		Immutable: true,
+	)
+	return getSpecType(a)
+}
+
+func getAllowedValuesWSDL() string {
+	a := allowedValues(
+		Id: "wsdl",
+		DisplayName: "WSDL",
+		Description: "WSDL",
+		Immutable: true,
+	)
+	return getSpecType(a)
+}
+
+func getSpecType(a allowedValues) string {
+	type specType struct {
+		EnumValues enumValues `json:"enumValues,omitempty"`
+	}
+
+	type enumValues struct {
+		Values []allowedValues `json:"values,omitempty"`
+	}
+	l := []allowedValues{}
+	l = append(l, a)
+	e := enumValues{}
+	e.Values = l
+
+	s := specType{}
+	s.EnumValues := enumValues{}
+	s.EnumValues = e
+
+	specTypeStr, _ := json.Marshall(&s)
+	return specTypeStr
 }
