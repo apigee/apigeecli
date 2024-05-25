@@ -26,6 +26,7 @@ import (
 const (
 	baseURL        = "https://apigee.googleapis.com/v1/organizations/"
 	baseStagingURL = "https://staging-apigee.sandbox.googleapis.com/v1/organizations/"
+	baseAutoURL    = "https://autopush-apigee.sandbox.googleapis.com/"
 )
 
 // registryBaseURL is the Apigee API Hub control plane endpoint
@@ -69,8 +70,9 @@ var apiRate Rate
 type API string
 
 const (
-	PROD    API = "prod"
-	STAGING API = "staging"
+	PROD     API = "prod"
+	STAGING  API = "staging"
+	AUTOPUSH API = "autopush"
 )
 
 var cmdPrintHttpResponses = true
@@ -134,10 +136,10 @@ func (a *API) String() string {
 
 func (a *API) Set(r string) error {
 	switch r {
-	case "prod", "staging":
+	case "prod", "autopush", "staging":
 		*a = API(r)
 	default:
-		return fmt.Errorf("must be one of %s or %s", PROD, STAGING)
+		return fmt.Errorf("must be one of %s, %s or %s", PROD, AUTOPUSH, STAGING)
 	}
 	return nil
 }
@@ -345,6 +347,8 @@ func GetApigeeBaseURL() string {
 		return baseURL
 	case STAGING:
 		return baseStagingURL
+	case AUTOPUSH:
+		return baseAutoURL
 	default:
 		return baseURL
 	}

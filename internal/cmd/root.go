@@ -158,7 +158,7 @@ func init() {
 	RootCmd.PersistentFlags().BoolVarP(&defaultToken, "default-token", "",
 		false, "Use Google default application credentials access token")
 
-	RootCmd.PersistentFlags().Var(&api, "api", "Sets the control plane API. Must be one of prod, "+
+	RootCmd.PersistentFlags().Var(&api, "api", "Sets the control plane API. Must be one of prod, autopush "+
 		"or staging; default is prod")
 
 	RootCmd.AddCommand(apis.Cmd)
