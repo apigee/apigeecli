@@ -26,7 +26,7 @@ import (
 const (
 	baseURL        = "https://apigee.googleapis.com/v1/organizations/"
 	baseStagingURL = "https://staging-apigee.sandbox.googleapis.com/v1/organizations/"
-	baseAutoURL    = "https://autopush-apigee.sandbox.googleapis.com/"
+	baseAutoURL    = "https://autopush-apigee.sandbox.googleapis.com/v1/organizations/"
 )
 
 // registryBaseURL is the Apigee API Hub control plane endpoint
