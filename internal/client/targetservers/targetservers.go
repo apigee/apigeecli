@@ -45,6 +45,7 @@ type targetserver struct {
 
 type sslInfo struct {
 	Enabled                *bool       `json:"enabled,omitempty"`
+	Enforce                *bool       `json:"enforce,omitempty"`
 	ClientAuthEnabled      *bool       `json:"clientAuthEnabled,omitempty"`
 	Keystore               string      `json:"keyStore,omitempty"`
 	Keyalias               string      `json:"keyAlias,omitempty"`
@@ -61,7 +62,7 @@ type commonName struct {
 }
 
 // Create
-func Create(name string, description string, host string, port int, enable bool, protocol string, keyStore string, keyAlias string, trustStore string, tlsenabled string, clientAuthEnabled string, ignoreValidationErrors string) (respBody []byte, err error) {
+func Create(name string, description string, host string, port int, enable bool, protocol string, keyStore string, keyAlias string, trustStore string, tlsenabled string, tlsenforce string, clientAuthEnabled string, ignoreValidationErrors string) (respBody []byte, err error) {
 	e := new(bool)
 	*e = enable
 
@@ -70,11 +71,11 @@ func Create(name string, description string, host string, port int, enable bool,
 		IsEnabled: e,
 	}
 
-	return createOrUpdate("create", targetsvr, name, description, host, port, protocol, keyStore, keyAlias, trustStore, tlsenabled, clientAuthEnabled, ignoreValidationErrors)
+	return createOrUpdate("create", targetsvr, name, description, host, port, protocol, keyStore, keyAlias, trustStore, tlsenabled, tlsenforce, clientAuthEnabled, ignoreValidationErrors)
 }
 
 // Update
-func Update(name string, description string, host string, port int, enable bool, protocol string, keyStore string, keyAlias string, trustStore string, tlsenabled string, clientAuthEnabled string, ignoreValidationErrors string) (respBody []byte, err error) {
+func Update(name string, description string, host string, port int, enable bool, protocol string, keyStore string, keyAlias string, trustStore string, tlsenabled string, tlsenforce string, clientAuthEnabled string, ignoreValidationErrors string) (respBody []byte, err error) {
 	apiclient.ClientPrintHttpResponse.Set(false)
 	targetRespBody, err := Get(name)
 	if err != nil {
@@ -89,10 +90,10 @@ func Update(name string, description string, host string, port int, enable bool,
 
 	targetsvr.IsEnabled = &enable
 
-	return createOrUpdate("update", targetsvr, name, description, host, port, protocol, keyStore, keyAlias, trustStore, tlsenabled, clientAuthEnabled, ignoreValidationErrors)
+	return createOrUpdate("update", targetsvr, name, description, host, port, protocol, keyStore, keyAlias, trustStore, tlsenabled, tlsenforce, clientAuthEnabled, ignoreValidationErrors)
 }
 
-func createOrUpdate(action string, targetsvr targetserver, name string, description string, host string, port int, protocol string, keyStore string, keyAlias string, trustStore string, tlsenabled string, clientAuthEnabled string, ignoreValidationErrors string) (respBody []byte, err error) {
+func createOrUpdate(action string, targetsvr targetserver, name string, description string, host string, port int, protocol string, keyStore string, keyAlias string, trustStore string, tlsenabled string, tlsenforce string, clientAuthEnabled string, ignoreValidationErrors string) (respBody []byte, err error) {
 	if description != "" {
 		targetsvr.Description = description
 	}
@@ -107,7 +108,7 @@ func createOrUpdate(action string, targetsvr targetserver, name string, descript
 		targetsvr.Protocol = protocol
 	}
 
-	if keyStore != "" || keyAlias != "" || trustStore != "" || tlsenabled != "" ||
+	if keyStore != "" || keyAlias != "" || trustStore != "" || tlsenabled != "" || tlsenforce != "" ||
 		clientAuthEnabled != "" || ignoreValidationErrors != "" {
 		if targetsvr.SslInfo == nil {
 			targetsvr.SslInfo = &sslInfo{}
@@ -117,6 +118,9 @@ func createOrUpdate(action string, targetsvr targetserver, name string, descript
 		targetsvr.SslInfo.Truststore = trustStore
 		if tlsenabled != "" {
 			targetsvr.SslInfo.Enabled = getBool(tlsenabled)
+		}
+		if tlsenforce != "" {
+			targetsvr.SslInfo.Enforce = getBool(tlsenforce)
 		}
 		if clientAuthEnabled != "" {
 			targetsvr.SslInfo.ClientAuthEnabled = getBool(clientAuthEnabled)

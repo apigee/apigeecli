@@ -37,6 +37,11 @@ var UpdateCmd = &cobra.Command{
 				return fmt.Errorf("tlsenabled must be set to  true or false")
 			}
 		}
+		if tlsenforce != "" {
+			if _, err := strconv.ParseBool(tlsenforce); err != nil {
+				return fmt.Errorf("tlsenforce must be set to  true or false")
+			}
+		}
 		if clientAuthEnabled != "" {
 			if _, err := strconv.ParseBool(clientAuthEnabled); err != nil {
 				return fmt.Errorf("clientAuthEnabled must be set to  true or false")
@@ -58,7 +63,7 @@ var UpdateCmd = &cobra.Command{
 			enable,
 			protocol,
 			keyStore, keyAlias, trustStore,
-			tlsenabled, clientAuthEnabled,
+			tlsenabled, tlsenforce, clientAuthEnabled,
 			ignoreValidationErrors)
 		return err
 	},
@@ -83,6 +88,8 @@ func init() {
 
 	UpdateCmd.Flags().StringVarP(&tlsenabled, "tls", "",
 		"", "Enable TLS for the target server")
+	UpdateCmd.Flags().StringVarP(&tlsenforce, "tlsenforce", "",
+		"", "Enforce TLS for the target server")
 	UpdateCmd.Flags().StringVarP(&clientAuthEnabled, "client-auth", "c",
 		"", "Enable mTLS for the target server")
 	UpdateCmd.Flags().StringVarP(&ignoreValidationErrors, "ignore-err", "i",
