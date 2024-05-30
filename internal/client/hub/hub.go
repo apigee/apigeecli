@@ -219,7 +219,6 @@ func GetApiVersionsDefinitions(apiID string, versionID string, definition string
 	return respBody, err
 }
 
-//TODO: specType
 func CreateApiVersionsSpec(apiID string, versionID string, specID string, displayName string,
 	contents []byte, mimeType string, attributes map[string]string, sourceURI string, documentation string) (respBody []byte, err error) {
 
@@ -255,15 +254,18 @@ func CreateApiVersionsSpec(apiID string, versionID string, specID string, displa
 				specContent = append(specContent, "\"specType\":" + getAllowedValuesWSDL())
 			} else {
 				mime = "application/text"
+				specContent = append(specContent, "\"specType\":" + getAllowedValuesOpenAPI())
 			}
 		} else {
 			mime = "application/text"
+			specContent = append(specContent, "\"specType\":" + getAllowedValuesOpenAPI())
 		}
 		contentStr = append(contentStr, "\"mimeType\":"+"\""+mime+"\"")
 		encContent := base64.StdEncoding.EncodeToString(contents)
 		contentStr = append(contentStr, "\"contents\":"+"\""+encContent+"\"")
 		contentPayload := "{" + strings.Join(contentStr, ",") + "}"
 		specContent = append(specContent, "\"contents\":"+"\""+contentPayload+"\"")
+		spec = append(spec, specContent)
 	}
 	if len(attributes) > 0 {
 		a := []string{}
@@ -274,6 +276,40 @@ func CreateApiVersionsSpec(apiID string, versionID string, specID string, displa
 		spec = append(spec, attributesStr)
 	}
 
+	payload := "{" + strings.Join(spec, ",") + "}"
+	respBody, err = apiclient.HttpClient(u.String(), payload)
+	return respBody, err
+}
+
+func GetApiVersionsSpec(apiID string, versionID string, specID string) (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.GetApigeeRegistryURL())
+	u.Path = path.Join(u.Path, "apis", apiID, "versions", versionID, "specs", specID)
+	respBody, err = apiclient.HttpClient(u.String())
+	return respBody, err
+}
+
+func GetApiVersionsSpecContent(apiID string, versionID string, specID string) (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.GetApigeeRegistryURL())
+	u.Path = path.Join(u.Path, "apis", apiID, "versions", versionID, "specs", specID, ":contents")
+	respBody, err = apiclient.HttpClient(u.String())
+	return respBody, err
+}
+
+func ListApiVersionsSpec(apiID string, versionID string, filter string, pageSize int, pageToken string) (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.GetApigeeRegistryURL())
+	u.Path = path.Join(u.Path, "apis", apiID, "versions", versionID, "specs")
+	q := u.Query()
+	if filter != "" {
+		q.Set("filter", filter)
+	}
+	if pageSize != -1 {
+		q.Set("pageSize", pageSize)
+	}
+	if pageToken != "" {
+		q.Set("pageToken", pageToken)
+	}
+	u.RawQuery = q.Encode()
+	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
