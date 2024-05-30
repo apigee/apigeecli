@@ -35,6 +35,8 @@ var UpdateCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		cmd.SilenceUsage = true
+
 		if expires != "" {
 			if _, err = strconv.Atoi(expires); err != nil {
 				return fmt.Errorf("expires must be an integer: %v", err)

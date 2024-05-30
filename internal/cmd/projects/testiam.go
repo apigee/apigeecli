@@ -33,6 +33,8 @@ var TestCmd = &cobra.Command{
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		cmd.SilenceUsage = true
+
 		u, _ := url.Parse(apiclient.CrmURL)
 		u.Path = path.Join(u.Path, apiclient.GetProjectID()+":testIamPermissions")
 		payload := "{\"permissions\":[\"resourcemanager.projects.get\"]}"

@@ -33,6 +33,8 @@ var CrtTraceOverridesCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		cmd.SilenceUsage = true
+
 		_, err = environments.CreateTraceOverrides(apiProxy, exporter, endpoint, sampler, sampleRate)
 		return
 	},

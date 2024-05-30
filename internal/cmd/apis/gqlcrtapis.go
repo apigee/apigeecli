@@ -53,6 +53,8 @@ var GqlCreateCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		cmd.SilenceUsage = true
+
 		var content []byte
 		var gqlDocName string
 		if gqlFile != "" {

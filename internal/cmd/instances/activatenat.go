@@ -33,6 +33,8 @@ var ActivateNatCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		cmd.SilenceUsage = true
+
 		_, err = instances.ActivateNatIP(name, natid)
 		return
 	},

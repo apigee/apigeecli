@@ -49,6 +49,8 @@ var CreateCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(projectID)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		cmd.SilenceUsage = true
+
 		_, err = orgs.Create(description, analyticsRegion, authorizedNetwork,
 			disableVpcPeering, runtimeType, billingType, runtimeDatabaseEncryptionKeyName,
 			portalDisabled, apiConsumerDataEncryptionKeyName, controlPlaneEncryptionKeyName,

@@ -33,6 +33,8 @@ var UndepCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		cmd.SilenceUsage = true
+
 		if revision == -1 {
 			if revision, err = apis.GetHighestProxyRevision(name); err != nil {
 				return err

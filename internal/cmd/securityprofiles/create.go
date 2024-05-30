@@ -33,6 +33,8 @@ var CreateCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		cmd.SilenceUsage = true
+
 		content, err := utils.ReadFile(securityActionFile)
 		if err != nil {
 			return err

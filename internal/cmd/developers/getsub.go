@@ -32,6 +32,8 @@ var GetSubCmd = &cobra.Command{
 	},
 	Long: "Returns a Developer subscription",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		cmd.SilenceUsage = true
+
 		_, err = developers.GetSubscriptions(email, subscription)
 		return
 	},

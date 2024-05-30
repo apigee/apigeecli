@@ -32,6 +32,8 @@ var ListSubCmd = &cobra.Command{
 	},
 	Long: "Returns a list of Developer subscriptions",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		cmd.SilenceUsage = true
+
 		_, err = developers.ListSubscriptions(email)
 		return
 	},

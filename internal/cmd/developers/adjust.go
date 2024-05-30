@@ -32,6 +32,8 @@ var AdjustCmd = &cobra.Command{
 	},
 	Long: "Adjust the prepaid balance for the developer",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		cmd.SilenceUsage = true
+
 		_, err = developers.Adjust(email, adjust)
 		return
 	},

@@ -30,6 +30,8 @@ var WidCmd = &cobra.Command{
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		cmd.SilenceUsage = true
+
 		return apiclient.AddWid(projectID, namespace,
 			kubernetesServiceAccount, googleServiceAccount)
 	},

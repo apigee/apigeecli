@@ -32,6 +32,8 @@ var PropCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		cmd.SilenceUsage = true
+
 		return orgs.SetOrgProperty(propName, propValue)
 	},
 }

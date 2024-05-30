@@ -60,6 +60,8 @@ var ExportCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		cmd.SilenceUsage = true
+
 		var productResponse, appsResponse, targetServerResponse, referencesResponse, appGroupAppsResponse [][]byte
 		var respBody, listKVMBytes, appGroupsRespBody []byte
 

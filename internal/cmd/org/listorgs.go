@@ -31,6 +31,8 @@ var ListCmd = &cobra.Command{
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		cmd.SilenceUsage = true
+
 		_, err = orgs.List()
 		return
 	},

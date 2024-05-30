@@ -67,6 +67,8 @@ Create an API Proxy from OAS and deploy the proxy to an environment:
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		cmd.SilenceUsage = true
+
 		var content []byte
 
 		if oasFile != "" {

@@ -35,6 +35,8 @@ var CreateCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		cmd.SilenceUsage = true
+
 		re := regexp.MustCompile(`projects\/([a-zA-Z0-9_-]+)\/regions` +
 			`\/([a-zA-Z0-9_-]+)\/serviceAttachments\/([a-zA-Z0-9_-]+)`)
 		ok := re.Match([]byte(location))

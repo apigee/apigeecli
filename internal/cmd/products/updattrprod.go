@@ -32,6 +32,8 @@ var UpdAttrCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		cmd.SilenceUsage = true
+
 		_, err = products.UpdateAttribute(name, attrName, attrValue)
 		return
 	},

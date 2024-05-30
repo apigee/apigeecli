@@ -57,6 +57,8 @@ var CloneCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		cmd.SilenceUsage = true
+
 		if proxyZip != "" {
 			// extract the zip to a tmp folder and assign to proxyFolder
 			if proxyFolder, err = unzipBundle(); err != nil {

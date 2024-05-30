@@ -33,6 +33,8 @@ var DeleteAttachCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		cmd.SilenceUsage = true
+
 		_, err = instances.DetachEnv(name)
 		return
 	},

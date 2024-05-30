@@ -39,6 +39,8 @@ var DeleteCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		cmd.SilenceUsage = true
+
 		if id != "" {
 			_, err = datastores.Delete(id)
 		} else {

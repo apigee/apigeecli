@@ -36,6 +36,8 @@ var CreateCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		cmd.SilenceUsage = true
+
 		apiclient.ClientPrintHttpResponse.Set(false)
 		if billingType, err = orgs.GetOrgField("billingType"); err != nil {
 			return err
