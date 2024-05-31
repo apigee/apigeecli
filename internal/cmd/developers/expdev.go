@@ -32,6 +32,8 @@ var ExpCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		cmd.SilenceUsage = true
+
 		const exportFileName = "developers.json"
 
 		respBody, err := developers.Export()

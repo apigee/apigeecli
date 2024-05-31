@@ -38,6 +38,8 @@ var UpdateCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(projectID)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		cmd.SilenceUsage = true
+
 		_, err = orgs.Update(description, authorizedNetwork)
 		return
 	},

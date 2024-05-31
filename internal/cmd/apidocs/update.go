@@ -51,6 +51,8 @@ var UpdateCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		cmd.SilenceUsage = true
+
 		_, err = apidocs.Update(siteid, id, title, description, published,
 			anonAllowed, apiProductName, requireCallbackUrl, imageUrl, categoryIds)
 		return

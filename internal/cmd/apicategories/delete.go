@@ -42,6 +42,8 @@ var DelCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		cmd.SilenceUsage = true
+
 		if name != "" {
 			if id, err = apicategories.GetIDByName(siteid, name); err != nil {
 				return err

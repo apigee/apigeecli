@@ -57,6 +57,8 @@ var BundleCreateCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		cmd.SilenceUsage = true
+
 		var respBody []byte
 		if sfZip != "" {
 			respBody, err = sharedflows.Create(name, sfZip)

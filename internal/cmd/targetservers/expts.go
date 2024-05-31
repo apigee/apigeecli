@@ -33,6 +33,8 @@ var ExpCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		cmd.SilenceUsage = true
+
 		const exportFileName = "targetservers.json"
 		apiclient.DisableCmdPrintHttpResponse()
 		payload, err := targetservers.Export(conn)

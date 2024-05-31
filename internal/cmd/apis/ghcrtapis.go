@@ -47,6 +47,8 @@ var GhCreateCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		cmd.SilenceUsage = true
+
 		if os.Getenv("GITHUB_TOKEN") == "" {
 			clilog.Debug.Println("github token is not set as an env var. Running unauthenticated")
 		}

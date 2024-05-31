@@ -39,6 +39,8 @@ var CallCmd = &cobra.Command{
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		cmd.SilenceUsage = true
+
 		if generateName {
 			name = GenerateName("apigee-" + roleType + "-")
 		}

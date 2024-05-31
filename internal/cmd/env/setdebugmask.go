@@ -33,6 +33,8 @@ var SetDebugCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		cmd.SilenceUsage = true
+
 		payload, err := utils.ReadFile(filePath)
 		if err != nil {
 			return nil

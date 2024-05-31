@@ -33,6 +33,8 @@ var SetDepCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		cmd.SilenceUsage = true
+
 		err = environments.SetIAM(memberName, "deploy", memberType)
 		if err != nil {
 			return err

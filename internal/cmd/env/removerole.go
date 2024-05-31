@@ -33,6 +33,8 @@ var RemoveRoleCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		cmd.SilenceUsage = true
+
 		err = environments.RemoveIAM(memberName, role)
 		if err != nil {
 			return err

@@ -56,6 +56,8 @@ var ImportCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		cmd.SilenceUsage = true
+
 		var kvmList []string
 
 		if stat, err := os.Stat(folder); err == nil && !stat.IsDir() {

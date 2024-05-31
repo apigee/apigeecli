@@ -32,6 +32,8 @@ var ListCmd = &cobra.Command{
 	},
 	Long: "Lists all developers in an organization by email address",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		cmd.SilenceUsage = true
+
 		_, err = developers.List(count, expand, ids, startKey, app, includeCompany)
 		return
 	},

@@ -32,6 +32,8 @@ var ExpSubCmd = &cobra.Command{
 	},
 	Long: "Expires a Developer subscription",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		cmd.SilenceUsage = true
+
 		_, err = developers.ExpireSubscriptions(email, subscription)
 		return
 	},

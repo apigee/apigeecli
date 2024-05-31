@@ -41,6 +41,8 @@ var ListCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		cmd.SilenceUsage = true
+
 		if len(filter) > 0 {
 			_, err = products.ListFilter(filter)
 		} else {

@@ -26,6 +26,8 @@ var SetCmd = &cobra.Command{
 	Short: "Set default preferences for apigeecli",
 	Long:  "Set default preferences for apigeecli",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		cmd.SilenceUsage = true
+
 		if err = apiclient.WriteDefaultOrg(org); err != nil {
 			return err
 		}

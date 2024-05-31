@@ -26,6 +26,8 @@ var CleanCmd = &cobra.Command{
 	Short: "Remove preferences file from the home dir",
 	Long:  "Remove preferences file from the home dir",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		cmd.SilenceUsage = true
+
 		return apiclient.DeletePreferencesFile()
 	},
 }

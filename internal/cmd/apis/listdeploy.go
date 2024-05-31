@@ -44,6 +44,8 @@ var ListDepCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		cmd.SilenceUsage = true
+
 		if apiclient.GetApigeeEnv() != "" {
 			if revision != -1 {
 				if !report {

@@ -40,6 +40,8 @@ var ListCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		cmd.SilenceUsage = true
+
 		if completeState == "Success" {
 			_, err = operations.List(state, operations.Success)
 		} else if completeState == "Failed" {

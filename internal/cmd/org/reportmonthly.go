@@ -38,6 +38,8 @@ var MonthlyCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		cmd.SilenceUsage = true
+
 		var apiCalls int
 		w := tabwriter.NewWriter(os.Stdout, 32, 4, 0, ' ', 0)
 

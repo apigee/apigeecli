@@ -34,6 +34,8 @@ var UpdateCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		cmd.SilenceUsage = true
+
 		_, err = developers.Update(email, firstName, lastName, userName, cmd.Flag("status").Value.String(), attrs)
 		return
 	},

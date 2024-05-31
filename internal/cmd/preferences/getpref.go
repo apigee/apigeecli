@@ -26,6 +26,8 @@ var GetCmd = &cobra.Command{
 	Short: "Get preferences for apigeecli",
 	Long:  "Get preferences for apigeecli",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		cmd.SilenceUsage = true
+
 		err = apiclient.GetPreferences()
 		return err
 	},

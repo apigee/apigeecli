@@ -32,6 +32,8 @@ var CreditCmd = &cobra.Command{
 	},
 	Long: "Credits the account balance for the developer",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		cmd.SilenceUsage = true
+
 		_, err = developers.Credit(email, credit)
 		return
 	},
