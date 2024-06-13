@@ -24,6 +24,9 @@ apiproxy/
 #keys for envoy
 remote-service.*
 
+# ignore changes to launch.json
+.vscode/launch.json
+
 #json files
 *.json
 
@@ -35,4 +38,4 @@ remote-service.*
 !test/*.zip
 !cmd/apigeecli*
 !internal/apigeecli*
-!.vscode/launch.json
+
