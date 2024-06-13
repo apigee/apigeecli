@@ -21,6 +21,10 @@ dist/
 
 apiproxy/
 
+
+# ignore changes to launch.json
+.vscode/launch.json
+
 #json files
 *.json
 
