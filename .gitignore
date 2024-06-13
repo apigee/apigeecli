@@ -35,3 +35,4 @@ remote-service.*
 !test/*.zip
 !cmd/apigeecli*
 !internal/apigeecli*
+!.vscode/launch.json
