@@ -1,0 +1,26 @@
+{
+	"name": "Go",
+	"build": {
+		"dockerfile": "Dockerfile",
+		"context": ".."
+	},
+	"runArgs": [
+		"--privileged",
+		"--network=host"
+	],
+	"workspaceMount": "source=${localWorkspaceFolder},target=/${localWorkspaceFolderBasename},type=bind",
+	"workspaceFolder": "/${localWorkspaceFolderBasename}",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"golang.go",
+				"redhat.vscode-yaml",
+				"davidanson.vscode-markdownlint"
+			],
+			"settings": {
+				"go.useLanguageServer": true,
+				"go.lintTool": "golangci-lint"
+			}
+		}
+	}
+}
