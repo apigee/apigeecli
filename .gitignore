@@ -21,9 +21,6 @@ dist/
 
 apiproxy/
 
-#keys for envoy
-remote-service.*
-
 #json files
 *.json
 
@@ -36,3 +33,4 @@ remote-service.*
 !cmd/apigeecli*
 !internal/apigeecli*
 !.vscode/launch.json
+!.devcontainer/devcontainer.json

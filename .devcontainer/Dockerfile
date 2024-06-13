@@ -12,16 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+FROM gcr.io/projectsigstore/cosign:latest as cosign
+
 FROM mcr.microsoft.com/devcontainers/go:1-1.22-bookworm
+COPY --from=cosign /ko-app/cosign /usr/bin
 
-ADD ../internal /go/src/apigeecli/internal
-ADD ../cmd /go/src/apigeecli/cmd
-
-COPY ../go.mod ../go.sum /go/src/apigeecli/
-
-WORKDIR /go/src/apigeecli
-
-ENV GO111MODULE=on
-RUN go mod tidy
-RUN go mod download
-
+RUN echo 'deb [trusted=yes] https://repo.goreleaser.com/apt/ /' | sudo tee /etc/apt/sources.list.d/goreleaser.list
+RUN sudo apt update
+RUN sudo apt install -y goreleaser curl jq
