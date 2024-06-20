@@ -30,7 +30,7 @@ const (
 )
 
 // registryBaseURL is the Apigee API Hub control plane endpoint
-const registryBaseURL = "https://apigeeregistry.googleapis.com/v1/projects/%s/locations/%s"
+const registryBaseURL = "https://apihub.googleapis.com/v1/projects/%s/locations/%s"
 
 // baseDRZURL is the Apigee control plane endpoint
 const baseDRZURL = "https://%s-apigee.googleapis.com/v1/organizations/"
