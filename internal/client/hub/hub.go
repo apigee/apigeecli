@@ -198,21 +198,7 @@ func GetApi(apiID string) (respBody []byte, err error) {
 }
 
 func ListApi(filter string, pageSize int, pageToken string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.GetApigeeRegistryURL())
-	u.Path = path.Join(u.Path, "apis")
-	q := u.Query()
-	if filter != "" {
-		q.Set("filter", filter)
-	}
-	if pageSize != -1 {
-		q.Set("pageSize", strconv.Itoa(pageSize))
-	}
-	if pageToken != "" {
-		q.Set("pageToken", pageToken)
-	}
-	u.RawQuery = q.Encode()
-	respBody, err = apiclient.HttpClient(u.String())
-	return respBody, err
+	return list("apis", filter, pageSize, pageToken)
 }
 
 func CreateApiVersion(versionID string, apiID string, contents []byte) (respBody []byte, err error) {
@@ -242,21 +228,7 @@ func DeleteApiVersion(versionID, apiID string) (respBody []byte, err error) {
 }
 
 func ListApiVersions(apiID string, filter string, pageSize int, pageToken string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.GetApigeeRegistryURL())
-	u.Path = path.Join(u.Path, "apis", apiID, "versions")
-	q := u.Query()
-	if filter != "" {
-		q.Set("filter", filter)
-	}
-	if pageSize != -1 {
-		q.Set("pageSize", strconv.Itoa(pageSize))
-	}
-	if pageToken != "" {
-		q.Set("pageToken", pageToken)
-	}
-	u.RawQuery = q.Encode()
-	respBody, err = apiclient.HttpClient(u.String())
-	return respBody, err
+	return list(path.Join("apis", apiID, "versions"), filter, pageSize, pageToken)
 }
 
 func GetApiVersionsDefinitions(apiID string, versionID string, definition string) (respBody []byte, err error) {
@@ -322,7 +294,7 @@ func DeleteApiVersionsSpec(apiID string, versionID string, specID string) (respB
 	return respBody, err
 }
 
-func GetApiVersionsSpecContent(apiID string, versionID string, specID string) (respBody []byte, err error) {
+func GetApiVersionsSpecContents(apiID string, versionID string, specID string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.GetApigeeRegistryURL())
 	u.Path = path.Join(u.Path, "apis", apiID, "versions", versionID, "specs", specID, ":contents")
 	respBody, err = apiclient.HttpClient(u.String())
@@ -330,21 +302,7 @@ func GetApiVersionsSpecContent(apiID string, versionID string, specID string) (r
 }
 
 func ListApiVersionsSpec(apiID string, versionID string, filter string, pageSize int, pageToken string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.GetApigeeRegistryURL())
-	u.Path = path.Join(u.Path, "apis", apiID, "versions", versionID, "specs")
-	q := u.Query()
-	if filter != "" {
-		q.Set("filter", filter)
-	}
-	if pageSize != -1 {
-		q.Set("pageSize", strconv.Itoa(pageSize))
-	}
-	if pageToken != "" {
-		q.Set("pageToken", pageToken)
-	}
-	u.RawQuery = q.Encode()
-	respBody, err = apiclient.HttpClient(u.String())
-	return respBody, err
+	return list(path.Join("apis", apiID, "versions", versionID, "specs"), filter, pageSize, pageToken)
 }
 
 func CreateDependency(dependencyID string, description string, consumerDisplayName string,
@@ -426,21 +384,7 @@ func DeleteDependency(dependencyID string) (respBody []byte, err error) {
 }
 
 func ListDependencies(filter string, pageSize int, pageToken string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.GetApigeeRegistryURL())
-	u.Path = path.Join(u.Path, "dependencies")
-	q := u.Query()
-	if filter != "" {
-		q.Set("filter", filter)
-	}
-	if pageSize != -1 {
-		q.Set("pageSize", strconv.Itoa(pageSize))
-	}
-	if pageToken != "" {
-		q.Set("pageToken", pageToken)
-	}
-	u.RawQuery = q.Encode()
-	respBody, err = apiclient.HttpClient(u.String())
-	return respBody, err
+	return list("dependencies", filter, pageSize, pageToken)
 }
 
 func CreateDeployment(deploymentID string, displayName string, description string,
@@ -499,21 +443,7 @@ func DeleteDeployment(deploymentID string) (respBody []byte, err error) {
 }
 
 func ListDeployments(filter string, pageSize int, pageToken string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.GetApigeeRegistryURL())
-	u.Path = path.Join(u.Path, "dependencies")
-	q := u.Query()
-	if filter != "" {
-		q.Set("filter", filter)
-	}
-	if pageSize != -1 {
-		q.Set("pageSize", strconv.Itoa(pageSize))
-	}
-	if pageToken != "" {
-		q.Set("pageToken", pageToken)
-	}
-	u.RawQuery = q.Encode()
-	respBody, err = apiclient.HttpClient(u.String())
-	return respBody, err
+	return list("deployments", filter, pageSize, pageToken)
 }
 
 func CreateExternalAPI(externalApiId string, displayName string, description string,
@@ -567,8 +497,71 @@ func DeleteExternalAPI(externalApiID string) (respBody []byte, err error) {
 }
 
 func ListExternalAPIs(filter string, pageSize int, pageToken string) (respBody []byte, err error) {
+	return list("externalApis", filter, pageSize, pageToken)
+}
+
+func CreateAttribute(attributeID string, displayName string, description string, scope string,
+	dataType string, aValues []byte, cardinality int) (respBody []byte, err error) {
+
+	type attribute struct {
+		DisplayName   string          `json:"displayName,omitempty"`
+		Description   string          `json:"description,omitempty"`
+		Scope         string          `json:"scope,omitempty"`
+		DataType      string          `json:"dataType,omitempty"`
+		AllowedValues []allowedValues `json:"allowedValues,omitempty"`
+		Cardinality   int             `json:"cardinality,omitempty"`
+	}
 	u, _ := url.Parse(apiclient.GetApigeeRegistryURL())
-	u.Path = path.Join(u.Path, "externalApis")
+	u.Path = path.Join(u.Path, "attributes")
+	q := u.Query()
+	q.Set("attributeId", attributeID)
+	u.RawQuery = q.Encode()
+
+	a := attribute{}
+	a.DisplayName = displayName
+	a.Description = description
+	a.Scope = scope
+	a.DataType = dataType
+	a.Cardinality = cardinality
+
+	if aValues != nil {
+		var av []allowedValues
+		err = json.Unmarshal(aValues, &av)
+		if err != nil {
+			return nil, err
+		}
+		a.AllowedValues = av
+	}
+
+	payload, err := json.Marshal(&a)
+	if err != nil {
+		return nil, err
+	}
+	respBody, err = apiclient.HttpClient(u.String(), string(payload))
+	return respBody, err
+}
+
+func GetAttribute(attributeID string) (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.GetApigeeRegistryURL())
+	u.Path = path.Join(u.Path, "attributes", attributeID)
+	respBody, err = apiclient.HttpClient(u.String())
+	return respBody, err
+}
+
+func DeleteAttribute(attributeID string) (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.GetApigeeRegistryURL())
+	u.Path = path.Join(u.Path, "attributes", attributeID)
+	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
+	return respBody, err
+}
+
+func ListAttributes(filter string, pageSize int, pageToken string) (respBody []byte, err error) {
+	return list("attributes", filter, pageSize, pageToken)
+}
+
+func list(resource string, filter string, pageSize int, pageToken string) (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.GetApigeeRegistryURL())
+	u.Path = path.Join(u.Path, resource)
 	q := u.Query()
 	if filter != "" {
 		q.Set("filter", filter)

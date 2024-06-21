@@ -12,11 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package externalapis
+package attributes
 
 import (
 	"internal/apiclient"
 	"internal/client/hub"
+	"os"
 
 	"github.com/spf13/cobra"
 )
@@ -24,40 +25,46 @@ import (
 // CrtCmd
 var CrtCmd = &cobra.Command{
 	Use:   "create",
-	Short: "Create a new API External API",
-	Long:  "Create a new API External API",
+	Short: "Create a new Attribute in API Hub",
+	Long:  "Create a new Attribute in API Hub",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
-		_, err = hub.CreateExternalAPI(externalApiId, displayName, description, endpoints, paths, externalURI)
+		var aValues []byte
+
+		if aValues, err = os.ReadFile(aValuesPath); err != nil {
+			return err
+		}
+		_, err = hub.CreateAttribute(attributeID, displayName, description, scope, dataType, aValues, cardinality)
 		return
 	},
 }
 
-var externalApiId, displayName, description, externalURI, resourceURI string
-var endpoints, paths []string
+var attributeID, displayName, description, scope, dataType, aValuesPath string
+var cardinality int
 
 func init() {
-	CrtCmd.Flags().StringVarP(&externalApiID, "id", "i",
-		"", "External API ID")
+	CrtCmd.Flags().StringVarP(&attributeID, "id", "i",
+		"", "Attribute ID")
 	CrtCmd.Flags().StringVarP(&displayName, "display-name", "d",
-		"", "Exernal API Display Name")
+		"", "Attribute Display Name")
 	CrtCmd.Flags().StringVarP(&description, "description", "",
-		"", "External API Description")
-	CrtCmd.Flags().StringVarP(&externalURI, "external-uri", "",
-		"", "The uri of the externally hosted documentation")
-	CrtCmd.Flags().StringVarP(&resourceURI, "resource-uri", "",
-		"", "A URI to the runtime resource")
-	CrtCmd.Flags().StringArrayVarP(&endpoints, "endpoints", "",
-		[]string{}, " The endpoints at which this deployment resource is listening for API requests")
-	CrtCmd.Flags().StringArrayVarP(&paths, "paths", "",
-		[]string{}, " API base paths")
+		"", "Attribute Description")
+	CrtCmd.Flags().StringVarP(&scope, "scope", "s",
+		"", "Attribute scope")
+	CrtCmd.Flags().StringVarP(&dataType, "data-type", "",
+		"", "Attribute data type")
+	CrtCmd.Flags().IntVarP(&cardinality, "cardinality", "c",
+		1, "Attribute cardinality")
+	CrtCmd.Flags().StringVarP(&aValuesPath, "allowed-values", "",
+		"", "Path to a file containing allowed values")
 
 	_ = CrtCmd.MarkFlagRequired("id")
 	_ = CrtCmd.MarkFlagRequired("display-name")
-	_ = CrtCmd.MarkFlagRequired("resource-uri")
-	_ = CrtCmd.MarkFlagRequired("endpoints")
+	_ = CrtCmd.MarkFlagRequired("scope")
+	_ = CrtCmd.MarkFlagRequired("data-type")
+
 }

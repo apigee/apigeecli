@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package specs
+package attributes
 
 import (
 	"internal/apiclient"
@@ -21,39 +21,32 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// GetCmd to get a catalog items
-var GetCmd = &cobra.Command{
-	Use:   "get",
-	Short: "Get a spec for an API Version",
-	Long:  "Get a spec for an API Version",
+// ListCmd to get a catalog items
+var ListCmd = &cobra.Command{
+	Use:   "list",
+	Short: "List attributes",
+	Long:  "List attributes",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
-		if contents {
-			_, err = hub.GetApiVersionsSpecContents(apiID, versionID, specID)
-			return
-		}
-		_, err = hub.GetApiVersionsSpec(apiID, versionID, specID)
+		_, err = hub.ListAttributes(filter, pageSize, pageToken)
 		return
 	},
 }
 
-var contents bool
+var (
+	pageSize          int
+	pageToken, filter string
+)
 
 func init() {
-	GetCmd.Flags().StringVarP(&versionID, "version", "v",
-		"", "API Version ID")
-	GetCmd.Flags().StringVarP(&apiID, "api-id", "",
-		"", "API ID")
-	GetCmd.Flags().StringVarP(&specID, "spec-id", "s",
-		"", "Spec ID")
-	GetCmd.Flags().BoolVarP(&contents, "contents", "c",
-		false, "Get contents")
-
-	_ = GetCmd.MarkFlagRequired("api-id")
-	_ = GetCmd.MarkFlagRequired("version")
-	_ = GetCmd.MarkFlagRequired("spec-id")
+	ListCmd.Flags().StringVarP(&filter, "filter", "f",
+		"", "filter expression")
+	ListCmd.Flags().IntVarP(&pageSize, "page-size", "",
+		-1, "The maximum number of versions to return")
+	ListCmd.Flags().StringVarP(&pageToken, "page-token", "",
+		"", "A page token, received from a previous call")
 }

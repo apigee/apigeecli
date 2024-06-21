@@ -32,8 +32,14 @@ var CrtCmd = &cobra.Command{
 		extApiPattern := `^projects/[^/]+/locations/[^/]+/apis/[^/]+/externalApis/[^/]+$`
 		opPattern := `^projects/[^/]+/locations/[^/]+/apis/[^/]+/versions/[^/]+/operations/[^/]+$`
 
+		if consumerExternalApiResouceName == "" && consumerOperationResourceName == "" {
+			return fmt.Errorf("at least one of consumer-ext-api-res-name or consumer-op-res-name must be set")
+		}
 		if consumerExternalApiResouceName != "" && consumerOperationResourceName != "" {
 			return fmt.Errorf("consumer-ext-api-res-name and consumer-op-res-name cannot be used together")
+		}
+		if supplierExternalApiResourceName == "" && supplierOperationResourceName == "" {
+			return fmt.Errorf("at least one of supplier-ext-api-res-name and supplier-op-res-name must be set")
 		}
 		if supplierExternalApiResourceName != "" && supplierOperationResourceName != "" {
 			return fmt.Errorf("supplier-ext-api-res-name and supplier-op-res-name cannot be used together")
@@ -87,4 +93,5 @@ func init() {
 	CrtCmd.Flags().StringVarP(&supplierExternalApiResourceName, "supplier-ext-api-res-name", "",
 		"", "Supplier External API Resource Name")
 
+	_ = CrtCmd.MarkFlagRequired("id")
 }

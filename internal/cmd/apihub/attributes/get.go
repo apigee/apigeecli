@@ -12,31 +12,34 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package apihub
+package attributes
 
 import (
-	"internal/cmd/apihub/apis"
-	"internal/cmd/apihub/attributes"
-	"internal/cmd/apihub/dependencies"
-	"internal/cmd/apihub/deployments"
-	"internal/cmd/apihub/externalapis"
-	"internal/cmd/apihub/instances"
+	"internal/apiclient"
+	"internal/client/hub"
 
 	"github.com/spf13/cobra"
 )
 
-// Cmd to manage apis
-var Cmd = &cobra.Command{
-	Use:   "apihub",
-	Short: "Manage Apigee API Hub Resources",
-	Long:  "Manage Apigee API Hub Resources",
+// GetCmd to get a catalog items
+var GetCmd = &cobra.Command{
+	Use:   "get",
+	Short: "Get details for an Attribute",
+	Long:  "Get details for an Attribute",
+	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetRegion(region)
+		return apiclient.SetApigeeOrg(org)
+	},
+	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		cmd.SilenceUsage = true
+		_, err = hub.GetAttribute(attributeID)
+		return
+	},
 }
 
 func init() {
-	Cmd.AddCommand(instances.InstanceCmd)
-	Cmd.AddCommand(apis.ApisCmd)
-	Cmd.AddCommand(deployments.DeploymentCmd)
-	Cmd.AddCommand(dependencies.DependencyCmd)
-	Cmd.AddCommand(externalapis.ExternalAPICmd)
-	Cmd.AddCommand(attributes.AttributeCmd)
+	GetCmd.Flags().StringVarP(&attributeID, "id", "i",
+		"", "Dependency ID")
+
+	_ = GetCmd.MarkFlagRequired("id")
 }

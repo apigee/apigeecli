@@ -32,18 +32,24 @@ var GetCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
+		if definition != "" {
+			_, err = hub.GetApiVersionsDefinitions(versionID, apiID, definition)
+			return
+		}
 		_, err = hub.GetApiVersion(versionID, apiID)
 		return
 	},
 }
 
-var versionID string
+var versionID, definition string
 
 func init() {
 	GetCmd.Flags().StringVarP(&versionID, "version", "v",
 		"", "API Version ID")
 	GetCmd.Flags().StringVarP(&apiID, "api-id", "",
 		"", "API ID")
+	GetCmd.Flags().StringVarP(&definition, "definition", "d",
+		"", "Get API Version definition")
 
 	_ = GetCmd.MarkFlagRequired("api-id")
 	_ = GetCmd.MarkFlagRequired("version")

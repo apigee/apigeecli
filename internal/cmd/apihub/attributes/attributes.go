@@ -12,31 +12,32 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package apihub
+package attributes
 
 import (
-	"internal/cmd/apihub/apis"
-	"internal/cmd/apihub/attributes"
-	"internal/cmd/apihub/dependencies"
-	"internal/cmd/apihub/deployments"
-	"internal/cmd/apihub/externalapis"
-	"internal/cmd/apihub/instances"
-
 	"github.com/spf13/cobra"
 )
 
-// Cmd to manage apis
-var Cmd = &cobra.Command{
-	Use:   "apihub",
-	Short: "Manage Apigee API Hub Resources",
-	Long:  "Manage Apigee API Hub Resources",
+// AttributeCmd to manage apis
+var AttributeCmd = &cobra.Command{
+	Use:   "attributes",
+	Short: "Manage attributes in API Hub",
+	Long:  "Manage attributes in API Hub",
 }
 
+var org, region string
+
 func init() {
-	Cmd.AddCommand(instances.InstanceCmd)
-	Cmd.AddCommand(apis.ApisCmd)
-	Cmd.AddCommand(deployments.DeploymentCmd)
-	Cmd.AddCommand(dependencies.DependencyCmd)
-	Cmd.AddCommand(externalapis.ExternalAPICmd)
-	Cmd.AddCommand(attributes.AttributeCmd)
+	AttributeCmd.PersistentFlags().StringVarP(&org, "org", "o",
+		"", "Apigee organization name")
+	AttributeCmd.PersistentFlags().StringVarP(&region, "region", "r",
+		"", "API Hub region name")
+
+	//AttributeCmd.AddCommand(CrtCmd)
+	AttributeCmd.AddCommand(GetCmd)
+	AttributeCmd.AddCommand(DelCmd)
+	AttributeCmd.AddCommand(ListCmd)
+
+	_ = AttributeCmd.MarkFlagRequired("org")
+	_ = AttributeCmd.MarkFlagRequired("region")
 }

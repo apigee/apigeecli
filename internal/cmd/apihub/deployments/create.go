@@ -42,6 +42,8 @@ var endpoints []string
 var d hub.DeploymentType
 
 func init() {
+	CrtCmd.Flags().StringVarP(&deploymentID, "id", "i",
+		"", "Deployment ID")
 	CrtCmd.Flags().StringVarP(&displayName, "display-name", "d",
 		"", "Deployment Display Name")
 	CrtCmd.Flags().StringVarP(&description, "description", "",
