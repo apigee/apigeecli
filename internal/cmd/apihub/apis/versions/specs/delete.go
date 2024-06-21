@@ -32,7 +32,7 @@ var DelCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
-		_, err = hub.DeleteApiVersionsSpec(apiID, versionID, specID)
+		_, err = hub.DeleteApiVersionSpec(apiID, versionID, specID)
 		return
 	},
 }

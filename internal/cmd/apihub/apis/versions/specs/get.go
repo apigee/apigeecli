@@ -36,7 +36,7 @@ var GetCmd = &cobra.Command{
 			_, err = hub.GetApiVersionsSpecContents(apiID, versionID, specID)
 			return
 		}
-		_, err = hub.GetApiVersionsSpec(apiID, versionID, specID)
+		_, err = hub.GetApiVersionSpec(apiID, versionID, specID)
 		return
 	},
 }

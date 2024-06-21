@@ -46,11 +46,11 @@ var CrtCmd = &cobra.Command{
 var id, apiFilePath string
 
 func init() {
-	CrtCmd.Flags().StringVarP(&id, "api-id", "",
+	CrtCmd.Flags().StringVarP(&id, "id", "i",
 		"", "API ID")
 	CrtCmd.Flags().StringVarP(&apiFilePath, "file", "f",
 		"", "Path to a file containing the API defintion")
 
-	_ = CrtCmd.MarkFlagRequired("api-id")
+	_ = CrtCmd.MarkFlagRequired("id")
 	_ = CrtCmd.MarkFlagRequired("file")
 }

@@ -274,14 +274,14 @@ func CreateApiVersionsSpec(apiID string, versionID string, specID string, displa
 	return respBody, err
 }
 
-func GetApiVersionsSpec(apiID string, versionID string, specID string) (respBody []byte, err error) {
+func GetApiVersionSpec(apiID string, versionID string, specID string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.GetApigeeRegistryURL())
 	u.Path = path.Join(u.Path, "apis", apiID, "versions", versionID, "specs", specID)
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
 
-func DeleteApiVersionsSpec(apiID string, versionID string, specID string) (respBody []byte, err error) {
+func DeleteApiVersionSpec(apiID string, versionID string, specID string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.GetApigeeRegistryURL())
 	u.Path = path.Join(u.Path, "apis", apiID, "versions", versionID, "specs", specID)
 	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
@@ -295,7 +295,7 @@ func GetApiVersionsSpecContents(apiID string, versionID string, specID string) (
 	return respBody, err
 }
 
-func ListApiVersionsSpec(apiID string, versionID string, filter string, pageSize int, pageToken string) (respBody []byte, err error) {
+func ListApiVersionSpecs(apiID string, versionID string, filter string, pageSize int, pageToken string) (respBody []byte, err error) {
 	return list(path.Join("apis", apiID, "versions", versionID, "specs"), filter, pageSize, pageToken)
 }
 
@@ -504,14 +504,35 @@ func ListExternalAPIs(filter string, pageSize int, pageToken string) (respBody [
 func CreateAttribute(attributeID string, displayName string, description string, scope string,
 	dataType string, aValues []byte, cardinality int) (respBody []byte, err error) {
 
+	type attributeScope string
+	const (
+		API           attributeScope = "API"
+		VERSION       attributeScope = "VERSION"
+		SPEC          attributeScope = "SPEC"
+		API_OPERATION attributeScope = "API_OPERATION"
+		DEPLOYMENT    attributeScope = "DEPLOYMENT"
+		DEPENDENCY    attributeScope = "DEPENDENCY"
+		DEFINITION    attributeScope = "DEFINITION"
+		EXTERNAL_API  attributeScope = "EXTERNAL_API"
+		PLUGIN        attributeScope = "PLUGIN"
+	)
+
+	type attributeDataType string
+	const (
+		ENUM   attributeDataType = "ENUM"
+		JSON   attributeDataType = "JSON"
+		STRING attributeDataType = "STRING"
+	)
+
 	type attribute struct {
-		DisplayName   string          `json:"displayName,omitempty"`
-		Description   string          `json:"description,omitempty"`
-		Scope         string          `json:"scope,omitempty"`
-		DataType      string          `json:"dataType,omitempty"`
-		AllowedValues []allowedValues `json:"allowedValues,omitempty"`
-		Cardinality   int             `json:"cardinality,omitempty"`
+		DisplayName   string            `json:"displayName,omitempty"`
+		Description   string            `json:"description,omitempty"`
+		Scope         attributeScope    `json:"scope,omitempty"`
+		DataType      attributeDataType `json:"dataType,omitempty"`
+		AllowedValues []allowedValues   `json:"allowedValues,omitempty"`
+		Cardinality   int               `json:"cardinality,omitempty"`
 	}
+
 	u, _ := url.Parse(apiclient.GetApigeeRegistryURL())
 	u.Path = path.Join(u.Path, "attributes")
 	q := u.Query()
@@ -521,8 +542,8 @@ func CreateAttribute(attributeID string, displayName string, description string,
 	a := attribute{}
 	a.DisplayName = displayName
 	a.Description = description
-	a.Scope = scope
-	a.DataType = dataType
+	a.Scope = attributeScope(scope)
+	a.DataType = attributeDataType(dataType)
 	a.Cardinality = cardinality
 
 	if aValues != nil {

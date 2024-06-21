@@ -32,7 +32,7 @@ var ListCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
-		_, err = hub.ListApiVersionsSpec(apiID, versionID, filter, pageSize, pageToken)
+		_, err = hub.ListApiVersionSpecs(apiID, versionID, filter, pageSize, pageToken)
 		return
 	},
 }

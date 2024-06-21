@@ -49,6 +49,8 @@ var specID, displayName, mimeType, sourceURI, documentation, apiFilePath string
 var attributes map[string]string
 
 func init() {
+	CrtCmd.Flags().StringVarP(&specID, "id", "i",
+		"", "Spec ID")
 	CrtCmd.Flags().StringVarP(&versionID, "version", "v",
 		"", "API Version ID")
 	CrtCmd.Flags().StringVarP(&apiID, "api-id", "",
@@ -64,6 +66,7 @@ func init() {
 	CrtCmd.Flags().StringVarP(&apiFilePath, "file", "f",
 		"", "Path to a file containing the API spec")
 
+	_ = CrtCmd.MarkFlagRequired("id")
 	_ = CrtCmd.MarkFlagRequired("api-id")
 	_ = CrtCmd.MarkFlagRequired("version")
 	_ = CrtCmd.MarkFlagRequired("display-name")
