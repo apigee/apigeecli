@@ -33,6 +33,7 @@ func init() {
 	InstanceCmd.PersistentFlags().StringVarP(&region, "region", "r",
 		"", "API Hub region name")
 
+	InstanceCmd.AddCommand(CrtCmd)
 	InstanceCmd.AddCommand(GetCmd)
 	InstanceCmd.AddCommand(ListCmd)
 

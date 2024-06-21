@@ -419,7 +419,7 @@ func TestGetDependency(t *testing.T) {
 	dependencyID := "test-dependency"
 
 	if _, err := GetDependency(dependencyID); err != nil {
-		t.Errorf("failed to get attribute %v", err)
+		t.Errorf("failed to get dependency %v", err)
 	}
 }
 
@@ -435,7 +435,7 @@ func TestListDependencies(t *testing.T) {
 	}
 
 	if _, err := ListDependencies("", -1, ""); err != nil {
-		t.Errorf("failed to list attributes %v", err)
+		t.Errorf("failed to list dependencies %v", err)
 	}
 }
 
@@ -452,6 +452,153 @@ func TestDeleteDependency(t *testing.T) {
 	dependencyID := "test-dependency"
 
 	if _, err := DeleteDependency(dependencyID); err != nil {
-		t.Errorf("failed to get attribute %v", err)
+		t.Errorf("failed to get dependency %v", err)
+	}
+}
+
+func TestCreateDeployment(t *testing.T) {
+	err := clienttest.TestSetup(clienttest.ENV_NOT_REQD,
+		clienttest.SITEID_NOT_REQD, clienttest.CLIPATH_REQD)
+	if err != nil {
+		t.Fatalf("setup failed: %v", err)
+	}
+
+	if os.Getenv("APIGEE_REGION") == "" {
+		t.Fatalf("APIGEE_REGION not set")
+	}
+
+	deploymentID := "test-deployment"
+	description := "test description"
+	displayName := "test display name"
+	externalURI := "https://httpbin.org/get"
+	resourceURI := "https://httpbin.org/get"
+	endpoints := []string{"https://httpbin.org/get"}
+
+	if _, err = CreateDeployment(deploymentID, displayName, description, externalURI,
+		resourceURI, endpoints, APIGEE); err != nil {
+		t.Errorf("failed to create deployment %v", err)
+	}
+}
+
+func TestGetDeployment(t *testing.T) {
+	err := clienttest.TestSetup(clienttest.ENV_NOT_REQD,
+		clienttest.SITEID_NOT_REQD, clienttest.CLIPATH_REQD)
+	if err != nil {
+		t.Fatalf("setup failed: %v", err)
+	}
+
+	if os.Getenv("APIGEE_REGION") == "" {
+		t.Fatalf("APIGEE_REGION not set")
+	}
+	deploymentID := "test-deployment"
+
+	if _, err := GetDeployment(deploymentID); err != nil {
+		t.Errorf("failed to get deployment %v", err)
+	}
+}
+
+func TestListDeployment(t *testing.T) {
+	err := clienttest.TestSetup(clienttest.ENV_NOT_REQD,
+		clienttest.SITEID_NOT_REQD, clienttest.CLIPATH_REQD)
+	if err != nil {
+		t.Fatalf("setup failed: %v", err)
+	}
+
+	if os.Getenv("APIGEE_REGION") == "" {
+		t.Fatalf("APIGEE_REGION not set")
+	}
+
+	if _, err := ListDeployments("", -1, ""); err != nil {
+		t.Errorf("failed to list deployments %v", err)
+	}
+}
+
+func TestDeleteDeployment(t *testing.T) {
+	err := clienttest.TestSetup(clienttest.ENV_NOT_REQD,
+		clienttest.SITEID_NOT_REQD, clienttest.CLIPATH_REQD)
+	if err != nil {
+		t.Fatalf("setup failed: %v", err)
+	}
+
+	if os.Getenv("APIGEE_REGION") == "" {
+		t.Fatalf("APIGEE_REGION not set")
+	}
+	deploymentID := "test-deployment"
+
+	if _, err := DeleteDeployment(deploymentID); err != nil {
+		t.Errorf("failed to delete deployment %v", err)
+	}
+}
+
+func TestCreateExternalApis(t *testing.T) {
+	err := clienttest.TestSetup(clienttest.ENV_NOT_REQD,
+		clienttest.SITEID_NOT_REQD, clienttest.CLIPATH_REQD)
+	if err != nil {
+		t.Fatalf("setup failed: %v", err)
+	}
+
+	if os.Getenv("APIGEE_REGION") == "" {
+		t.Fatalf("APIGEE_REGION not set")
+	}
+
+	externalApiId := "test-external-api"
+	description := "test description"
+	displayName := "test display name"
+	externalURI := "https://httpbin.org/get"
+	paths := []string{"/get"}
+	endpoints := []string{"https://httpbin.org/get"}
+
+	if _, err = CreateExternalAPI(externalApiId, displayName, description, endpoints, paths, externalURI); err != nil {
+		t.Errorf("failed to create external api %v", err)
+	}
+}
+
+func TestGetExternalApi(t *testing.T) {
+	err := clienttest.TestSetup(clienttest.ENV_NOT_REQD,
+		clienttest.SITEID_NOT_REQD, clienttest.CLIPATH_REQD)
+	if err != nil {
+		t.Fatalf("setup failed: %v", err)
+	}
+
+	if os.Getenv("APIGEE_REGION") == "" {
+		t.Fatalf("APIGEE_REGION not set")
+	}
+	externalApiId := "test-external-api"
+
+	if _, err := GetExternalAPI(externalApiId); err != nil {
+		t.Errorf("failed to get external api %v", err)
+	}
+}
+
+func TestGetInstance(t *testing.T) {
+	err := clienttest.TestSetup(clienttest.ENV_NOT_REQD,
+		clienttest.SITEID_NOT_REQD, clienttest.CLIPATH_REQD)
+	if err != nil {
+		t.Fatalf("setup failed: %v", err)
+	}
+
+	if os.Getenv("APIGEE_REGION") == "" {
+		t.Fatalf("APIGEE_REGION not set")
+	}
+	instanceId := "test-instance"
+
+	if _, err := GetInstance(instanceId); err != nil {
+		t.Errorf("failed to get instance %v", err)
+	}
+}
+
+func TestLookupInstance(t *testing.T) {
+	err := clienttest.TestSetup(clienttest.ENV_NOT_REQD,
+		clienttest.SITEID_NOT_REQD, clienttest.CLIPATH_REQD)
+	if err != nil {
+		t.Fatalf("setup failed: %v", err)
+	}
+
+	if os.Getenv("APIGEE_REGION") == "" {
+		t.Fatalf("APIGEE_REGION not set")
+	}
+
+	if _, err := LookupInstance(); err != nil {
+		t.Errorf("failed to lookup instances %v", err)
 	}
 }

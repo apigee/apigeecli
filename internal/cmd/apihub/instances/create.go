@@ -15,33 +15,42 @@
 package instances
 
 import (
+	"fmt"
 	"internal/apiclient"
 	"internal/client/hub"
+	"regexp"
 
 	"github.com/spf13/cobra"
 )
 
-// GetCmd to get a catalog items
-var GetCmd = &cobra.Command{
-	Use:   "get",
-	Short: "Gets an API Hub Instance",
-	Long:  "Gets an API Hub Instance",
+// CrtCmd to get a catalog items
+var CrtCmd = &cobra.Command{
+	Use:   "create",
+	Short: "Create an API Hub Instance",
+	Long:  "Create an API Hub Instance",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		cmekPattern := `^projects/[^/]+/locations/[^/]+/keyRings/[^/]+/cryptoKeys/[^/]+$`
+		if ok, err := regexp.MatchString(cmekPattern, cmekKeyName); err != nil || !ok {
+			return fmt.Errorf("invalid pattern for cmekKeyName: %v", err)
+		}
 		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
-		_, err = hub.GetInstance(id)
+		_, err = hub.CreateInstance(id, cmekKeyName)
 		return
 	},
 }
 
-var id string
+var cmekKeyName string
 
 func init() {
-	GetCmd.Flags().StringVarP(&id, "id", "i",
+	CrtCmd.Flags().StringVarP(&id, "id", "i",
 		"", "API Hub Intance Id")
+	CrtCmd.Flags().StringVarP(&cmekKeyName, "cmek-key-name", "k",
+		"", "Cmek Key Name")
 
-	GetCmd.MarkFlagRequired("id")
+	CrtCmd.MarkFlagRequired("id")
+	CrtCmd.MarkFlagRequired("cmek-key-name")
 }
