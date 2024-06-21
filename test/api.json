@@ -1,0 +1,11 @@
+{
+    "displayName": "test",
+    "description": "test description",
+    "documentation": {
+        "externalUri": "https://httpbin.org"
+    },
+    "owner": {
+        "displayName": "Test User",
+        "email": "user@example.com"
+    }
+}

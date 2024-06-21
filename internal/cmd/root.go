@@ -29,6 +29,7 @@ import (
 
 	"internal/cmd/apicategories"
 	"internal/cmd/apidocs"
+	"internal/cmd/apihub"
 	"internal/cmd/apis"
 	"internal/cmd/appgroups"
 	"internal/cmd/apps"
@@ -192,6 +193,7 @@ func init() {
 	RootCmd.AddCommand(datastores.Cmd)
 	RootCmd.AddCommand(securityprofiles.Cmd)
 	RootCmd.AddCommand(sites.Cmd)
+	RootCmd.AddCommand(apihub.Cmd)
 }
 
 func initConfig() {

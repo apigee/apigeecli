@@ -334,7 +334,7 @@ func GetApigeeRegistryURL() (registryURL string) {
 	if options.ProjectID == "" {
 		options.ProjectID = options.Org
 	}
-	return fmt.Sprintf(registryBaseURL, options.ProjectID, registryRegion)
+	return fmt.Sprintf(registryBaseURL, options.ProjectID, options.Region)
 }
 
 // GetApigeeBaseURL
