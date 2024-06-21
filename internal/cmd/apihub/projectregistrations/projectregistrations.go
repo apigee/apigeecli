@@ -12,32 +12,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package projectattachments
+package projectregistrations
 
 import (
 	"github.com/spf13/cobra"
 )
 
-// ProjectAttachmentCmd to manage apis
-var ProjectAttachmentCmd = &cobra.Command{
-	Use:   "project-attachments",
-	Short: "Manage Runtime Project Attachments to API Hub",
-	Long:  "Manage Runtime Project Attachments to API Hub",
+// ProjectRegistrationCmd to manage apis
+var ProjectRegistrationCmd = &cobra.Command{
+	Use:   "project-registrations",
+	Short: "Manage Host Project Registrations with API Hub",
+	Long:  "Manage Host Project Registrations with API Hub",
 }
 
 var org, region string
 
 func init() {
-	ProjectAttachmentCmd.PersistentFlags().StringVarP(&org, "org", "o",
+	ProjectRegistrationCmd.PersistentFlags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
-	ProjectAttachmentCmd.PersistentFlags().StringVarP(&region, "region", "r",
+	ProjectRegistrationCmd.PersistentFlags().StringVarP(&region, "region", "r",
 		"", "API Hub region name")
 
-	ProjectAttachmentCmd.AddCommand(CrtCmd)
-	ProjectAttachmentCmd.AddCommand(GetCmd)
-	ProjectAttachmentCmd.AddCommand(DelCmd)
-	ProjectAttachmentCmd.AddCommand(ListCmd)
+	ProjectRegistrationCmd.AddCommand(CrtCmd)
+	ProjectRegistrationCmd.AddCommand(ListCmd)
 
-	_ = ProjectAttachmentCmd.MarkFlagRequired("org")
-	_ = ProjectAttachmentCmd.MarkFlagRequired("region")
+	_ = ProjectRegistrationCmd.MarkFlagRequired("org")
+	_ = ProjectRegistrationCmd.MarkFlagRequired("region")
 }

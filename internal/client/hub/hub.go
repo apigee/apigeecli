@@ -127,11 +127,8 @@ func RegisterHostProject(registrationId string, gcpProjectId string) (respBody [
 	return respBody, err
 }
 
-func ListHostProjects() (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.GetApigeeRegistryURL())
-	u.Path = path.Join(u.Path, "hostProjectRegistrations")
-	respBody, err = apiclient.HttpClient(u.String())
-	return respBody, err
+func ListHostProjects(filter string, pageSize int, pageToken string) (respBody []byte, err error) {
+	return list("hostProjectRegistrations", filter, pageSize, pageToken)
 }
 
 func CreateRuntimeProjectAttachment(runtimeProjectAttachmentId string, runtimeProject string) (respBody []byte, err error) {
