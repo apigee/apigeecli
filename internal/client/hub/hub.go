@@ -162,11 +162,8 @@ func GetRuntimeProjectAttachment(runtimeProjectAttachmentId string) (respBody []
 	return respBody, err
 }
 
-func ListRuntimeProjectAttachment(runtimeProjectAttachmentId string) (respBody []byte, err error) {
-	u, _ := url.Parse(apiclient.GetApigeeRegistryURL())
-	u.Path = path.Join(u.Path, "runtimeProjectAttachments")
-	respBody, err = apiclient.HttpClient(u.String())
-	return respBody, err
+func ListRuntimeProjectAttachments(filter string, pageSize int, pageToken string) (respBody []byte, err error) {
+	return list("runtimeProjectAttachments", filter, pageSize, pageToken)
 }
 
 func CreateApi(apiID string, contents []byte) (respBody []byte, err error) {
@@ -303,6 +300,13 @@ func GetApiVersionsSpecContents(apiID string, versionID string, specID string) (
 
 func ListApiVersionsSpec(apiID string, versionID string, filter string, pageSize int, pageToken string) (respBody []byte, err error) {
 	return list(path.Join("apis", apiID, "versions", versionID, "specs"), filter, pageSize, pageToken)
+}
+
+func LintApiVersionSpec(apiID string, versionID string, specID string) (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.GetApigeeRegistryURL())
+	u.Path = path.Join(u.Path, "apis", apiID, "versions", versionID, "specs", specID, ":lint")
+	respBody, err = apiclient.HttpClient(u.String(), "")
+	return respBody, err
 }
 
 func CreateDependency(dependencyID string, description string, consumerDisplayName string,
@@ -636,9 +640,63 @@ func getDeploymentEnum(d DeploymentType) specType {
 			Description: "Apigee Hybrid",
 			Immutable:   true,
 		})
+	case APIGEE_EDGE_PRIVATE:
+		return getSpecType(allowedValues{
+			Id:          "apigee-edge-private",
+			DisplayName: "Apigee Edge Private Cloud",
+			Description: "Apigee Edge Private Cloud",
+			Immutable:   true,
+		})
+	case APIGEE_EDGE_PUBLIC:
+		return getSpecType(allowedValues{
+			Id:          "apigee-edge-public",
+			DisplayName: "Apigee Edge Public Cloud",
+			Description: "Apigee Edge Public Cloud",
+			Immutable:   true,
+		})
+	case MOCK_SERVER:
+		return getSpecType(allowedValues{
+			Id:          "mock-server",
+			DisplayName: "Mock Server",
+			Description: "Mock Server",
+			Immutable:   true,
+		})
+	case CLOUD_API_GATEWAY:
+		return getSpecType(allowedValues{
+			Id:          "cloud-api-gateway",
+			DisplayName: "Cloud API Gateway",
+			Description: "Cloud API Gateway",
+			Immutable:   true,
+		})
+	case CLOUD_ENDPOINTS:
+		return getSpecType(allowedValues{
+			Id:          "cloud-endpoints",
+			DisplayName: "Cloud Endpoints",
+			Description: "Cloud Endpoints",
+			Immutable:   true,
+		})
+	case UNMANAGED:
+		return getSpecType(allowedValues{
+			Id:          "unmanaged",
+			DisplayName: "Unmanaged",
+			Description: "Unmanaged",
+			Immutable:   true,
+		})
+	case OTHERS:
+		return getSpecType(allowedValues{
+			Id:          "others",
+			DisplayName: "Others",
+			Description: "Others",
+			Immutable:   true,
+		})
+	default:
+		return getSpecType(allowedValues{
+			Id:          "others",
+			DisplayName: "Others",
+			Description: "Others",
+			Immutable:   true,
+		})
 	}
-
-	return specType{}
 }
 
 func (d *DeploymentType) String() string {

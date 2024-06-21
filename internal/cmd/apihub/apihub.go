@@ -21,6 +21,7 @@ import (
 	"internal/cmd/apihub/deployments"
 	"internal/cmd/apihub/externalapis"
 	"internal/cmd/apihub/instances"
+	"internal/cmd/apihub/projectattachments"
 
 	"github.com/spf13/cobra"
 )
@@ -39,4 +40,5 @@ func init() {
 	Cmd.AddCommand(dependencies.DependencyCmd)
 	Cmd.AddCommand(externalapis.ExternalAPICmd)
 	Cmd.AddCommand(attributes.AttributeCmd)
+	Cmd.AddCommand(projectattachments.ProjectAttachmentCmd)
 }

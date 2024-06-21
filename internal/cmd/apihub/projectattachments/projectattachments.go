@@ -12,33 +12,32 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package specs
+package projectattachments
 
 import (
 	"github.com/spf13/cobra"
 )
 
-// SpecsCmd to manage apis
-var SpecsCmd = &cobra.Command{
-	Use:   "specs",
-	Short: "Manage Specs for an API Version in API Hub",
-	Long:  "Manage Specs for an API Version in API Hub",
+// ProjectAttachmentCmd to manage apis
+var ProjectAttachmentCmd = &cobra.Command{
+	Use:   "project-attachments",
+	Short: "Manage Runtime Project Attachments to API Hub",
+	Long:  "Manage Runtime Project Attachments to API Hub",
 }
 
 var org, region string
 
 func init() {
-	SpecsCmd.PersistentFlags().StringVarP(&org, "org", "o",
+	ProjectAttachmentCmd.PersistentFlags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
-	SpecsCmd.PersistentFlags().StringVarP(&region, "region", "r",
+	ProjectAttachmentCmd.PersistentFlags().StringVarP(&region, "region", "r",
 		"", "API Hub region name")
 
-	SpecsCmd.AddCommand(CrtCmd)
-	SpecsCmd.AddCommand(GetCmd)
-	SpecsCmd.AddCommand(DelCmd)
-	SpecsCmd.AddCommand(ListCmd)
-	SpecsCmd.AddCommand(LintCmd)
+	//ProjectAttachmentCmd.AddCommand(CrtCmd)
+	ProjectAttachmentCmd.AddCommand(GetCmd)
+	ProjectAttachmentCmd.AddCommand(DelCmd)
+	ProjectAttachmentCmd.AddCommand(ListCmd)
 
-	_ = SpecsCmd.MarkFlagRequired("org")
-	_ = SpecsCmd.MarkFlagRequired("region")
+	_ = ProjectAttachmentCmd.MarkFlagRequired("org")
+	_ = ProjectAttachmentCmd.MarkFlagRequired("region")
 }
