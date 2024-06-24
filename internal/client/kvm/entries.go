@@ -16,6 +16,7 @@ package kvm
 
 import (
 	"encoding/json"
+	"errors"
 	"io"
 	"net/url"
 	"os"
@@ -97,6 +98,20 @@ func UpdateEntry(proxyName string, mapName string, keyName string, value string)
 	payload := "{\"name\":\"" + keyName + "\",\"value\":\"" + value + "\"}"
 	respBody, err = apiclient.HttpClient(u.String(), payload, "PUT")
 	return respBody, err
+}
+
+func upsertEntry(proxyName string, mapName string, keyName string, value string) (respBody []byte, err error) {
+	update := false
+	apiclient.ClientPrintHttpResponse.Set(false)
+	_, err = GetEntry(proxyName, mapName, keyName)
+	if err == nil {
+		update = true
+	}
+	apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
+	if update {
+		return UpdateEntry(proxyName, mapName, keyName, value)
+	}
+	return CreateEntry(proxyName, mapName, keyName, value)
 }
 
 // ListEntries
@@ -223,16 +238,6 @@ func ExportEntries(proxyName string, mapName string) (payload [][]byte, err erro
 
 // ImportEntries
 func ImportEntries(proxyName string, mapName string, conn int, filePath string) (err error) {
-	var pwg sync.WaitGroup
-
-	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
-	if apiclient.GetApigeeEnv() != "" {
-		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "keyvaluemaps", mapName, "entries")
-	} else if proxyName != "" {
-		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apis", proxyName, "keyvaluemaps", mapName, "entries")
-	} else {
-		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "keyvaluemaps", mapName, "entries")
-	}
 
 	kvmEntries, err := readKVMfile(filePath)
 	if err != nil {
@@ -244,58 +249,59 @@ func ImportEntries(proxyName string, mapName string, conn int, filePath string) 
 	clilog.Debug.Printf("Found %d entries in the file\n", numEntities)
 	clilog.Debug.Printf("Create KVM entries with %d connections\n", conn)
 
-	numOfLoops, remaining := numEntities/conn, numEntities%conn
+	jobChan := make(chan keyvalueentry)
+	errChan := make(chan error)
 
-	// ensure connections aren't greater than entities
-	if conn > numEntities {
-		conn = numEntities
+	fanOutWg := sync.WaitGroup{}
+	fanInWg := sync.WaitGroup{}
+
+	errs := []string{}
+	fanInWg.Add(1)
+	go func() {
+		defer fanInWg.Done()
+		for {
+			newErr, ok := <-errChan
+			if !ok {
+				return
+			}
+			errs = append(errs, newErr.Error())
+		}
+	}()
+
+	for i := 0; i < conn; i++ {
+		fanOutWg.Add(1)
+		go batchImport(&fanOutWg, proxyName, mapName, jobChan, errChan)
 	}
 
-	start := 0
-
-	for i, end := 0, 0; i < numOfLoops; i++ {
-		pwg.Add(1)
-		end = (i * conn) + conn
-		clilog.Debug.Printf("Creating batch %d of entries\n", (i + 1))
-		go batchImport(u.String(), kvmEntries.KeyValueEntries[start:end], &pwg)
-		start = end
-		pwg.Wait()
+	for _, entity := range kvmEntries.KeyValueEntries {
+		jobChan <- entity
 	}
+	close(jobChan)
+	fanOutWg.Wait()
+	close(errChan)
+	fanInWg.Wait()
 
-	if remaining > 0 {
-		pwg.Add(1)
-		clilog.Debug.Printf("Creating remaining %d entries\n", remaining)
-		go batchImport(u.String(), kvmEntries.KeyValueEntries[start:numEntities], &pwg)
-		pwg.Wait()
+	if len(errs) > 0 {
+		return errors.New(strings.Join(errs, "\n"))
 	}
-
 	return nil
 }
 
-func batchImport(url string, entities []keyvalueentry, pwg *sync.WaitGroup) {
-	defer pwg.Done()
-	// batch workgroup
-	var bwg sync.WaitGroup
-
-	bwg.Add(len(entities))
-
-	for _, entity := range entities {
-		go createAsyncEntry(url, entity, &bwg)
-	}
-	bwg.Wait()
-}
-
-func createAsyncEntry(url string, kvEntry keyvalueentry, wg *sync.WaitGroup) {
+func batchImport(wg *sync.WaitGroup, proxyName string, mapName string, jobs <-chan keyvalueentry, errs chan<- error) {
+	var err error
 	defer wg.Done()
-	out, err := json.Marshal(kvEntry)
-	if err != nil {
-		clilog.Error.Println(err)
-		return
-	}
-	_, err = apiclient.HttpClient(url, string(out))
-	if err != nil {
-		clilog.Error.Println(err)
-		return
+	for {
+		job, ok := <-jobs
+		if !ok {
+			return
+		}
+
+		_, err = upsertEntry(proxyName, mapName, job.Name, job.Value)
+
+		if err != nil {
+			errs <- err
+			continue
+		}
 	}
 }
 
