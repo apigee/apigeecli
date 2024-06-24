@@ -38,6 +38,7 @@ func init() {
 	SpecsCmd.AddCommand(DelCmd)
 	SpecsCmd.AddCommand(ListCmd)
 	SpecsCmd.AddCommand(LintCmd)
+	SpecsCmd.AddCommand(UpdateCmd)
 
 	_ = SpecsCmd.MarkFlagRequired("org")
 	_ = SpecsCmd.MarkFlagRequired("region")

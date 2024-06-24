@@ -37,6 +37,7 @@ func init() {
 	ExternalAPICmd.AddCommand(GetCmd)
 	ExternalAPICmd.AddCommand(DelCmd)
 	ExternalAPICmd.AddCommand(ListCmd)
+	ExternalAPICmd.AddCommand(UpdateCmd)
 
 	_ = ExternalAPICmd.MarkFlagRequired("org")
 	_ = ExternalAPICmd.MarkFlagRequired("region")

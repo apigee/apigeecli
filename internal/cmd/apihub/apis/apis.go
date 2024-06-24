@@ -39,6 +39,7 @@ func init() {
 	ApisCmd.AddCommand(CrtCmd)
 	ApisCmd.AddCommand(GetCmd)
 	ApisCmd.AddCommand(DelCmd)
+	ApisCmd.AddCommand(UpdateCmd)
 	ApisCmd.AddCommand(versions.ApiVersionsCmd)
 
 	_ = ApisCmd.MarkFlagRequired("org")

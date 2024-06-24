@@ -21,11 +21,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// CrtCmd
-var CrtCmd = &cobra.Command{
-	Use:   "create",
-	Short: "Create a new API Deployment in API Hub",
-	Long:  "Create a new API Deployment in API Hub",
+// UpdateCmd
+var UpdateCmd = &cobra.Command{
+	Use:   "update",
+	Short: "Updates an API Deployment in API Hub",
+	Long:  "Updates an API Deployment in API Hub",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
@@ -37,31 +37,25 @@ var CrtCmd = &cobra.Command{
 	},
 }
 
-var deploymentID, displayName, description, externalURI, resourceURI string
-var endpoints []string
-var d hub.DeploymentType
-var e hub.EnvironmentType
-var s hub.SloType
-
 func init() {
-	CrtCmd.Flags().StringVarP(&deploymentID, "id", "i",
+	UpdateCmd.Flags().StringVarP(&deploymentID, "id", "i",
 		"", "Deployment ID")
-	CrtCmd.Flags().StringVarP(&displayName, "display-name", "d",
+	UpdateCmd.Flags().StringVarP(&displayName, "display-name", "d",
 		"", "Deployment Display Name")
-	CrtCmd.Flags().StringVarP(&description, "description", "",
+	UpdateCmd.Flags().StringVarP(&description, "description", "",
 		"", "Deployment Description")
-	CrtCmd.Flags().StringVarP(&externalURI, "external-uri", "",
+	UpdateCmd.Flags().StringVarP(&externalURI, "external-uri", "",
 		"", "The uri of the externally hosted documentation")
-	CrtCmd.Flags().StringVarP(&resourceURI, "resource-uri", "",
+	UpdateCmd.Flags().StringVarP(&resourceURI, "resource-uri", "",
 		"", "A URI to the runtime resource")
-	CrtCmd.Flags().StringArrayVarP(&endpoints, "endpoints", "",
+	UpdateCmd.Flags().StringArrayVarP(&endpoints, "endpoints", "",
 		[]string{}, " The endpoints at which this deployment resource is listening for API requests")
-	CrtCmd.Flags().Var(&d, "dep-type", "The type of deployment")
-	CrtCmd.Flags().Var(&e, "env-type", "The environment mapping to this deployment")
-	CrtCmd.Flags().Var(&s, "slo-type", "The SLO for this deployment")
+	UpdateCmd.Flags().Var(&d, "dep-type", "The type of deployment")
+	UpdateCmd.Flags().Var(&e, "env-type", "The environment mapping to this deployment")
+	UpdateCmd.Flags().Var(&s, "slo-type", "The SLO for this deployment")
 
-	_ = CrtCmd.MarkFlagRequired("display-name")
-	_ = CrtCmd.MarkFlagRequired("resource-uri")
-	_ = CrtCmd.MarkFlagRequired("endpoints")
-	_ = CrtCmd.MarkFlagRequired("type")
+	_ = UpdateCmd.MarkFlagRequired("display-name")
+	_ = UpdateCmd.MarkFlagRequired("resource-uri")
+	_ = UpdateCmd.MarkFlagRequired("endpoints")
+	_ = UpdateCmd.MarkFlagRequired("type")
 }

@@ -17,6 +17,7 @@ package hub
 import (
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/url"
 	"path"
@@ -41,13 +42,32 @@ const (
 )
 
 type spec struct {
-	DisplayName   string        `json:"displayName,omitempty"`
-	SpecType      specType      `json:"specType,omitempty"`
-	SourceURI     string        `json:"sourceUri,omitempty"`
-	Contents      content       `json:"contents,omitempty"`
-	Documentation documentation `json:"documentation,omitempty"`
-	ParsingMode   string        `json:"parsingMode,omitempty"`
+	DisplayName   string             `json:"displayName,omitempty"`
+	SpecType      enumAttributeValue `json:"specType,omitempty"`
+	SourceURI     string             `json:"sourceUri,omitempty"`
+	Contents      content            `json:"contents,omitempty"`
+	Documentation documentation      `json:"documentation,omitempty"`
+	ParsingMode   string             `json:"parsingMode,omitempty"`
 }
+
+type EnvironmentType string
+
+const (
+	DEVELOPMENT   EnvironmentType = "development"
+	STAGING       EnvironmentType = "staging"
+	TEST          EnvironmentType = "test"
+	PREPRODUCTION EnvironmentType = "pre-prod"
+	PRODUCTION    EnvironmentType = "prod"
+)
+
+type SloType string
+
+const (
+	SLO99_99 SloType = "99.99"
+	SLO99_95 SloType = "99.95"
+	SLO99_9  SloType = "99.9"
+	SLO99_5  SloType = "99.5"
+)
 
 type documentation struct {
 	ExternalUri string `json:"externalUri,omitempty"`
@@ -58,7 +78,7 @@ type content struct {
 	MimeType string `json:"mimeType,omitempty"`
 }
 
-type allowedValues struct {
+type allowedValue struct {
 	Id          string `json:"id,omitempty"`
 	DisplayName string `json:"displayName,omitempty"`
 	Description string `json:"description,omitempty"`
@@ -66,12 +86,19 @@ type allowedValues struct {
 }
 
 type enumValues struct {
-	Values []allowedValues `json:"values,omitempty"`
+	Values []allowedValue `json:"values,omitempty"`
 }
 
-type specType struct {
+type enumAttributeValue struct {
 	EnumValues enumValues `json:"enumValues,omitempty"`
 }
+
+type Action uint8
+
+const (
+	CREATE Action = iota
+	UPDATE
+)
 
 func CreateInstance(apiHubInstanceId string, cmekName string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.GetApigeeRegistryURL())
@@ -195,6 +222,16 @@ func ListApi(filter string, pageSize int, pageToken string) (respBody []byte, er
 	return list("apis", filter, pageSize, pageToken)
 }
 
+func UpdateApi(apiID string, contents []byte) (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.GetApigeeRegistryURL())
+	u.Path = path.Join(u.Path, "apis", apiID)
+	q := u.Query()
+	q.Set("updateMask", "display_name,description,owner,documentation,target_user,team,business_unit,maturity_level,attributes")
+	u.RawQuery = q.Encode()
+	respBody, err = apiclient.HttpClient(u.String(), string(contents), "PATCH")
+	return respBody, err
+}
+
 func CreateApiVersion(versionID string, apiID string, contents []byte) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.GetApigeeRegistryURL())
 	u.Path = path.Join(u.Path, "apis", apiID, "versions")
@@ -235,43 +272,7 @@ func GetApiVersionsDefinitions(apiID string, versionID string, definition string
 func CreateApiVersionsSpec(apiID string, versionID string, specID string, displayName string,
 	contents []byte, mimeType string, sourceURI string, documentation string) (respBody []byte, err error) {
 
-	u, _ := url.Parse(apiclient.GetApigeeRegistryURL())
-	u.Path = path.Join(u.Path, "apis", apiID, "versions", versionID, "specs")
-	q := u.Query()
-	if specID != "" {
-		q.Set("specId", specID)
-	}
-	u.RawQuery = q.Encode()
-
-	s := spec{}
-	s.DisplayName = displayName
-	s.Documentation.ExternalUri = documentation
-	s.Contents.Contents = base64.StdEncoding.EncodeToString(contents)
-
-	if strings.Contains(mimeType, "yaml") || strings.Contains(mimeType, "yml") {
-		s.Contents.MimeType = "application/yaml"
-		s.SpecType = getAllowedValuesOpenAPI()
-	} else if strings.Contains(mimeType, "json") {
-		s.Contents.MimeType = "application/json"
-		s.SpecType = getAllowedValuesOpenAPI()
-	} else if strings.Contains(mimeType, "wsdl") {
-		s.Contents.MimeType = "application/wsdl"
-		s.SpecType = getAllowedValuesWSDL()
-	} else if strings.Contains(mimeType, "proto") {
-		s.Contents.MimeType = "application/text"
-		s.SpecType = getAllowedValuesProto()
-	} else {
-		s.Contents.MimeType = "application/text"
-	}
-	s.SourceURI = sourceURI
-
-	payload, err := json.Marshal(s)
-	if err != nil {
-		return nil, err
-	}
-
-	respBody, err = apiclient.HttpClient(u.String(), string(payload))
-	return respBody, err
+	return createOrUpdateApiVersionSpec(apiID, versionID, specID, displayName, contents, mimeType, sourceURI, documentation, CREATE)
 }
 
 func GetApiVersionSpec(apiID string, versionID string, specID string) (respBody []byte, err error) {
@@ -303,6 +304,68 @@ func LintApiVersionSpec(apiID string, versionID string, specID string) (respBody
 	u, _ := url.Parse(apiclient.GetApigeeRegistryURL())
 	u.Path = path.Join(u.Path, "apis", apiID, "versions", versionID, "specs", specID, ":lint")
 	respBody, err = apiclient.HttpClient(u.String(), "")
+	return respBody, err
+}
+
+func UpdateApiVersionSpec(apiID string, versionID string, specID string, displayName string,
+	contents []byte, mimeType string, sourceURI string, documentation string) (respBody []byte, err error) {
+
+	return createOrUpdateApiVersionSpec(apiID, versionID, specID, displayName, contents, mimeType, sourceURI, documentation, UPDATE)
+}
+
+func createOrUpdateApiVersionSpec(apiID string, versionID string, specID string, displayName string,
+	contents []byte, mimeType string, sourceURI string, documentation string, action Action) (respBody []byte, err error) {
+
+	s := spec{}
+	s.DisplayName = displayName
+	if documentation != "" {
+		s.Documentation.ExternalUri = documentation
+	}
+
+	if contents != nil {
+		s.Contents.Contents = base64.StdEncoding.EncodeToString(contents)
+	}
+
+	if strings.Contains(mimeType, "yaml") || strings.Contains(mimeType, "yml") {
+		s.Contents.MimeType = "application/yaml"
+		s.SpecType = getSpecType("openapi")
+	} else if strings.Contains(mimeType, "json") {
+		s.Contents.MimeType = "application/json"
+		s.SpecType = getSpecType("openapi")
+	} else if strings.Contains(mimeType, "wsdl") {
+		s.Contents.MimeType = "application/wsdl"
+		s.SpecType = getSpecType("wsdl")
+	} else if strings.Contains(mimeType, "proto") {
+		s.Contents.MimeType = "application/text"
+		s.SpecType = getSpecType("proto")
+	} else {
+		s.Contents.MimeType = "application/text"
+	}
+
+	if sourceURI != "" {
+		s.SourceURI = sourceURI
+	}
+
+	payload, err := json.Marshal(s)
+	if err != nil {
+		return nil, err
+	}
+
+	u, _ := url.Parse(apiclient.GetApigeeRegistryURL())
+
+	if action == CREATE {
+		u.Path = path.Join(u.Path, "apis", apiID, "versions", versionID, "specs")
+		q := u.Query()
+		q.Set("specId", specID)
+		u.RawQuery = q.Encode()
+		respBody, err = apiclient.HttpClient(u.String(), string(payload))
+	} else {
+		u.Path = path.Join(u.Path, "apis", apiID, "versions", versionID, "specs", specID)
+		q := u.Query()
+		q.Set("updateMask", "display_name,source_uri,documentation,contents,spec_type")
+		u.RawQuery = q.Encode()
+		respBody, err = apiclient.HttpClient(u.String(), string(payload), "PATCH")
+	}
 	return respBody, err
 }
 
@@ -389,24 +452,8 @@ func ListDependencies(filter string, pageSize int, pageToken string) (respBody [
 }
 
 func CreateDeployment(deploymentID string, displayName string, description string,
-	externalURI string, resourceURI string, endpoints []string, dep DeploymentType) (respBody []byte, err error) {
-
-	type documentation struct {
-		ExternalURI string `json:"externalUri,omitempty"`
-	}
-
-	type deploymentType struct {
-		EnumValues enumValues `json:"enumValues,omitempty"`
-	}
-
-	type deployment struct {
-		DisplayName    string         `json:"displayName,omitempty"`
-		Description    string         `json:"description,omitempty"`
-		DeploymentType deploymentType `json:"deploymentType,omitempty"`
-		Documentation  documentation  `json:"documentation,omitempty"`
-		ResourceURI    string         `json:"resourceUri,omitempty"`
-		Endpoints      []string       `json:"endpoints,omitempty"`
-	}
+	externalURI string, resourceURI string, endpoints []string, dep DeploymentType,
+	env EnvironmentType, slo SloType) (respBody []byte, err error) {
 
 	u, _ := url.Parse(apiclient.GetApigeeRegistryURL())
 	u.Path = path.Join(u.Path, "deployments")
@@ -414,18 +461,12 @@ func CreateDeployment(deploymentID string, displayName string, description strin
 	q.Set("deploymentId", deploymentID)
 	u.RawQuery = q.Encode()
 
-	d := deployment{}
-	d.DisplayName = displayName
-	d.Description = description
-	d.Documentation.ExternalURI = externalURI
-	d.ResourceURI = resourceURI
-	d.Endpoints = endpoints
-
-	payload, err := json.Marshal(&d)
+	payload, err := getDeployment(displayName, description, externalURI, resourceURI, endpoints, dep, env, slo)
 	if err != nil {
 		return nil, err
 	}
-	respBody, err = apiclient.HttpClient(u.String(), string(payload))
+
+	respBody, err = apiclient.HttpClient(u.String(), payload)
 	return respBody, err
 }
 
@@ -447,20 +488,113 @@ func ListDeployments(filter string, pageSize int, pageToken string) (respBody []
 	return list("deployments", filter, pageSize, pageToken)
 }
 
-func CreateExternalAPI(externalApiId string, displayName string, description string,
-	endpoints []string, paths []string, externalUri string) (respBody []byte, err error) {
+func UpdateDeployment(deploymentID string, displayName string, description string,
+	externalURI string, resourceURI string, endpoints []string, dep DeploymentType,
+	env EnvironmentType, slo SloType) (respBody []byte, err error) {
+
+	updateMask := []string{}
+
+	if displayName != "" {
+		updateMask = append(updateMask, "displayName")
+	}
+	if description != "" {
+		updateMask = append(updateMask, "description")
+	}
+	if externalURI != "" {
+		updateMask = append(updateMask, "documentation")
+	}
+	if resourceURI != "" {
+		updateMask = append(updateMask, "resource_uri")
+	}
+	if dep != "" {
+		updateMask = append(updateMask, "deployment_type")
+	}
+	if env != "" {
+		updateMask = append(updateMask, "environment")
+	}
+	if slo != "" {
+		updateMask = append(updateMask, "slo")
+	}
+	if len(endpoints) > 0 {
+		updateMask = append(updateMask, "endpoints")
+	}
+	if len(updateMask) == 0 {
+		return nil, errors.New("Update mask is empty")
+	}
+
+	u, _ := url.Parse(apiclient.GetApigeeRegistryURL())
+	u.Path = path.Join(u.Path, "deployments", deploymentID)
+	q := u.Query()
+	q.Set("updateMask", strings.Join(updateMask, ","))
+	u.RawQuery = q.Encode()
+
+	payload, err := getDeployment(displayName, description, externalURI, resourceURI, endpoints, dep, env, slo)
+	if err != nil {
+		return nil, err
+	}
+
+	respBody, err = apiclient.HttpClient(u.String(), payload, "PATCH")
+	return respBody, err
+}
+
+func getDeployment(displayName string, description string,
+	externalURI string, resourceURI string, endpoints []string, dep DeploymentType,
+	env EnvironmentType, slo SloType) (string, error) {
 
 	type documentation struct {
 		ExternalURI string `json:"externalUri,omitempty"`
 	}
 
-	type extapi struct {
-		DisplayName   string        `json:"displayName,omitempty"`
-		Description   string        `json:"description,omitempty"`
-		Documentation documentation `json:"documentation,omitempty"`
-		Paths         []string      `json:"paths,omitempty"`
-		Endpoints     []string      `json:"endpoints,omitempty"`
+	type attributeType struct {
+		EnumValues enumValues `json:"enumValues,omitempty"`
 	}
+
+	type deployment struct {
+		DisplayName    string        `json:"displayName,omitempty"`
+		Description    string        `json:"description,omitempty"`
+		DeploymentType attributeType `json:"deploymentType,omitempty"`
+		Documentation  documentation `json:"documentation,omitempty"`
+		Environment    attributeType `json:"environment,omitempty"`
+		Slo            attributeType `json:"slo,omitempty"`
+		ResourceURI    string        `json:"resourceUri,omitempty"`
+		Endpoints      []string      `json:"endpoints,omitempty"`
+	}
+
+	d := deployment{}
+	if displayName != "" {
+		d.DisplayName = displayName
+	}
+	if description != "" {
+		d.Description = description
+	}
+	if externalURI != "" {
+		d.Documentation.ExternalURI = externalURI
+	}
+	if dep != "" {
+		d.DeploymentType.EnumValues = getDeploymentEnum(dep).EnumValues
+	}
+	if env != "" {
+		d.Environment.EnumValues = getEnvironmentEnum(env).EnumValues
+	}
+	if slo != "" {
+		d.Slo.EnumValues = getSloEnum(slo).EnumValues
+	}
+	if resourceURI != "" {
+		d.ResourceURI = resourceURI
+	}
+	if len(endpoints) > 0 {
+		d.Endpoints = endpoints
+	}
+
+	payload, err := json.Marshal(&d)
+	if err != nil {
+		return "", err
+	}
+	return string(payload), nil
+}
+
+func CreateExternalAPI(externalApiId string, displayName string, description string,
+	endpoints []string, paths []string, externalUri string) (respBody []byte, err error) {
 
 	u, _ := url.Parse(apiclient.GetApigeeRegistryURL())
 	u.Path = path.Join(u.Path, "externalApi")
@@ -468,18 +602,11 @@ func CreateExternalAPI(externalApiId string, displayName string, description str
 	q.Set("externalApiId", externalApiId)
 	u.RawQuery = q.Encode()
 
-	e := extapi{}
-	e.DisplayName = displayName
-	e.Description = description
-	e.Documentation.ExternalURI = externalUri
-	e.Paths = paths
-	e.Endpoints = endpoints
-
-	payload, err := json.Marshal(&e)
+	payload, err := getExternalApi(displayName, description, endpoints, paths, externalUri)
 	if err != nil {
 		return nil, err
 	}
-	respBody, err = apiclient.HttpClient(u.String(), string(payload))
+	respBody, err = apiclient.HttpClient(u.String(), payload)
 	return respBody, err
 }
 
@@ -499,6 +626,83 @@ func DeleteExternalAPI(externalApiID string) (respBody []byte, err error) {
 
 func ListExternalAPIs(filter string, pageSize int, pageToken string) (respBody []byte, err error) {
 	return list("externalApis", filter, pageSize, pageToken)
+}
+
+func UpdateExternalAPI(externalApiID string, displayName string, description string,
+	endpoints []string, paths []string, externalUri string) (respBody []byte, err error) {
+
+	updateMask := []string{}
+
+	if displayName != "" {
+		updateMask = append(updateMask, "displayName")
+	}
+	if description != "" {
+		updateMask = append(updateMask, "description")
+	}
+	if externalUri != "" {
+		updateMask = append(updateMask, "documentation")
+	}
+	if len(paths) > 0 {
+		updateMask = append(updateMask, "paths")
+	}
+	if len(endpoints) > 0 {
+		updateMask = append(updateMask, "endpoints")
+	}
+	if len(updateMask) == 0 {
+		return nil, errors.New("Update mask is empty")
+	}
+
+	u, _ := url.Parse(apiclient.GetApigeeRegistryURL())
+	u.Path = path.Join(u.Path, "externalApi", externalApiID)
+	q := u.Query()
+	q.Set("updateMask", strings.Join(updateMask, ","))
+	u.RawQuery = q.Encode()
+
+	payload, err := getExternalApi(displayName, description, endpoints, paths, externalUri)
+	if err != nil {
+		return nil, err
+	}
+
+	respBody, err = apiclient.HttpClient(u.String(), payload, "PATCH")
+	return respBody, err
+}
+
+func getExternalApi(displayName string, description string,
+	endpoints []string, paths []string, externalUri string) (string, error) {
+
+	type documentation struct {
+		ExternalURI string `json:"externalUri,omitempty"`
+	}
+
+	type extapi struct {
+		DisplayName   string        `json:"displayName,omitempty"`
+		Description   string        `json:"description,omitempty"`
+		Documentation documentation `json:"documentation,omitempty"`
+		Paths         []string      `json:"paths,omitempty"`
+		Endpoints     []string      `json:"endpoints,omitempty"`
+	}
+	e := extapi{}
+	if displayName != "" {
+		e.DisplayName = displayName
+	}
+	if description != "" {
+		e.Description = description
+	}
+	if externalUri != "" {
+		e.Documentation.ExternalURI = externalUri
+	}
+	if len(paths) > 0 {
+		e.Paths = paths
+	}
+	if len(endpoints) > 0 {
+		e.Endpoints = endpoints
+	}
+
+	payload, err := json.Marshal(&e)
+	if err != nil {
+		return "", err
+	}
+	return string(payload), nil
 }
 
 func CreateAttribute(attributeID string, displayName string, description string, scope string,
@@ -529,7 +733,7 @@ func CreateAttribute(attributeID string, displayName string, description string,
 		Description   string            `json:"description,omitempty"`
 		Scope         attributeScope    `json:"scope,omitempty"`
 		DataType      attributeDataType `json:"dataType,omitempty"`
-		AllowedValues []allowedValues   `json:"allowedValues,omitempty"`
+		AllowedValues []allowedValue    `json:"allowedValues,omitempty"`
 		Cardinality   int               `json:"cardinality,omitempty"`
 	}
 
@@ -547,7 +751,7 @@ func CreateAttribute(attributeID string, displayName string, description string,
 	a.Cardinality = cardinality
 
 	if aValues != nil {
-		var av []allowedValues
+		var av []allowedValue
 		err = json.Unmarshal(aValues, &av)
 		if err != nil {
 			return nil, err
@@ -599,120 +803,199 @@ func list(resource string, filter string, pageSize int, pageToken string) (respB
 	return respBody, err
 }
 
-func getAllowedValuesOpenAPI() specType {
-	a := allowedValues{
-		Id:          "openapi",
-		DisplayName: "OpenAPI Spec",
-		Description: "OpenAPI Spec",
-		Immutable:   true,
+func getSpecType(id string) enumAttributeValue {
+	switch id {
+	case "openapi":
+		return getAttributeValues(allowedValue{
+			Id:          "openapi",
+			DisplayName: "OpenAPI Spec",
+			Description: "OpenAPI Spec",
+			Immutable:   true,
+		})
+	case "proto":
+		return getAttributeValues(allowedValue{
+			Id:          "proto",
+			DisplayName: "Proto",
+			Description: "Proto",
+			Immutable:   true,
+		})
+	case "wsdl":
+		return getAttributeValues(allowedValue{
+			Id:          "wsdl",
+			DisplayName: "WSDL",
+			Description: "WSDL",
+			Immutable:   true,
+		})
+	default:
+		return getAttributeValues(allowedValue{
+			Id:          "openapi",
+			DisplayName: "OpenAPI Spec",
+			Description: "OpenAPI Spec",
+			Immutable:   true,
+		})
 	}
-	return getSpecType(a)
 }
 
-func getAllowedValuesProto() specType {
-	a := allowedValues{
-		Id:          "proto",
-		DisplayName: "Proto",
-		Description: "Proto",
-		Immutable:   true,
-	}
-	return getSpecType(a)
-}
-
-func getAllowedValuesWSDL() specType {
-	a := allowedValues{
-		Id:          "wsdl",
-		DisplayName: "WSDL",
-		Description: "WSDL",
-		Immutable:   true,
-	}
-	return getSpecType(a)
-}
-
-func getSpecType(a allowedValues) specType {
-	l := []allowedValues{}
+func getAttributeValues(a allowedValue) enumAttributeValue {
+	l := []allowedValue{}
 	l = append(l, a)
 	e := enumValues{}
 	e.Values = l
 
-	s := specType{}
+	s := enumAttributeValue{}
 	s.EnumValues = enumValues{}
 	s.EnumValues = e
 
 	return s
 }
 
-func getDeploymentEnum(d DeploymentType) specType {
+func getDeploymentEnum(d DeploymentType) enumAttributeValue {
 	switch d {
 	case APIGEE:
-		return getSpecType(allowedValues{
+		return getAttributeValues(allowedValue{
 			Id:          "apigee",
 			DisplayName: "Apigee",
 			Description: "Apigee",
 			Immutable:   true,
 		})
 	case APIGEE_HYBRID:
-		return getSpecType(allowedValues{
+		return getAttributeValues(allowedValue{
 			Id:          "apigee-hybrid",
 			DisplayName: "Apigee Hybrid",
 			Description: "Apigee Hybrid",
 			Immutable:   true,
 		})
 	case APIGEE_EDGE_PRIVATE:
-		return getSpecType(allowedValues{
+		return getAttributeValues(allowedValue{
 			Id:          "apigee-edge-private",
 			DisplayName: "Apigee Edge Private Cloud",
 			Description: "Apigee Edge Private Cloud",
 			Immutable:   true,
 		})
 	case APIGEE_EDGE_PUBLIC:
-		return getSpecType(allowedValues{
+		return getAttributeValues(allowedValue{
 			Id:          "apigee-edge-public",
 			DisplayName: "Apigee Edge Public Cloud",
 			Description: "Apigee Edge Public Cloud",
 			Immutable:   true,
 		})
 	case MOCK_SERVER:
-		return getSpecType(allowedValues{
+		return getAttributeValues(allowedValue{
 			Id:          "mock-server",
 			DisplayName: "Mock Server",
 			Description: "Mock Server",
 			Immutable:   true,
 		})
 	case CLOUD_API_GATEWAY:
-		return getSpecType(allowedValues{
+		return getAttributeValues(allowedValue{
 			Id:          "cloud-api-gateway",
 			DisplayName: "Cloud API Gateway",
 			Description: "Cloud API Gateway",
 			Immutable:   true,
 		})
 	case CLOUD_ENDPOINTS:
-		return getSpecType(allowedValues{
+		return getAttributeValues(allowedValue{
 			Id:          "cloud-endpoints",
 			DisplayName: "Cloud Endpoints",
 			Description: "Cloud Endpoints",
 			Immutable:   true,
 		})
 	case UNMANAGED:
-		return getSpecType(allowedValues{
+		return getAttributeValues(allowedValue{
 			Id:          "unmanaged",
 			DisplayName: "Unmanaged",
 			Description: "Unmanaged",
 			Immutable:   true,
 		})
 	case OTHERS:
-		return getSpecType(allowedValues{
+		return getAttributeValues(allowedValue{
 			Id:          "others",
 			DisplayName: "Others",
 			Description: "Others",
 			Immutable:   true,
 		})
 	default:
-		return getSpecType(allowedValues{
+		return getAttributeValues(allowedValue{
 			Id:          "others",
 			DisplayName: "Others",
 			Description: "Others",
 			Immutable:   true,
+		})
+	}
+}
+
+func getEnvironmentEnum(e EnvironmentType) enumAttributeValue {
+	switch e {
+	case DEVELOPMENT:
+		return getAttributeValues(allowedValue{
+			Id:          "development",
+			DisplayName: "Development",
+			Description: "Development",
+		})
+	case STAGING:
+		return getAttributeValues(allowedValue{
+			Id:          "staging",
+			DisplayName: "Staging",
+			Description: "Staging",
+		})
+	case TEST:
+		return getAttributeValues(allowedValue{
+			Id:          "test",
+			DisplayName: "Test",
+			Description: "Test",
+		})
+	case PREPRODUCTION:
+		return getAttributeValues(allowedValue{
+			Id:          "pre-prod",
+			DisplayName: "Pre-Production",
+			Description: "Pre-Production",
+		})
+	case PRODUCTION:
+		return getAttributeValues(allowedValue{
+			Id:          "production",
+			DisplayName: "Production",
+			Description: "Production",
+		})
+	default:
+		return getAttributeValues(allowedValue{
+			Id:          "development",
+			DisplayName: "Development",
+			Description: "Development",
+		})
+	}
+}
+
+func getSloEnum(s SloType) enumAttributeValue {
+	switch s {
+	case SLO99_99:
+		return getAttributeValues(allowedValue{
+			Id:          "99-99",
+			DisplayName: "99.99%",
+			Description: "99.99% SLO",
+		})
+	case SLO99_95:
+		return getAttributeValues(allowedValue{
+			Id:          "99-95",
+			DisplayName: "99.95%",
+			Description: "99.95% SLO",
+		})
+	case SLO99_9:
+		return getAttributeValues(allowedValue{
+			Id:          "99-9",
+			DisplayName: "99.9%",
+			Description: "99.9% SLO",
+		})
+	case SLO99_5:
+		return getAttributeValues(allowedValue{
+			Id:          "99-5",
+			DisplayName: "99.5%",
+			Description: "99.5% SLO",
+		})
+	default:
+		return getAttributeValues(allowedValue{
+			Id:          "99-90",
+			DisplayName: "99.90%",
+			Description: "99.90% SLO",
 		})
 	}
 }
@@ -734,4 +1017,42 @@ func (d *DeploymentType) Set(r string) error {
 
 func (d *DeploymentType) Type() string {
 	return "deploymentType"
+}
+
+func (e *EnvironmentType) String() string {
+	return string(*e)
+}
+
+func (e *EnvironmentType) Set(r string) error {
+	switch r {
+	case "apigee", "development", "test", "staging", "pre-prod", "prod":
+		*e = EnvironmentType(r)
+	default:
+		return fmt.Errorf("must be one of %s, %s, %s, %s or %s",
+			DEVELOPMENT, TEST, PRODUCTION, STAGING, PREPRODUCTION)
+	}
+	return nil
+}
+
+func (e *EnvironmentType) Type() string {
+	return "environmentType"
+}
+
+func (s *SloType) String() string {
+	return string(*s)
+}
+
+func (s *SloType) Set(r string) error {
+	switch r {
+	case "99-99", "99-95", "99-5", "99-9":
+		*s = SloType(r)
+	default:
+		return fmt.Errorf("must be one of %s, %s, %s, or %s",
+			SLO99_99, SLO99_95, SLO99_5, SLO99_9)
+	}
+	return nil
+}
+
+func (s *SloType) Type() string {
+	return "sloType"
 }

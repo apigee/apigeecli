@@ -15,6 +15,7 @@
 package attributes
 
 import (
+	"fmt"
 	"internal/apiclient"
 	"internal/client/hub"
 
@@ -27,19 +28,52 @@ var GetCmd = &cobra.Command{
 	Short: "Get details for an Attribute",
 	Long:  "Get details for an Attribute",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		var count int
+		for _, v := range []bool{slo, env, dep, specType} {
+			if v {
+				count++
+			}
+		}
+		if count > 1 {
+			return fmt.Errorf("only one of --slo, --env, --deployments, --spec-types can be specified")
+		}
+		if attributeID != "" && count != 0 {
+			return fmt.Errorf("attributeID cannot be mixed with other flags")
+		}
+		if attributeID == "" && count == 0 {
+			return fmt.Errorf("attributeID or --slo, --env, --deployments, --spec-types must be specified")
+		}
+
 		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
+		if slo {
+			attributeID = "system-slo"
+		} else if env {
+			attributeID = "system-envvironment"
+		} else if dep {
+			attributeID = "system-deployment"
+		} else if specType {
+			attributeID = "system-spec-type"
+		}
 		_, err = hub.GetAttribute(attributeID)
 		return
 	},
 }
 
+var slo, dep, env, specType bool
+
 func init() {
 	GetCmd.Flags().StringVarP(&attributeID, "id", "i",
-		"", "Dependency ID")
-
-	_ = GetCmd.MarkFlagRequired("id")
+		"", "Attribute ID")
+	GetCmd.Flags().BoolVarP(&slo, "slo", "",
+		false, "Get System SLO Attributes")
+	GetCmd.Flags().BoolVarP(&env, "env", "",
+		false, "Get System Environment Attributes")
+	GetCmd.Flags().BoolVarP(&dep, "deployments", "",
+		false, "Get System Deployment Attributes")
+	GetCmd.Flags().BoolVarP(&specType, "spec-types", "",
+		false, "Get System Deployment Attributes")
 }
