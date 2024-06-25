@@ -20,11 +20,15 @@ import (
 	"errors"
 	"fmt"
 	"net/url"
+	"os"
 	"path"
+	"path/filepath"
 	"strconv"
 	"strings"
 
 	"internal/apiclient"
+	"internal/clilog"
+	"internal/cmd/utils"
 )
 
 type DeploymentType string
@@ -226,10 +230,88 @@ func UpdateApi(apiID string, contents []byte) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.GetApigeeRegistryURL())
 	u.Path = path.Join(u.Path, "apis", apiID)
 	q := u.Query()
-	q.Set("updateMask", "display_name,description,owner,documentation,target_user,team,business_unit,maturity_level,attributes")
+	q.Set("updateMask",
+		"display_name,description,owner,documentation,target_user,team,business_unit,maturity_level,attributes")
 	u.RawQuery = q.Encode()
 	respBody, err = apiclient.HttpClient(u.String(), string(contents), "PATCH")
 	return respBody, err
+}
+
+func ExportApi(apiID string, folder string) (err error) {
+	apiclient.ClientPrintHttpResponse.Set(false)
+	defer apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
+
+	folderName := path.Join(folder, "api"+utils.DefaultFileSplitter+apiID)
+
+	// create a folder for the api
+	_, err = os.Stat(folderName)
+	if err != nil {
+		if os.IsNotExist(err) {
+			err = os.MkdirAll(folderName, 0o755)
+			if err != nil {
+				return err
+			}
+		} else {
+			return err
+		}
+	}
+
+	// write api details
+	apiBody, err := GetApi(apiID)
+	if err != nil {
+		return err
+	}
+	apiFileName := fmt.Sprintf("api%s%s.json", utils.DefaultFileSplitter, apiID)
+	err = apiclient.WriteByteArrayToFile(path.Join(folderName, apiFileName), false, apiBody)
+	if err != nil {
+		return err
+	}
+
+	type apiVersions struct {
+		Versions      []map[string]interface{} `json:"versions"`
+		NextPageToken string                   `json:"nextPageToken"`
+	}
+
+	apiVersionsObj := apiVersions{}
+
+	for {
+
+		a := apiVersions{}
+
+		apiVersionsBody, err := ListApiVersions(apiID, "", -1, "")
+		if err != nil {
+			return fmt.Errorf("Error listing api versions: %s", err)
+		}
+		err = json.Unmarshal(apiVersionsBody, &a)
+		if err != nil {
+			return fmt.Errorf("Error unmarshalling api versions: %s", err)
+		}
+
+		apiVersionsObj.Versions = append(apiVersionsObj.Versions, a.Versions...)
+		if a.NextPageToken == "" {
+			break
+		}
+	}
+
+	for _, version := range apiVersionsObj.Versions {
+		versionName := filepath.Base(version["name"].(string))
+		apiVersionBody, err := GetApiVersion(versionName, apiID)
+		if err != nil {
+			return fmt.Errorf("Error getting api version: %s", err)
+		}
+		apiVersionFileName := fmt.Sprintf("api%s%s%s%s.json",
+			utils.DefaultFileSplitter, apiID, utils.DefaultFileSplitter, versionName)
+		err = apiclient.WriteByteArrayToFile(path.Join(folderName, apiVersionFileName), false, apiVersionBody)
+		if err != nil {
+			return err
+		}
+
+		if err = ExportApiVersionSpecs(apiID, versionName, folderName); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func CreateApiVersion(versionID string, apiID string, contents []byte) (respBody []byte, err error) {
@@ -270,8 +352,8 @@ func GetApiVersionsDefinitions(apiID string, versionID string, definition string
 }
 
 func CreateApiVersionsSpec(apiID string, versionID string, specID string, displayName string,
-	contents []byte, mimeType string, sourceURI string, documentation string) (respBody []byte, err error) {
-
+	contents []byte, mimeType string, sourceURI string, documentation string,
+) (respBody []byte, err error) {
 	return createOrUpdateApiVersionSpec(apiID, versionID, specID, displayName, contents, mimeType, sourceURI, documentation, CREATE)
 }
 
@@ -308,14 +390,60 @@ func LintApiVersionSpec(apiID string, versionID string, specID string) (respBody
 }
 
 func UpdateApiVersionSpec(apiID string, versionID string, specID string, displayName string,
-	contents []byte, mimeType string, sourceURI string, documentation string) (respBody []byte, err error) {
-
+	contents []byte, mimeType string, sourceURI string, documentation string,
+) (respBody []byte, err error) {
 	return createOrUpdateApiVersionSpec(apiID, versionID, specID, displayName, contents, mimeType, sourceURI, documentation, UPDATE)
 }
 
-func createOrUpdateApiVersionSpec(apiID string, versionID string, specID string, displayName string,
-	contents []byte, mimeType string, sourceURI string, documentation string, action Action) (respBody []byte, err error) {
+func ExportApiVersionSpecs(apiID string, versionID string, folder string) (err error) {
+	apiclient.ClientPrintHttpResponse.Set(false)
+	defer apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
 
+	var specResp map[string]string
+
+	// create a folder for the specs
+	_, err = os.Stat(path.Join(folder, "specs"))
+	if err != nil {
+		if os.IsNotExist(err) {
+			os.MkdirAll(path.Join(folder, "specs"), 0o755)
+		} else {
+			return err
+		}
+	}
+
+	specsBody, err := ListApiVersionSpecs(apiID, versionID, "", -1, "")
+	if err != nil {
+		return err
+	}
+
+	specList := getSpecIDList(specsBody)
+	for _, spec := range specList {
+		specBody, err := GetApiVersionsSpecContents(apiID, versionID, spec)
+		if err != nil {
+			return fmt.Errorf("unable to complete GetApiVersionsSpecContents")
+		}
+
+		if err = json.Unmarshal(specBody, &specResp); err != nil {
+			return fmt.Errorf("unable to unmarshal specBody")
+		}
+
+		specContent, err := base64.StdEncoding.DecodeString(specResp["contents"])
+		if err != nil {
+			return fmt.Errorf("unable to decode contents %v", err)
+		}
+		err = apiclient.WriteByteArrayToFile(path.Join(folder,
+			"specs", spec), false, specContent)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func createOrUpdateApiVersionSpec(apiID string, versionID string, specID string, displayName string,
+	contents []byte, mimeType string, sourceURI string, documentation string, action Action,
+) (respBody []byte, err error) {
 	s := spec{}
 	s.DisplayName = displayName
 	if documentation != "" {
@@ -371,8 +499,8 @@ func createOrUpdateApiVersionSpec(apiID string, versionID string, specID string,
 
 func CreateDependency(dependencyID string, description string, consumerDisplayName string,
 	consumerOperationResourceName string, consumerExternalApiResourceName string, supplierDisplayName string,
-	supplierOperationResourceName string, supplierExternalApiResourceName string) (respBody []byte, err error) {
-
+	supplierOperationResourceName string, supplierExternalApiResourceName string,
+) (respBody []byte, err error) {
 	type consumer struct {
 		DisplayName             string  `json:"displayName,omitempty"`
 		OperationResourceName   *string `json:"operationResourceName,omitempty"`
@@ -453,8 +581,8 @@ func ListDependencies(filter string, pageSize int, pageToken string) (respBody [
 
 func CreateDeployment(deploymentID string, displayName string, description string,
 	externalURI string, resourceURI string, endpoints []string, dep DeploymentType,
-	env EnvironmentType, slo SloType) (respBody []byte, err error) {
-
+	env EnvironmentType, slo SloType,
+) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.GetApigeeRegistryURL())
 	u.Path = path.Join(u.Path, "deployments")
 	q := u.Query()
@@ -490,8 +618,8 @@ func ListDeployments(filter string, pageSize int, pageToken string) (respBody []
 
 func UpdateDeployment(deploymentID string, displayName string, description string,
 	externalURI string, resourceURI string, endpoints []string, dep DeploymentType,
-	env EnvironmentType, slo SloType) (respBody []byte, err error) {
-
+	env EnvironmentType, slo SloType,
+) (respBody []byte, err error) {
 	updateMask := []string{}
 
 	if displayName != "" {
@@ -539,8 +667,8 @@ func UpdateDeployment(deploymentID string, displayName string, description strin
 
 func getDeployment(displayName string, description string,
 	externalURI string, resourceURI string, endpoints []string, dep DeploymentType,
-	env EnvironmentType, slo SloType) (string, error) {
-
+	env EnvironmentType, slo SloType,
+) (string, error) {
 	type documentation struct {
 		ExternalURI string `json:"externalUri,omitempty"`
 	}
@@ -594,8 +722,8 @@ func getDeployment(displayName string, description string,
 }
 
 func CreateExternalAPI(externalApiId string, displayName string, description string,
-	endpoints []string, paths []string, externalUri string) (respBody []byte, err error) {
-
+	endpoints []string, paths []string, externalUri string,
+) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.GetApigeeRegistryURL())
 	u.Path = path.Join(u.Path, "externalApi")
 	q := u.Query()
@@ -629,8 +757,8 @@ func ListExternalAPIs(filter string, pageSize int, pageToken string) (respBody [
 }
 
 func UpdateExternalAPI(externalApiID string, displayName string, description string,
-	endpoints []string, paths []string, externalUri string) (respBody []byte, err error) {
-
+	endpoints []string, paths []string, externalUri string,
+) (respBody []byte, err error) {
 	updateMask := []string{}
 
 	if displayName != "" {
@@ -668,8 +796,8 @@ func UpdateExternalAPI(externalApiID string, displayName string, description str
 }
 
 func getExternalApi(displayName string, description string,
-	endpoints []string, paths []string, externalUri string) (string, error) {
-
+	endpoints []string, paths []string, externalUri string,
+) (string, error) {
 	type documentation struct {
 		ExternalURI string `json:"externalUri,omitempty"`
 	}
@@ -706,8 +834,8 @@ func getExternalApi(displayName string, description string,
 }
 
 func CreateAttribute(attributeID string, displayName string, description string, scope string,
-	dataType string, aValues []byte, cardinality int) (respBody []byte, err error) {
-
+	dataType string, aValues []byte, cardinality int,
+) (respBody []byte, err error) {
 	type attributeScope string
 	const (
 		API           attributeScope = "API"
@@ -1055,4 +1183,32 @@ func (s *SloType) Set(r string) error {
 
 func (s *SloType) Type() string {
 	return "sloType"
+}
+
+func getSpecIDList(s []byte) (sList []string) {
+
+	type spec struct {
+		Name         string                 `json:"name,omitempty"`
+		DisplayName  string                 `json:"displayName,omitempty"`
+		SpecType     map[string]interface{} `json:"specType,omitempty"`
+		Details      map[string]interface{} `json:"details,omitempty"`
+		LintResponse map[string]interface{} `json:"lintResponse,omitempty"`
+	}
+
+	type speclist struct {
+		Specs []spec `json:"specs,omitempty"`
+	}
+
+	l := speclist{}
+
+	if err := json.Unmarshal(s, &l); err != nil {
+		clilog.Error.Println(err)
+		return nil
+	}
+
+	for _, i := range l.Specs {
+		sList = append(sList, filepath.Base(i.Name))
+	}
+
+	return sList
 }

@@ -15,16 +15,15 @@
 package hub
 
 import (
-	"internal/client/clienttest"
-	"internal/cmd/utils"
 	"os"
 	"path"
 	"testing"
+
+	"internal/client/clienttest"
+	"internal/cmd/utils"
 )
 
-var (
-	cliPath = os.Getenv("APIGEECLI_PATH")
-)
+var cliPath = os.Getenv("APIGEECLI_PATH")
 
 func TestCreateApi(t *testing.T) {
 	err := clienttest.TestSetup(clienttest.ENV_NOT_REQD,
@@ -475,7 +474,7 @@ func TestCreateDeployment(t *testing.T) {
 	endpoints := []string{"https://httpbin.org/get"}
 
 	if _, err = CreateDeployment(deploymentID, displayName, description, externalURI,
-		resourceURI, endpoints, APIGEE); err != nil {
+		resourceURI, endpoints, APIGEE, DEVELOPMENT, SLO99_9); err != nil {
 		t.Errorf("failed to create deployment %v", err)
 	}
 }
