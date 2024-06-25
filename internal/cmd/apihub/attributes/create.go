@@ -15,9 +15,10 @@
 package attributes
 
 import (
+	"os"
+
 	"internal/apiclient"
 	"internal/client/hub"
-	"os"
 
 	"github.com/spf13/cobra"
 )
@@ -43,8 +44,10 @@ var CrtCmd = &cobra.Command{
 	},
 }
 
-var attributeID, displayName, description, scope, dataType, aValuesPath string
-var cardinality int
+var (
+	attributeID, displayName, description, scope, dataType, aValuesPath string
+	cardinality                                                         int
+)
 
 func init() {
 	CrtCmd.Flags().StringVarP(&attributeID, "id", "i",
@@ -66,5 +69,4 @@ func init() {
 	_ = CrtCmd.MarkFlagRequired("display-name")
 	_ = CrtCmd.MarkFlagRequired("scope")
 	_ = CrtCmd.MarkFlagRequired("data-type")
-
 }

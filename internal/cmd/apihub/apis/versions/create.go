@@ -15,9 +15,10 @@
 package versions
 
 import (
+	"os"
+
 	"internal/apiclient"
 	"internal/client/hub"
-	"os"
 
 	"github.com/spf13/cobra"
 )

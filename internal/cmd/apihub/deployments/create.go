@@ -37,11 +37,13 @@ var CrtCmd = &cobra.Command{
 	},
 }
 
-var deploymentID, displayName, description, externalURI, resourceURI string
-var endpoints []string
-var d hub.DeploymentType
-var e hub.EnvironmentType
-var s hub.SloType
+var (
+	deploymentID, displayName, description, externalURI, resourceURI string
+	endpoints                                                        []string
+	d                                                                hub.DeploymentType
+	e                                                                hub.EnvironmentType
+	s                                                                hub.SloType
+)
 
 func init() {
 	CrtCmd.Flags().StringVarP(&deploymentID, "id", "i",

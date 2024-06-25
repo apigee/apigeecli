@@ -45,5 +45,4 @@ func init() {
 
 	_ = DelCmd.MarkFlagRequired("api-id")
 	_ = DelCmd.MarkFlagRequired("version")
-
 }

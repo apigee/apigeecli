@@ -15,10 +15,11 @@
 package specs
 
 import (
+	"path/filepath"
+
 	"internal/apiclient"
 	"internal/client/hub"
 	"internal/cmd/utils"
-	"path/filepath"
 
 	"github.com/spf13/cobra"
 )
@@ -45,8 +46,10 @@ var CrtCmd = &cobra.Command{
 	},
 }
 
-var specID, displayName, mimeType, sourceURI, documentation, apiFilePath string
-var attributes map[string]string
+var (
+	specID, displayName, mimeType, sourceURI, documentation, apiFilePath string
+	attributes                                                           map[string]string
+)
 
 func init() {
 	CrtCmd.Flags().StringVarP(&specID, "id", "i",

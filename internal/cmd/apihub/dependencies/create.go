@@ -16,9 +16,10 @@ package dependencies
 
 import (
 	"fmt"
+	"regexp"
+
 	"internal/apiclient"
 	"internal/client/hub"
-	"regexp"
 
 	"github.com/spf13/cobra"
 )
@@ -71,9 +72,11 @@ var CrtCmd = &cobra.Command{
 	},
 }
 
-var dependencyID, description, consumerDisplayName, consumerOperationResourceName string
-var consumerExternalApiResouceName, supplierDisplayName, supplierOperationResourceName string
-var supplierExternalApiResourceName string
+var (
+	dependencyID, description, consumerDisplayName, consumerOperationResourceName      string
+	consumerExternalApiResouceName, supplierDisplayName, supplierOperationResourceName string
+	supplierExternalApiResourceName                                                    string
+)
 
 func init() {
 	CrtCmd.Flags().StringVarP(&dependencyID, "id", "i",

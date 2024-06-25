@@ -53,5 +53,4 @@ func init() {
 
 	_ = GetCmd.MarkFlagRequired("api-id")
 	_ = GetCmd.MarkFlagRequired("version")
-
 }

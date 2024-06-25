@@ -33,7 +33,7 @@ func init() {
 	AttributeCmd.PersistentFlags().StringVarP(&region, "region", "r",
 		"", "API Hub region name")
 
-	//AttributeCmd.AddCommand(CrtCmd)
+	// AttributeCmd.AddCommand(CrtCmd)
 	AttributeCmd.AddCommand(GetCmd)
 	AttributeCmd.AddCommand(DelCmd)
 	AttributeCmd.AddCommand(ListCmd)

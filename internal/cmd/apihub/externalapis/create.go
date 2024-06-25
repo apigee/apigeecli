@@ -37,8 +37,10 @@ var CrtCmd = &cobra.Command{
 	},
 }
 
-var externalApiId, displayName, description, externalURI, resourceURI string
-var endpoints, paths []string
+var (
+	externalApiId, displayName, description, externalURI, resourceURI string
+	endpoints, paths                                                  []string
+)
 
 func init() {
 	CrtCmd.Flags().StringVarP(&externalApiID, "id", "i",

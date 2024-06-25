@@ -15,10 +15,11 @@
 package specs
 
 import (
+	"path/filepath"
+
 	"internal/apiclient"
 	"internal/client/hub"
 	"internal/cmd/utils"
-	"path/filepath"
 
 	"github.com/spf13/cobra"
 )
