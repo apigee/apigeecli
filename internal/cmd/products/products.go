@@ -44,7 +44,8 @@ var (
 	attrs                                                               map[string]string
 )
 
-var examples = []string{`apigeecli products create --name $product_name \
+var examples = []string{
+	`apigeecli products create --name $product_name \
 --display-name $product_name \
 --opgrp $ops_file \
 --envs $env \
@@ -58,7 +59,8 @@ var examples = []string{`apigeecli products create --name $product_name \
 --quota 100 --interval 1 --unit minute  --default-token`,
 	`apigeecli products import -f samples/apiproduct-legacy.json  --default-token`,
 	`apigeecli products import -f samples/apiproduct-gqlgroup.json  --default-token`,
-	`apigeecli products import -f samples/apiproduct-op-group.json  --default-token`}
+	`apigeecli products import -f samples/apiproduct-op-group.json  --default-token`,
+}
 
 func init() {
 	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
