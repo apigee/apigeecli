@@ -40,6 +40,7 @@ var ImpEntryCmd = &cobra.Command{
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
+		apiclient.DisableCmdPrintHttpResponse()
 		return kvm.ImportEntries(proxyName, mapName, conn, filePath)
 	},
 }
