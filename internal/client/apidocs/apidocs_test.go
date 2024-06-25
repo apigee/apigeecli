@@ -110,7 +110,7 @@ func TestUpdateDocumentation(t *testing.T) {
 	if openAPIDoc, err = utils.ReadFile(path.Join(cliPath, "test", "openapi.json")); err != nil {
 		t.Fatalf("%v", err)
 	}
-	if _, err = UpdateDocumentation(siteID, aPIDocID, displayName, string(openAPIDoc), "", ""); err != nil {
+	if _, err = UpdateDocumentation(siteID, aPIDocID, displayName, openAPIDoc, nil, ""); err != nil {
 		t.Fatalf("%v", err)
 	}
 }

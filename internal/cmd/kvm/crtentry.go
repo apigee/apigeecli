@@ -18,7 +18,6 @@ import (
 	"fmt"
 
 	"internal/apiclient"
-
 	"internal/client/kvm"
 
 	"github.com/spf13/cobra"
@@ -41,8 +40,7 @@ var CreateEntryCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
-
-		_, err = kvm.CreateEntry(proxyName, mapName, keyName, value)
+		_, err = kvm.CreateEntry(proxyName, mapName, keyName, []byte(value))
 		return
 	},
 }

@@ -33,6 +33,11 @@ import (
 )
 
 type keyvalueentry struct {
+	Name  string          `json:"name,omitempty"`
+	Value json.RawMessage `json:"value,omitempty"`
+}
+
+type kventry struct {
 	Name  string `json:"name,omitempty"`
 	Value string `json:"value,omitempty"`
 }
@@ -43,7 +48,7 @@ type keyvalueentries struct {
 }
 
 // CreateEntry
-func CreateEntry(proxyName string, mapName string, keyName string, value string) (respBody []byte, err error) {
+func CreateEntry(proxyName string, mapName string, keyName string, value []byte) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	if apiclient.GetApigeeEnv() != "" {
 		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "keyvaluemaps", mapName, "entries")
@@ -52,7 +57,10 @@ func CreateEntry(proxyName string, mapName string, keyName string, value string)
 	} else {
 		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "keyvaluemaps", mapName, "entries")
 	}
-	payload := "{\"name\":\"" + keyName + "\",\"value\":\"" + value + "\"}"
+	payload, err := getKVPayload(keyName, value)
+	if err != nil {
+		return nil, err
+	}
 	respBody, err = apiclient.HttpClient(u.String(), payload)
 	return respBody, err
 }
@@ -86,7 +94,7 @@ func GetEntry(proxyName string, mapName string, keyName string) (respBody []byte
 }
 
 // UpdateEntry
-func UpdateEntry(proxyName string, mapName string, keyName string, value string) (respBody []byte, err error) {
+func UpdateEntry(proxyName string, mapName string, keyName string, value []byte) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	if apiclient.GetApigeeEnv() != "" {
 		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "keyvaluemaps", mapName, "entries", keyName)
@@ -95,12 +103,32 @@ func UpdateEntry(proxyName string, mapName string, keyName string, value string)
 	} else {
 		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "keyvaluemaps", mapName, "entries", keyName)
 	}
-	payload := "{\"name\":\"" + keyName + "\",\"value\":\"" + value + "\"}"
-	respBody, err = apiclient.HttpClient(u.String(), payload, "PUT")
+	payload, err := getKVPayload(keyName, value)
+	if err != nil {
+		return nil, err
+	}
+	respBody, err = apiclient.HttpClient(u.String(), string(payload), "PUT")
 	return respBody, err
 }
 
-func upsertEntry(proxyName string, mapName string, keyName string, value string) (respBody []byte, err error) {
+func getKVPayload(keyName string, value []byte) (payload string, err error) {
+
+	var p []byte
+
+	// attempt as json
+	k1 := keyvalueentry{Name: keyName, Value: value}
+	p, err = json.Marshal(k1)
+	if err != nil {
+		k2 := kventry{Name: keyName, Value: string(value)}
+		p, err = json.Marshal(k2)
+		if err != nil {
+			return "", err
+		}
+	}
+	return string(p), nil
+}
+
+func upsertEntry(proxyName string, mapName string, keyName string, value []byte) (respBody []byte, err error) {
 	update := false
 	apiclient.ClientPrintHttpResponse.Set(false)
 	_, err = GetEntry(proxyName, mapName, keyName)
