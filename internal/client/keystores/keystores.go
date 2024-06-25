@@ -27,6 +27,7 @@ import (
 
 	"internal/apiclient"
 	"internal/client/keyaliases"
+	"internal/cmd/utils"
 
 	"internal/clilog"
 )
@@ -82,7 +83,7 @@ func Export(folder string) (err error) {
 	}
 
 	for _, k := range ks {
-		ksFolder := path.Join(folder,"keystore-"+k)
+		ksFolder := path.Join(folder, "keystore"+utils.DefaultFileSplitter+apiclient.GetApigeeEnv()+utils.DefaultFileSplitter+k)
 		err = os.MkdirAll(ksFolder, 0755)
 		if err != nil {
 			return err
