@@ -797,7 +797,6 @@ func SetSharedFlowDescription(sfFolder string, name string, description string) 
 		return err
 	}
 	return apiclient.WriteByteArrayToFile(path.Join(sfFolder, name+".xml"), false, byteValue)
-
 }
 
 func downloadProxyFromRepo(client *github.Client, ctx context.Context, owner string, repo string, repopath string, sharedflow bool) (err error) {

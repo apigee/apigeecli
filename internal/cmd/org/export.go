@@ -256,6 +256,11 @@ var ExportCmd = &cobra.Command{
 				return err
 			}
 
+			clilog.Info.Println("\tExporting Key alias certs...")
+			if err = keystores.Export(folder); proceedOnError(err) != nil {
+				return err
+			}
+
 			clilog.Info.Println("\tExporting references...")
 			if referencesResponse, err = references.Export(conn); proceedOnError(err) != nil {
 				return err

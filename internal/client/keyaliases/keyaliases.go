@@ -172,11 +172,11 @@ func CreateCSR(keystoreName string, name string) (respBody []byte, err error) {
 }
 
 // GetCert
-func GetCert(keystoreName string, name string) (err error) {
+func GetCert(keystoreName string, name string, folder string) (err error) {
 	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(),
 		"keystores", keystoreName, "aliases", name, "certificate")
-	err = apiclient.DownloadResource(u.String(), name+".crt", "", true)
+	err = apiclient.DownloadResource(u.String(), path.Join(folder, name+".crt"), "", true)
 	return err
 }
 
@@ -205,4 +205,29 @@ func List(keystoreName string) (respBody []byte, err error) {
 		"keystores", keystoreName, "aliases")
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
+}
+
+func ExportCerts(folder string, keyStoreName string) error {
+	apiclient.ClientPrintHttpResponse.Set(false)
+	defer apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
+
+	respBody, err := List(keyStoreName)
+	if err != nil {
+		return err
+	}
+
+	var certs []string
+	err = json.Unmarshal(respBody, &certs)
+	if err != nil {
+		return err
+	}
+
+	for _, cert := range certs {
+		err = GetCert(keyStoreName, cert, folder)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }

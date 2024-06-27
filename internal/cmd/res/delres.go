@@ -15,8 +15,9 @@
 package res
 
 import (
-	"internal/apiclient"
 	"strings"
+
+	"internal/apiclient"
 
 	"internal/client/res"
 

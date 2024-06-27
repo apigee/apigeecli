@@ -1,4 +1,4 @@
-// Copyright 2020 Google LLC
+// Copyright 2024 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,44 +12,42 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package res
+package keystores
 
 import (
-	"strings"
+	"os"
 
 	"internal/apiclient"
 
-	"internal/client/res"
+	"internal/client/keystores"
 
 	"github.com/spf13/cobra"
 )
 
-// UpdateCmd to get a resource
-var UpdateCmd = &cobra.Command{
-	Use:   "update",
-	Short: "Update a resource file",
-	Long:  "Update a resource file",
+// ExpCmd to import ts
+var ExpCmd = &cobra.Command{
+	Use:   "export",
+	Short: "Export to a folder keystores and keyaliases",
+	Long:  "Export to a folder keystores and keyaliases",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetApigeeEnv(env)
 		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		cmd.SilenceUsage = true
-
-		return res.Update(name, resPath, resType)
+		if folder == "" {
+			folder, err = os.Getwd()
+			if err != nil {
+				return err
+			}
+		}
+		return keystores.Export(folder)
 	},
 }
 
-func init() {
-	UpdateCmd.Flags().StringVarP(&name, "name", "n",
-		"", "Name of the resource file")
-	UpdateCmd.Flags().StringVarP(&resType, "type", "p",
-		"", "Resource type. Valid types include "+strings.Join(res.GetValidResourceTypes(), ", "))
-	UpdateCmd.Flags().StringVarP(&resPath, "respath", "",
-		"", "Resource Path")
+var folder string
 
-	_ = UpdateCmd.MarkFlagRequired("name")
-	_ = UpdateCmd.MarkFlagRequired("type")
-	_ = UpdateCmd.MarkFlagRequired("respath")
+func init() {
+	ExpCmd.Flags().StringVarP(&folder, "folder", "f",
+		"", "Folder to export keystores")
 }

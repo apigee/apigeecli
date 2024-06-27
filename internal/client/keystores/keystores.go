@@ -26,6 +26,8 @@ import (
 	"sync"
 
 	"internal/apiclient"
+	"internal/client/keyaliases"
+	"internal/cmd/utils"
 
 	"internal/clilog"
 )
@@ -61,6 +63,38 @@ func List() (respBody []byte, err error) {
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "keystores")
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
+}
+
+// Export
+func Export(folder string) (err error) {
+	apiclient.ClientPrintHttpResponse.Set(false)
+	defer apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
+
+	respBody, err := List()
+	if err != nil {
+		clilog.Error.Println("Error listing keystores: ", err)
+		return err
+	}
+
+	var ks []string
+	err = json.Unmarshal(respBody, &ks)
+	if err != nil {
+		return err
+	}
+
+	for _, k := range ks {
+		ksFolder := path.Join(folder, "keystore"+utils.DefaultFileSplitter+apiclient.GetApigeeEnv()+utils.DefaultFileSplitter+k)
+		err = os.MkdirAll(ksFolder, 0755)
+		if err != nil {
+			return err
+		}
+		err = keyaliases.ExportCerts(ksFolder, k)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 // Import

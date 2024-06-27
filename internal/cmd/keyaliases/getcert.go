@@ -15,7 +15,11 @@
 package keyaliases
 
 import (
+	"fmt"
+	"os"
+
 	"internal/apiclient"
+	"internal/clilog"
 
 	"internal/client/keyaliases"
 
@@ -35,16 +39,38 @@ var GetctCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
 
-		err = keyaliases.GetCert(keystoreName, aliasName)
+		if folder == "" {
+			folder, err = os.Getwd()
+			if err != nil {
+				return err
+			}
+		}
+
+		info, err := os.Stat(folder)
+		if os.IsNotExist(err) {
+			clilog.Error.Println("Directory does not exist")
+			return err
+		} else if err != nil {
+			clilog.Error.Println("Error checking directory:", err)
+			return err
+		} else if !info.IsDir() {
+			clilog.Error.Println("Directory does not exist")
+			return fmt.Errorf("Directory does not exist")
+		}
+		err = keyaliases.GetCert(keystoreName, aliasName, folder)
 		return
 	},
 }
+
+var folder string
 
 func init() {
 	GetctCmd.Flags().StringVarP(&keystoreName, "key", "k",
 		"", "Name of the key store")
 	GetctCmd.Flags().StringVarP(&aliasName, "alias", "s",
 		"", "Name of the key alias")
+	GetctCmd.Flags().StringVarP(&folder, "folder", "f",
+		"", "Name of the folder to export the certificate")
 
 	_ = GetctCmd.MarkFlagRequired("alias")
 	_ = GetctCmd.MarkFlagRequired("key")
