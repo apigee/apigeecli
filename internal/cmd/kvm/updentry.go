@@ -18,7 +18,6 @@ import (
 	"fmt"
 
 	"internal/apiclient"
-
 	"internal/client/kvm"
 
 	"github.com/spf13/cobra"
@@ -41,8 +40,7 @@ var UpdateEntryCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
-
-		_, err = kvm.UpdateEntry(proxyName, mapName, keyName, value)
+		_, err = kvm.UpdateEntry(proxyName, mapName, keyName, []byte(value))
 		return
 	},
 }

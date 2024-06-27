@@ -1,0 +1,17 @@
+{
+    "keyValueEntries": [
+        {
+            "name": "json1",
+            "value": "{\"message\":\"hello\"}"
+        },
+        {
+            "name": "basepath",
+            "value": "/chris/duncan"
+        },
+        {
+            "name": "pathsuffix",
+            "value": "/is/great"
+        }
+    ],
+    "nextPageToken": ""
+}

@@ -33,18 +33,18 @@ func TestCreateEntry(t *testing.T) {
 	apiclient.SetApigeeEnv("")
 
 	// add entry to org kvm
-	if _, err := CreateEntry("", kvmName, keyName, value); err != nil {
+	if _, err := CreateEntry("", kvmName, keyName, []byte(value)); err != nil {
 		t.Fatalf("%v", err)
 	}
 
 	// add entry to proxy kvm
-	if _, err := CreateEntry(proxyName, kvmName, keyName, value); err != nil {
+	if _, err := CreateEntry(proxyName, kvmName, keyName, []byte(value)); err != nil {
 		t.Fatalf("%v", err)
 	}
 
 	// add entry to env kvm
 	apiclient.SetApigeeEnv(env)
-	if _, err := CreateEntry("", kvmName, keyName, value); err != nil {
+	if _, err := CreateEntry("", kvmName, keyName, []byte(value)); err != nil {
 		t.Fatalf("%v", err)
 	}
 }
@@ -81,7 +81,7 @@ func TestUpdateEntry(t *testing.T) {
 	env := apiclient.GetApigeeEnv()
 	apiclient.SetApigeeEnv("")
 
-	updatedValue := "updatedTest"
+	updatedValue := []byte("updatedTest")
 
 	// add entry to org kvm
 	if _, err := UpdateEntry("", kvmName, keyName, updatedValue); err != nil {
