@@ -36,9 +36,12 @@ var CrtCmd = &cobra.Command{
 		cmd.SilenceUsage = true
 		var aValues []byte
 
-		if aValues, err = os.ReadFile(aValuesPath); err != nil {
-			return err
+		if aValuesPath != "" {
+			if aValues, err = os.ReadFile(aValuesPath); err != nil {
+				return err
+			}
 		}
+
 		_, err = hub.CreateAttribute(attributeID, displayName, description, scope, dataType, aValues, cardinality)
 		return
 	},
