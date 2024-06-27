@@ -137,8 +137,10 @@ func upsertEntry(proxyName string, mapName string, keyName string, value []byte)
 	}
 	apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
 	if update {
+		clilog.Info.Printf("Updating entry in map [%s] with key [%s]\n", mapName, keyName)
 		return UpdateEntry(proxyName, mapName, keyName, value)
 	}
+	clilog.Info.Printf("Creating a new entry in map [%s] with key [%s]\n", mapName, keyName)
 	return CreateEntry(proxyName, mapName, keyName, value)
 }
 
