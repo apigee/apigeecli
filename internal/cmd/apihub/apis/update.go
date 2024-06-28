@@ -25,9 +25,9 @@ import (
 
 // UpdateCmd
 var UpdateCmd = &cobra.Command{
-	Use:   "create",
-	Short: "Create a new API Hub API",
-	Long:  "Create a new API Hub API",
+	Use:   "update",
+	Short: "Updates an API in API Hub",
+	Long:  "Updates an API in API Hub",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
@@ -39,7 +39,7 @@ var UpdateCmd = &cobra.Command{
 		if apiFileBytes, err = os.ReadFile(apiFilePath); err != nil {
 			return err
 		}
-		_, err = hub.CreateApi(id, apiFileBytes)
+		_, err = hub.UpdateApi(id, apiFileBytes)
 		return
 	},
 }

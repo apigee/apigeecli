@@ -52,7 +52,7 @@ func init() {
 	CrtCmd.Flags().StringVarP(&apiID, "api-id", "",
 		"", "API ID")
 	CrtCmd.Flags().StringVarP(&apiFilePath, "file", "f",
-		"", "Path to a file containing the API defintion")
+		"", "Path to a file containing the API version definition")
 
 	_ = CrtCmd.MarkFlagRequired("api-id")
 	_ = CrtCmd.MarkFlagRequired("file")

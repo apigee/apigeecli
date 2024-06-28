@@ -38,8 +38,8 @@ var DelCmd = &cobra.Command{
 }
 
 func init() {
-	DelCmd.Flags().StringVarP(&apiID, "api-id", "",
+	DelCmd.Flags().StringVarP(&apiID, "id", "",
 		"", "API ID")
 
-	_ = DelCmd.MarkFlagRequired("api-id")
+	_ = DelCmd.MarkFlagRequired("id")
 }
