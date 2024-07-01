@@ -24,8 +24,8 @@ import (
 // DelCmd to get a catalog items
 var DelCmd = &cobra.Command{
 	Use:   "delete",
-	Short: "Delete a deployment",
-	Long:  "Delete a deployment",
+	Short: "Delete a dependency",
+	Long:  "Delete a dependency",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)

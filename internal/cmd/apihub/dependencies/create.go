@@ -27,8 +27,8 @@ import (
 // CrtCmd
 var CrtCmd = &cobra.Command{
 	Use:   "create",
-	Short: "Create a new API Deployment in API Hub",
-	Long:  "Create a new API Deployment in API Hub",
+	Short: "Create a new Dependency in API Hub",
+	Long:  "Create a new Dependency in API Hub",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		extApiPattern := `^projects/[^/]+/locations/[^/]+/apis/[^/]+/externalApis/[^/]+$`
 		opPattern := `^projects/[^/]+/locations/[^/]+/apis/[^/]+/versions/[^/]+/operations/[^/]+$`
