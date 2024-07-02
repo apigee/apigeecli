@@ -344,6 +344,68 @@ func ListApiVersions(apiID string, filter string, pageSize int, pageToken string
 	return list(path.Join("apis", apiID, "versions"), filter, pageSize, pageToken)
 }
 
+func UpdateApiVersion(versionID string, apiID string, contents []byte) (respBody []byte, err error) {
+
+	var updateMasks []string
+
+	type apiversion struct {
+		DisplayName   *string                 `json:"displayName,omitempty"`
+		Description   *string                 `json:"description,omitempty"`
+		Documentation *map[string]interface{} `json:"documentation,omitempty"`
+		Deployments   *map[string]interface{} `json:"deployments,omitempty"`
+		Lifecycle     *map[string]interface{} `json:"lifecycle,omitempty"`
+		Compliance    *map[string]interface{} `json:"compliance,omitempty"`
+		Accreditation *map[string]interface{} `json:"acreditation,omitempty"`
+		Attributes    *map[string]interface{} `json:"attributes,omitempty"`
+	}
+
+	a := apiversion{}
+	err = json.Unmarshal(contents, &a)
+	if err != nil {
+		return nil, err
+	}
+
+	if a.DisplayName != nil {
+		updateMasks = append(updateMasks, "displayName")
+	}
+	if a.Description != nil {
+		updateMasks = append(updateMasks, "description")
+	}
+	if a.Documentation != nil {
+		updateMasks = append(updateMasks, "documentation")
+	}
+	if a.Deployments != nil {
+		updateMasks = append(updateMasks, "deployments")
+	}
+	if a.Lifecycle != nil {
+		updateMasks = append(updateMasks, "lifecycle")
+	}
+	if a.Compliance != nil {
+		updateMasks = append(updateMasks, "compliance")
+	}
+	if a.Accreditation != nil {
+		updateMasks = append(updateMasks, "acreditation")
+	}
+	if a.Attributes != nil {
+		updateMasks = append(updateMasks, "attributes")
+	}
+
+	if len(updateMasks) == 0 {
+		return nil, fmt.Errorf("at least one update parameter is required")
+	}
+
+	u, _ := url.Parse(apiclient.GetApigeeRegistryURL())
+	u.Path = path.Join(u.Path, "apis", apiID, "versions", versionID)
+
+	q := u.Query()
+	q.Set("updateMask", strings.Join(updateMasks, ","))
+	u.RawQuery = q.Encode()
+
+	respBody, err = apiclient.HttpClient(u.String(), string(contents), "PATCH")
+
+	return respBody, err
+}
+
 func GetApiVersionsDefinitions(apiID string, versionID string, definition string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.GetApigeeRegistryURL())
 	u.Path = path.Join(u.Path, "apis", apiID, "versions", versionID, "definitions", definition)

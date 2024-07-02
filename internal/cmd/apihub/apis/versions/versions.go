@@ -39,6 +39,7 @@ func init() {
 	ApiVersionsCmd.AddCommand(ListCmd)
 	ApiVersionsCmd.AddCommand(GetCmd)
 	ApiVersionsCmd.AddCommand(DelCmd)
+	ApiVersionsCmd.AddCommand(UpdateCmd)
 	ApiVersionsCmd.AddCommand(specs.SpecsCmd)
 
 	_ = ApiVersionsCmd.MarkFlagRequired("org")
