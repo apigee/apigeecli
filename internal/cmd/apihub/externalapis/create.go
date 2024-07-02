@@ -24,21 +24,21 @@ import (
 // CrtCmd
 var CrtCmd = &cobra.Command{
 	Use:   "create",
-	Short: "Create a new API External API",
-	Long:  "Create a new API External API",
+	Short: "Create a new External API",
+	Long:  "Create a new External API",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
-		_, err = hub.CreateExternalAPI(externalApiId, displayName, description, endpoints, paths, externalURI)
+		_, err = hub.CreateExternalAPI(externalApiID, displayName, description, endpoints, paths, externalURI)
 		return
 	},
 }
 
 var (
-	externalApiId, displayName, description, externalURI, resourceURI string
+	externalApiID, displayName, description, externalURI, resourceURI string
 	endpoints, paths                                                  []string
 )
 
@@ -51,8 +51,6 @@ func init() {
 		"", "External API Description")
 	CrtCmd.Flags().StringVarP(&externalURI, "external-uri", "",
 		"", "The uri of the externally hosted documentation")
-	CrtCmd.Flags().StringVarP(&resourceURI, "resource-uri", "",
-		"", "A URI to the runtime resource")
 	CrtCmd.Flags().StringArrayVarP(&endpoints, "endpoints", "",
 		[]string{}, " The endpoints at which this deployment resource is listening for API requests")
 	CrtCmd.Flags().StringArrayVarP(&paths, "paths", "",

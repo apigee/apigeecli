@@ -37,8 +37,6 @@ var GetCmd = &cobra.Command{
 	},
 }
 
-var externalApiID string
-
 func init() {
 	GetCmd.Flags().StringVarP(&externalApiID, "id", "i",
 		"", "External API ID")

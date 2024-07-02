@@ -37,6 +37,7 @@ func init() {
 	DeploymentCmd.AddCommand(GetCmd)
 	DeploymentCmd.AddCommand(DelCmd)
 	DeploymentCmd.AddCommand(ListCmd)
+	DeploymentCmd.AddCommand(UpdateCmd)
 
 	_ = DeploymentCmd.MarkFlagRequired("org")
 	_ = DeploymentCmd.MarkFlagRequired("region")

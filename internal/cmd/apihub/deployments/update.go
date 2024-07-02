@@ -38,7 +38,7 @@ var UpdateCmd = &cobra.Command{
 }
 
 func init() {
-	UpdateCmd.Flags().StringVarP(&deploymentName, "name", "n",
+	UpdateCmd.Flags().StringVarP(&deploymentName, "id", "i",
 		"", "Deployment Name")
 	UpdateCmd.Flags().StringVarP(&displayName, "display-name", "d",
 		"", "Deployment Display Name")

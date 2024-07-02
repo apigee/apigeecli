@@ -23,16 +23,16 @@ import (
 
 // UpdateCmd
 var UpdateCmd = &cobra.Command{
-	Use:   "create",
-	Short: "Create a new API External API",
-	Long:  "Create a new API External API",
+	Use:   "update",
+	Short: "Update an External API",
+	Long:  "Update an External API",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
-		_, err = hub.UpdateExternalAPI(externalApiId, displayName, description, endpoints, paths, externalURI)
+		_, err = hub.UpdateExternalAPI(externalApiID, displayName, description, endpoints, paths, externalURI)
 		return
 	},
 }
@@ -46,8 +46,6 @@ func init() {
 		"", "External API Description")
 	UpdateCmd.Flags().StringVarP(&externalURI, "external-uri", "",
 		"", "The uri of the externally hosted documentation")
-	UpdateCmd.Flags().StringVarP(&resourceURI, "resource-uri", "",
-		"", "A URI to the runtime resource")
 	UpdateCmd.Flags().StringArrayVarP(&endpoints, "endpoints", "",
 		[]string{}, " The endpoints at which this deployment resource is listening for API requests")
 	UpdateCmd.Flags().StringArrayVarP(&paths, "paths", "",

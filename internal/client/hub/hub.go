@@ -730,13 +730,13 @@ func getDeployment(displayName string, description string, deploymentName string
 	return string(payload), nil
 }
 
-func CreateExternalAPI(externalApiId string, displayName string, description string,
+func CreateExternalAPI(externalApiID string, displayName string, description string,
 	endpoints []string, paths []string, externalUri string,
 ) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.GetApigeeRegistryURL())
-	u.Path = path.Join(u.Path, "externalApi")
+	u.Path = path.Join(u.Path, "externalApis")
 	q := u.Query()
-	q.Set("externalApiId", externalApiId)
+	q.Set("externalApiId", externalApiID)
 	u.RawQuery = q.Encode()
 
 	payload, err := getExternalApi(displayName, description, endpoints, paths, externalUri)
@@ -747,9 +747,9 @@ func CreateExternalAPI(externalApiId string, displayName string, description str
 	return respBody, err
 }
 
-func GetExternalAPI(externalApiId string) (respBody []byte, err error) {
+func GetExternalAPI(externalApiID string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.GetApigeeRegistryURL())
-	u.Path = path.Join(u.Path, "externalApis", externalApiId)
+	u.Path = path.Join(u.Path, "externalApis", externalApiID)
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
@@ -790,7 +790,7 @@ func UpdateExternalAPI(externalApiID string, displayName string, description str
 	}
 
 	u, _ := url.Parse(apiclient.GetApigeeRegistryURL())
-	u.Path = path.Join(u.Path, "externalApi", externalApiID)
+	u.Path = path.Join(u.Path, "externalApis", externalApiID)
 	q := u.Query()
 	q.Set("updateMask", strings.Join(updateMask, ","))
 	u.RawQuery = q.Encode()
