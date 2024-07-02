@@ -1,0 +1,7 @@
+{
+    "displayName": "test version",
+    "description": "test version description",
+    "documentation": {
+        "externalUri": "https://httpbin.org"
+    }
+}
