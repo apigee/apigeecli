@@ -44,7 +44,7 @@ var GetCmd = &cobra.Command{
 var versionID, definition string
 
 func init() {
-	GetCmd.Flags().StringVarP(&versionID, "version", "v",
+	GetCmd.Flags().StringVarP(&versionID, "id", "i",
 		"", "API Version ID")
 	GetCmd.Flags().StringVarP(&apiID, "api-id", "",
 		"", "API ID")

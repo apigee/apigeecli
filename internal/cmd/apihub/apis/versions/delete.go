@@ -38,7 +38,7 @@ var DelCmd = &cobra.Command{
 }
 
 func init() {
-	DelCmd.Flags().StringVarP(&versionID, "version", "v",
+	DelCmd.Flags().StringVarP(&versionID, "id", "i",
 		"", "API Version ID")
 	DelCmd.Flags().StringVarP(&apiID, "api-id", "",
 		"", "API ID")
