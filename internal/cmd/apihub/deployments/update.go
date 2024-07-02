@@ -32,14 +32,14 @@ var UpdateCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
-		_, err = hub.CreateDeployment(deploymentID, displayName, description, externalURI, resourceURI, endpoints, d, e, s)
+		_, err = hub.UpdateDeployment(deploymentName, displayName, description, externalURI, resourceURI, endpoints, d, e, s)
 		return
 	},
 }
 
 func init() {
-	UpdateCmd.Flags().StringVarP(&deploymentID, "id", "i",
-		"", "Deployment ID")
+	UpdateCmd.Flags().StringVarP(&deploymentName, "name", "n",
+		"", "Deployment Name")
 	UpdateCmd.Flags().StringVarP(&displayName, "display-name", "d",
 		"", "Deployment Display Name")
 	UpdateCmd.Flags().StringVarP(&description, "description", "",
@@ -54,8 +54,4 @@ func init() {
 	UpdateCmd.Flags().Var(&e, "env-type", "The environment mapping to this deployment")
 	UpdateCmd.Flags().Var(&s, "slo-type", "The SLO for this deployment")
 
-	_ = UpdateCmd.MarkFlagRequired("display-name")
-	_ = UpdateCmd.MarkFlagRequired("resource-uri")
-	_ = UpdateCmd.MarkFlagRequired("endpoints")
-	_ = UpdateCmd.MarkFlagRequired("type")
 }

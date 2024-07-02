@@ -32,22 +32,25 @@ var CrtCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
-		_, err = hub.CreateDeployment(deploymentID, displayName, description, externalURI, resourceURI, endpoints, d, e, s)
+		_, err = hub.CreateDeployment(deploymentID, displayName, description,
+			deploymentName, externalURI, resourceURI, endpoints, d, e, s)
 		return
 	},
 }
 
 var (
-	deploymentID, displayName, description, externalURI, resourceURI string
-	endpoints                                                        []string
-	d                                                                hub.DeploymentType
-	e                                                                hub.EnvironmentType
-	s                                                                hub.SloType
+	deploymentID, displayName, deploymentName, description, externalURI, resourceURI string
+	endpoints                                                                        []string
+	d                                                                                hub.DeploymentType
+	e                                                                                hub.EnvironmentType
+	s                                                                                hub.SloType
 )
 
 func init() {
 	CrtCmd.Flags().StringVarP(&deploymentID, "id", "i",
 		"", "Deployment ID")
+	CrtCmd.Flags().StringVarP(&deploymentName, "name", "n",
+		"", "Deployment Name")
 	CrtCmd.Flags().StringVarP(&displayName, "display-name", "d",
 		"", "Deployment Display Name")
 	CrtCmd.Flags().StringVarP(&description, "description", "",
@@ -62,6 +65,7 @@ func init() {
 	CrtCmd.Flags().Var(&e, "env-type", "The environment mapping to this deployment")
 	CrtCmd.Flags().Var(&s, "slo-type", "The SLO for this deployment")
 
+	_ = CrtCmd.MarkFlagRequired("name")
 	_ = CrtCmd.MarkFlagRequired("display-name")
 	_ = CrtCmd.MarkFlagRequired("resource-uri")
 	_ = CrtCmd.MarkFlagRequired("endpoints")

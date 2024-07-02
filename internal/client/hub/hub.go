@@ -67,10 +67,10 @@ const (
 type SloType string
 
 const (
-	SLO99_99 SloType = "99.99"
-	SLO99_95 SloType = "99.95"
-	SLO99_9  SloType = "99.9"
-	SLO99_5  SloType = "99.5"
+	SLO99_99 SloType = "99-99"
+	SLO99_95 SloType = "99-95"
+	SLO99_9  SloType = "99-9"
+	SLO99_5  SloType = "99-5"
 )
 
 type documentation struct {
@@ -579,17 +579,19 @@ func ListDependencies(filter string, pageSize int, pageToken string) (respBody [
 	return list("dependencies", filter, pageSize, pageToken)
 }
 
-func CreateDeployment(deploymentID string, displayName string, description string,
+func CreateDeployment(deploymentID string, displayName string, description string, deploymentName string,
 	externalURI string, resourceURI string, endpoints []string, dep DeploymentType,
 	env EnvironmentType, slo SloType,
 ) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.GetApigeeRegistryURL())
 	u.Path = path.Join(u.Path, "deployments")
-	q := u.Query()
-	q.Set("deploymentId", deploymentID)
-	u.RawQuery = q.Encode()
+	if deploymentID != "" {
+		q := u.Query()
+		q.Set("deploymentId", deploymentID)
+		u.RawQuery = q.Encode()
+	}
 
-	payload, err := getDeployment(displayName, description, externalURI, resourceURI, endpoints, dep, env, slo)
+	payload, err := getDeployment(displayName, description, deploymentName, externalURI, resourceURI, endpoints, dep, env, slo)
 	if err != nil {
 		return nil, err
 	}
@@ -616,7 +618,7 @@ func ListDeployments(filter string, pageSize int, pageToken string) (respBody []
 	return list("deployments", filter, pageSize, pageToken)
 }
 
-func UpdateDeployment(deploymentID string, displayName string, description string,
+func UpdateDeployment(deploymentName string, displayName string, description string,
 	externalURI string, resourceURI string, endpoints []string, dep DeploymentType,
 	env EnvironmentType, slo SloType,
 ) (respBody []byte, err error) {
@@ -651,12 +653,13 @@ func UpdateDeployment(deploymentID string, displayName string, description strin
 	}
 
 	u, _ := url.Parse(apiclient.GetApigeeRegistryURL())
-	u.Path = path.Join(u.Path, "deployments", deploymentID)
+	u.Path = path.Join(u.Path, "deployments", deploymentName)
 	q := u.Query()
 	q.Set("updateMask", strings.Join(updateMask, ","))
 	u.RawQuery = q.Encode()
 
-	payload, err := getDeployment(displayName, description, externalURI, resourceURI, endpoints, dep, env, slo)
+	payload, err := getDeployment(displayName, description, deploymentName,
+		externalURI, resourceURI, endpoints, dep, env, slo)
 	if err != nil {
 		return nil, err
 	}
@@ -665,7 +668,7 @@ func UpdateDeployment(deploymentID string, displayName string, description strin
 	return respBody, err
 }
 
-func getDeployment(displayName string, description string,
+func getDeployment(displayName string, description string, deploymentName string,
 	externalURI string, resourceURI string, endpoints []string, dep DeploymentType,
 	env EnvironmentType, slo SloType,
 ) (string, error) {
@@ -678,6 +681,7 @@ func getDeployment(displayName string, description string,
 	}
 
 	type deployment struct {
+		Name           string        `json:"name,omitempty"`
 		DisplayName    string        `json:"displayName,omitempty"`
 		Description    string        `json:"description,omitempty"`
 		DeploymentType attributeType `json:"deploymentType,omitempty"`
@@ -689,6 +693,11 @@ func getDeployment(displayName string, description string,
 	}
 
 	d := deployment{}
+
+	if deploymentName != "" {
+		d.Name = deploymentName
+	}
+
 	if displayName != "" {
 		d.DisplayName = displayName
 	}
