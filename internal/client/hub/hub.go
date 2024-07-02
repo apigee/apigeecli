@@ -352,7 +352,7 @@ func UpdateApiVersion(versionID string, apiID string, contents []byte) (respBody
 		DisplayName   *string                 `json:"displayName,omitempty"`
 		Description   *string                 `json:"description,omitempty"`
 		Documentation *map[string]interface{} `json:"documentation,omitempty"`
-		Deployments   *map[string]interface{} `json:"deployments,omitempty"`
+		Deployments   *[]string               `json:"deployments,omitempty"`
 		Lifecycle     *map[string]interface{} `json:"lifecycle,omitempty"`
 		Compliance    *map[string]interface{} `json:"compliance,omitempty"`
 		Accreditation *map[string]interface{} `json:"acreditation,omitempty"`
