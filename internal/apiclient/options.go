@@ -32,6 +32,9 @@ const (
 // registryBaseURL is the Apigee API Hub control plane endpoint
 const registryBaseURL = "https://apihub.googleapis.com/v1/projects/%s/locations/%s"
 
+// API Observability control plane endpoint
+const apiObserveBaseURL = "https://apim.googleapis.com/v1alpha/projects/%s/locations/%s"
+
 // baseDRZURL is the Apigee control plane endpoint
 const baseDRZURL = "https://%s-apigee.googleapis.com/v1/organizations/"
 
@@ -335,6 +338,14 @@ func GetApigeeRegistryURL() (registryURL string) {
 		options.ProjectID = options.Org
 	}
 	return fmt.Sprintf(registryBaseURL, options.ProjectID, options.Region)
+}
+
+// GetAPIObserveURL
+func GetAPIObserveURL() (apiObserveURL string) {
+	if options.ProjectID == "" {
+		options.ProjectID = options.Org
+	}
+	return fmt.Sprintf(apiObserveBaseURL, options.ProjectID, options.Region)
 }
 
 // GetApigeeBaseURL
