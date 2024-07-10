@@ -454,6 +454,9 @@ func LintApiVersionSpec(apiID string, versionID string, specID string) (respBody
 func UpdateApiVersionSpec(apiID string, versionID string, specID string, displayName string,
 	contents []byte, mimeType string, sourceURI string, documentation string,
 ) (respBody []byte, err error) {
+	if contents != nil && sourceURI != "" {
+		return nil, fmt.Errorf("contents and sourceURI cannot be set together")
+	}
 	return createOrUpdateApiVersionSpec(apiID, versionID, specID, displayName, contents, mimeType, sourceURI, documentation, UPDATE)
 }
 
@@ -507,33 +510,44 @@ func createOrUpdateApiVersionSpec(apiID string, versionID string, specID string,
 	contents []byte, mimeType string, sourceURI string, documentation string, action Action,
 ) (respBody []byte, err error) {
 	s := spec{}
-	s.DisplayName = displayName
+	updateMask := []string{}
+
+	if displayName != "" {
+		s.DisplayName = displayName
+		updateMask = append(updateMask, "display_name")
+	}
+	if sourceURI != "" {
+		s.SourceURI = sourceURI
+		updateMask = append(updateMask, "source_uri")
+	}
+
 	if documentation != "" {
 		s.Documentation.ExternalUri = documentation
 	}
 
 	if contents != nil {
 		s.Contents.Contents = base64.StdEncoding.EncodeToString(contents)
+		updateMask = append(updateMask, "contents")
 	}
 
 	if strings.Contains(mimeType, "yaml") || strings.Contains(mimeType, "yml") {
 		s.Contents.MimeType = "application/yaml"
 		s.SpecType = getSpecType("openapi")
+		updateMask = append(updateMask, "specType")
 	} else if strings.Contains(mimeType, "json") {
 		s.Contents.MimeType = "application/json"
 		s.SpecType = getSpecType("openapi")
+		updateMask = append(updateMask, "specType")
 	} else if strings.Contains(mimeType, "wsdl") {
 		s.Contents.MimeType = "application/wsdl"
 		s.SpecType = getSpecType("wsdl")
+		updateMask = append(updateMask, "specType")
 	} else if strings.Contains(mimeType, "proto") {
 		s.Contents.MimeType = "application/text"
 		s.SpecType = getSpecType("proto")
+		updateMask = append(updateMask, "specType")
 	} else {
 		s.Contents.MimeType = "application/text"
-	}
-
-	if sourceURI != "" {
-		s.SourceURI = sourceURI
 	}
 
 	payload, err := json.Marshal(s)
@@ -552,7 +566,7 @@ func createOrUpdateApiVersionSpec(apiID string, versionID string, specID string,
 	} else {
 		u.Path = path.Join(u.Path, "apis", apiID, "versions", versionID, "specs", specID)
 		q := u.Query()
-		q.Set("updateMask", "display_name,source_uri,documentation,contents,spec_type")
+		q.Set("updateMask", strings.Join(updateMask, ","))
 		u.RawQuery = q.Encode()
 		respBody, err = apiclient.HttpClient(u.String(), string(payload), "PATCH")
 	}
