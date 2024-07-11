@@ -37,9 +37,12 @@ var UpdateCmd = &cobra.Command{
 		cmd.SilenceUsage = true
 		var contents []byte
 
-		if contents, err = utils.ReadFile(apiFilePath); err != nil {
-			return err
+		if apiFilePath != "" {
+			if contents, err = utils.ReadFile(apiFilePath); err != nil {
+				return err
+			}
 		}
+
 		_, err = hub.UpdateApiVersionSpec(apiID, versionID, specID, displayName,
 			contents, filepath.Ext(apiFilePath), sourceURI)
 		return
