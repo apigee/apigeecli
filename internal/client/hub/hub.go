@@ -452,9 +452,12 @@ func LintApiVersionSpec(apiID string, versionID string, specID string) (respBody
 }
 
 func UpdateApiVersionSpec(apiID string, versionID string, specID string, displayName string,
-	contents []byte, mimeType string, sourceURI string, documentation string,
+	contents []byte, mimeType string, sourceURI string,
 ) (respBody []byte, err error) {
-	return createOrUpdateApiVersionSpec(apiID, versionID, specID, displayName, contents, mimeType, sourceURI, documentation, UPDATE)
+	if contents != nil && sourceURI != "" {
+		return nil, fmt.Errorf("contents and sourceURI cannot be set together")
+	}
+	return createOrUpdateApiVersionSpec(apiID, versionID, specID, displayName, contents, mimeType, sourceURI, "", UPDATE)
 }
 
 func ExportApiVersionSpecs(apiID string, versionID string, folder string) (err error) {
@@ -507,13 +510,24 @@ func createOrUpdateApiVersionSpec(apiID string, versionID string, specID string,
 	contents []byte, mimeType string, sourceURI string, documentation string, action Action,
 ) (respBody []byte, err error) {
 	s := spec{}
-	s.DisplayName = displayName
+	updateMask := []string{}
+
+	if displayName != "" {
+		s.DisplayName = displayName
+		updateMask = append(updateMask, "display_name")
+	}
+	if sourceURI != "" {
+		s.SourceURI = sourceURI
+		updateMask = append(updateMask, "source_uri")
+	}
+
 	if documentation != "" {
 		s.Documentation.ExternalUri = documentation
 	}
 
 	if contents != nil {
 		s.Contents.Contents = base64.StdEncoding.EncodeToString(contents)
+		updateMask = append(updateMask, "contents")
 	}
 
 	if strings.Contains(mimeType, "yaml") || strings.Contains(mimeType, "yml") {
@@ -532,10 +546,6 @@ func createOrUpdateApiVersionSpec(apiID string, versionID string, specID string,
 		s.Contents.MimeType = "application/text"
 	}
 
-	if sourceURI != "" {
-		s.SourceURI = sourceURI
-	}
-
 	payload, err := json.Marshal(s)
 	if err != nil {
 		return nil, err
@@ -552,7 +562,7 @@ func createOrUpdateApiVersionSpec(apiID string, versionID string, specID string,
 	} else {
 		u.Path = path.Join(u.Path, "apis", apiID, "versions", versionID, "specs", specID)
 		q := u.Query()
-		q.Set("updateMask", "display_name,source_uri,documentation,contents,spec_type")
+		q.Set("updateMask", strings.Join(updateMask, ","))
 		u.RawQuery = q.Encode()
 		respBody, err = apiclient.HttpClient(u.String(), string(payload), "PATCH")
 	}
