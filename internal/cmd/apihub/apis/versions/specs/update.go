@@ -66,5 +66,4 @@ func init() {
 	_ = UpdateCmd.MarkFlagRequired("api-id")
 	_ = UpdateCmd.MarkFlagRequired("version")
 	_ = UpdateCmd.MarkFlagRequired("display-name")
-	_ = UpdateCmd.MarkFlagRequired("file")
 }
