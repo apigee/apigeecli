@@ -41,7 +41,7 @@ var UpdateCmd = &cobra.Command{
 			return err
 		}
 		_, err = hub.UpdateApiVersionSpec(apiID, versionID, specID, displayName,
-			contents, filepath.Ext(apiFilePath), sourceURI, documentation)
+			contents, filepath.Ext(apiFilePath), sourceURI)
 		return
 	},
 }
@@ -59,8 +59,6 @@ func init() {
 		nil, "API Spec attributes")
 	UpdateCmd.Flags().StringVarP(&sourceURI, "source-uri", "s",
 		"", "API Spec attributes")
-	UpdateCmd.Flags().StringVarP(&documentation, "documentation", "",
-		"", "API Spec external documentation")
 	UpdateCmd.Flags().StringVarP(&apiFilePath, "file", "f",
 		"", "Path to a file containing the API spec")
 

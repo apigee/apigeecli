@@ -452,12 +452,12 @@ func LintApiVersionSpec(apiID string, versionID string, specID string) (respBody
 }
 
 func UpdateApiVersionSpec(apiID string, versionID string, specID string, displayName string,
-	contents []byte, mimeType string, sourceURI string, documentation string,
+	contents []byte, mimeType string, sourceURI string,
 ) (respBody []byte, err error) {
 	if contents != nil && sourceURI != "" {
 		return nil, fmt.Errorf("contents and sourceURI cannot be set together")
 	}
-	return createOrUpdateApiVersionSpec(apiID, versionID, specID, displayName, contents, mimeType, sourceURI, documentation, UPDATE)
+	return createOrUpdateApiVersionSpec(apiID, versionID, specID, displayName, contents, mimeType, sourceURI, "", UPDATE)
 }
 
 func ExportApiVersionSpecs(apiID string, versionID string, folder string) (err error) {
@@ -533,19 +533,15 @@ func createOrUpdateApiVersionSpec(apiID string, versionID string, specID string,
 	if strings.Contains(mimeType, "yaml") || strings.Contains(mimeType, "yml") {
 		s.Contents.MimeType = "application/yaml"
 		s.SpecType = getSpecType("openapi")
-		updateMask = append(updateMask, "specType")
 	} else if strings.Contains(mimeType, "json") {
 		s.Contents.MimeType = "application/json"
 		s.SpecType = getSpecType("openapi")
-		updateMask = append(updateMask, "specType")
 	} else if strings.Contains(mimeType, "wsdl") {
 		s.Contents.MimeType = "application/wsdl"
 		s.SpecType = getSpecType("wsdl")
-		updateMask = append(updateMask, "specType")
 	} else if strings.Contains(mimeType, "proto") {
 		s.Contents.MimeType = "application/text"
 		s.SpecType = getSpecType("proto")
-		updateMask = append(updateMask, "specType")
 	} else {
 		s.Contents.MimeType = "application/text"
 	}
