@@ -59,6 +59,7 @@ import (
 	"internal/cmd/sync"
 	targetservers "internal/cmd/targetservers"
 	"internal/cmd/token"
+	"internal/cmd/tree"
 
 	"github.com/spf13/cobra"
 )
@@ -69,6 +70,7 @@ var RootCmd = &cobra.Command{
 	Short: "Utility to work with Apigee APIs.",
 	Long:  "This command lets you interact with Apigee APIs.",
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+
 		if metadataToken && defaultToken {
 			return fmt.Errorf("metadata-token and default-token cannot be used together")
 		}
@@ -194,6 +196,7 @@ func init() {
 	RootCmd.AddCommand(securityprofiles.Cmd)
 	RootCmd.AddCommand(sites.Cmd)
 	RootCmd.AddCommand(apihub.Cmd)
+	RootCmd.AddCommand(tree.Cmd)
 }
 
 func initConfig() {
