@@ -40,6 +40,7 @@ var CreateEntryCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
+		value = getKVMString(value)
 		_, err = kvm.CreateEntry(proxyName, mapName, keyName, []byte(value))
 		return
 	},

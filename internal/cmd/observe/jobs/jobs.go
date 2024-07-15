@@ -22,3 +22,19 @@ var ObservationJobCmd = &cobra.Command{
 	Short: "Manage Observation jobs for Shadow API Discovery",
 	Long:  "Manage Observation jobs for Shadow API Discovery",
 }
+
+var org, region string
+
+func init() {
+	ObservationJobCmd.PersistentFlags().StringVarP(&org, "org", "o",
+		"", "Apigee organization name")
+	ObservationJobCmd.PersistentFlags().StringVarP(&region, "region", "r",
+		"", "API Observation region name")
+
+	ObservationJobCmd.AddCommand(CrtCmd)
+	ObservationJobCmd.AddCommand(GetCmd)
+	ObservationJobCmd.AddCommand(DeleteCmd)
+	ObservationJobCmd.AddCommand(ListCmd)
+	ObservationJobCmd.AddCommand(EnableCmd)
+	ObservationJobCmd.AddCommand(DisableCmd)
+}

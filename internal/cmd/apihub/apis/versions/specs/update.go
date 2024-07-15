@@ -37,11 +37,14 @@ var UpdateCmd = &cobra.Command{
 		cmd.SilenceUsage = true
 		var contents []byte
 
-		if contents, err = utils.ReadFile(apiFilePath); err != nil {
-			return err
+		if apiFilePath != "" {
+			if contents, err = utils.ReadFile(apiFilePath); err != nil {
+				return err
+			}
 		}
+
 		_, err = hub.UpdateApiVersionSpec(apiID, versionID, specID, displayName,
-			contents, filepath.Ext(apiFilePath), sourceURI, documentation)
+			contents, filepath.Ext(apiFilePath), sourceURI)
 		return
 	},
 }
@@ -59,8 +62,6 @@ func init() {
 		nil, "API Spec attributes")
 	UpdateCmd.Flags().StringVarP(&sourceURI, "source-uri", "s",
 		"", "API Spec attributes")
-	UpdateCmd.Flags().StringVarP(&documentation, "documentation", "",
-		"", "API Spec external documentation")
 	UpdateCmd.Flags().StringVarP(&apiFilePath, "file", "f",
 		"", "Path to a file containing the API spec")
 
@@ -68,5 +69,4 @@ func init() {
 	_ = UpdateCmd.MarkFlagRequired("api-id")
 	_ = UpdateCmd.MarkFlagRequired("version")
 	_ = UpdateCmd.MarkFlagRequired("display-name")
-	_ = UpdateCmd.MarkFlagRequired("file")
 }

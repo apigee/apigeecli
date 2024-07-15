@@ -41,7 +41,7 @@ func CreateObservationJob(observationJobId string, sources []string) (respBody [
 	u.RawQuery = q.Encode()
 
 	if len(sources) != 0 {
-		payload = "{ \"sourees\":[" + strings.Join(sources, ", ") + "]}"
+		payload = "{ \"sources\":[" + strings.Join(sources, ", ") + "]}"
 	}
 	respBody, err = apiclient.HttpClient(u.String(), payload, "POST")
 	return respBody, err
@@ -106,7 +106,7 @@ func ListApiObservations(observationJob string, pageSize int, pageToken string) 
 	return respBody, err
 }
 
-func CreateObservationSources(observationSourceId string, pscNetworkConfigs map[string]string) (respBody []byte, err error) {
+func CreateObservationSource(observationSourceId string, pscNetworkConfigs map[string]string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.GetAPIObserveURL())
 	u.Path = path.Join(u.Path, "observationSources")
 	networkConfig, err := json.Marshal(pscNetworkConfigs)
@@ -132,9 +132,9 @@ func DeleteObservationSource(observationSourceId string) (respBody []byte, err e
 	return respBody, err
 }
 
-func ListObservationSources(observationSourceId string, pageSize int, pageToken string) (respBody []byte, err error) {
+func ListObservationSources(pageSize int, pageToken string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.GetAPIObserveURL())
-	u.Path = path.Join(u.Path, "observationSources", observationSourceId)
+	u.Path = path.Join(u.Path, "observationSources")
 	q := u.Query()
 	if pageSize != -1 {
 		q.Set("pageSize", strconv.Itoa(pageSize))

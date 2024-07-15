@@ -44,7 +44,7 @@ var name string
 
 func init() {
 	DelCmd.Flags().StringVarP(&name, "name", "n",
-		"", "API proxy name")
+		"", "Cache resource name")
 
 	_ = DelCmd.MarkFlagRequired("name")
 }
