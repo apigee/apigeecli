@@ -15,6 +15,7 @@
 package observe
 
 import (
+	"encoding/json"
 	"net/url"
 	"path"
 	"strconv"
@@ -60,6 +61,29 @@ func DeleteObservationJob(observationJobId string) (respBody []byte, err error) 
 	return respBody, err
 }
 
+func ListObservationJobs(pageSize int, pageToken string) (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.GetAPIObserveURL())
+	u.Path = path.Join(u.Path, "observationJobs")
+	q := u.Query()
+	if pageSize != -1 {
+		q.Set("pageSize", strconv.Itoa(pageSize))
+	}
+	if pageToken != "" {
+		q.Set("pageToken", pageToken)
+	}
+	u.RawQuery = q.Encode()
+	respBody, err = apiclient.HttpClient(u.String())
+	return respBody, err
+}
+
+func EnableObservationJob(observationJob string) (respBody []byte, err error) {
+	return controlObservation(observationJob, ENABLE)
+}
+
+func DisableObservationJob(observationJob string) (respBody []byte, err error) {
+	return controlObservation(observationJob, DISABLE)
+}
+
 func GetApiObservation(name string, observationJob string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.GetAPIObserveURL())
 	u.Path = path.Join(u.Path, "observationJobs", observationJob, "apiObservations", name)
@@ -79,5 +103,57 @@ func ListApiObservations(observationJob string, pageSize int, pageToken string) 
 	}
 	u.RawQuery = q.Encode()
 	respBody, err = apiclient.HttpClient(u.String())
+	return respBody, err
+}
+
+func CreateObservationSources(observationSourceId string, pscNetworkConfigs map[string]string) (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.GetAPIObserveURL())
+	u.Path = path.Join(u.Path, "observationSources")
+	networkConfig, err := json.Marshal(pscNetworkConfigs)
+	if err != nil {
+		return nil, err
+	}
+	payload := "{ \"gclbObservationSource\":{\"pscNetworkConfigs\":" + string(networkConfig) + "}}"
+	respBody, err = apiclient.HttpClient(u.String(), payload, "POST")
+	return respBody, err
+}
+
+func GetObservationSource(observationSourceId string) (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.GetAPIObserveURL())
+	u.Path = path.Join(u.Path, "observationSources", observationSourceId)
+	respBody, err = apiclient.HttpClient(u.String())
+	return respBody, err
+}
+
+func DeleteObservationSource(observationSourceId string) (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.GetAPIObserveURL())
+	u.Path = path.Join(u.Path, "observationSources", observationSourceId)
+	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
+	return respBody, err
+}
+
+func ListObservationSources(observationSourceId string, pageSize int, pageToken string) (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.GetAPIObserveURL())
+	u.Path = path.Join(u.Path, "observationSources", observationSourceId)
+	q := u.Query()
+	if pageSize != -1 {
+		q.Set("pageSize", strconv.Itoa(pageSize))
+	}
+	if pageToken != "" {
+		q.Set("pageToken", pageToken)
+	}
+	u.RawQuery = q.Encode()
+	respBody, err = apiclient.HttpClient(u.String())
+	return respBody, err
+}
+
+func controlObservation(observationJob string, action Action) (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.GetAPIObserveURL())
+	if action == ENABLE {
+		u.Path = path.Join(u.Path, "observationJobs", observationJob+":enable")
+	} else {
+		u.Path = path.Join(u.Path, "observationJobs", observationJob+":disable")
+	}
+	respBody, err = apiclient.HttpClient(u.String(), "", "POST")
 	return respBody, err
 }
