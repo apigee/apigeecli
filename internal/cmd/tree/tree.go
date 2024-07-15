@@ -20,11 +20,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to manage token to interact with apigee.googleapis.com
+// Cmd to to print all the commands in apigeecli
 var Cmd = &cobra.Command{
 	Use:   "tree",
-	Short: "Print Tree",
-	Long:  "Print Tree",
+	Short: "Prints apigeecli command Tree",
+	Long:  "Prints apigeecli command Tree",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
 		printCommand(cmd.Parent().Root(), 0, true)
