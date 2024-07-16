@@ -188,11 +188,13 @@ var ExportCmd = &cobra.Command{
 		}
 
 		clilog.Info.Println("Exporting API Portal apidocs Configuration...")
+		apiclient.DisableCmdPrintHttpResponse()
 		if err = apidocs.Export(portalsFolderName); proceedOnError(err) != nil {
 			return err
 		}
 
 		clilog.Info.Println("Exporting API Portal apicategories Configuration...")
+		apiclient.DisableCmdPrintHttpResponse()
 		if err = apicategories.Export(portalsFolderName); proceedOnError(err) != nil {
 			return err
 		}
@@ -211,7 +213,7 @@ var ExportCmd = &cobra.Command{
 
 		var _, envDetailsRespBody []byte
 		clilog.Info.Println("Exporting list of environments...")
-
+		apiclient.DisableCmdPrintHttpResponse()
 		if envDetailsRespBody, err = env.Export(); proceedOnError(err) != nil {
 			return err
 		}
@@ -273,7 +275,7 @@ var ExportCmd = &cobra.Command{
 			}
 
 			if environment.Type != "BASE" {
-				clilog.Info.Printf("\tExporting KV Map names for environment %s...\n", environment)
+				clilog.Info.Printf("\tExporting KV Map names for environment...\n")
 				if listKVMBytes, err = kvm.List(""); proceedOnError(err) != nil {
 					return err
 				}
