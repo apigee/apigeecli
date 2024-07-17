@@ -194,6 +194,10 @@ func SearchApp(name string) (respBody []byte, err error) {
 	if err != nil {
 		return outBytes, err
 	}
+	// unfortunately jsonq returns null as a string instead of a nil byte array
+	if string(outBytes) == "null" {
+		return nil, fmt.Errorf("Application with name %s was not found", name)
+	}
 	return outBytes, nil
 }
 
