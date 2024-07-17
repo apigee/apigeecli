@@ -190,13 +190,12 @@ func SearchApp(name string) (respBody []byte, err error) {
 	}
 	jq := gojsonq.New().JSONString(string(respBody)).From("app").Where("name", "eq", name)
 	out := jq.Get()
+	if apiclient.IsNil(out) {
+		return nil, fmt.Errorf("unable to find developer app with name %s", name)
+	}
 	outBytes, err := json.Marshal(out)
 	if err != nil {
 		return outBytes, err
-	}
-	// unfortunately jsonq returns null as a string instead of a nil byte array
-	if string(outBytes) == "null" {
-		return nil, fmt.Errorf("Application with name %s was not found", name)
 	}
 	return outBytes, nil
 }
