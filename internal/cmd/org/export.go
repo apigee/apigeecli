@@ -291,7 +291,8 @@ var ExportCmd = &cobra.Command{
 						return err
 					}
 				}
-
+			}
+			if environment.Type == "COMPREHENSIVE" {
 				clilog.Info.Println("\tExporting debugmask configuration...")
 				if respBody, err = env.GetDebug(); proceedOnError(err) != nil {
 					return err
