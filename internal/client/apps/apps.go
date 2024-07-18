@@ -190,6 +190,10 @@ func SearchApp(name string) (respBody []byte, err error) {
 	}
 	jq := gojsonq.New().JSONString(string(respBody)).From("app").Where("name", "eq", name)
 	out := jq.Get()
+	if apiclient.IsNil(out) {
+		clilog.Warning.Printf("unable to find developer app with name %s\n", name)
+		return respBody, nil
+	}
 	outBytes, err := json.Marshal(out)
 	if err != nil {
 		return outBytes, err

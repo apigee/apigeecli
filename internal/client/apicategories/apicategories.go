@@ -22,7 +22,6 @@ import (
 	"net/url"
 	"os"
 	"path"
-	"reflect"
 	"strings"
 
 	"internal/apiclient"
@@ -124,7 +123,7 @@ func getByName(siteid string, name string) (respBytes []byte, err error) {
 		return nil, fmt.Errorf("failed to fetch apidocs: %w", err)
 	}
 	out := gojsonq.New().JSONString(string(listRespBytes)).From("data").Where("name", "eq", name).First()
-	if isNil(out) {
+	if apiclient.IsNil(out) {
 		return nil, fmt.Errorf("unable to find category with name %s", name)
 	}
 	outBytes, err := json.Marshal(out)
@@ -132,18 +131,6 @@ func getByName(siteid string, name string) (respBytes []byte, err error) {
 		return outBytes, err
 	}
 	return outBytes, nil
-}
-
-// from: https://mangatmodi.medium.com/go-check-nil-interface-the-right-way-d142776edef1
-func isNil(i interface{}) bool {
-	if i == nil {
-		return true
-	}
-	switch reflect.TypeOf(i).Kind() {
-	case reflect.Ptr, reflect.Map, reflect.Array, reflect.Chan, reflect.Slice:
-		return reflect.ValueOf(i).IsNil()
-	}
-	return false
 }
 
 // Export
