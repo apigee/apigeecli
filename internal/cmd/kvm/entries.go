@@ -15,9 +15,6 @@
 package kvm
 
 import (
-	"fmt"
-	"strconv"
-
 	"github.com/spf13/cobra"
 )
 
@@ -38,17 +35,4 @@ func init() {
 	EntryCmd.AddCommand(ExpEntryCmd)
 	EntryCmd.AddCommand(ImpEntryCmd)
 	EntryCmd.AddCommand(UpdateEntryCmd)
-}
-
-func getKVMString(value string) string {
-	var err error
-	// convert any boolean, float or integer to string
-	if _, err = strconv.ParseBool(value); err == nil {
-		value = fmt.Sprintf("\"%s\"", value)
-	} else if _, err = strconv.ParseInt(value, 10, 0); err == nil {
-		value = fmt.Sprintf("\"%s\"", value)
-	} else if _, err = strconv.ParseFloat(value, 0); err == nil {
-		value = fmt.Sprintf("\"%s\"", value)
-	}
-	return value
 }

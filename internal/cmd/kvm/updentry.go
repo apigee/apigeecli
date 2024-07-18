@@ -40,8 +40,7 @@ var UpdateEntryCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
-		value = getKVMString(value)
-		_, err = kvm.UpdateEntry(proxyName, mapName, keyName, []byte(value))
+		_, err = kvm.UpdateEntry(proxyName, mapName, keyName, value, false)
 		return
 	},
 }
