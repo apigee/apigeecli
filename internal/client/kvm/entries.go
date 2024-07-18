@@ -17,6 +17,7 @@ package kvm
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"net/url"
 	"os"
@@ -37,18 +38,13 @@ type keyvalueentry struct {
 	Value json.RawMessage `json:"value,omitempty"`
 }
 
-type kventry struct {
-	Name  string `json:"name,omitempty"`
-	Value string `json:"value,omitempty"`
-}
-
 type keyvalueentries struct {
 	KeyValueEntries []keyvalueentry `json:"keyValueEntries,omitempty"`
 	NextPageToken   string          `json:"nextPageToken,omitempty"`
 }
 
 // CreateEntry
-func CreateEntry(proxyName string, mapName string, keyName string, value []byte) (respBody []byte, err error) {
+func CreateEntry(proxyName string, mapName string, keyName string, value string, stringyfied bool) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	if apiclient.GetApigeeEnv() != "" {
 		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "keyvaluemaps", mapName, "entries")
@@ -57,7 +53,7 @@ func CreateEntry(proxyName string, mapName string, keyName string, value []byte)
 	} else {
 		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "keyvaluemaps", mapName, "entries")
 	}
-	payload, err := getKVPayload(keyName, value)
+	payload, err := getKVPayload(keyName, value, stringyfied)
 	if err != nil {
 		return nil, err
 	}
@@ -94,7 +90,7 @@ func GetEntry(proxyName string, mapName string, keyName string) (respBody []byte
 }
 
 // UpdateEntry
-func UpdateEntry(proxyName string, mapName string, keyName string, value []byte) (respBody []byte, err error) {
+func UpdateEntry(proxyName string, mapName string, keyName string, value string, stringyfied bool) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	if apiclient.GetApigeeEnv() != "" {
 		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "keyvaluemaps", mapName, "entries", keyName)
@@ -103,32 +99,22 @@ func UpdateEntry(proxyName string, mapName string, keyName string, value []byte)
 	} else {
 		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "keyvaluemaps", mapName, "entries", keyName)
 	}
-	payload, err := getKVPayload(keyName, value)
+	payload, err := getKVPayload(keyName, value, stringyfied)
 	if err != nil {
 		return nil, err
 	}
-	respBody, err = apiclient.HttpClient(u.String(), string(payload), "PUT")
+	respBody, err = apiclient.HttpClient(u.String(), payload, "PUT")
 	return respBody, err
 }
 
-func getKVPayload(keyName string, value []byte) (payload string, err error) {
-
-	var p []byte
-
-	// attempt as json
-	k1 := keyvalueentry{Name: keyName, Value: value}
-	p, err = json.Marshal(k1)
-	if err != nil {
-		k2 := kventry{Name: keyName, Value: string(value)}
-		p, err = json.Marshal(k2)
-		if err != nil {
-			return "", err
-		}
+func getKVPayload(keyName string, value string, stringyfied bool) (payload string, err error) {
+	if stringyfied {
+		return fmt.Sprintf("{\"name\":\"%s\",\"value\":%s}", keyName, value), nil
 	}
-	return string(p), nil
+	return fmt.Sprintf("{\"name\":\"%s\",\"value\":\"%s\"}", keyName, value), nil
 }
 
-func upsertEntry(proxyName string, mapName string, keyName string, value []byte) (respBody []byte, err error) {
+func upsertEntry(proxyName string, mapName string, keyName string, value string, stringyfied bool) (respBody []byte, err error) {
 	update := false
 	apiclient.ClientPrintHttpResponse.Set(false)
 	_, err = GetEntry(proxyName, mapName, keyName)
@@ -138,10 +124,10 @@ func upsertEntry(proxyName string, mapName string, keyName string, value []byte)
 	apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
 	if update {
 		clilog.Info.Printf("Updating entry in map [%s] with key [%s]\n", mapName, keyName)
-		return UpdateEntry(proxyName, mapName, keyName, value)
+		return UpdateEntry(proxyName, mapName, keyName, value, stringyfied)
 	}
 	clilog.Info.Printf("Creating a new entry in map [%s] with key [%s]\n", mapName, keyName)
-	return CreateEntry(proxyName, mapName, keyName, value)
+	return CreateEntry(proxyName, mapName, keyName, value, stringyfied)
 }
 
 // ListEntries
@@ -326,7 +312,7 @@ func batchImport(wg *sync.WaitGroup, proxyName string, mapName string, jobs <-ch
 			return
 		}
 
-		_, err = upsertEntry(proxyName, mapName, job.Name, job.Value)
+		_, err = upsertEntry(proxyName, mapName, job.Name, string(job.Value), true)
 
 		if err != nil {
 			errs <- err
