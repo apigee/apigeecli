@@ -365,7 +365,7 @@ func exportKVMEntries(scope string, env string, listKVMBytes []byte) (err error)
 
 	for _, mapName := range listKVM {
 
-		clilog.Info.Printf("\tExporting KVM entries for %s in org %s\n", org, mapName)
+		clilog.Info.Printf("\tExporting KVM entries for map %s with scope %s\n", mapName, scope)
 		if kvmEntries, err = kvm.ExportEntries("", mapName); err != nil {
 			return err
 		}
