@@ -55,7 +55,7 @@ func init() {
 	UndepCmd.Flags().IntVarP(&revision, "rev", "v",
 		-1, "API Proxy revision. If not set, the highest revision is used")
 	UndepCmd.Flags().BoolVarP(&safeUndeploy, "safeundeploy", "",
-		true, deploymentMsg)
+		false, deploymentMsg)
 
 	_ = UndepCmd.MarkFlagRequired("env")
 	_ = UndepCmd.MarkFlagRequired("name")
