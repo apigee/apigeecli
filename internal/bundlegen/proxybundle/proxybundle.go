@@ -640,6 +640,9 @@ func archiveBundle(pathToZip, destinationPath string, sharedflow bool) (err erro
 
 	myZip := zip.NewWriter(destinationFile)
 	err = filepath.Walk(pathToZip, func(filePath string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
 		if info.IsDir() {
 			// for the first time, add the rootDir as the zipEntry
 			if parentFolder {
