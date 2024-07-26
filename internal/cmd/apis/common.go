@@ -21,7 +21,7 @@ import (
 )
 
 const deploymentMsg = "When set to true, generateDeployChangeReport will be executed and " +
-	"deployment will proceed if there are no conflicts; default is false"
+	"deployment will proceed if there are no conflicts"
 
 func GetRevision(respBody []byte) (revision int, err error) {
 	var apiProxyRevResp map[string]interface{}
