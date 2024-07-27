@@ -16,6 +16,7 @@ package products
 
 import (
 	"internal/apiclient"
+	"strings"
 
 	"internal/client/products"
 
@@ -35,6 +36,11 @@ var CreateCmd = &cobra.Command{
 		cmd.SilenceUsage = true
 
 		p := products.APIProduct{}
+
+		// if the user provides scope as comma separated values then handle it
+		if len(scopes) != 0 && strings.Contains(scopes[0], ",") {
+			scopes = append(scopes[1:], strings.Split(scopes[0], ",")...)
+		}
 
 		p.Name = name
 		p.DisplayName = displayName
