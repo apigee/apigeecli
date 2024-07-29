@@ -207,7 +207,7 @@ func init() {
 	OasCreatev2Cmd.Flags().BoolVarP(&sequencedRollout, "sequencedrollout", "",
 		false, "If set to true, the routing rules will be rolled out in a safe order; default is false")
 	OasCreatev2Cmd.Flags().BoolVarP(&safeDeploy, "safedeploy", "",
-		true, deploymentMsg)
+		false, deploymentMsg)
 	OasCreatev2Cmd.Flags().StringVarP(&serviceAccountName, "sa", "s",
 		"", "The format must be {ACCOUNT_ID}@{PROJECT}.iam.gserviceaccount.com.")
 	OasCreatev2Cmd.Flags().StringVarP(&desc, "desc", "d",
