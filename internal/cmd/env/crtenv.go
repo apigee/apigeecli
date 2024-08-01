@@ -43,6 +43,9 @@ var CreateCmd = &cobra.Command{
 		cmd.SilenceUsage = true
 
 		_, err = env.Create(envType, deploymentType, fwdProxyURI)
+		if wait {
+			err = env.Wait()
+		}
 		return
 	},
 }
@@ -58,6 +61,7 @@ func init() {
 		"", "Deployment type - must be PROXY or ARCHIVE")
 	CreateCmd.Flags().StringVarP(&fwdProxyURI, "fwdproxyuri", "f",
 		"", "URL of the forward proxy to be applied to the runtime instances in this env")
-
+	CreateCmd.Flags().BoolVarP(&wait, "wait", "",
+		false, "Waits for the create to finish, with success or error")
 	_ = CreateCmd.MarkFlagRequired("env")
 }

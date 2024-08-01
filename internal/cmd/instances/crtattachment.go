@@ -36,15 +36,22 @@ var CreateAttachCmd = &cobra.Command{
 		cmd.SilenceUsage = true
 
 		_, err = instances.Attach(name, environment)
+		if wait {
+			err = instances.Wait(name)
+		}
 		return
 	},
 }
+
+var wait bool
 
 func init() {
 	CreateAttachCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of the Instance")
 	CreateAttachCmd.Flags().StringVarP(&environment, "env", "e",
 		"", "Apigee environment name")
+	CreateAttachCmd.Flags().BoolVarP(&wait, "wait", "",
+		false, "Waits for the attachment to finish, with success or error")
 
 	_ = CreateAttachCmd.MarkFlagRequired("name")
 	_ = CreateAttachCmd.MarkFlagRequired("env")

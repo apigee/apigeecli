@@ -35,6 +35,7 @@ var AttachCmd = &cobra.Command{
 		cmd.SilenceUsage = true
 
 		_, err = envgroups.Attach(name, environment)
+
 		return
 	},
 }
@@ -42,12 +43,12 @@ var AttachCmd = &cobra.Command{
 func init() {
 	AttachCmd.Flags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
-
 	AttachCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of the environment group")
-
 	AttachCmd.Flags().StringVarP(&environment, "env", "e",
 		"", "Name of the environment")
+	AttachCmd.Flags().BoolVarP(&wait, "wait", "",
+		false, "Waits for the attachment to finish, with success or error")
 
 	_ = AttachCmd.MarkFlagRequired("name")
 	_ = AttachCmd.MarkFlagRequired("env")

@@ -35,15 +35,22 @@ var CreateCmd = &cobra.Command{
 		cmd.SilenceUsage = true
 
 		_, err = envgroups.Create(name, hostnames)
+		if wait {
+			err = envgroups.Wait(name)
+		}
 		return
 	},
 }
+
+var wait bool
 
 func init() {
 	CreateCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of the Environment Group")
 	CreateCmd.Flags().StringArrayVarP(&hostnames, "hosts", "d",
 		[]string{}, "A list of hostnames")
+	CreateCmd.Flags().BoolVarP(&wait, "wait", "",
+		false, "Waits for the create to finish, with success or error")
 
 	_ = CreateCmd.MarkFlagRequired("name")
 	_ = CreateCmd.MarkFlagRequired("hosts")

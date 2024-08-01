@@ -20,9 +20,13 @@ import (
 	"net/url"
 	"path"
 	"strings"
+	"time"
 
 	"internal/apiclient"
+	"internal/clilog"
 )
+
+const interval = 10
 
 // Attach
 func Attach(name string, environment string) (respBody []byte, err error) {
@@ -133,4 +137,42 @@ func getAttachmentName(instance string) (attachmentName string, err error) {
 		}
 	}
 	return attachmentName, nil
+}
+
+// Wait
+func Wait(name string) error {
+	var err error
+
+	clilog.Info.Printf("Checking creation status in %d seconds\n", interval)
+
+	apiclient.DisableCmdPrintHttpResponse()
+
+	stop := apiclient.Every(interval*time.Second, func(time.Time) bool {
+		var respBody []byte
+		respMap := make(map[string]interface{})
+		if respBody, err = Get(name); err != nil {
+			clilog.Error.Printf("Error fetching env status: %v", err)
+			return false
+		}
+
+		if err = json.Unmarshal(respBody, &respMap); err != nil {
+			return true
+		}
+
+		switch respMap["state"] {
+		case "PROGRESSING":
+			clilog.Info.Printf("Instance attachment status is: %s. Waiting %d seconds.\n", respMap["state"], interval)
+			return true
+		case "ACTIVE":
+			clilog.Info.Println("Instance attachment completed with status: ", respMap["state"])
+		default:
+			clilog.Info.Println("Instance attachment failed with status: ", respMap["state"])
+		}
+
+		return false
+	})
+
+	<-stop
+
+	return err
 }
