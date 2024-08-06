@@ -15,7 +15,9 @@
 package instances
 
 import (
+	"encoding/json"
 	"internal/apiclient"
+	"path/filepath"
 
 	"internal/client/instances"
 
@@ -35,9 +37,13 @@ var CreateAttachCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
 
-		_, err = instances.Attach(name, environment)
+		respBody, err := instances.Attach(name, environment)
 		if wait {
-			err = instances.Wait(name)
+			respMap := make(map[string]interface{})
+			if err = json.Unmarshal(respBody, &respMap); err != nil {
+				return err
+			}
+			err = instances.WaitAttach(filepath.Base(respMap["name"].(string)))
 		}
 		return
 	},

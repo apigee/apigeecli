@@ -23,6 +23,7 @@ import (
 	"time"
 
 	"internal/apiclient"
+	"internal/client/operations"
 	"internal/clilog"
 )
 
@@ -139,8 +140,8 @@ func getAttachmentName(instance string) (attachmentName string, err error) {
 	return attachmentName, nil
 }
 
-// Wait
-func Wait(name string) error {
+// WaitAttach
+func WaitAttach(name string) error {
 	var err error
 
 	clilog.Info.Printf("Checking creation status in %d seconds\n", interval)
@@ -150,7 +151,7 @@ func Wait(name string) error {
 	stop := apiclient.Every(interval*time.Second, func(time.Time) bool {
 		var respBody []byte
 		respMap := make(map[string]interface{})
-		if respBody, err = Get(name); err != nil {
+		if respBody, err = operations.Get(name); err != nil {
 			clilog.Error.Printf("Error fetching env status: %v", err)
 			return false
 		}
@@ -159,14 +160,14 @@ func Wait(name string) error {
 			return true
 		}
 
-		switch respMap["state"] {
-		case "PROGRESSING":
+		if respMap["done"] == true {
+			if respMap["error"] != nil {
+				clilog.Info.Println("Instance attachment failed with status: ", respMap["error"])
+			}
+			clilog.Info.Println("Instance attachment completed")
+		} else {
 			clilog.Info.Printf("Instance attachment status is: %s. Waiting %d seconds.\n", respMap["state"], interval)
 			return true
-		case "ACTIVE":
-			clilog.Info.Println("Instance attachment completed with status: ", respMap["state"])
-		default:
-			clilog.Info.Println("Instance attachment failed with status: ", respMap["state"])
 		}
 
 		return false

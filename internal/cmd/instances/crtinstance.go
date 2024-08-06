@@ -64,6 +64,10 @@ var CreateCmd = &cobra.Command{
 
 		_, err = instances.Create(name, location, diskEncryptionKeyName, ipRange, consumerAcceptList)
 
+		if wait {
+			err = instances.Wait(name)
+		}
+
 		return err
 	},
 }
@@ -85,6 +89,8 @@ func init() {
 	CreateCmd.Flags().StringArrayVarP(&consumerAcceptList, "consumer-accept-list", "c",
 		[]string{}, "Customer accept list represents the list of "+
 			"projects (id/number) that can connect to the service attachment")
+	CreateCmd.Flags().BoolVarP(&wait, "wait", "",
+		false, "Waits for the instance to finish, with success or error")
 
 	_ = CreateCmd.MarkFlagRequired("name")
 	_ = CreateCmd.MarkFlagRequired("location")
