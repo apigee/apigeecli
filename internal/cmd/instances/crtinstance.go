@@ -63,7 +63,9 @@ var CreateCmd = &cobra.Command{
 		}
 
 		_, err = instances.Create(name, location, diskEncryptionKeyName, ipRange, consumerAcceptList)
-
+		if err != nil {
+			return err
+		}
 		if wait {
 			err = instances.Wait(name)
 		}

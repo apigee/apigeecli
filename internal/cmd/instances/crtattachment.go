@@ -38,6 +38,9 @@ var CreateAttachCmd = &cobra.Command{
 		cmd.SilenceUsage = true
 
 		respBody, err := instances.Attach(name, environment)
+		if err != nil {
+			return
+		}
 		if wait {
 			respMap := make(map[string]interface{})
 			if err = json.Unmarshal(respBody, &respMap); err != nil {
