@@ -22,10 +22,8 @@ import (
 	"os"
 	"path"
 	"strings"
-	"time"
 
 	"internal/apiclient"
-	"internal/clilog"
 )
 
 type environmentgroups struct {
@@ -39,8 +37,6 @@ type environmentgroup struct {
 	LastModifiedAt string   `json:"lastModifiedAt,omitempty"`
 	State          string   `json:"state,omitempty"`
 }
-
-const interval = 10
 
 // Create
 func Create(name string, hostnames []string) (respBody []byte, err error) {
@@ -211,42 +207,4 @@ func readEnvGroupsFile(filePath string) (environmentgroups, error) {
 	}
 
 	return environmentGroups, nil
-}
-
-// Wait
-func Wait(name string) error {
-	var err error
-
-	clilog.Info.Printf("Checking creation status in %d seconds\n", interval)
-
-	apiclient.DisableCmdPrintHttpResponse()
-
-	stop := apiclient.Every(interval*time.Second, func(time.Time) bool {
-		var respBody []byte
-		respMap := make(map[string]interface{})
-		if respBody, err = Get(name); err != nil {
-			clilog.Error.Printf("Error fetching env status: %v", err)
-			return false
-		}
-
-		if err = json.Unmarshal(respBody, &respMap); err != nil {
-			return true
-		}
-
-		switch respMap["state"] {
-		case "PROGRESSING":
-			clilog.Info.Printf("Environment Group creation status is: %s. Waiting %d seconds.\n", respMap["state"], interval)
-			return true
-		case "ACTIVE":
-			clilog.Info.Println("Environment Group creation completed with status: ", respMap["state"])
-		default:
-			clilog.Info.Println("Environment Group creation failed with status: ", respMap["state"])
-		}
-
-		return false
-	})
-
-	<-stop
-
-	return err
 }

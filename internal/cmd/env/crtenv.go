@@ -15,12 +15,15 @@
 package env
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/url"
+	"path/filepath"
 
 	"internal/apiclient"
 
 	"internal/client/env"
+	"internal/client/operations"
 
 	"github.com/spf13/cobra"
 )
@@ -42,9 +45,16 @@ var CreateCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
 
-		_, err = env.Create(envType, deploymentType, fwdProxyURI)
+		respBody, err := env.Create(envType, deploymentType, fwdProxyURI)
+		if err != nil {
+			return
+		}
 		if wait {
-			err = env.Wait()
+			respMap := make(map[string]interface{})
+			if err = json.Unmarshal(respBody, &respMap); err != nil {
+				return err
+			}
+			err = operations.WaitForOperation(filepath.Base(respMap["name"].(string)))
 		}
 		return
 	},

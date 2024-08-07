@@ -23,7 +23,6 @@ import (
 	"os"
 	"path"
 	"strings"
-	"time"
 
 	"internal/apiclient"
 	"internal/clilog"
@@ -47,8 +46,6 @@ type Property struct {
 	Name  string `json:"name,omitempty"`
 	Value string `json:"value,omitempty"`
 }
-
-const interval = 10
 
 // Create
 func Create(envType string, deploymentType string, fwdProxyURI string) (respBody []byte, err error) {
@@ -392,42 +389,4 @@ func MarshalEnvironmentList(contents []byte) (envronmentList Environments, err e
 		return envronmentList, err
 	}
 	return envronmentList, nil
-}
-
-// Wait
-func Wait() error {
-	var err error
-
-	clilog.Info.Printf("Checking creation status in %d seconds\n", interval)
-
-	apiclient.DisableCmdPrintHttpResponse()
-
-	stop := apiclient.Every(interval*time.Second, func(time.Time) bool {
-		var respBody []byte
-		respMap := make(map[string]interface{})
-		if respBody, err = Get(false); err != nil {
-			clilog.Error.Printf("Error fetching env status: %v", err)
-			return false
-		}
-
-		if err = json.Unmarshal(respBody, &respMap); err != nil {
-			return true
-		}
-
-		switch respMap["state"] {
-		case "PROGRESSING":
-			clilog.Info.Printf("Environment creation status is: %s. Waiting %d seconds.\n", respMap["state"], interval)
-			return true
-		case "ACTIVE":
-			clilog.Info.Println("Environment creation completed with status: ", respMap["state"])
-		default:
-			clilog.Info.Println("Environment creation failed with status: ", respMap["state"])
-		}
-
-		return false
-	})
-
-	<-stop
-
-	return err
 }

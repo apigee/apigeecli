@@ -15,9 +15,12 @@
 package envgroup
 
 import (
+	"encoding/json"
 	"internal/apiclient"
+	"path/filepath"
 
 	"internal/client/envgroups"
+	"internal/client/operations"
 
 	"github.com/spf13/cobra"
 )
@@ -34,7 +37,17 @@ var DelCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
 
-		_, err = envgroups.Delete(name)
+		respBody, err := envgroups.Delete(name)
+		if err != nil {
+			return
+		}
+		if wait {
+			respMap := make(map[string]interface{})
+			if err = json.Unmarshal(respBody, &respMap); err != nil {
+				return err
+			}
+			err = operations.WaitForOperation(filepath.Base(respMap["name"].(string)))
+		}
 		return
 	},
 }
