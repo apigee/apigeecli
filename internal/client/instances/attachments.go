@@ -162,11 +162,13 @@ func WaitAttach(name string) error {
 
 		if respMap["done"] == true {
 			if respMap["error"] != nil {
-				clilog.Info.Println("Instance attachment failed with status: ", respMap["error"])
+				clilog.Info.Printf("Instance attachment failed with status: %v\n", respMap["error"])
 			}
 			clilog.Info.Println("Instance attachment completed")
 		} else {
-			clilog.Info.Printf("Instance attachment status is: %s. Waiting %d seconds.\n", respMap["state"], interval)
+			metadata, _ := respMap["metadata"].(map[string]interface{})
+			state, _ := metadata["state"].(string)
+			clilog.Info.Printf("Instance attachment status is: %s. Waiting %d seconds.\n", state, interval)
 			return true
 		}
 
