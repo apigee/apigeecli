@@ -20,6 +20,7 @@ import (
 	"path/filepath"
 
 	"internal/client/instances"
+	"internal/client/operations"
 
 	"github.com/spf13/cobra"
 )
@@ -46,7 +47,7 @@ var CreateAttachCmd = &cobra.Command{
 			if err = json.Unmarshal(respBody, &respMap); err != nil {
 				return err
 			}
-			err = instances.WaitAttach(filepath.Base(respMap["name"].(string)))
+			err = operations.WaitForOperation(filepath.Base(respMap["name"].(string)))
 		}
 		return
 	},

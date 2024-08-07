@@ -19,10 +19,8 @@ import (
 	"net/url"
 	"path"
 	"strings"
-	"time"
 
 	"internal/apiclient"
-	"internal/clilog"
 )
 
 // Create
@@ -99,42 +97,4 @@ func Update(name string, consumerAcceptList []string) (respBody []byte, err erro
 		respBody, err = apiclient.HttpClient(u.String(), payload, "PATCH")
 	}
 	return respBody, err
-}
-
-// Wait
-func Wait(name string) error {
-	var err error
-
-	clilog.Info.Printf("Checking creation status in %d seconds\n", interval)
-
-	apiclient.DisableCmdPrintHttpResponse()
-
-	stop := apiclient.Every(interval*time.Second, func(time.Time) bool {
-		var respBody []byte
-		respMap := make(map[string]interface{})
-		if respBody, err = Get(name); err != nil {
-			clilog.Error.Printf("Error fetching env status: %v", err)
-			return false
-		}
-
-		if err = json.Unmarshal(respBody, &respMap); err != nil {
-			return true
-		}
-
-		switch respMap["state"] {
-		case "PROGRESSING":
-			clilog.Info.Printf("Instance creation status is: %s. Waiting %d seconds.\n", respMap["state"], interval)
-			return true
-		case "ACTIVE":
-			clilog.Info.Println("Instance creation completed with status: ", respMap["state"])
-		default:
-			clilog.Info.Println("Instance creation failed with status: ", respMap["state"])
-		}
-
-		return false
-	})
-
-	<-stop
-
-	return err
 }

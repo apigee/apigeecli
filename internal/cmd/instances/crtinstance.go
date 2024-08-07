@@ -15,12 +15,15 @@
 package instances
 
 import (
+	"encoding/json"
 	"fmt"
+	"path/filepath"
 	"regexp"
 
 	"internal/apiclient"
 
 	"internal/client/instances"
+	"internal/client/operations"
 	"internal/client/orgs"
 
 	"github.com/spf13/cobra"
@@ -62,12 +65,16 @@ var CreateCmd = &cobra.Command{
 			}
 		}
 
-		_, err = instances.Create(name, location, diskEncryptionKeyName, ipRange, consumerAcceptList)
+		respBody, err := instances.Create(name, location, diskEncryptionKeyName, ipRange, consumerAcceptList)
 		if err != nil {
 			return err
 		}
 		if wait {
-			err = instances.Wait(name)
+			respMap := make(map[string]interface{})
+			if err = json.Unmarshal(respBody, &respMap); err != nil {
+				return err
+			}
+			err = operations.WaitForOperation(filepath.Base(respMap["name"].(string)))
 		}
 
 		return err

@@ -18,8 +18,10 @@ import (
 	"encoding/json"
 	"net/url"
 	"path"
+	"time"
 
 	"internal/apiclient"
+	"internal/clilog"
 )
 
 type ops struct {
@@ -58,6 +60,8 @@ const (
 	Failed  OperationCompleteState = "Failed"
 	Both    OperationCompleteState = "Both"
 )
+
+const interval = 10
 
 // Get
 func Get(name string) (respBody []byte, err error) {
@@ -115,4 +119,44 @@ func filterOperation(respBody []byte, state string, completeState OperationCompl
 		apiclient.PrettyPrint("json", operationsRespBody)
 	}
 	return operationsRespBody, nil
+}
+
+// WaitForOperation
+func WaitForOperation(operationName string) error {
+	var err error
+
+	clilog.Info.Printf("Checking operation status in %d seconds\n", interval)
+
+	apiclient.DisableCmdPrintHttpResponse()
+
+	stop := apiclient.Every(interval*time.Second, func(time.Time) bool {
+		var respBody []byte
+		respMap := make(map[string]interface{})
+		if respBody, err = Get(operationName); err != nil {
+			clilog.Error.Printf("Error fetching operation status: %v", err)
+			return false
+		}
+
+		if err = json.Unmarshal(respBody, &respMap); err != nil {
+			return true
+		}
+
+		if respMap["done"] == true {
+			if respMap["error"] != nil {
+				clilog.Info.Printf("Operation failed with status: %v\n", respMap["error"])
+			}
+			clilog.Info.Println("Operation completed")
+		} else {
+			metadata, _ := respMap["metadata"].(map[string]interface{})
+			state, _ := metadata["state"].(string)
+			clilog.Info.Printf("Operation status is: %s. Waiting %d seconds.\n", state, interval)
+			return true
+		}
+
+		return false
+	})
+
+	<-stop
+
+	return err
 }
