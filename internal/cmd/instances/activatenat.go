@@ -15,9 +15,12 @@
 package instances
 
 import (
+	"encoding/json"
 	"internal/apiclient"
+	"path/filepath"
 
 	"internal/client/instances"
+	"internal/client/operations"
 
 	"github.com/spf13/cobra"
 )
@@ -35,7 +38,17 @@ var ActivateNatCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
 
-		_, err = instances.ActivateNatIP(name, natid)
+		respBody, err := instances.ActivateNatIP(name, natid)
+		if err != nil {
+			return
+		}
+		if wait {
+			respMap := make(map[string]interface{})
+			if err = json.Unmarshal(respBody, &respMap); err != nil {
+				return err
+			}
+			err = operations.WaitForOperation(filepath.Base(respMap["name"].(string)))
+		}
 		return
 	},
 }
@@ -43,6 +56,8 @@ var ActivateNatCmd = &cobra.Command{
 func init() {
 	ActivateNatCmd.Flags().StringVarP(&natid, "natid", "i",
 		"", "NAT identifier")
+	ActivateNatCmd.Flags().BoolVarP(&wait, "wait", "",
+		false, "Waits for the activate to finish, with success or error")
 
 	_ = ActivateNatCmd.MarkFlagRequired("natid")
 }

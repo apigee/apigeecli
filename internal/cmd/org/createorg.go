@@ -15,10 +15,13 @@
 package org
 
 import (
+	"encoding/json"
 	"fmt"
+	"path/filepath"
 
 	"internal/apiclient"
 
+	"internal/client/operations"
 	"internal/client/orgs"
 
 	"github.com/spf13/cobra"
@@ -51,10 +54,20 @@ var CreateCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
 
-		_, err = orgs.Create(description, analyticsRegion, authorizedNetwork,
+		respBody, err := orgs.Create(description, analyticsRegion, authorizedNetwork,
 			disableVpcPeering, runtimeType, billingType, runtimeDatabaseEncryptionKeyName,
 			portalDisabled, apiConsumerDataEncryptionKeyName, controlPlaneEncryptionKeyName,
 			apiConsumerDataLocation)
+		if err != nil {
+			return
+		}
+		if wait {
+			respMap := make(map[string]interface{})
+			if err = json.Unmarshal(respBody, &respMap); err != nil {
+				return err
+			}
+			err = operations.WaitForOperation(filepath.Base(respMap["name"].(string)))
+		}
 		return
 	},
 }
@@ -63,7 +76,7 @@ var (
 	analyticsRegion, projectID, authorizedNetwork, runtimeType                               string
 	description, runtimeDatabaseEncryptionKeyName, billingType                               string
 	apiConsumerDataEncryptionKeyName, controlPlaneEncryptionKeyName, apiConsumerDataLocation string
-	disableVpcPeering, portalDisabled                                                        bool
+	disableVpcPeering, portalDisabled, wait                                                  bool
 )
 
 func init() {
@@ -95,6 +108,9 @@ func init() {
 
 	CreateCmd.Flags().BoolVarP(&portalDisabled, "disable-portal", "",
 		false, "Disable creation of Developer Portals; default false")
+
+	CreateCmd.Flags().BoolVarP(&wait, "wait", "",
+		false, "Waits for the create to finish, with success or error")
 
 	_ = CreateCmd.MarkFlagRequired("prj")
 	_ = CreateCmd.MarkFlagRequired("reg")

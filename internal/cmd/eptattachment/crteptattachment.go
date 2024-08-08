@@ -15,12 +15,15 @@
 package eptattachment
 
 import (
+	"encoding/json"
 	"fmt"
+	"path/filepath"
 	"regexp"
 
 	"internal/apiclient"
 
 	"internal/client/eptattachment"
+	"internal/client/operations"
 
 	"github.com/spf13/cobra"
 )
@@ -44,12 +47,23 @@ var CreateCmd = &cobra.Command{
 			return fmt.Errorf("disk encryption key must be of the format " +
 				"projects/{project-id}/regions/{location}/serviceAttachments/{sa-name}")
 		}
-		_, err = eptattachment.Create(name, serviceAttachment, location)
+		respBody, err := eptattachment.Create(name, serviceAttachment, location)
+		if err != nil {
+			return
+		}
+		if wait {
+			respMap := make(map[string]interface{})
+			if err = json.Unmarshal(respBody, &respMap); err != nil {
+				return err
+			}
+			err = operations.WaitForOperation(filepath.Base(respMap["name"].(string)))
+		}
 		return err
 	},
 }
 
 var location, serviceAttachment string
+var wait bool
 
 func init() {
 	CreateCmd.Flags().StringVarP(&name, "name", "n",
@@ -58,6 +72,8 @@ func init() {
 		"", "Location of the service endpoint")
 	CreateCmd.Flags().StringVarP(&serviceAttachment, "service-attachment", "s",
 		"", "Service attachment url: projects/{project-id}/regions/{location}/serviceAttachments/{sa-name}")
+	CreateCmd.Flags().BoolVarP(&wait, "wait", "",
+		false, "Waits for the create to finish, with success or error")
 
 	_ = CreateCmd.MarkFlagRequired("name")
 	_ = CreateCmd.MarkFlagRequired("service-attachment")
