@@ -15,9 +15,12 @@
 package instances
 
 import (
+	"encoding/json"
 	"internal/apiclient"
+	"path/filepath"
 
 	"internal/client/instances"
+	"internal/client/operations"
 
 	"github.com/spf13/cobra"
 )
@@ -35,16 +38,30 @@ var CreateAttachCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
 
-		_, err = instances.Attach(name, environment)
+		respBody, err := instances.Attach(name, environment)
+		if err != nil {
+			return
+		}
+		if wait {
+			respMap := make(map[string]interface{})
+			if err = json.Unmarshal(respBody, &respMap); err != nil {
+				return err
+			}
+			err = operations.WaitForOperation(filepath.Base(respMap["name"].(string)))
+		}
 		return
 	},
 }
+
+var wait bool
 
 func init() {
 	CreateAttachCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of the Instance")
 	CreateAttachCmd.Flags().StringVarP(&environment, "env", "e",
 		"", "Apigee environment name")
+	CreateAttachCmd.Flags().BoolVarP(&wait, "wait", "",
+		false, "Waits for the attachment to finish, with success or error")
 
 	_ = CreateAttachCmd.MarkFlagRequired("name")
 	_ = CreateAttachCmd.MarkFlagRequired("env")

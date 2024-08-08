@@ -15,12 +15,15 @@
 package env
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/url"
+	"path/filepath"
 
 	"internal/apiclient"
 
 	"internal/client/env"
+	"internal/client/operations"
 
 	"github.com/spf13/cobra"
 )
@@ -42,7 +45,17 @@ var CreateCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
 
-		_, err = env.Create(envType, deploymentType, fwdProxyURI)
+		respBody, err := env.Create(envType, deploymentType, fwdProxyURI)
+		if err != nil {
+			return
+		}
+		if wait {
+			respMap := make(map[string]interface{})
+			if err = json.Unmarshal(respBody, &respMap); err != nil {
+				return err
+			}
+			err = operations.WaitForOperation(filepath.Base(respMap["name"].(string)))
+		}
 		return
 	},
 }
@@ -58,6 +71,7 @@ func init() {
 		"", "Deployment type - must be PROXY or ARCHIVE")
 	CreateCmd.Flags().StringVarP(&fwdProxyURI, "fwdproxyuri", "f",
 		"", "URL of the forward proxy to be applied to the runtime instances in this env")
-
+	CreateCmd.Flags().BoolVarP(&wait, "wait", "",
+		false, "Waits for the create to finish, with success or error")
 	_ = CreateCmd.MarkFlagRequired("env")
 }

@@ -15,9 +15,12 @@
 package eptattachment
 
 import (
+	"encoding/json"
 	"internal/apiclient"
+	"path/filepath"
 
 	"internal/client/eptattachment"
+	"internal/client/operations"
 
 	"github.com/spf13/cobra"
 )
@@ -34,7 +37,17 @@ var RemoveCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
 
-		_, err = eptattachment.Delete(name)
+		respBody, err := eptattachment.Delete(name)
+		if err != nil {
+			return
+		}
+		if wait {
+			respMap := make(map[string]interface{})
+			if err = json.Unmarshal(respBody, &respMap); err != nil {
+				return err
+			}
+			err = operations.WaitForOperation(filepath.Base(respMap["name"].(string)))
+		}
 		return
 	},
 }
@@ -42,6 +55,8 @@ var RemoveCmd = &cobra.Command{
 func init() {
 	RemoveCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of the service endpoint")
+	RemoveCmd.Flags().BoolVarP(&wait, "wait", "",
+		false, "Waits for the delete to finish, with success or error")
 
 	_ = RemoveCmd.MarkFlagRequired("name")
 }

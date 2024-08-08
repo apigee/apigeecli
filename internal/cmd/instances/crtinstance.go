@@ -15,12 +15,15 @@
 package instances
 
 import (
+	"encoding/json"
 	"fmt"
+	"path/filepath"
 	"regexp"
 
 	"internal/apiclient"
 
 	"internal/client/instances"
+	"internal/client/operations"
 	"internal/client/orgs"
 
 	"github.com/spf13/cobra"
@@ -62,7 +65,17 @@ var CreateCmd = &cobra.Command{
 			}
 		}
 
-		_, err = instances.Create(name, location, diskEncryptionKeyName, ipRange, consumerAcceptList)
+		respBody, err := instances.Create(name, location, diskEncryptionKeyName, ipRange, consumerAcceptList)
+		if err != nil {
+			return err
+		}
+		if wait {
+			respMap := make(map[string]interface{})
+			if err = json.Unmarshal(respBody, &respMap); err != nil {
+				return err
+			}
+			err = operations.WaitForOperation(filepath.Base(respMap["name"].(string)))
+		}
 
 		return err
 	},
@@ -85,6 +98,8 @@ func init() {
 	CreateCmd.Flags().StringArrayVarP(&consumerAcceptList, "consumer-accept-list", "c",
 		[]string{}, "Customer accept list represents the list of "+
 			"projects (id/number) that can connect to the service attachment")
+	CreateCmd.Flags().BoolVarP(&wait, "wait", "",
+		false, "Waits for the instance to finish, with success or error")
 
 	_ = CreateCmd.MarkFlagRequired("name")
 	_ = CreateCmd.MarkFlagRequired("location")

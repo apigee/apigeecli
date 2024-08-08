@@ -15,9 +15,12 @@
 package instances
 
 import (
+	"encoding/json"
 	"internal/apiclient"
+	"path/filepath"
 
 	"internal/client/instances"
+	"internal/client/operations"
 
 	"github.com/spf13/cobra"
 )
@@ -35,7 +38,17 @@ var DeleteAttachCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
 
-		_, err = instances.DetachEnv(name)
+		respBody, err := instances.DetachEnv(name)
+		if err != nil {
+			return
+		}
+		if wait {
+			respMap := make(map[string]interface{})
+			if err = json.Unmarshal(respBody, &respMap); err != nil {
+				return err
+			}
+			err = operations.WaitForOperation(filepath.Base(respMap["name"].(string)))
+		}
 		return
 	},
 }
@@ -45,6 +58,8 @@ func init() {
 		"", "Name of the Instance")
 	DeleteAttachCmd.Flags().StringVarP(&environment, "env", "e",
 		"", "Apigee environment name")
+	DeleteAttachCmd.Flags().BoolVarP(&wait, "wait", "",
+		false, "Waits for the deletion to finish, with success or error")
 
 	_ = DeleteAttachCmd.MarkFlagRequired("name")
 	_ = DeleteAttachCmd.MarkFlagRequired("env")

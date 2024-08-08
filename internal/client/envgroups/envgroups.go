@@ -155,6 +155,14 @@ func ListAttach(name string) (respBody []byte, err error) {
 	return respBody, err
 }
 
+// GetAttach
+func GetAttach(name string, attachment string) (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "envgroups", name, "attachments", attachment)
+	respBody, err = apiclient.HttpClient(u.String())
+	return respBody, err
+}
+
 func getArrayStr(str []string) string {
 	tmp := strings.Join(str, ",")
 	tmp = strings.ReplaceAll(tmp, ",", "\",\"")

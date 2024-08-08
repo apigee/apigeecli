@@ -15,9 +15,12 @@
 package envgroup
 
 import (
+	"encoding/json"
 	"internal/apiclient"
+	"path/filepath"
 
 	"internal/client/envgroups"
+	"internal/client/operations"
 
 	"github.com/spf13/cobra"
 )
@@ -34,7 +37,17 @@ var AttachCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
 
-		_, err = envgroups.Attach(name, environment)
+		respBody, err := envgroups.Attach(name, environment)
+		if err != nil {
+			return
+		}
+		if wait {
+			respMap := make(map[string]interface{})
+			if err = json.Unmarshal(respBody, &respMap); err != nil {
+				return err
+			}
+			err = operations.WaitForOperation(filepath.Base(respMap["name"].(string)))
+		}
 		return
 	},
 }
@@ -42,12 +55,12 @@ var AttachCmd = &cobra.Command{
 func init() {
 	AttachCmd.Flags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
-
 	AttachCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of the environment group")
-
 	AttachCmd.Flags().StringVarP(&environment, "env", "e",
 		"", "Name of the environment")
+	AttachCmd.Flags().BoolVarP(&wait, "wait", "",
+		false, "Waits for the attachment to finish, with success or error")
 
 	_ = AttachCmd.MarkFlagRequired("name")
 	_ = AttachCmd.MarkFlagRequired("env")

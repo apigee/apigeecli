@@ -24,6 +24,8 @@ import (
 	"internal/apiclient"
 )
 
+const interval = 10
+
 // Attach
 func Attach(name string, environment string) (respBody []byte, err error) {
 	envgroup := []string{}

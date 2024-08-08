@@ -15,9 +15,12 @@
 package instances
 
 import (
+	"encoding/json"
 	"internal/apiclient"
+	"path/filepath"
 
 	"internal/client/instances"
+	"internal/client/operations"
 
 	"github.com/spf13/cobra"
 )
@@ -34,7 +37,17 @@ var DeleteCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
 
-		_, err = instances.Delete(name)
+		respBody, err := instances.Delete(name)
+		if err != nil {
+			return
+		}
+		if wait {
+			respMap := make(map[string]interface{})
+			if err = json.Unmarshal(respBody, &respMap); err != nil {
+				return err
+			}
+			err = operations.WaitForOperation(filepath.Base(respMap["name"].(string)))
+		}
 		return
 	},
 }
@@ -42,9 +55,10 @@ var DeleteCmd = &cobra.Command{
 func init() {
 	DeleteCmd.Flags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
-
 	DeleteCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of the instance")
+	DeleteCmd.Flags().BoolVarP(&wait, "wait", "",
+		false, "Waits for the deletion to finish, with success or error")
 
 	_ = DeleteCmd.MarkFlagRequired("name")
 }
