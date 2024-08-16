@@ -27,7 +27,8 @@ import (
 	"internal/client/env"
 )
 
-func TotalAPICallsInMonth(month int, year int, envDetails bool, conn int) (total int, err error) {
+func TotalAPICallsInMonth(month int, year int, envDetails bool,
+	proxyType bool, conn int) (apiCalls int, extensibleApiCalls int, standardApiCalls int, err error) {
 	var pwg sync.WaitGroup
 	var envListBytes []byte
 	var envList []string
@@ -39,11 +40,11 @@ func TotalAPICallsInMonth(month int, year int, envDetails bool, conn int) (total
 	defer apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
 
 	if envListBytes, err = env.List(); err != nil {
-		return -1, err
+		return -1, -1, -1, err
 	}
 
 	if err = json.Unmarshal(envListBytes, &envList); err != nil {
-		return -1, err
+		return -1, -1, -1, err
 	}
 
 	numEntities := len(envList)
@@ -63,7 +64,7 @@ func TotalAPICallsInMonth(month int, year int, envDetails bool, conn int) (total
 		pwg.Add(1)
 		end = (i * conn) + conn
 		clilog.Debug.Printf("Creating reports for a batch %d of environments\n", (i + 1))
-		go batchReport(envList[start:end], month, year, envDetails, &pwg)
+		go batchReport(envList[start:end], month, year, envDetails, proxyType, &pwg)
 		start = end
 		pwg.Wait()
 	}
@@ -71,53 +72,66 @@ func TotalAPICallsInMonth(month int, year int, envDetails bool, conn int) (total
 	if remaining > 0 {
 		pwg.Add(1)
 		clilog.Debug.Printf("Creating reports for remaining %d environments\n", remaining)
-		go batchReport(envList[start:numEntities], month, year, envDetails, &pwg)
+		go batchReport(envList[start:numEntities], month, year, envDetails, proxyType, &pwg)
 		pwg.Wait()
 	}
 
-	return env.ApiCalls.GetCount(), nil
+	return env.ApiCalls.GetCount(), env.ApiCalls.GetExtensibleCount(), env.ApiCalls.GetStandardCount(), nil
 }
 
-func batchReport(envList []string, month int, year int, envDetails bool, pwg *sync.WaitGroup) {
+func batchReport(envList []string, month int, year int, envDetails bool, proxyType bool, pwg *sync.WaitGroup) {
 	defer pwg.Done()
 	// batch workgroup
 	var bwg sync.WaitGroup
 
 	bwg.Add(len(envList))
 
-	for _, environment := range envList {
-		go env.TotalAPICallsInMonthAsync(environment, month, year, envDetails, &bwg)
+	if proxyType {
+		for _, environment := range envList {
+			go env.TotalAPICallsByTypeInMonthAsync(environment, month, year, envDetails, &bwg)
+		}
+	} else {
+		for _, environment := range envList {
+			go env.TotalAPICallsInMonthAsync(environment, month, year, envDetails, &bwg)
+		}
 	}
 
 	bwg.Wait()
 }
 
-func TotalAPICallsInYear(year int, envDetails bool, conn int) (total int, err error) {
-	var monthlyTotal int
+func TotalAPICallsInYear(year int, envDetails bool,
+	proxyType bool, conn int) (apiCalls int, extensibleApiCalls int, standardApiCalls int, err error) {
+	var monthlyApiTotal, monthlyExtensibleTotal, monthlyStandardTotal int
 
 	t := time.Now()
 	currentYear := t.Year()
 
 	if year > currentYear {
-		return -1, fmt.Errorf("Invalid year. Year cannot be greater than current year")
+		return -1, -1, -1, fmt.Errorf("Invalid year. Year cannot be greater than current year")
 	}
 
 	if currentYear == year {
 		currentMonth := t.Month()
 		for i := 1; i <= int(currentMonth); i++ { // run the loop only till the current month
-			if monthlyTotal, err = TotalAPICallsInMonth(i, year, envDetails, conn); err != nil {
-				return -1, err
+			if monthlyApiTotal, monthlyExtensibleTotal, monthlyStandardTotal, err =
+				TotalAPICallsInMonth(i, year, envDetails, proxyType, conn); err != nil {
+				return -1, -1, -1, err
 			}
-			total = total + monthlyTotal
+			apiCalls = apiCalls + monthlyApiTotal
+			extensibleApiCalls = extensibleApiCalls + monthlyExtensibleTotal
+			standardApiCalls = standardApiCalls + monthlyStandardTotal
 		}
 	} else {
 		for i := 1; i <= 12; i++ { // run the loop for each month
-			if monthlyTotal, err = TotalAPICallsInMonth(i, year, envDetails, conn); err != nil {
-				return -1, err
+			if monthlyApiTotal, monthlyExtensibleTotal, monthlyStandardTotal, err =
+				TotalAPICallsInMonth(i, year, envDetails, proxyType, conn); err != nil {
+				return -1, -1, -1, err
 			}
-			total = total + monthlyTotal
+			apiCalls = apiCalls + monthlyApiTotal
+			extensibleApiCalls = extensibleApiCalls + monthlyExtensibleTotal
+			standardApiCalls = standardApiCalls + monthlyStandardTotal
 		}
 	}
 
-	return total, nil
+	return apiCalls, extensibleApiCalls, standardApiCalls, nil
 }

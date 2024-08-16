@@ -31,8 +31,9 @@ import (
 )
 
 const (
-	proxy_dimension = "apiproxy"
-	selection       = "sum(message_count)"
+	proxy_dimension       = "apiproxy"
+	proxy_deployment_type = "proxy_deployment_type"
+	selection             = "sum(message_count)"
 )
 
 type report struct {
@@ -55,7 +56,9 @@ type metric struct {
 }
 
 type apiCalls struct {
-	count int
+	count           int
+	standardCount   int
+	extensibleCount int
 	sync.Mutex
 }
 
@@ -79,8 +82,72 @@ func TotalAPICallsInMonthAsync(environment string, month int, year int, envDetai
 	}
 }
 
+func TotalAPICallsByTypeInMonthAsync(environment string, month int, year int, envDetails bool, wg *sync.WaitGroup) {
+	defer wg.Done()
+	var totalExtensible, totalStandard int
+	var err error
+
+	if totalExtensible, totalStandard, err = TotalAPICallsByTypeInMonth(environment, month, year); err != nil {
+		clilog.Error.Println(err)
+		return
+	}
+	ApiCalls.incrementExtensibleCount(totalExtensible)
+	ApiCalls.incrementStandardCount(totalStandard)
+	if envDetails {
+		w := tabwriter.NewWriter(os.Stdout, 32, 4, 0, ' ', 0)
+		fmt.Fprintf(w, "%s\t%d/%d\t%d\t%d", environment, month, year, totalExtensible, totalStandard)
+		fmt.Fprintln(w)
+		w.Flush()
+	}
+}
+
 func TotalAPICallsInMonth(environment string, month int, year int) (total int, err error) {
 	var apiCalls int
+
+	environmentReport, err := getReport(proxy_dimension, environment, month, year)
+	if err != nil {
+		return -1, err
+	}
+
+	for _, e := range environmentReport.Environments {
+		for _, d := range e.Dimensions {
+			for _, m := range d.Metrics {
+				calls, _ := strconv.Atoi(m.Values[0])
+				apiCalls = apiCalls + calls
+			}
+		}
+	}
+
+	return apiCalls, nil
+}
+
+func TotalAPICallsByTypeInMonth(environment string, month int, year int) (totalExtensible int, totalStandard int, err error) {
+	var extensibleApiCalls, standardApiCalls int
+
+	environmentReport, err := getReport(proxy_deployment_type, environment, month, year)
+	if err != nil {
+		return -1, -1, err
+	}
+
+	for _, e := range environmentReport.Environments {
+		for _, d := range e.Dimensions {
+			if d.Name == "EXTENSIBLE" {
+				for _, m := range d.Metrics {
+					calls, _ := strconv.Atoi(m.Values[0])
+					extensibleApiCalls = extensibleApiCalls + calls
+				}
+			} else if d.Name == "STANDARD" {
+				for _, m := range d.Metrics {
+					calls, _ := strconv.Atoi(m.Values[0])
+					standardApiCalls = standardApiCalls + calls
+				}
+			}
+		}
+	}
+	return extensibleApiCalls, standardApiCalls, nil
+}
+
+func getReport(dimension string, environment string, month int, year int) (r report, err error) {
 	var respBody []byte
 
 	// throttle API Calls
@@ -97,28 +164,17 @@ func TotalAPICallsInMonth(environment string, month int, year int) (total int, e
 	q.Set("timeRange", timeRange)
 
 	u.RawQuery = q.Encode()
-	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", environment, "stats", proxy_dimension)
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", environment, "stats", dimension)
 
 	if respBody, err = apiclient.HttpClient(u.String()); err != nil {
-		return -1, err
+		return r, err
 	}
 
-	environmentReport := report{}
-
-	if err = json.Unmarshal(respBody, &environmentReport); err != nil {
-		return -1, err
+	if err = json.Unmarshal(respBody, &r); err != nil {
+		return r, err
 	}
 
-	for _, e := range environmentReport.Environments {
-		for _, d := range e.Dimensions {
-			for _, m := range d.Metrics {
-				calls, _ := strconv.Atoi(m.Values[0])
-				apiCalls = apiCalls + calls
-			}
-		}
-	}
-
-	return apiCalls, nil
+	return r, nil
 }
 
 // GetCount
@@ -126,11 +182,23 @@ func (c *apiCalls) GetCount() int {
 	return c.count
 }
 
+// GetExtensibleCount
+func (c *apiCalls) GetExtensibleCount() int {
+	return c.extensibleCount
+}
+
+// GetStandardCount
+func (c *apiCalls) GetStandardCount() int {
+	return c.standardCount
+}
+
 // ResetCount
 func (c *apiCalls) ResetCount() {
 	c.Lock()
 	defer c.Unlock()
 	c.count = 0
+	c.extensibleCount = 0
+	c.standardCount = 0
 }
 
 // daysIn returns the number of days in a month for a given year.
@@ -145,4 +213,18 @@ func (c *apiCalls) incrementCount(total int) {
 	c.Lock()
 	defer c.Unlock()
 	c.count = c.count + total
+}
+
+// incrementStandardCount synchronizes counting
+func (c *apiCalls) incrementStandardCount(total int) {
+	c.Lock()
+	defer c.Unlock()
+	c.standardCount = c.standardCount + total
+}
+
+// incrementExtensibleCount synchronizes counting
+func (c *apiCalls) incrementExtensibleCount(total int) {
+	c.Lock()
+	defer c.Unlock()
+	c.extensibleCount = c.extensibleCount + total
 }
