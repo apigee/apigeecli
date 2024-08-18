@@ -86,14 +86,8 @@ func batchReport(envList []string, month int, year int, envDetails bool, proxyTy
 
 	bwg.Add(len(envList))
 
-	if proxyType {
-		for _, environment := range envList {
-			go env.TotalAPICallsByTypeInMonthAsync(environment, month, year, envDetails, &bwg)
-		}
-	} else {
-		for _, environment := range envList {
-			go env.TotalAPICallsInMonthAsync(environment, month, year, envDetails, &bwg)
-		}
+	for _, environment := range envList {
+		go env.TotalAPICallsInMonthAsync(proxyType, environment, month, year, envDetails, &bwg)
 	}
 
 	bwg.Wait()

@@ -64,87 +64,72 @@ type apiCalls struct {
 
 var ApiCalls = &apiCalls{count: 0}
 
-func TotalAPICallsInMonthAsync(environment string, month int, year int, envDetails bool, wg *sync.WaitGroup) {
+func TotalAPICallsInMonthAsync(dimension bool, environment string, month int, year int, envDetails bool, wg *sync.WaitGroup) {
 	defer wg.Done()
-	var total int
+	var totalApiCalls, totalExtensible, totalStandard int
 	var err error
 
-	if total, err = TotalAPICallsInMonth(environment, month, year); err != nil {
+	if totalApiCalls, totalExtensible, totalStandard, err = TotalAPICallsInMonth(dimension, environment, month, year); err != nil {
 		clilog.Error.Println(err)
 		return
 	}
-	ApiCalls.incrementCount(total)
-	if envDetails {
-		w := tabwriter.NewWriter(os.Stdout, 32, 4, 0, ' ', 0)
-		fmt.Fprintf(w, "%s\t%d/%d\t%d", environment, month, year, total)
-		fmt.Fprintln(w)
-		w.Flush()
-	}
-}
 
-func TotalAPICallsByTypeInMonthAsync(environment string, month int, year int, envDetails bool, wg *sync.WaitGroup) {
-	defer wg.Done()
-	var totalExtensible, totalStandard int
-	var err error
+	if dimension {
+		ApiCalls.incrementExtensibleCount(totalExtensible)
+		ApiCalls.incrementStandardCount(totalStandard)
+		ApiCalls.incrementCount(totalApiCalls)
+		if envDetails {
+			w := tabwriter.NewWriter(os.Stdout, 32, 4, 0, ' ', 0)
+			fmt.Fprintf(w, "%s\t%d/%d\t%d\t%d", environment, month, year, totalExtensible, totalStandard)
+			fmt.Fprintln(w)
+			w.Flush()
 
-	if totalExtensible, totalStandard, err = TotalAPICallsByTypeInMonth(environment, month, year); err != nil {
-		clilog.Error.Println(err)
-		return
-	}
-	ApiCalls.incrementExtensibleCount(totalExtensible)
-	ApiCalls.incrementStandardCount(totalStandard)
-	if envDetails {
-		w := tabwriter.NewWriter(os.Stdout, 32, 4, 0, ' ', 0)
-		fmt.Fprintf(w, "%s\t%d/%d\t%d\t%d", environment, month, year, totalExtensible, totalStandard)
-		fmt.Fprintln(w)
-		w.Flush()
-	}
-}
+		}
+	} else {
+		ApiCalls.incrementCount(totalApiCalls)
+		if envDetails {
+			w := tabwriter.NewWriter(os.Stdout, 32, 4, 0, ' ', 0)
+			fmt.Fprintf(w, "%s\t%d/%d\t%d", environment, month, year, totalApiCalls)
+			fmt.Fprintln(w)
+			w.Flush()
 
-func TotalAPICallsInMonth(environment string, month int, year int) (total int, err error) {
-	var apiCalls int
-
-	environmentReport, err := getReport(proxy_dimension, environment, month, year)
-	if err != nil {
-		return -1, err
-	}
-
-	for _, e := range environmentReport.Environments {
-		for _, d := range e.Dimensions {
-			for _, m := range d.Metrics {
-				calls, _ := strconv.Atoi(m.Values[0])
-				apiCalls = apiCalls + calls
-			}
 		}
 	}
-
-	return apiCalls, nil
 }
 
-func TotalAPICallsByTypeInMonth(environment string, month int, year int) (totalExtensible int, totalStandard int, err error) {
-	var extensibleApiCalls, standardApiCalls int
-
+func TotalAPICallsInMonth(dimension bool, environment string, month int, year int) (totalApiCalls int, totalExtensible int, totalStandard int, err error) {
 	environmentReport, err := getReport(proxy_deployment_type, environment, month, year)
 	if err != nil {
-		return -1, -1, err
+		return -1, -1, -1, err
 	}
-
 	for _, e := range environmentReport.Environments {
 		for _, d := range e.Dimensions {
-			if d.Name == "EXTENSIBLE" {
-				for _, m := range d.Metrics {
-					calls, _ := strconv.Atoi(m.Values[0])
-					extensibleApiCalls = extensibleApiCalls + calls
+			if dimension {
+				if d.Name == "EXTENSIBLE" {
+					for _, m := range d.Metrics {
+						calls, _ := strconv.Atoi(m.Values[0])
+						totalExtensible = totalExtensible + calls
+					}
+				} else if d.Name == "STANDARD" {
+					for _, m := range d.Metrics {
+						calls, _ := strconv.Atoi(m.Values[0])
+						totalStandard = totalStandard + calls
+					}
+				} else if d.Name == "(not set)" {
+					for _, m := range d.Metrics {
+						calls, _ := strconv.Atoi(m.Values[0])
+						totalApiCalls = totalApiCalls + calls
+					}
 				}
-			} else if d.Name == "STANDARD" {
+			} else {
 				for _, m := range d.Metrics {
 					calls, _ := strconv.Atoi(m.Values[0])
-					standardApiCalls = standardApiCalls + calls
+					totalApiCalls = totalApiCalls + calls
 				}
 			}
 		}
 	}
-	return extensibleApiCalls, standardApiCalls, nil
+	return totalApiCalls, totalExtensible, totalStandard, nil
 }
 
 func getReport(dimension string, environment string, month int, year int) (r report, err error) {

@@ -33,7 +33,7 @@ func TestTotalAPICallsInMonth(t *testing.T) {
 	currentMonth := int(currentTime.Month())
 	currentYear := int(currentTime.Year())
 
-	if _, err := TotalAPICallsInMonth(currentMonth, currentYear, true, 1); err != nil {
+	if _, _, _, err := TotalAPICallsInMonth(currentMonth, currentYear, true, false, 1); err != nil {
 		t.Fatalf("%v", err)
 	}
 }
