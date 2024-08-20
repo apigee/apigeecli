@@ -66,6 +66,7 @@ type organization struct {
 	ApiConsumerDataLocation          string        `json:"apiConsumerDataLocation,omitempty"`
 	ApigeeProjectId                  string        `json:"apigeeProjectId,omitempty"`
 	DisableVpcPeering                bool          `json:"disableVpcPeering,omitempty"`
+	SubscriptionPlan                 string        `json:"subscriptionPlan,omitempty"`
 }
 
 type addonsConfig struct {
@@ -74,6 +75,7 @@ type addonsConfig struct {
 	MonetizationConfig        addon `json:"monetizationConfig,omitempty"`
 	ConnectorsPlatformConfig  addon `json:"connectorsPlatformConfig,omitempty"`
 	AdvancedApiSecurityConfig addon `json:"apiSecurityConfig,omitempty"`
+	AnalyticsConfig           addon `json:"analyticsConfig,omitempty"`
 }
 
 type addon struct {
@@ -197,7 +199,7 @@ func GetAddOn(addon string) (enabled bool) {
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg())
 
 	apiclient.DisableCmdPrintHttpResponse()
-	defer apiclient.EnableCmdPrintHttpResponse()
+	defer apiclient.SetPrintOutput(apiclient.GetCmdPrintHttpResponseSetting())
 
 	orgBody, err := apiclient.HttpClient(u.String())
 	if err != nil {
@@ -219,6 +221,8 @@ func GetAddOn(addon string) (enabled bool) {
 		return o.AddOnsConfig.AdvancedApiSecurityConfig.Enabled
 	case "connectorsPlatformConfig":
 		return o.AddOnsConfig.ConnectorsPlatformConfig.Enabled
+	case "analyticsConfig":
+		return o.AddOnsConfig.AnalyticsConfig.Enabled
 	default:
 		return false
 	}
@@ -367,7 +371,8 @@ func Update(description string, authorizedNetwork string) (respBody []byte, err 
 }
 
 // SetAddons
-func SetAddons(advancedApiOpsConfig bool, integrationConfig bool, monetizationConfig bool, connectorsConfig bool, apiSecurityConfig bool) (respBody []byte, err error) {
+func SetAddons(advancedApiOpsConfig bool, integrationConfig bool, monetizationConfig bool, connectorsConfig bool,
+	apiSecurityConfig bool, analyticsConfig bool) (respBody []byte, err error) {
 	apiclient.ClientPrintHttpResponse.Set(false)
 
 	orgRespBody, err := Get()
@@ -408,6 +413,10 @@ func SetAddons(advancedApiOpsConfig bool, integrationConfig bool, monetizationCo
 
 	if apiSecurityConfig || org.AddOnsConfig.AdvancedApiSecurityConfig.Enabled {
 		addonPayload = append(addonPayload, "\"apiSecurityConfig\":{\"enabled\":true}")
+	}
+
+	if analyticsConfig || org.AddOnsConfig.AnalyticsConfig.Enabled {
+		addonPayload = append(addonPayload, "\"analyticsConfig\":{\"enabled\":true}")
 	}
 
 	payload := "{\"addonsConfig\":{" + strings.Join(addonPayload, ",") + "}}"

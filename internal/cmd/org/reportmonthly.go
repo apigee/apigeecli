@@ -41,7 +41,12 @@ var MonthlyCmd = &cobra.Command{
 		cmd.SilenceUsage = true
 
 		var apiCalls, extensibleApiCalls, standardApiCalls int
-		var apiHeader string
+		var apiHeader, billingType string
+
+		apiclient.DisableCmdPrintHttpResponse()
+		if billingType, err = orgs.GetOrgField("billingType"); err != nil {
+			return err
+		}
 
 		if proxyType {
 			apiHeader = proxyTypeHeader
@@ -63,7 +68,7 @@ var MonthlyCmd = &cobra.Command{
 		}
 
 		if apiCalls, extensibleApiCalls, standardApiCalls, err = orgs.TotalAPICallsInMonth(month,
-			year, envDetails, proxyType, conn); err != nil {
+			year, envDetails, proxyType, billingType); err != nil {
 			return err
 		}
 
@@ -71,7 +76,7 @@ var MonthlyCmd = &cobra.Command{
 			fmt.Printf("\nSummary\n\n")
 		}
 
-		fmt.Fprintln(w, "ORGANIATION\tMONTH"+apiHeader)
+		fmt.Fprintln(w, "ORGANIZATION\tMONTH"+apiHeader)
 		if proxyType {
 			fmt.Fprintf(w, "%s\t%d/%d\t%d\t%d\n", apiclient.GetApigeeOrg(), month, year, extensibleApiCalls, standardApiCalls)
 		} else {
@@ -98,8 +103,6 @@ func init() {
 		false, "Print details of each environment")
 	MonthlyCmd.Flags().BoolVarP(&proxyType, "proxy-type", "",
 		false, "Split the API Calls by proxy type, standard vs extensible proxy")
-	MonthlyCmd.Flags().IntVarP(&conn, "conn", "c",
-		4, "Number of connections")
 	MonthlyCmd.Flags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
 

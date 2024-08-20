@@ -64,12 +64,25 @@ type apiCalls struct {
 
 var ApiCalls = &apiCalls{count: 0}
 
-func TotalAPICallsInMonthAsync(dimension bool, environment string, month int, year int, envDetails bool, wg *sync.WaitGroup) {
-	defer wg.Done()
+func TotalAPICallsInMonth(dimension bool, environment string, month int, year int,
+	envDetails bool, billingType string) {
+
 	var totalApiCalls, totalExtensible, totalStandard int
 	var err error
+	var analyticsAddon bool
 
-	if totalApiCalls, totalExtensible, totalStandard, err = TotalAPICallsInMonth(dimension, environment, month, year); err != nil {
+	if billingType == "PAYG" {
+		if analyticsAddon, err = IsAnalyticsEnabled(environment); err != nil {
+			clilog.Error.Printf("error getting analytics addon information: %s\n", err)
+			return
+		}
+
+		if !analyticsAddon {
+			return
+		}
+	}
+
+	if totalApiCalls, totalExtensible, totalStandard, err = totalAPICallsInMonth(dimension, environment, month, year); err != nil {
 		clilog.Error.Println(err)
 		return
 	}
@@ -97,7 +110,7 @@ func TotalAPICallsInMonthAsync(dimension bool, environment string, month int, ye
 	}
 }
 
-func TotalAPICallsInMonth(dimension bool, environment string, month int, year int) (totalApiCalls int, totalExtensible int, totalStandard int, err error) {
+func totalAPICallsInMonth(dimension bool, environment string, month int, year int) (totalApiCalls int, totalExtensible int, totalStandard int, err error) {
 	environmentReport, err := getReport(proxy_deployment_type, environment, month, year)
 	if err != nil {
 		return -1, -1, -1, err
