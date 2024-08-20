@@ -16,16 +16,13 @@ package sharedflows
 
 import (
 	"fmt"
+	"internal/apiclient"
+	"internal/bundlegen/proxybundle"
+	"internal/client/sharedflows"
+	"internal/clilog"
 	"os"
 	"path"
 	"path/filepath"
-
-	"internal/apiclient"
-	"internal/clilog"
-
-	"internal/bundlegen/proxybundle"
-
-	"internal/client/sharedflows"
 
 	cp "github.com/otiai10/copy"
 

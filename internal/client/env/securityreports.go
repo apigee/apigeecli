@@ -15,11 +15,10 @@
 package env
 
 import (
+	"internal/apiclient"
 	"net/url"
 	"path"
 	"strconv"
-
-	"internal/apiclient"
 )
 
 // GetSecurityReportView

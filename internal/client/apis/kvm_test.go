@@ -15,9 +15,8 @@
 package apis
 
 import (
-	"testing"
-
 	"internal/client/clienttest"
+	"testing"
 )
 
 const (

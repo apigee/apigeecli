@@ -15,10 +15,9 @@
 package cache
 
 import (
+	"internal/apiclient"
 	"net/url"
 	"path"
-
-	"internal/apiclient"
 )
 
 // Delete

@@ -15,13 +15,12 @@
 package kvm
 
 import (
-	"os"
-	"path"
-	"testing"
-
 	"internal/apiclient"
 	"internal/client/apis"
 	"internal/client/clienttest"
+	"os"
+	"path"
+	"testing"
 )
 
 const (

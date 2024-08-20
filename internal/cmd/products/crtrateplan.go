@@ -15,13 +15,10 @@
 package products
 
 import (
-	"os"
-
 	"internal/apiclient"
-
-	"internal/clilog"
-
 	"internal/client/products"
+	"internal/clilog"
+	"os"
 
 	"github.com/spf13/cobra"
 )

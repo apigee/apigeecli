@@ -20,6 +20,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"internal/clilog"
 	"io"
 	"mime/multipart"
 	"net/http"
@@ -28,8 +29,6 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
-
-	"internal/clilog"
 
 	"golang.org/x/time/rate"
 )

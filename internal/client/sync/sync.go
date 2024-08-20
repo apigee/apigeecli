@@ -17,11 +17,10 @@ package sync
 import (
 	"encoding/json"
 	"fmt"
+	"internal/apiclient"
 	"net/url"
 	"path"
 	"strings"
-
-	"internal/apiclient"
 )
 
 type iAMIdentities struct {

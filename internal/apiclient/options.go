@@ -16,10 +16,9 @@ package apiclient
 
 import (
 	"fmt"
+	"internal/clilog"
 	"os"
 	"sync"
-
-	"internal/clilog"
 )
 
 // baseURL is the Apigee control plane endpoint

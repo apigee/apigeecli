@@ -15,15 +15,7 @@
 package main
 
 import (
-	"io"
-	"log"
-	"os"
-	"path/filepath"
-	"strings"
-
-	apiclient "internal/apiclient"
 	"internal/cmd"
-	apicategories "internal/cmd/apicategories"
 	"internal/cmd/apidocs"
 	"internal/cmd/apis"
 	"internal/cmd/appgroups"
@@ -32,10 +24,20 @@ import (
 	"internal/cmd/developers"
 	"internal/cmd/keystores"
 	"internal/cmd/kvm"
-	products "internal/cmd/products"
 	"internal/cmd/references"
 	"internal/cmd/sharedflows"
 	"internal/cmd/targetservers"
+	"io"
+	"log"
+	"os"
+	"path/filepath"
+	"strings"
+
+	apiclient "internal/apiclient"
+
+	apicategories "internal/cmd/apicategories"
+
+	products "internal/cmd/products"
 
 	"github.com/spf13/cobra/doc"
 )

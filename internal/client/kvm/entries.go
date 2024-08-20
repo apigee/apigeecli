@@ -18,6 +18,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"internal/apiclient"
+	"internal/client/apis"
+	"internal/clilog"
+	"internal/cmd/utils"
 	"io"
 	"net/url"
 	"os"
@@ -25,12 +29,6 @@ import (
 	"strconv"
 	"strings"
 	"sync"
-
-	"internal/apiclient"
-	"internal/client/apis"
-
-	"internal/clilog"
-	"internal/cmd/utils"
 )
 
 type keyvalueentry struct {
@@ -254,7 +252,6 @@ func ExportEntries(proxyName string, mapName string) (payload [][]byte, err erro
 
 // ImportEntries
 func ImportEntries(proxyName string, mapName string, conn int, filePath string) (err error) {
-
 	kvmEntries, err := readKVMfile(filePath)
 	if err != nil {
 		clilog.Error.Println("Error reading file: ", err)
@@ -313,7 +310,6 @@ func batchImport(wg *sync.WaitGroup, proxyName string, mapName string, jobs <-ch
 		}
 
 		_, err = upsertEntry(proxyName, mapName, job.Name, string(job.Value), true)
-
 		if err != nil {
 			errs <- err
 			continue
@@ -337,7 +333,6 @@ func readKVMfile(filePath string) (kvmEntries keyvalueentries, err error) {
 	}
 
 	err = json.Unmarshal(byteValue, &kvmEntries)
-
 	if err != nil {
 		return kvmEntries, err
 	}

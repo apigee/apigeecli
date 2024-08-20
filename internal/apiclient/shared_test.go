@@ -15,9 +15,8 @@
 package apiclient
 
 import (
-	"testing"
-
 	"internal/clilog"
+	"testing"
 )
 
 func TestInit(t *testing.T) {

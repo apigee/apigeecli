@@ -17,12 +17,11 @@ package apps
 import (
 	"encoding/json"
 	"fmt"
-	"os"
-	"testing"
-
 	"internal/client/clienttest"
 	"internal/client/developers"
 	"internal/client/products"
+	"os"
+	"testing"
 )
 
 const (

@@ -16,16 +16,14 @@ package apis
 
 import (
 	"fmt"
+	"internal/apiclient"
+	"internal/client/apis"
+	"internal/clilog"
 	"os"
 	"path"
 	"path/filepath"
 
-	"internal/apiclient"
-	"internal/clilog"
-
 	proxybundle "internal/bundlegen/proxybundle"
-
-	"internal/client/apis"
 
 	cp "github.com/otiai10/copy"
 

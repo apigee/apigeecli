@@ -16,10 +16,9 @@ package res
 
 import (
 	"fmt"
+	"internal/apiclient"
 	"net/url"
 	"path"
-
-	"internal/apiclient"
 )
 
 // validResourceTypes contains a list of valid resources

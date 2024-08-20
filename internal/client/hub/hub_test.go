@@ -15,12 +15,11 @@
 package hub
 
 import (
+	"internal/client/clienttest"
+	"internal/cmd/utils"
 	"os"
 	"path"
 	"testing"
-
-	"internal/client/clienttest"
-	"internal/cmd/utils"
 )
 
 var cliPath = os.Getenv("APIGEECLI_PATH")

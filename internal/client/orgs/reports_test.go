@@ -15,10 +15,9 @@
 package orgs
 
 import (
+	"internal/client/clienttest"
 	"testing"
 	"time"
-
-	"internal/client/clienttest"
 )
 
 func TestTotalAPICallsInMonth(t *testing.T) {

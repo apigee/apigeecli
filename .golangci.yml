@@ -17,14 +17,14 @@ run:
   deadline: 20m
   issues-exit-code: 1
   tests: false
-  skip-dirs:
+  exclude-dirs:
     - cicd
     - docs
     - test
     - third-party
 
 output:
-  format: tab
+  formats: tab
   print-issued-lines: true
   print-linter-name: true
 
@@ -32,8 +32,6 @@ linters-settings:
   errcheck:
     check-type-assertions: false
     check-blank: false
-  govet:
-    check-shadowing: true
   golint:
     min-confidence: 0.8
   gofmt:
@@ -71,8 +69,9 @@ linters-settings:
 
 linters:
   enable:
+    - govet
     - errcheck
-    - exportloopref
+#   - copyloopvar
     - gocritic
     - gofumpt
     - revive

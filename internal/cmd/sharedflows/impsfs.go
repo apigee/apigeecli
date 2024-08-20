@@ -16,11 +16,9 @@ package sharedflows
 
 import (
 	"fmt"
-	"os"
-
 	"internal/apiclient"
-
 	"internal/client/sharedflows"
+	"os"
 
 	"github.com/spf13/cobra"
 )

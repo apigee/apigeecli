@@ -15,10 +15,9 @@
 package projects
 
 import (
+	"internal/apiclient"
 	"net/url"
 	"path"
-
-	"internal/apiclient"
 
 	"github.com/spf13/cobra"
 )

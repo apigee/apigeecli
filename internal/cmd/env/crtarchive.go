@@ -17,16 +17,13 @@ package env
 import (
 	"encoding/json"
 	"fmt"
-	"strings"
-	"time"
-
 	"internal/apiclient"
-	"internal/clilog"
-
 	"internal/bundlegen/proxybundle"
-
 	"internal/client/env"
 	"internal/client/operations"
+	"internal/clilog"
+	"strings"
+	"time"
 
 	"github.com/spf13/cobra"
 )

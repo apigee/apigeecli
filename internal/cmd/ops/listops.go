@@ -16,9 +16,7 @@ package ops
 
 import (
 	"fmt"
-
 	"internal/apiclient"
-
 	"internal/client/operations"
 
 	"github.com/spf13/cobra"

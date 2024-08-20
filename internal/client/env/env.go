@@ -18,14 +18,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"internal/apiclient"
+	"internal/clilog"
 	"io"
 	"net/url"
 	"os"
 	"path"
 	"strings"
-
-	"internal/apiclient"
-	"internal/clilog"
 )
 
 type Environments struct {
@@ -403,7 +402,6 @@ func MarshalEnvironmentList(contents []byte) (envronmentList Environments, err e
 }
 
 func GetAddonsConfig(environment string) (respBody []byte, err error) {
-
 	if environment == "" {
 		environment = apiclient.GetApigeeEnv()
 	}

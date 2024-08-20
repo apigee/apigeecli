@@ -15,15 +15,12 @@
 package kvm
 
 import (
+	"internal/apiclient"
+	"internal/client/kvm"
+	"internal/clilog"
+	"internal/cmd/utils"
 	"path/filepath"
 	"strings"
-
-	"internal/apiclient"
-	"internal/clilog"
-
-	"internal/client/kvm"
-
-	"internal/cmd/utils"
 
 	"github.com/spf13/cobra"
 )

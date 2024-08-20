@@ -18,16 +18,14 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"internal/apiclient"
+	"internal/client/sites"
+	"internal/clilog"
 	"io"
 	"net/url"
 	"os"
 	"path"
 	"strings"
-
-	"internal/apiclient"
-
-	"internal/client/sites"
-	"internal/clilog"
 
 	"github.com/thedevsaddam/gojsonq"
 )

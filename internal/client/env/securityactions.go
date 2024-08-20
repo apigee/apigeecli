@@ -16,11 +16,10 @@ package env
 
 import (
 	"encoding/json"
+	"internal/apiclient"
 	"net/url"
 	"path"
 	"strconv"
-
-	"internal/apiclient"
 )
 
 type securityAction struct {

@@ -16,7 +16,6 @@ package env
 
 import (
 	"fmt"
-
 	"internal/apiclient"
 	"internal/clilog"
 

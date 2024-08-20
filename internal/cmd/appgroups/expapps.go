@@ -16,12 +16,9 @@ package appgroups
 
 import (
 	"fmt"
-
-	"internal/cmd/utils"
-
 	"internal/apiclient"
-
 	"internal/client/appgroups"
+	"internal/cmd/utils"
 
 	"github.com/spf13/cobra"
 )

@@ -16,7 +16,6 @@ package appgroups
 
 import (
 	"internal/apiclient"
-
 	"internal/client/appgroups"
 
 	"github.com/spf13/cobra"

@@ -16,6 +16,9 @@ package apis
 
 import (
 	"fmt"
+	"internal/apiclient"
+	"internal/client/apis"
+	"internal/clilog"
 	"io"
 	"net/url"
 	"os"
@@ -23,14 +26,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"internal/apiclient"
-
-	"internal/clilog"
-
 	bundle "internal/bundlegen"
 	proxybundle "internal/bundlegen/proxybundle"
-
-	"internal/client/apis"
 
 	"github.com/spf13/cobra"
 )
@@ -81,7 +78,6 @@ var GqlCreateCmd = &cobra.Command{
 			addCORS,
 			targetURLRef,
 			targetURL)
-
 		if err != nil {
 			return err
 		}
@@ -97,7 +93,6 @@ var GqlCreateCmd = &cobra.Command{
 			addCORS,
 			targetURLRef,
 			targetURL)
-
 		if err != nil {
 			return err
 		}

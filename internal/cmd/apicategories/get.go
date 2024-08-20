@@ -16,9 +16,7 @@ package apicategories
 
 import (
 	"fmt"
-
 	"internal/apiclient"
-
 	"internal/client/apicategories"
 
 	"github.com/spf13/cobra"

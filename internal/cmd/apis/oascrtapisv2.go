@@ -16,16 +16,14 @@ package apis
 
 import (
 	"fmt"
+	"internal/apiclient"
+	"internal/client/apis"
+	"internal/clilog"
 	"os"
 	"regexp"
 
-	"internal/apiclient"
-	"internal/clilog"
-
 	bundle "internal/bundlegen"
 	proxybundle "internal/bundlegen/proxybundle"
-
-	"internal/client/apis"
 
 	"github.com/spf13/cobra"
 )
@@ -115,7 +113,6 @@ Create an API Proxy from OAS and deploy the proxy to an environment:
 			skipPolicy,
 			addCORS,
 			targetOptions)
-
 		if err != nil {
 			return err
 		}
@@ -127,7 +124,6 @@ Create an API Proxy from OAS and deploy the proxy to an environment:
 			skipPolicy,
 			addCORS,
 			targetOptions)
-
 		if err != nil {
 			return err
 		}

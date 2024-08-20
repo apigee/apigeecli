@@ -16,10 +16,9 @@ package env
 
 import (
 	"fmt"
-	"regexp"
-
 	"internal/apiclient"
 	"internal/clilog"
+	"regexp"
 
 	environments "internal/client/env"
 

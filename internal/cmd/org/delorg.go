@@ -16,7 +16,6 @@ package org
 
 import (
 	"internal/apiclient"
-
 	"internal/client/orgs"
 
 	"github.com/spf13/cobra"

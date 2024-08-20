@@ -17,11 +17,10 @@ package apps
 import (
 	"encoding/json"
 	"fmt"
+	"internal/apiclient"
 	"net/url"
 	"path"
 	"strings"
-
-	"internal/apiclient"
 )
 
 // CreateKey
@@ -58,7 +57,6 @@ func CreateKey(developerEmail string, appID string, consumerKey string, consumer
 		apiclient.ClientPrintHttpResponse.Set(false)
 	}
 	respBody, err = apiclient.HttpClient(u.String(), payload)
-
 	if err != nil {
 		return respBody, err
 	}

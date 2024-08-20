@@ -16,9 +16,7 @@ package apidocs
 
 import (
 	"fmt"
-
 	"internal/apiclient"
-
 	"internal/client/apidocs"
 
 	"github.com/spf13/cobra"

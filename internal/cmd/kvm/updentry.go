@@ -16,7 +16,6 @@ package kvm
 
 import (
 	"fmt"
-
 	"internal/apiclient"
 	"internal/client/kvm"
 

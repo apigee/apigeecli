@@ -16,12 +16,11 @@ package apiclient
 
 import (
 	"encoding/json"
+	"internal/clilog"
 	"os"
 	"os/user"
 	"path"
 	"time"
-
-	"internal/clilog"
 )
 
 const (

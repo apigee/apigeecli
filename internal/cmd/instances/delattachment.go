@@ -17,10 +17,9 @@ package instances
 import (
 	"encoding/json"
 	"internal/apiclient"
-	"path/filepath"
-
 	"internal/client/instances"
 	"internal/client/operations"
+	"path/filepath"
 
 	"github.com/spf13/cobra"
 )

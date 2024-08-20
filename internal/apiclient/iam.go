@@ -18,13 +18,12 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"internal/clilog"
 	"net/url"
 	"os"
 	"path"
 	"regexp"
 	"strings"
-
-	"internal/clilog"
 )
 
 // CrmURL is the endpoint for cloud resource manager
@@ -126,7 +125,6 @@ func CreateIAMServiceAccount(name string, iamRole string) (err error) {
 	payload := "{" + strings.Join(iamPayload, ",") + "}"
 
 	_, err = HttpClient(u.String(), payload)
-
 	if err != nil {
 		clilog.Error.Println(err)
 		return err

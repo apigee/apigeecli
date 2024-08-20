@@ -16,9 +16,7 @@ package kvm
 
 import (
 	"fmt"
-
 	"internal/apiclient"
-
 	"internal/client/kvm"
 
 	"github.com/spf13/cobra"

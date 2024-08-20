@@ -16,7 +16,6 @@ package sharedflows
 
 import (
 	"internal/apiclient"
-
 	"internal/client/sharedflows"
 
 	"github.com/spf13/cobra"

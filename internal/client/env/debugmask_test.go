@@ -15,13 +15,12 @@
 package env
 
 import (
-	"os"
-	"path"
-	"testing"
-
 	"internal/apiclient"
 	"internal/client/clienttest"
 	"internal/cmd/utils"
+	"os"
+	"path"
+	"testing"
 )
 
 var cliPath = os.Getenv("APIGEECLI_PATH")

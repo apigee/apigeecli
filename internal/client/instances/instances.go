@@ -16,11 +16,10 @@ package instances
 
 import (
 	"encoding/json"
+	"internal/apiclient"
 	"net/url"
 	"path"
 	"strings"
-
-	"internal/apiclient"
 )
 
 // Create

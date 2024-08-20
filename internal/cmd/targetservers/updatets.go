@@ -16,11 +16,9 @@ package targetservers
 
 import (
 	"fmt"
-	"strconv"
-
 	"internal/apiclient"
-
 	"internal/client/targetservers"
+	"strconv"
 
 	"github.com/spf13/cobra"
 )

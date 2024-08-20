@@ -16,10 +16,9 @@ package securityprofiles
 
 import (
 	"fmt"
-	"time"
-
 	"internal/apiclient"
 	"internal/client/securityprofiles"
+	"time"
 
 	"github.com/spf13/cobra"
 )

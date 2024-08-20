@@ -16,9 +16,7 @@ package references
 
 import (
 	"fmt"
-
 	"internal/apiclient"
-
 	"internal/client/references"
 
 	"github.com/spf13/cobra"

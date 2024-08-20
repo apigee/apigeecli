@@ -16,11 +16,9 @@ package appgroups
 
 import (
 	"fmt"
-	"strconv"
-
 	"internal/apiclient"
-
 	"internal/client/appgroups"
+	"strconv"
 
 	"github.com/spf13/cobra"
 )

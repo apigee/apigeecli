@@ -15,11 +15,9 @@
 package res
 
 import (
-	"strings"
-
 	"internal/apiclient"
-
 	"internal/client/res"
+	"strings"
 
 	"github.com/spf13/cobra"
 )

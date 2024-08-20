@@ -16,11 +16,9 @@ package products
 
 import (
 	"encoding/json"
-	"os"
-
-	"internal/clilog"
-
 	"internal/client/products"
+	"internal/clilog"
+	"os"
 
 	"github.com/spf13/cobra"
 )

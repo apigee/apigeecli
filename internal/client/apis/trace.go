@@ -17,11 +17,10 @@ package apis
 import (
 	"bytes"
 	"fmt"
+	"internal/apiclient"
 	"net/url"
 	"path"
 	"strconv"
-
-	"internal/apiclient"
 )
 
 func getFilterStr(filter map[string]string) string {

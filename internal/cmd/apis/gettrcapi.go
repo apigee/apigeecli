@@ -16,7 +16,6 @@ package apis
 
 import (
 	"internal/apiclient"
-
 	"internal/client/apis"
 
 	"github.com/spf13/cobra"

@@ -17,12 +17,10 @@ package org
 import (
 	"encoding/json"
 	"fmt"
-	"path/filepath"
-
 	"internal/apiclient"
-
 	"internal/client/operations"
 	"internal/client/orgs"
+	"path/filepath"
 
 	"github.com/spf13/cobra"
 )

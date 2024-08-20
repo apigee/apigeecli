@@ -15,10 +15,9 @@
 package products
 
 import (
+	"internal/apiclient"
 	"net/url"
 	"path"
-
-	"internal/apiclient"
 )
 
 // CreateRatePlan

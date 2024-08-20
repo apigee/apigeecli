@@ -15,11 +15,9 @@
 package apicategories
 
 import (
-	"os"
-
 	"internal/apiclient"
-
 	"internal/client/apicategories"
+	"os"
 
 	"github.com/spf13/cobra"
 )

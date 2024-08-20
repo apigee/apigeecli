@@ -17,10 +17,9 @@ package apicategories
 import (
 	"encoding/json"
 	"fmt"
+	"internal/client/clienttest"
 	"os"
 	"testing"
-
-	"internal/client/clienttest"
 )
 
 const (

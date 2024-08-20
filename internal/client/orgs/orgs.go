@@ -17,13 +17,11 @@ package orgs
 import (
 	"encoding/json"
 	"fmt"
+	"internal/apiclient"
+	"internal/clilog"
 	"net/url"
 	"path"
 	"strings"
-
-	"internal/apiclient"
-
-	"internal/clilog"
 )
 
 var analyticsRegions = [...]string{
@@ -372,7 +370,8 @@ func Update(description string, authorizedNetwork string) (respBody []byte, err 
 
 // SetAddons
 func SetAddons(advancedApiOpsConfig bool, integrationConfig bool, monetizationConfig bool, connectorsConfig bool,
-	apiSecurityConfig bool, analyticsConfig bool) (respBody []byte, err error) {
+	apiSecurityConfig bool, analyticsConfig bool,
+) (respBody []byte, err error) {
 	apiclient.ClientPrintHttpResponse.Set(false)
 
 	orgRespBody, err := Get()

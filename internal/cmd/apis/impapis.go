@@ -16,11 +16,9 @@ package apis
 
 import (
 	"fmt"
-	"os"
-
 	"internal/apiclient"
-
 	"internal/client/apis"
+	"os"
 
 	"github.com/spf13/cobra"
 )

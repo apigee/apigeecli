@@ -17,18 +17,15 @@ package orgs
 import (
 	"encoding/json"
 	"fmt"
-	"time"
-
 	"internal/apiclient"
-
-	"internal/clilog"
-
 	"internal/client/env"
+	"internal/clilog"
+	"time"
 )
 
 func TotalAPICallsInMonth(month int, year int, envDetails bool,
-	proxyType bool, billingType string) (apiCalls int, extensibleApiCalls int, standardApiCalls int, err error) {
-
+	proxyType bool, billingType string,
+) (apiCalls int, extensibleApiCalls int, standardApiCalls int, err error) {
 	var envListBytes []byte
 	var envList []string
 
@@ -61,7 +58,8 @@ func batchReport(envList []string, month int, year int, envDetails bool, proxyTy
 }
 
 func TotalAPICallsInYear(year int, envDetails bool,
-	proxyType bool, billingType string) (apiCalls int, extensibleApiCalls int, standardApiCalls int, err error) {
+	proxyType bool, billingType string,
+) (apiCalls int, extensibleApiCalls int, standardApiCalls int, err error) {
 	var monthlyApiTotal, monthlyExtensibleTotal, monthlyStandardTotal int
 
 	t := time.Now()
@@ -74,8 +72,7 @@ func TotalAPICallsInYear(year int, envDetails bool,
 	if currentYear == year {
 		currentMonth := t.Month()
 		for i := 1; i <= int(currentMonth); i++ { // run the loop only till the current month
-			if monthlyApiTotal, monthlyExtensibleTotal, monthlyStandardTotal, err =
-				TotalAPICallsInMonth(i, year, envDetails, proxyType, billingType); err != nil {
+			if monthlyApiTotal, monthlyExtensibleTotal, monthlyStandardTotal, err = TotalAPICallsInMonth(i, year, envDetails, proxyType, billingType); err != nil {
 				return -1, -1, -1, err
 			}
 			apiCalls = apiCalls + monthlyApiTotal
@@ -84,8 +81,7 @@ func TotalAPICallsInYear(year int, envDetails bool,
 		}
 	} else {
 		for i := 1; i <= 12; i++ { // run the loop for each month
-			if monthlyApiTotal, monthlyExtensibleTotal, monthlyStandardTotal, err =
-				TotalAPICallsInMonth(i, year, envDetails, proxyType, billingType); err != nil {
+			if monthlyApiTotal, monthlyExtensibleTotal, monthlyStandardTotal, err = TotalAPICallsInMonth(i, year, envDetails, proxyType, billingType); err != nil {
 				return -1, -1, -1, err
 			}
 			apiCalls = apiCalls + monthlyApiTotal

@@ -16,12 +16,11 @@ package products
 
 import (
 	"encoding/json"
+	"internal/client/clienttest"
+	"internal/clilog"
 	"os"
 	"path"
 	"testing"
-
-	"internal/client/clienttest"
-	"internal/clilog"
 )
 
 const name = "test"

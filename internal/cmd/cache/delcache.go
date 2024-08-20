@@ -16,7 +16,6 @@ package cache
 
 import (
 	"internal/apiclient"
-
 	"internal/client/cache"
 
 	"github.com/spf13/cobra"

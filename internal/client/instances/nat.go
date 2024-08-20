@@ -15,11 +15,10 @@
 package instances
 
 import (
+	"internal/apiclient"
 	"net/url"
 	"path"
 	"strings"
-
-	"internal/apiclient"
 )
 
 // ReserveNatIP

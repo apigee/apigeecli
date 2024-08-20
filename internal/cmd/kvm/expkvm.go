@@ -17,15 +17,12 @@ package kvm
 import (
 	"encoding/json"
 	"fmt"
+	"internal/apiclient"
+	"internal/client/kvm"
+	"internal/clilog"
+	"internal/cmd/utils"
 	"strconv"
 	"strings"
-
-	"internal/cmd/utils"
-
-	"internal/apiclient"
-	"internal/clilog"
-
-	"internal/client/kvm"
 
 	"github.com/spf13/cobra"
 )

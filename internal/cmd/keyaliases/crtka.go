@@ -16,11 +16,8 @@ package keyaliases
 
 import (
 	"fmt"
-
 	"internal/apiclient"
-
 	"internal/client/keyaliases"
-
 	"internal/cmd/utils"
 
 	"github.com/spf13/cobra"

@@ -17,6 +17,9 @@ package apps
 import (
 	"encoding/json"
 	"fmt"
+	"internal/apiclient"
+	"internal/client/developers"
+	"internal/clilog"
 	"io"
 	"net/url"
 	"os"
@@ -24,12 +27,6 @@ import (
 	"strconv"
 	"strings"
 	"sync"
-
-	"internal/apiclient"
-
-	"internal/clilog"
-
-	"internal/client/developers"
 
 	"github.com/thedevsaddam/gojsonq"
 )

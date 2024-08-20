@@ -18,6 +18,10 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"internal/apiclient"
+	"internal/bundlegen/policies"
+	"internal/bundlegen/proxies"
+	"internal/clilog"
 	"io"
 	"net/url"
 	"os"
@@ -25,12 +29,9 @@ import (
 	"regexp"
 	"strings"
 
-	"internal/apiclient"
 	apiproxy "internal/bundlegen/apiproxydef"
-	"internal/bundlegen/policies"
-	"internal/bundlegen/proxies"
+
 	targets "internal/bundlegen/targets"
-	"internal/clilog"
 
 	"github.com/pb33f/libopenapi"
 	validator "github.com/pb33f/libopenapi-validator"

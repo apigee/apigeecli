@@ -16,7 +16,6 @@ package envgroup
 
 import (
 	"internal/apiclient"
-
 	"internal/client/envgroups"
 
 	"github.com/spf13/cobra"

@@ -15,11 +15,9 @@
 package keystores
 
 import (
-	"os"
-
 	"internal/apiclient"
-
 	"internal/client/keystores"
+	"os"
 
 	"github.com/spf13/cobra"
 )

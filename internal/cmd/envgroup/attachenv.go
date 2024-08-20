@@ -17,10 +17,9 @@ package envgroup
 import (
 	"encoding/json"
 	"internal/apiclient"
-	"path/filepath"
-
 	"internal/client/envgroups"
 	"internal/client/operations"
+	"path/filepath"
 
 	"github.com/spf13/cobra"
 )

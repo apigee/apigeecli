@@ -15,9 +15,8 @@
 package apis
 
 import (
-	"testing"
-
 	"internal/client/clienttest"
+	"testing"
 )
 
 func TestListTracceSession(t *testing.T) {

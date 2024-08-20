@@ -16,14 +16,11 @@ package kvm
 
 import (
 	"fmt"
+	"internal/apiclient"
+	"internal/client/kvm"
+	"internal/cmd/utils"
 	"strconv"
 	"strings"
-
-	"internal/cmd/utils"
-
-	"internal/apiclient"
-
-	"internal/client/kvm"
 
 	"github.com/spf13/cobra"
 )

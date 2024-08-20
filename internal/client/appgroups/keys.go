@@ -16,11 +16,10 @@ package appgroups
 
 import (
 	"fmt"
+	"internal/apiclient"
 	"net/url"
 	"path"
 	"strings"
-
-	"internal/apiclient"
 )
 
 // CreateKey
@@ -57,7 +56,6 @@ func CreateKey(name string, appName string, consumerKey string, consumerSecret s
 		apiclient.ClientPrintHttpResponse.Set(false)
 	}
 	respBody, err = apiclient.HttpClient(u.String(), payload)
-
 	if err != nil {
 		return respBody, err
 	}

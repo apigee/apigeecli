@@ -19,15 +19,14 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"internal/clilog"
+	"internal/cmd/utils"
 	"net/url"
 	"os"
 	"path"
 	"path/filepath"
 	"strings"
 	"sync"
-
-	"internal/clilog"
-	"internal/cmd/utils"
 )
 
 // entityPayloadList stores list of entities
@@ -55,7 +54,6 @@ func ReadArchive(filename string) ([]byte, error) {
 	}
 
 	_, err = zip.NewReader(file, fi.Size())
-
 	if err != nil {
 		clilog.Error.Println("invalid archive format: ", err)
 		return nil, err
@@ -92,7 +90,6 @@ func ReadBundle(filename string) error {
 	}
 
 	_, err = zip.NewReader(file, fi.Size())
-
 	if err != nil {
 		clilog.Error.Println("invalid API Proxy Bundle: ", err)
 		return err
@@ -153,7 +150,6 @@ func WriteArrayByteArrayToFile(exportFile string, fileAppend bool, payload [][]b
 	payloadFromArray = append(payloadFromArray, byte(']'))
 
 	_, err = f.Write(payloadFromArray)
-
 	if err != nil {
 		clilog.Error.Println("error writing to file: ", err)
 		return err

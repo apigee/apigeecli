@@ -16,9 +16,8 @@ package iam
 
 import (
 	"fmt"
-	"strings"
-
 	"internal/apiclient"
+	"strings"
 
 	"github.com/spf13/cobra"
 )

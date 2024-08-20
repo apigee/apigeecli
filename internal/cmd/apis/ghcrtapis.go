@@ -16,16 +16,13 @@ package apis
 
 import (
 	"fmt"
+	"internal/apiclient"
+	"internal/client/apis"
+	"internal/clilog"
 	"os"
 	"regexp"
 
-	"internal/apiclient"
-
-	"internal/clilog"
-
 	proxybundle "internal/bundlegen/proxybundle"
-
-	"internal/client/apis"
 
 	"github.com/spf13/cobra"
 )

@@ -19,6 +19,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"internal/apiclient"
+	"internal/bundlegen"
+	"internal/bundlegen/targets"
+	"internal/clilog"
 	"io"
 	"net/http"
 	"net/url"
@@ -28,16 +32,12 @@ import (
 	"regexp"
 	"strings"
 
-	"internal/apiclient"
-	"internal/clilog"
-
-	"internal/bundlegen"
 	genapi "internal/bundlegen"
 	apiproxy "internal/bundlegen/apiproxydef"
 	policies "internal/bundlegen/policies"
 	proxies "internal/bundlegen/proxies"
 	sf "internal/bundlegen/sharedflowdef"
-	"internal/bundlegen/targets"
+
 	target "internal/bundlegen/targets"
 
 	"github.com/google/go-github/github"
