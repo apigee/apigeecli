@@ -47,6 +47,17 @@ type Property struct {
 	Value string `json:"value,omitempty"`
 }
 
+type AddonsConfig struct {
+	AnalyticsConfig AnalyticsConfig `json:"analyticsConfig,omitempty"`
+}
+
+type AnalyticsConfig struct {
+	Enabled         bool   `json:"enabled,omitempty"`
+	ExpireTimeMills string `json:"expireTimeMills,omitempty"`
+	State           string `json:"state,omitempty"`
+	UpdateTime      string `json:"updateTime,omitempty"`
+}
+
 // Create
 func Create(envType string, deploymentType string, fwdProxyURI string) (respBody []byte, err error) {
 	environment := []string{}
@@ -389,4 +400,52 @@ func MarshalEnvironmentList(contents []byte) (envronmentList Environments, err e
 		return envronmentList, err
 	}
 	return envronmentList, nil
+}
+
+func GetAddonsConfig(environment string) (respBody []byte, err error) {
+
+	if environment == "" {
+		environment = apiclient.GetApigeeEnv()
+	}
+
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments",
+		environment, "addonsConfig")
+
+	respBody, err = apiclient.HttpClient(u.String())
+	return respBody, err
+}
+
+func IsAnalyticsEnabled(environment string) (enabled bool, err error) {
+	var tmp string
+	apiclient.ClientPrintHttpResponse.Set(false)
+	tmp = apiclient.GetApigeeEnv()
+	apiclient.SetApigeeEnv(environment)
+	respBody, err := Get(false)
+	apiclient.SetApigeeEnv(tmp)
+	if err != nil {
+		return false, err
+	}
+	e := Environment{}
+
+	if err = json.Unmarshal(respBody, &e); err != nil {
+		return false, err
+	}
+
+	if e.Type == "BASE" {
+		return false, nil
+	}
+
+	respBody, err = GetAddonsConfig(environment)
+	apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
+
+	if err != nil {
+		return false, err
+	}
+	addonsConfig := AddonsConfig{}
+	err = json.Unmarshal(respBody, &addonsConfig)
+	if err != nil {
+		return false, err
+	}
+	return addonsConfig.AnalyticsConfig.Enabled, nil
 }

@@ -35,12 +35,12 @@ var SetAddonCmd = &cobra.Command{
 		cmd.SilenceUsage = true
 
 		_, err = orgs.SetAddons(advancedAPIOpsConfig, integrationConfig,
-			monetizationConfig, connectorsConfig, apiSecurityConfig)
+			monetizationConfig, connectorsConfig, apiSecurityConfig, analyticsConfig)
 		return
 	},
 }
 
-var advancedAPIOpsConfig, integrationConfig, monetizationConfig, connectorsConfig, apiSecurityConfig bool
+var advancedAPIOpsConfig, integrationConfig, monetizationConfig, connectorsConfig, apiSecurityConfig, analyticsConfig bool
 
 func init() {
 	SetAddonCmd.Flags().StringVarP(&org, "org", "o",
@@ -55,4 +55,6 @@ func init() {
 		false, "Enable Apigee Connectors")
 	SetAddonCmd.Flags().BoolVarP(&apiSecurityConfig, "advapisec", "",
 		false, "Enable Apigee Advanced API Security")
+	SetAddonCmd.Flags().BoolVarP(&analyticsConfig, "analytics", "",
+		false, "Enable Apigee Analytics")
 }

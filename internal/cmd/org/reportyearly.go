@@ -40,7 +40,20 @@ var YearlyCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
 
-		var apiCalls int
+		var apiCalls, extensibleApiCalls, standardApiCalls int
+		var apiHeader, billingType string
+
+		apiclient.DisableCmdPrintHttpResponse()
+		if billingType, err = orgs.GetOrgField("billingType"); err != nil {
+			return err
+		}
+
+		if proxyType {
+			apiHeader = proxyTypeHeader
+		} else {
+			apiHeader = apiCallsHeader
+		}
+
 		w := tabwriter.NewWriter(os.Stdout, 32, 4, 0, ' ', 0)
 
 		clilog.Warning.Println("This API is rate limited to 1 API Call per second")
@@ -50,11 +63,12 @@ var YearlyCmd = &cobra.Command{
 		}
 
 		if envDetails {
-			fmt.Fprintln(w, "ENVIRONMENT\tMONTH\tAPI CALLS")
+			fmt.Fprintln(w, "ENVIRONMENT\tMONTH"+apiHeader)
 			w.Flush()
 		}
 
-		if apiCalls, err = orgs.TotalAPICallsInYear(year, envDetails, conn); err != nil {
+		if apiCalls, extensibleApiCalls, standardApiCalls, err = orgs.TotalAPICallsInYear(year,
+			envDetails, proxyType, billingType); err != nil {
 			return err
 		}
 
@@ -62,8 +76,12 @@ var YearlyCmd = &cobra.Command{
 			fmt.Printf("\nSummary\n\n")
 		}
 
-		fmt.Fprintln(w, "ORGANIZATION\tYEAR\tAPI CALLS")
-		fmt.Fprintf(w, "%s\t%d\t%d\n", apiclient.GetApigeeOrg(), year, apiCalls)
+		fmt.Fprintln(w, "ORGANIZATION\tYEAR"+apiHeader)
+		if proxyType {
+			fmt.Fprintf(w, "%s\t%d\t%d\t%d\n", apiclient.GetApigeeOrg(), year, extensibleApiCalls, standardApiCalls)
+		} else {
+			fmt.Fprintf(w, "%s\t%d\t%d\n", apiclient.GetApigeeOrg(), year, apiCalls)
+		}
 		fmt.Fprintln(w)
 		w.Flush()
 
@@ -76,8 +94,8 @@ func init() {
 		-1, "Year")
 	YearlyCmd.Flags().BoolVarP(&envDetails, "env-details", "",
 		false, "Print details of each environment")
-	YearlyCmd.Flags().IntVarP(&conn, "conn", "c",
-		4, "Number of connections")
+	YearlyCmd.Flags().BoolVarP(&proxyType, "proxy-type", "",
+		false, "Split the API Calls by proxy type, standard vs extensible proxy")
 	YearlyCmd.Flags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
 

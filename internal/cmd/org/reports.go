@@ -26,6 +26,9 @@ var ReportCmd = &cobra.Command{
 	Long:    "Report Apigee Org Usage",
 }
 
+const apiCallsHeader = "\tAPI CALLS"
+const proxyTypeHeader = "\tEXTENSIBLE PROXY\tSTANDARD PROXY"
+
 func init() {
 	ReportCmd.AddCommand(MonthlyCmd)
 	ReportCmd.AddCommand(YearlyCmd)
