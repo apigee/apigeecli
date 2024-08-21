@@ -17,13 +17,11 @@ package eptattachment
 import (
 	"encoding/json"
 	"fmt"
-	"path/filepath"
-	"regexp"
-
 	"internal/apiclient"
-
 	"internal/client/eptattachment"
 	"internal/client/operations"
+	"path/filepath"
+	"regexp"
 
 	"github.com/spf13/cobra"
 )
@@ -62,8 +60,10 @@ var CreateCmd = &cobra.Command{
 	},
 }
 
-var location, serviceAttachment string
-var wait bool
+var (
+	location, serviceAttachment string
+	wait                        bool
+)
 
 func init() {
 	CreateCmd.Flags().StringVarP(&name, "name", "n",

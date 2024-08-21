@@ -16,9 +16,7 @@ package org
 
 import (
 	"fmt"
-
 	"internal/apiclient"
-
 	"internal/client/orgs"
 
 	"github.com/spf13/cobra"

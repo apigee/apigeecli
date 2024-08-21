@@ -16,7 +16,6 @@ package keyaliases
 
 import (
 	"internal/apiclient"
-
 	"internal/client/keyaliases"
 
 	"github.com/spf13/cobra"

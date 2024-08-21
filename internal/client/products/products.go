@@ -17,6 +17,8 @@ package products
 import (
 	"encoding/json"
 	"errors"
+	"internal/apiclient"
+	"internal/clilog"
 	"io"
 	"net/url"
 	"os"
@@ -24,10 +26,6 @@ import (
 	"strconv"
 	"strings"
 	"sync"
-
-	"internal/apiclient"
-
-	"internal/clilog"
 )
 
 type apiProducts struct {
@@ -467,7 +465,6 @@ func readProductsFile(filePath string) ([]APIProduct, error) {
 	}
 
 	err = json.Unmarshal(byteValue, &products)
-
 	if err != nil {
 		return products, err
 	}

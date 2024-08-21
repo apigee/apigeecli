@@ -16,9 +16,7 @@ package products
 
 import (
 	"fmt"
-
 	"internal/apiclient"
-
 	"internal/client/products"
 
 	"github.com/spf13/cobra"

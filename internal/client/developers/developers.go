@@ -18,6 +18,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"internal/apiclient"
+	"internal/clilog"
 	"io"
 	"net/url"
 	"os"
@@ -25,10 +27,6 @@ import (
 	"strconv"
 	"strings"
 	"sync"
-
-	"internal/apiclient"
-
-	"internal/clilog"
 )
 
 // Appdevelopers holds a single developer
@@ -356,7 +354,6 @@ func ReadDevelopersFile(filePath string) (Appdevelopers, error) {
 	}
 
 	err = json.Unmarshal(byteValue, &devs)
-
 	if err != nil {
 		return devs, err
 	}

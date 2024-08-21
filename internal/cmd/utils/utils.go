@@ -16,13 +16,12 @@ package utils
 
 import (
 	"encoding/json"
+	"internal/clilog"
 	"io"
 	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
-
-	"internal/clilog"
 )
 
 // Org variable is used within the registry cmd

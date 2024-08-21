@@ -19,6 +19,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"internal/apiclient"
+	"internal/clilog"
 	"io"
 	"mime/multipart"
 	"net/http"
@@ -30,10 +32,6 @@ import (
 	"strings"
 	"sync"
 	"time"
-
-	"internal/apiclient"
-
-	"internal/clilog"
 )
 
 type proxies struct {

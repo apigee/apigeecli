@@ -17,14 +17,12 @@ package instances
 import (
 	"encoding/json"
 	"fmt"
-	"path/filepath"
-	"regexp"
-
 	"internal/apiclient"
-
 	"internal/client/instances"
 	"internal/client/operations"
 	"internal/client/orgs"
+	"path/filepath"
+	"regexp"
 
 	"github.com/spf13/cobra"
 )

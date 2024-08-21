@@ -22,6 +22,10 @@ RUN go install github.com/google/addlicense@latest
 
 RUN go install github.com/google/go-licenses@latest
 
+RUN go install mvdan.cc/gofumpt@latest
+
+RUN curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.60.2
+
 RUN echo 'deb [trusted=yes] https://repo.goreleaser.com/apt/ /' | sudo tee /etc/apt/sources.list.d/goreleaser.list
 RUN sudo apt update
 RUN sudo apt install -y goreleaser curl jq

@@ -15,10 +15,9 @@
 package kvm
 
 import (
-	"testing"
-
 	"internal/apiclient"
 	"internal/client/clienttest"
+	"testing"
 )
 
 const (

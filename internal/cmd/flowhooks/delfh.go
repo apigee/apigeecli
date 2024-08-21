@@ -16,7 +16,6 @@ package flowhooks
 
 import (
 	"internal/apiclient"
-
 	"internal/client/flowhooks"
 
 	"github.com/spf13/cobra"

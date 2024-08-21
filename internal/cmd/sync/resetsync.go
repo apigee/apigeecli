@@ -16,7 +16,6 @@ package sync
 
 import (
 	"internal/apiclient"
-
 	"internal/client/sync"
 
 	"github.com/spf13/cobra"

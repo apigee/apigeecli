@@ -16,7 +16,6 @@ package kvm
 
 import (
 	"fmt"
-
 	"internal/apiclient"
 	"internal/client/kvm"
 
@@ -40,7 +39,7 @@ var CreateEntryCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
-		//value = getKVMString(value)
+		// value = getKVMString(value)
 		_, err = kvm.CreateEntry(proxyName, mapName, keyName, value, false)
 		return
 	},

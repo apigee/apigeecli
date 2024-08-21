@@ -74,8 +74,10 @@ var GetCmd = &cobra.Command{
 	},
 }
 
-var fileContentPath string
-var contents bool
+var (
+	fileContentPath string
+	contents        bool
+)
 
 func init() {
 	GetCmd.Flags().StringVarP(&versionID, "version", "v",

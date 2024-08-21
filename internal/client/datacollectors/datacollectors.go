@@ -16,13 +16,12 @@ package datacollectors
 
 import (
 	"encoding/json"
+	"internal/apiclient"
 	"io"
 	"net/url"
 	"os"
 	"path"
 	"strings"
-
-	"internal/apiclient"
 )
 
 type dcollectors struct {
@@ -115,7 +114,6 @@ func readDataCollectorsFile(filePath string) (dcollectors, error) {
 	}
 
 	err = json.Unmarshal(byteValue, &dCollectors)
-
 	if err != nil {
 		return dCollectors, err
 	}

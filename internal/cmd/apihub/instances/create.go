@@ -16,10 +16,9 @@ package instances
 
 import (
 	"fmt"
-	"regexp"
-
 	"internal/apiclient"
 	"internal/client/hub"
+	"regexp"
 
 	"github.com/spf13/cobra"
 )

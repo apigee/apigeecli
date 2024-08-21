@@ -16,10 +16,11 @@ package bundlegen
 
 import (
 	"fmt"
+	"internal/bundlegen/proxies"
 	"net/url"
 
 	apiproxy "internal/bundlegen/apiproxydef"
-	"internal/bundlegen/proxies"
+
 	targets "internal/bundlegen/targets"
 )
 

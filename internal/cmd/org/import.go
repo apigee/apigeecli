@@ -17,14 +17,7 @@ package org
 import (
 	"encoding/json"
 	"fmt"
-	"io"
-	"os"
-	"path"
-
 	"internal/apiclient"
-
-	"internal/clilog"
-
 	"internal/client/apis"
 	"internal/client/apps"
 	"internal/client/datacollectors"
@@ -36,12 +29,14 @@ import (
 	"internal/client/orgs"
 	"internal/client/products"
 	"internal/client/references"
+	"internal/client/securityprofiles"
 	"internal/client/sharedflows"
 	"internal/client/targetservers"
-
-	"internal/client/securityprofiles"
-
+	"internal/clilog"
 	"internal/cmd/utils"
+	"io"
+	"os"
+	"path"
 
 	"github.com/spf13/cobra"
 )

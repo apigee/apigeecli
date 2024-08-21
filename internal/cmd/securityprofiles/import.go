@@ -16,11 +16,9 @@ package securityprofiles
 
 import (
 	"fmt"
-	"os"
-
 	"internal/apiclient"
-
 	"internal/client/securityprofiles"
+	"os"
 
 	"github.com/spf13/cobra"
 )

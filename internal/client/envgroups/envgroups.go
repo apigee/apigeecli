@@ -17,13 +17,12 @@ package envgroups
 import (
 	"encoding/json"
 	"fmt"
+	"internal/apiclient"
 	"io"
 	"net/url"
 	"os"
 	"path"
 	"strings"
-
-	"internal/apiclient"
 )
 
 type environmentgroups struct {
@@ -201,7 +200,6 @@ func readEnvGroupsFile(filePath string) (environmentgroups, error) {
 	}
 
 	err = json.Unmarshal(byteValue, &environmentGroups)
-
 	if err != nil {
 		return environmentGroups, err
 	}

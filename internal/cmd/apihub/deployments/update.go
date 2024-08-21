@@ -53,5 +53,4 @@ func init() {
 	UpdateCmd.Flags().Var(&d, "dep-type", "The type of deployment")
 	UpdateCmd.Flags().Var(&e, "env-type", "The environment mapping to this deployment")
 	UpdateCmd.Flags().Var(&s, "slo-type", "The SLO for this deployment")
-
 }

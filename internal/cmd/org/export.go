@@ -16,18 +16,7 @@ package org
 
 import (
 	"encoding/json"
-	"os"
-	"path"
-	"strconv"
-	"strings"
-	"syscall"
-
-	"internal/cmd/utils"
-
 	"internal/apiclient"
-
-	"internal/clilog"
-
 	"internal/client/apicategories"
 	"internal/client/apidocs"
 	"internal/client/apis"
@@ -46,6 +35,13 @@ import (
 	"internal/client/sharedflows"
 	"internal/client/sync"
 	"internal/client/targetservers"
+	"internal/clilog"
+	"internal/cmd/utils"
+	"os"
+	"path"
+	"strconv"
+	"strings"
+	"syscall"
 
 	"github.com/spf13/cobra"
 )

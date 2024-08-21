@@ -15,9 +15,8 @@
 package datacollectors
 
 import (
-	"testing"
-
 	"internal/client/clienttest"
+	"testing"
 )
 
 const name = "test"

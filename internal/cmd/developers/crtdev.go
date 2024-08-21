@@ -16,7 +16,6 @@ package developers
 
 import (
 	"internal/apiclient"
-
 	"internal/client/developers"
 
 	"github.com/spf13/cobra"

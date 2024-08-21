@@ -16,11 +16,9 @@ package sync
 
 import (
 	"fmt"
-	"strings"
-
 	"internal/apiclient"
-
 	"internal/client/sync"
+	"strings"
 
 	"github.com/spf13/cobra"
 )

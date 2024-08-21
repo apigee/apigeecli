@@ -16,13 +16,11 @@ package sharedflows
 
 import (
 	"fmt"
-	"os"
-	"regexp"
-
 	"internal/apiclient"
 	"internal/client/sharedflows"
-
 	"internal/clilog"
+	"os"
+	"regexp"
 
 	proxybundle "internal/bundlegen/proxybundle"
 

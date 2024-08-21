@@ -17,6 +17,12 @@ package bundlegen
 import (
 	"encoding/json"
 	"fmt"
+	"internal/apiclient"
+	"internal/bundlegen/policies"
+	"internal/bundlegen/proxies"
+	"internal/bundlegen/targets"
+	"internal/clilog"
+	"internal/cmd/utils"
 	"net/url"
 	"os"
 	"path"
@@ -25,16 +31,7 @@ import (
 	"strconv"
 	"strings"
 
-	"internal/apiclient"
-
-	"internal/clilog"
-
 	apiproxy "internal/bundlegen/apiproxydef"
-	"internal/bundlegen/policies"
-	"internal/bundlegen/proxies"
-	"internal/bundlegen/targets"
-
-	"internal/cmd/utils"
 
 	"github.com/getkin/kin-openapi/openapi2"
 	"github.com/ghodss/yaml"

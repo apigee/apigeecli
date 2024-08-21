@@ -15,11 +15,10 @@
 package sharedflows
 
 import (
+	"internal/client/clienttest"
 	"os"
 	"path"
 	"testing"
-
-	"internal/client/clienttest"
 )
 
 const (

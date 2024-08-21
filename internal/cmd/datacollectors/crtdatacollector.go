@@ -16,9 +16,7 @@ package datacollectors
 
 import (
 	"fmt"
-
 	"internal/apiclient"
-
 	"internal/client/datacollectors"
 
 	"github.com/spf13/cobra"

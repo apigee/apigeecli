@@ -19,16 +19,15 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"internal/apiclient"
+	"internal/client/sites"
+	"internal/cmd/utils"
 	"io"
 	"net/url"
 	"os"
 	"path"
 	"strconv"
 	"strings"
-
-	"internal/apiclient"
-	"internal/client/sites"
-	"internal/cmd/utils"
 )
 
 type Action uint8

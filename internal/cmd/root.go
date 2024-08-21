@@ -18,29 +18,20 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
-	"os"
-	"strconv"
-
 	"internal/apiclient"
-
 	"internal/clilog"
-
 	"internal/cmd/apicategories"
 	"internal/cmd/apidocs"
 	"internal/cmd/apihub"
 	"internal/cmd/apis"
 	"internal/cmd/appgroups"
 	"internal/cmd/apps"
-	cache "internal/cmd/cache"
 	"internal/cmd/datacollectors"
 	"internal/cmd/datastores"
 	"internal/cmd/developers"
 	"internal/cmd/env"
 	"internal/cmd/envgroup"
 	"internal/cmd/eptattachment"
-	flowhooks "internal/cmd/flowhooks"
 	"internal/cmd/iam"
 	"internal/cmd/instances"
 	"internal/cmd/keyaliases"
@@ -52,14 +43,24 @@ import (
 	"internal/cmd/products"
 	"internal/cmd/projects"
 	"internal/cmd/references"
-	res "internal/cmd/res"
 	"internal/cmd/securityprofiles"
 	"internal/cmd/sharedflows"
 	"internal/cmd/sites"
 	"internal/cmd/sync"
-	targetservers "internal/cmd/targetservers"
 	"internal/cmd/token"
 	"internal/cmd/tree"
+	"io"
+	"net/http"
+	"os"
+	"strconv"
+
+	cache "internal/cmd/cache"
+
+	flowhooks "internal/cmd/flowhooks"
+
+	res "internal/cmd/res"
+
+	targetservers "internal/cmd/targetservers"
 
 	"github.com/spf13/cobra"
 )
@@ -70,7 +71,6 @@ var RootCmd = &cobra.Command{
 	Short: "Utility to work with Apigee APIs.",
 	Long:  "This command lets you interact with Apigee APIs.",
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-
 		if metadataToken && defaultToken {
 			return fmt.Errorf("metadata-token and default-token cannot be used together")
 		}

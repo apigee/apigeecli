@@ -15,9 +15,8 @@
 package developers
 
 import (
-	"testing"
-
 	"internal/client/clienttest"
+	"testing"
 )
 
 const email = "user@example.com"

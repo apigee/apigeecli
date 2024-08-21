@@ -16,14 +16,12 @@ package org
 
 import (
 	"fmt"
+	"internal/apiclient"
+	"internal/client/orgs"
+	"internal/clilog"
 	"os"
 	"text/tabwriter"
 	"time"
-
-	"internal/apiclient"
-	"internal/clilog"
-
-	"internal/client/orgs"
 
 	"github.com/spf13/cobra"
 )

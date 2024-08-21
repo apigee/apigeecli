@@ -15,13 +15,11 @@
 package apis
 
 import (
-	"os"
-
 	"internal/apiclient"
-	"internal/client/apis"
-
 	"internal/bundlegen"
 	"internal/bundlegen/proxybundle"
+	"internal/client/apis"
+	"os"
 
 	"github.com/spf13/cobra"
 )

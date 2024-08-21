@@ -17,10 +17,9 @@ package eptattachment
 import (
 	"encoding/json"
 	"internal/apiclient"
-	"path/filepath"
-
 	"internal/client/eptattachment"
 	"internal/client/operations"
+	"path/filepath"
 
 	"github.com/spf13/cobra"
 )

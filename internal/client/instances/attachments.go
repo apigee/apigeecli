@@ -17,11 +17,10 @@ package instances
 import (
 	"encoding/json"
 	"fmt"
+	"internal/apiclient"
 	"net/url"
 	"path"
 	"strings"
-
-	"internal/apiclient"
 )
 
 const interval = 10

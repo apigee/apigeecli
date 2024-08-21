@@ -15,11 +15,9 @@
 package env
 
 import (
-	"strconv"
-
 	"internal/apiclient"
-
 	"internal/client/env"
+	"strconv"
 
 	"github.com/spf13/cobra"
 )

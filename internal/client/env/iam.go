@@ -16,11 +16,10 @@ package env
 
 import (
 	"fmt"
+	"internal/apiclient"
 	"net/url"
 	"path"
 	"strings"
-
-	"internal/apiclient"
 )
 
 var validMemberTypes = []string{"serviceAccount", "group", "user", "domain"}

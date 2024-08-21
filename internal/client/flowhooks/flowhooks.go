@@ -15,12 +15,11 @@
 package flowhooks
 
 import (
+	"internal/apiclient"
 	"net/url"
 	"path"
 	"strconv"
 	"strings"
-
-	"internal/apiclient"
 )
 
 // Attach

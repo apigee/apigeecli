@@ -15,9 +15,8 @@
 package cache
 
 import (
-	"testing"
-
 	"internal/client/clienttest"
+	"testing"
 )
 
 func TestList(t *testing.T) {

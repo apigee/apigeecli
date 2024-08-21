@@ -19,16 +19,15 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"internal/apiclient"
+	"internal/clilog"
+	"internal/cmd/utils"
 	"net/url"
 	"os"
 	"path"
 	"path/filepath"
 	"strconv"
 	"strings"
-
-	"internal/apiclient"
-	"internal/clilog"
-	"internal/cmd/utils"
 )
 
 type DeploymentType string
@@ -345,7 +344,6 @@ func ListApiVersions(apiID string, filter string, pageSize int, pageToken string
 }
 
 func UpdateApiVersion(versionID string, apiID string, contents []byte) (respBody []byte, err error) {
-
 	var updateMasks []string
 
 	type apiversion struct {
@@ -1267,7 +1265,6 @@ func (s *SloType) Type() string {
 }
 
 func getSpecIDList(s []byte) (sList []string) {
-
 	type spec struct {
 		Name         string                 `json:"name,omitempty"`
 		DisplayName  string                 `json:"displayName,omitempty"`

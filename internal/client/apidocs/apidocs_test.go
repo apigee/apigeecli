@@ -17,12 +17,11 @@ package apidocs
 import (
 	"encoding/json"
 	"fmt"
+	"internal/client/clienttest"
+	"internal/cmd/utils"
 	"os"
 	"path"
 	"testing"
-
-	"internal/client/clienttest"
-	"internal/cmd/utils"
 )
 
 var (

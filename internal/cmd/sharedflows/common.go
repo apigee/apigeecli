@@ -17,12 +17,11 @@ package sharedflows
 import (
 	"encoding/json"
 	"fmt"
-	"strconv"
-	"time"
-
 	"internal/apiclient"
 	"internal/client/sharedflows"
 	"internal/clilog"
+	"strconv"
+	"time"
 )
 
 func GetRevision(respBody []byte) (revision int, err error) {

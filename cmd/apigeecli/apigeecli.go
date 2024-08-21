@@ -16,9 +16,8 @@ package main
 
 import (
 	"fmt"
-	"os"
-
 	"internal/cmd"
+	"os"
 )
 
 // https://goreleaser.com/cookbooks/using-main.version/?h=ldflags

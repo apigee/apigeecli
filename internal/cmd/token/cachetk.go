@@ -16,7 +16,6 @@ package token
 
 import (
 	"internal/apiclient"
-
 	"internal/clilog"
 
 	"github.com/spf13/cobra"

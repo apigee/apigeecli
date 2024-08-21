@@ -16,10 +16,9 @@ package developers
 
 import (
 	"encoding/json"
+	"internal/apiclient"
 	"net/url"
 	"path"
-
-	"internal/apiclient"
 )
 
 type developerAdjustment struct {

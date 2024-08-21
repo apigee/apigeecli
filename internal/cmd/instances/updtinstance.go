@@ -16,7 +16,6 @@ package instances
 
 import (
 	"internal/apiclient"
-
 	"internal/client/instances"
 
 	"github.com/spf13/cobra"

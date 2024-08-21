@@ -15,11 +15,10 @@
 package apis
 
 import (
+	"internal/client/clienttest"
 	"os"
 	"path"
 	"testing"
-
-	"internal/client/clienttest"
 )
 
 // go test internal/client/apis

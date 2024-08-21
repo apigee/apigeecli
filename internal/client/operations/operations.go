@@ -16,12 +16,11 @@ package operations
 
 import (
 	"encoding/json"
+	"internal/apiclient"
+	"internal/clilog"
 	"net/url"
 	"path"
 	"time"
-
-	"internal/apiclient"
-	"internal/clilog"
 )
 
 type ops struct {

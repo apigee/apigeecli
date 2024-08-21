@@ -19,6 +19,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"internal/apiclient"
+	"internal/clilog"
 	"io"
 	"net/http"
 	"net/url"
@@ -26,10 +28,6 @@ import (
 	"path"
 	"strings"
 	"sync"
-
-	"internal/apiclient"
-
-	"internal/clilog"
 )
 
 type ref struct {

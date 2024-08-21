@@ -16,13 +16,11 @@ package apis
 
 import (
 	"fmt"
-
 	"internal/apiclient"
+	"internal/client/apis"
 
 	bundle "internal/bundlegen"
 	proxybundle "internal/bundlegen/proxybundle"
-
-	"internal/client/apis"
 
 	"github.com/spf13/cobra"
 )
@@ -62,7 +60,6 @@ var SwaggerCreateCmd = &cobra.Command{
 			oasDocName,
 			basePath,
 			addCORS)
-
 		if err != nil {
 			return err
 		}

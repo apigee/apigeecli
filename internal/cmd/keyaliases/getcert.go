@@ -16,12 +16,10 @@ package keyaliases
 
 import (
 	"fmt"
-	"os"
-
 	"internal/apiclient"
-	"internal/clilog"
-
 	"internal/client/keyaliases"
+	"internal/clilog"
+	"os"
 
 	"github.com/spf13/cobra"
 )

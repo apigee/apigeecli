@@ -17,7 +17,6 @@ package env
 import (
 	"internal/apiclient"
 	"internal/client/env"
-
 	"internal/cmd/utils"
 
 	"github.com/spf13/cobra"

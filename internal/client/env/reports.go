@@ -17,6 +17,8 @@ package env
 import (
 	"encoding/json"
 	"fmt"
+	"internal/apiclient"
+	"internal/clilog"
 	"net/url"
 	"os"
 	"path"
@@ -24,10 +26,6 @@ import (
 	"sync"
 	"text/tabwriter"
 	"time"
-
-	"internal/apiclient"
-
-	"internal/clilog"
 )
 
 const (
@@ -65,8 +63,8 @@ type apiCalls struct {
 var ApiCalls = &apiCalls{count: 0}
 
 func TotalAPICallsInMonth(dimension bool, environment string, month int, year int,
-	envDetails bool, billingType string) {
-
+	envDetails bool, billingType string,
+) {
 	var totalApiCalls, totalExtensible, totalStandard int
 	var err error
 	var analyticsAddon bool

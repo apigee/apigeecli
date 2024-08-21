@@ -15,10 +15,9 @@
 package sites
 
 import (
+	"internal/apiclient"
 	"net/url"
 	"path"
-
-	"internal/apiclient"
 
 	"github.com/thedevsaddam/gojsonq"
 )

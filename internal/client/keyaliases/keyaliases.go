@@ -17,12 +17,10 @@ package keyaliases
 import (
 	"encoding/json"
 	"fmt"
+	"internal/apiclient"
+	"internal/cmd/utils"
 	"net/url"
 	"path"
-
-	"internal/apiclient"
-
-	"internal/cmd/utils"
 )
 
 type certificate struct {

@@ -16,7 +16,6 @@ package targetservers
 
 import (
 	"internal/apiclient"
-
 	"internal/client/targetservers"
 
 	"github.com/spf13/cobra"

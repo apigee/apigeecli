@@ -16,9 +16,8 @@ package products
 
 import (
 	"internal/apiclient"
-	"strings"
-
 	"internal/client/products"
+	"strings"
 
 	"github.com/spf13/cobra"
 )

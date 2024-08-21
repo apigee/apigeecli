@@ -15,10 +15,9 @@
 package orgs
 
 import (
-	"testing"
-
 	"internal/apiclient"
 	"internal/client/clienttest"
+	"testing"
 )
 
 func TestList(t *testing.T) {

@@ -21,6 +21,7 @@ import (
 	"encoding/pem"
 	"errors"
 	"fmt"
+	"internal/clilog"
 	"io"
 	"net/http"
 	"net/url"
@@ -29,8 +30,6 @@ import (
 	"strconv"
 	"strings"
 	"time"
-
-	"internal/clilog"
 
 	"github.com/lestrrat-go/jwx/v2/jwa"
 	"github.com/lestrrat-go/jwx/v2/jwt"

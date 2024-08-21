@@ -16,12 +16,11 @@ package bundlegen
 
 import (
 	"fmt"
+	"internal/client/clienttest"
 	"os"
 	"path"
 	"regexp"
 	"testing"
-
-	"internal/client/clienttest"
 )
 
 var cliPath = os.Getenv("APIGEECLI_PATH")

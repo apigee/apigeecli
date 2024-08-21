@@ -16,11 +16,9 @@ package apps
 
 import (
 	"fmt"
-	"strconv"
-
 	"internal/apiclient"
-
 	"internal/client/apps"
+	"strconv"
 
 	"github.com/spf13/cobra"
 )

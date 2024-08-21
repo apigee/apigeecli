@@ -18,6 +18,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"internal/apiclient"
+	"internal/clilog"
 	"io"
 	"net/url"
 	"os"
@@ -27,9 +29,6 @@ import (
 	"strconv"
 	"strings"
 	"sync"
-
-	"internal/apiclient"
-	"internal/clilog"
 )
 
 type secprofiles struct {

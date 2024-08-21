@@ -15,9 +15,8 @@
 package apps
 
 import (
-	"testing"
-
 	"internal/client/clienttest"
+	"testing"
 )
 
 func TestCreateKey(t *testing.T) {

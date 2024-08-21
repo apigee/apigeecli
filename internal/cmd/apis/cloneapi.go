@@ -17,6 +17,8 @@ package apis
 import (
 	"archive/zip"
 	"fmt"
+	"internal/apiclient"
+	"internal/client/apis"
 	"io"
 	"os"
 	"os/exec"
@@ -25,9 +27,6 @@ import (
 	"regexp"
 	"runtime"
 	"strings"
-
-	"internal/apiclient"
-	"internal/client/apis"
 
 	proxybundle "internal/bundlegen/proxybundle"
 
@@ -163,7 +162,6 @@ func renameProxy(tmpDir string) (err error) {
 		}
 		return nil
 	})
-
 	if err != nil {
 		return err
 	}

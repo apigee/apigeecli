@@ -16,7 +16,6 @@ package eptattachment
 
 import (
 	"internal/apiclient"
-
 	"internal/client/eptattachment"
 
 	"github.com/spf13/cobra"

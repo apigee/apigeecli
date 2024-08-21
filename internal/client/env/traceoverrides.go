@@ -16,11 +16,10 @@ package env
 
 import (
 	"fmt"
+	"internal/apiclient"
 	"net/url"
 	"path"
 	"strings"
-
-	"internal/apiclient"
 )
 
 func CreateTraceOverrides(apiproxy string, exporter string, endpoint string, sampler string, sample_rate string) (respBody []byte, err error) {
