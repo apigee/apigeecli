@@ -32,7 +32,8 @@ var UpdateCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
-		_, err = hub.UpdateExternalAPI(externalApiID, displayName, description, endpoints, paths, externalURI)
+		_, err = hub.UpdateExternalAPI(externalApiID, displayName,
+			description, endpoints, paths, externalURI, attribute)
 		return
 	},
 }
@@ -48,6 +49,8 @@ func init() {
 		"", "The uri of the externally hosted documentation")
 	UpdateCmd.Flags().StringArrayVarP(&endpoints, "endpoints", "",
 		[]string{}, " The endpoints at which this deployment resource is listening for API requests")
+	UpdateCmd.Flags().StringVarP(&attribute, "attribute", "",
+		"", "The name of the attribute for the external api")
 	UpdateCmd.Flags().StringArrayVarP(&paths, "paths", "",
 		[]string{}, " API base paths")
 

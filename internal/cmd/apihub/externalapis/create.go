@@ -32,14 +32,15 @@ var CrtCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
-		_, err = hub.CreateExternalAPI(externalApiID, displayName, description, endpoints, paths, externalURI)
+		_, err = hub.CreateExternalAPI(externalApiID, displayName, description,
+			endpoints, paths, externalURI, attribute)
 		return
 	},
 }
 
 var (
-	externalApiID, displayName, description, externalURI, resourceURI string
-	endpoints, paths                                                  []string
+	externalApiID, displayName, description, externalURI, resourceURI, attribute string
+	endpoints, paths                                                             []string
 )
 
 func init() {
@@ -53,11 +54,13 @@ func init() {
 		"", "The uri of the externally hosted documentation")
 	CrtCmd.Flags().StringArrayVarP(&endpoints, "endpoints", "",
 		[]string{}, " The endpoints at which this deployment resource is listening for API requests")
+
+	CrtCmd.Flags().StringVarP(&attribute, "attribute", "",
+		"", "The name of the attribute for the external api")
+
 	CrtCmd.Flags().StringArrayVarP(&paths, "paths", "",
 		[]string{}, " API base paths")
 
 	_ = CrtCmd.MarkFlagRequired("id")
 	_ = CrtCmd.MarkFlagRequired("display-name")
-	_ = CrtCmd.MarkFlagRequired("resource-uri")
-	_ = CrtCmd.MarkFlagRequired("endpoints")
 }
