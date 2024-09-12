@@ -574,7 +574,8 @@ func importAPIProxies(wg *sync.WaitGroup, jobs <-chan string, errs chan<- error)
 
 		u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 		q := u.Query()
-		q.Set("name", strings.TrimSuffix(filepath.Base(job), ".zip"))
+		n := strings.TrimSuffix(filepath.Base(job), ".zip")
+		q.Set("name", n)
 		q.Set("action", "import")
 		u.RawQuery = q.Encode()
 		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apis")
@@ -622,7 +623,7 @@ func importAPIProxies(wg *sync.WaitGroup, jobs <-chan string, errs chan<- error)
 			b = []byte(err.Error())
 		}
 		if err != nil || resp.StatusCode < 200 || resp.StatusCode >= 300 {
-			errs <- fmt.Errorf("bundle not imported: (HTTP %v) %s", resp.StatusCode, b)
+			errs <- fmt.Errorf("bundle %s not imported: (HTTP %v) %s", n, resp.StatusCode, b)
 			continue
 		}
 
