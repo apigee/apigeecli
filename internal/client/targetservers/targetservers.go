@@ -388,7 +388,7 @@ func importServers(knownServers map[string]bool, wg *sync.WaitGroup, jobs <-chan
 			errs <- err
 			continue
 		} else if resp.StatusCode/100 != 2 && resp.StatusCode != http.StatusConflict {
-			errs <- fmt.Errorf("could not import targetserver, apigee responded with HTTP %d: %s", resp.StatusCode, resp.Status)
+			errs <- fmt.Errorf("could not import targetserver %s, apigee responded with HTTP %d: %s", job.Name, resp.StatusCode, resp.Status)
 		}
 
 		b, err = io.ReadAll(resp.Body)
