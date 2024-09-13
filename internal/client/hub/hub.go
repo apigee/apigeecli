@@ -906,7 +906,7 @@ func getExternalApi(displayName string, description string,
 		e.Endpoints = endpoints
 	}
 
-	a, err := getAttributeAllowedlue(attribute, 0)
+	a, err := getAttributeAllowedValue(attribute, 0)
 	if err != nil {
 		return "", err
 	}
@@ -1305,7 +1305,7 @@ func getSpecIDList(s []byte) (sList []string) {
 	return sList
 }
 
-func getAttributeAllowedlue(attributeID string, index int) (allowedValue, error) {
+func getAttributeAllowedValue(attributeID string, index int) (allowedValue, error) {
 	type attribute struct {
 		Name           string         `json:"name,omitempty"`
 		DisplayName    string         `json:"displayName,omitempty"`
