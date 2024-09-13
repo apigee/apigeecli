@@ -60,23 +60,6 @@ var ImpCmd = &cobra.Command{
 			}
 		}
 
-		if len(envKVMFileList) > 0 {
-			clilog.Info.Println("Importing env scoped KVMs...")
-			for _, envKVMFile := range envKVMFileList {
-				kvmFile := filepath.Base(envKVMFile)
-				kvmMetadata := strings.Split(kvmFile, utils.DefaultFileSplitter)
-				apiclient.SetApigeeEnv(kvmMetadata[1])
-				clilog.Info.Printf("\tCreating KVM %s\n", envKVMFile)
-				if _, err = kvm.Create("", kvmMetadata[2], true); proceedOnError(err) != nil {
-					return err
-				}
-				clilog.Info.Printf("\tImporting entries for %s\n", envKVMFile)
-				if err = kvm.ImportEntries("", kvmMetadata[2], conn, envKVMFile); proceedOnError(err) != nil {
-					return err
-				}
-			}
-		}
-
 		if len(proxyKVMFileList) > 0 {
 			clilog.Info.Println("Importing proxy scoped KVMs...")
 			for _, proxyKVMFile := range proxyKVMFileList {
@@ -93,6 +76,22 @@ var ImpCmd = &cobra.Command{
 			}
 		}
 
+		if len(envKVMFileList) > 0 {
+			clilog.Info.Println("Importing env scoped KVMs...")
+			for _, envKVMFile := range envKVMFileList {
+				kvmFile := filepath.Base(envKVMFile)
+				kvmMetadata := strings.Split(kvmFile, utils.DefaultFileSplitter)
+				apiclient.SetApigeeEnv(kvmMetadata[1])
+				clilog.Info.Printf("\tCreating KVM %s\n", envKVMFile)
+				if _, err = kvm.Create("", kvmMetadata[2], true); proceedOnError(err) != nil {
+					return err
+				}
+				clilog.Info.Printf("\tImporting entries for %s\n", envKVMFile)
+				if err = kvm.ImportEntries("", kvmMetadata[2], conn, envKVMFile); proceedOnError(err) != nil {
+					return err
+				}
+			}
+		}
 		return err
 	},
 }
