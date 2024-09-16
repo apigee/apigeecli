@@ -801,7 +801,7 @@ func getDeployment(displayName string, description string, deploymentName string
 }
 
 func CreateExternalAPI(externalApiID string, displayName string, description string,
-	endpoints []string, paths []string, externalUri string,
+	endpoints []string, paths []string, externalUri string, attribute string, allowedValueID string,
 ) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.GetApigeeRegistryURL())
 	u.Path = path.Join(u.Path, "externalApis")
@@ -809,7 +809,7 @@ func CreateExternalAPI(externalApiID string, displayName string, description str
 	q.Set("externalApiId", externalApiID)
 	u.RawQuery = q.Encode()
 
-	payload, err := getExternalApi(displayName, description, endpoints, paths, externalUri)
+	payload, err := getExternalApi(displayName, description, endpoints, paths, externalUri, attribute, allowedValueID)
 	if err != nil {
 		return nil, err
 	}
@@ -836,7 +836,7 @@ func ListExternalAPIs(filter string, pageSize int, pageToken string) (respBody [
 }
 
 func UpdateExternalAPI(externalApiID string, displayName string, description string,
-	endpoints []string, paths []string, externalUri string,
+	endpoints []string, paths []string, externalUri string, apiType string, allowedValueID string,
 ) (respBody []byte, err error) {
 	updateMask := []string{}
 
@@ -865,7 +865,7 @@ func UpdateExternalAPI(externalApiID string, displayName string, description str
 	q.Set("updateMask", strings.Join(updateMask, ","))
 	u.RawQuery = q.Encode()
 
-	payload, err := getExternalApi(displayName, description, endpoints, paths, externalUri)
+	payload, err := getExternalApi(displayName, description, endpoints, paths, externalUri, apiType, allowedValueID)
 	if err != nil {
 		return nil, err
 	}
@@ -875,18 +875,19 @@ func UpdateExternalAPI(externalApiID string, displayName string, description str
 }
 
 func getExternalApi(displayName string, description string,
-	endpoints []string, paths []string, externalUri string,
+	endpoints []string, paths []string, externalUri string, attribute string, allowedValueID string,
 ) (string, error) {
 	type documentation struct {
 		ExternalURI string `json:"externalUri,omitempty"`
 	}
 
 	type extapi struct {
-		DisplayName   string        `json:"displayName,omitempty"`
-		Description   string        `json:"description,omitempty"`
-		Documentation documentation `json:"documentation,omitempty"`
-		Paths         []string      `json:"paths,omitempty"`
-		Endpoints     []string      `json:"endpoints,omitempty"`
+		DisplayName   string                 `json:"displayName,omitempty"`
+		Description   string                 `json:"description,omitempty"`
+		Documentation documentation          `json:"documentation,omitempty"`
+		Paths         []string               `json:"paths,omitempty"`
+		Endpoints     []string               `json:"endpoints,omitempty"`
+		Attributes    map[string]interface{} `json:"attributes,omitempty"`
 	}
 	e := extapi{}
 	if displayName != "" {
@@ -904,6 +905,19 @@ func getExternalApi(displayName string, description string,
 	if len(endpoints) > 0 {
 		e.Endpoints = endpoints
 	}
+
+	a, err := getAttributeAllowedValue(attribute, allowedValueID)
+	if err != nil {
+		return "", err
+	}
+
+	eAV := enumAttributeValue{}
+	eAV.EnumValues.Values = make([]allowedValue, 1)
+	eAV.EnumValues.Values[0] = a
+
+	e.Attributes = make(map[string]interface{})
+	n := fmt.Sprintf("projects/%s/locations/%s/attributes/%s", apiclient.GetApigeeOrg(), apiclient.GetRegion(), attribute)
+	e.Attributes[n] = eAV
 
 	payload, err := json.Marshal(&e)
 	if err != nil {
@@ -1289,4 +1303,40 @@ func getSpecIDList(s []byte) (sList []string) {
 	}
 
 	return sList
+}
+
+func getAttributeAllowedValue(attributeID string, allowedValueID string) (allowedValue, error) {
+	type attribute struct {
+		Name           string         `json:"name,omitempty"`
+		DisplayName    string         `json:"displayName,omitempty"`
+		DefinitionType string         `json:"definitionType,omitempty"`
+		Scope          string         `json:"scope,omitempty"`
+		DataType       string         `json:"dataType,omitempty"`
+		Cardinality    int            `json:"cardinality,omitempty"`
+		AllowedValues  []allowedValue `json:"allowedValues,omitempty"`
+		Mandatory      bool           `json:"mandatory,omitempty"`
+		CreateTime     string         `json:"createTime,omitempty"`
+		UpdateTime     string         `json:"updateTime,omitempty"`
+	}
+
+	apiclient.ClientPrintHttpResponse.Set(false)
+	r, err := GetAttribute(attributeID)
+	apiclient.ClientPrintHttpResponse.Set(true)
+	if err != nil {
+		return allowedValue{}, err
+	}
+
+	a := attribute{}
+	err = json.Unmarshal(r, &a)
+	if err != nil {
+		return allowedValue{}, err
+	}
+
+	for _, i := range a.AllowedValues {
+		if i.Id == allowedValueID {
+			return i, nil
+		}
+	}
+
+	return allowedValue{}, fmt.Errorf("allowedValue not found")
 }
