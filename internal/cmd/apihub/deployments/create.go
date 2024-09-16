@@ -60,7 +60,7 @@ func init() {
 	CrtCmd.Flags().StringVarP(&resourceURI, "resource-uri", "",
 		"", "A URI to the runtime resource")
 	CrtCmd.Flags().StringArrayVarP(&endpoints, "endpoints", "",
-		[]string{}, " The endpoints at which this deployment resource is listening for API requests")
+		[]string{}, "The endpoints at which this deployment resource is listening for API requests")
 	CrtCmd.Flags().Var(&d, "dep-type", "The type of deployment")
 	CrtCmd.Flags().Var(&e, "env-type", "The environment mapping to this deployment")
 	CrtCmd.Flags().Var(&s, "slo-type", "The SLO for this deployment")

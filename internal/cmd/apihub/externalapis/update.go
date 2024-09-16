@@ -48,7 +48,7 @@ func init() {
 	UpdateCmd.Flags().StringVarP(&externalURI, "external-uri", "",
 		"", "The uri of the externally hosted documentation")
 	UpdateCmd.Flags().StringArrayVarP(&endpoints, "endpoints", "",
-		[]string{}, " The endpoints at which this deployment resource is listening for API requests")
+		[]string{}, "The endpoints at which this deployment resource is listening for API requests")
 	UpdateCmd.Flags().StringVarP(&attribute, "attribute", "",
 		"", "The name of the attribute for the external api")
 	UpdateCmd.Flags().StringVarP(&allowedValueID, "attribute-allowed-value-id", "",

@@ -53,7 +53,7 @@ func init() {
 	CrtCmd.Flags().StringVarP(&externalURI, "external-uri", "",
 		"", "The uri of the externally hosted documentation")
 	CrtCmd.Flags().StringArrayVarP(&endpoints, "endpoints", "",
-		[]string{}, " The endpoints at which this deployment resource is listening for API requests")
+		[]string{}, "The endpoints at which this deployment resource is listening for API requests")
 
 	CrtCmd.Flags().StringVarP(&attribute, "attribute", "",
 		"", "The name of the attribute for the external api")
