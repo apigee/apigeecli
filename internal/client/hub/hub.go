@@ -801,7 +801,7 @@ func getDeployment(displayName string, description string, deploymentName string
 }
 
 func CreateExternalAPI(externalApiID string, displayName string, description string,
-	endpoints []string, paths []string, externalUri string, attribute string,
+	endpoints []string, paths []string, externalUri string, attribute string, allowedValueID string,
 ) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.GetApigeeRegistryURL())
 	u.Path = path.Join(u.Path, "externalApis")
@@ -809,7 +809,7 @@ func CreateExternalAPI(externalApiID string, displayName string, description str
 	q.Set("externalApiId", externalApiID)
 	u.RawQuery = q.Encode()
 
-	payload, err := getExternalApi(displayName, description, endpoints, paths, externalUri, attribute)
+	payload, err := getExternalApi(displayName, description, endpoints, paths, externalUri, attribute, allowedValueID)
 	if err != nil {
 		return nil, err
 	}
@@ -836,7 +836,7 @@ func ListExternalAPIs(filter string, pageSize int, pageToken string) (respBody [
 }
 
 func UpdateExternalAPI(externalApiID string, displayName string, description string,
-	endpoints []string, paths []string, externalUri string, apiType string,
+	endpoints []string, paths []string, externalUri string, apiType string, allowedValueID string,
 ) (respBody []byte, err error) {
 	updateMask := []string{}
 
@@ -865,7 +865,7 @@ func UpdateExternalAPI(externalApiID string, displayName string, description str
 	q.Set("updateMask", strings.Join(updateMask, ","))
 	u.RawQuery = q.Encode()
 
-	payload, err := getExternalApi(displayName, description, endpoints, paths, externalUri, apiType)
+	payload, err := getExternalApi(displayName, description, endpoints, paths, externalUri, apiType, allowedValueID)
 	if err != nil {
 		return nil, err
 	}
@@ -875,7 +875,7 @@ func UpdateExternalAPI(externalApiID string, displayName string, description str
 }
 
 func getExternalApi(displayName string, description string,
-	endpoints []string, paths []string, externalUri string, attribute string,
+	endpoints []string, paths []string, externalUri string, attribute string, allowedValueID string,
 ) (string, error) {
 	type documentation struct {
 		ExternalURI string `json:"externalUri,omitempty"`
@@ -906,7 +906,7 @@ func getExternalApi(displayName string, description string,
 		e.Endpoints = endpoints
 	}
 
-	a, err := getAttributeAllowedValue(attribute, 0)
+	a, err := getAttributeAllowedValue(attribute, allowedValueID)
 	if err != nil {
 		return "", err
 	}
@@ -1305,7 +1305,7 @@ func getSpecIDList(s []byte) (sList []string) {
 	return sList
 }
 
-func getAttributeAllowedValue(attributeID string, index int) (allowedValue, error) {
+func getAttributeAllowedValue(attributeID string, allowedValueID string) (allowedValue, error) {
 	type attribute struct {
 		Name           string         `json:"name,omitempty"`
 		DisplayName    string         `json:"displayName,omitempty"`
@@ -1332,5 +1332,11 @@ func getAttributeAllowedValue(attributeID string, index int) (allowedValue, erro
 		return allowedValue{}, err
 	}
 
-	return a.AllowedValues[index], nil
+	for _, i := range a.AllowedValues {
+		if i.Id == allowedValueID {
+			return i, nil
+		}
+	}
+
+	return allowedValue{}, fmt.Errorf("allowedValue not found")
 }

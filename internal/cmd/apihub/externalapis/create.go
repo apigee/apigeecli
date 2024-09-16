@@ -33,14 +33,14 @@ var CrtCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
 		_, err = hub.CreateExternalAPI(externalApiID, displayName, description,
-			endpoints, paths, externalURI, attribute)
+			endpoints, paths, externalURI, attribute, allowedValueID)
 		return
 	},
 }
 
 var (
-	externalApiID, displayName, description, externalURI, resourceURI, attribute string
-	endpoints, paths                                                             []string
+	externalApiID, displayName, description, externalURI, resourceURI, attribute, allowedValueID string
+	endpoints, paths                                                                             []string
 )
 
 func init() {
@@ -57,6 +57,8 @@ func init() {
 
 	CrtCmd.Flags().StringVarP(&attribute, "attribute", "",
 		"", "The name of the attribute for the external api")
+	CrtCmd.Flags().StringVarP(&allowedValueID, "attribute-allowed-value-id", "",
+		"", "The allowed value id for the attribute")
 
 	CrtCmd.Flags().StringArrayVarP(&paths, "paths", "",
 		[]string{}, " API base paths")
