@@ -51,7 +51,7 @@ var ExpCmd = &cobra.Command{
 		apiclient.DisableCmdPrintHttpResponse()
 
 		// return all kvm entries from all proxies
-		if env == "" && proxyName == "" {
+		if env == "" && proxyName == "*" {
 			return kvm.ExportAllEntries()
 		}
 
@@ -92,7 +92,7 @@ var ExpCmd = &cobra.Command{
 
 func init() {
 	ExpCmd.Flags().StringVarP(&env, "env", "e",
-		"", "Environment name")
+		"", "Environment name. Omit this param to export org scoped KVMs")
 	ExpCmd.Flags().StringVarP(&proxyName, "proxy", "p",
-		"", "API Proxy name")
+		"", "API Proxy name; Use * to export all KVMs from all proxies. Omit this param to export org scoped KVMs")
 }
