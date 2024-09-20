@@ -28,11 +28,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Push GH Pages
         run: |
+          git config pull.rebase false
           git config --global user.name "apigeecli Publish Action"
           git config --global user.email "apigeecli-bot@noreply.apigee.com"
+
+          git pull origin main --allow-unrelated-histories
 
           GOBIN=/tmp/ go install github.com/google/go-licenses@v1.0.0
           /tmp/go-licenses csv ./cmd/apigeecli > third-party-licenses.txt || echo "Ignore warnings"
