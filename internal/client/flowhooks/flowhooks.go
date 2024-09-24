@@ -36,9 +36,7 @@ func Attach(name string, description string, sharedflow string, continueOnErr bo
 
 	flowhook = append(flowhook, "\"sharedFlow\":\""+sharedflow+"\"")
 
-	if continueOnErr {
-		flowhook = append(flowhook, "\"continueOnError\":"+strconv.FormatBool(continueOnErr))
-	}
+	flowhook = append(flowhook, "\"continueOnError\":"+strconv.FormatBool(continueOnErr))
 
 	payload := "{" + strings.Join(flowhook, ",") + "}"
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "flowhooks", name)
