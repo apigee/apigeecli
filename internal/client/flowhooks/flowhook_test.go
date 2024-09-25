@@ -37,7 +37,9 @@ func TestAttach(t *testing.T) {
 	if _, err := sharedflows.Create(name, path.Join(cliPath, testFolder, "test_flow.zip")); err != nil {
 		t.Fatalf("%v", err)
 	}
-	if _, err := Attach("PreProxyFlowHook", "test description", name, true); err != nil {
+	cPtr := new(bool)
+	*cPtr = true
+	if _, err := Attach("PreProxyFlowHook", "test description", name, cPtr); err != nil {
 		t.Fatalf("%v", err)
 	}
 }

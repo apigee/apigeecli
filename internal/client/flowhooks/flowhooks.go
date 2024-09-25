@@ -23,7 +23,7 @@ import (
 )
 
 // Attach
-func Attach(name string, description string, sharedflow string, continueOnErr bool) (respBody []byte, err error) {
+func Attach(name string, description string, sharedflow string, continueOnErr *bool) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 
 	flowhook := []string{}
@@ -36,8 +36,8 @@ func Attach(name string, description string, sharedflow string, continueOnErr bo
 
 	flowhook = append(flowhook, "\"sharedFlow\":\""+sharedflow+"\"")
 
-	if continueOnErr {
-		flowhook = append(flowhook, "\"continueOnError\":"+strconv.FormatBool(continueOnErr))
+	if continueOnErr != nil {
+		flowhook = append(flowhook, "\"continueOnError\":"+strconv.FormatBool(*continueOnErr))
 	}
 
 	payload := "{" + strings.Join(flowhook, ",") + "}"
