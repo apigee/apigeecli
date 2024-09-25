@@ -15,8 +15,10 @@
 package flowhooks
 
 import (
+	"fmt"
 	"internal/apiclient"
 	"internal/client/flowhooks"
+	"strconv"
 
 	"github.com/spf13/cobra"
 )
@@ -34,14 +36,21 @@ var CreateCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
 
-		_, err = flowhooks.Attach(name, description, sharedflow, continueOnErr)
+		if continueOnErrStr != "" {
+			continueOnErrPtr = new(bool)
+			*continueOnErrPtr, err = strconv.ParseBool(continueOnErrStr)
+			if err != nil {
+				return fmt.Errorf("continueOnErr should be a boolean value: %v", err)
+			}
+		}
+		_, err = flowhooks.Attach(name, description, sharedflow, continueOnErrPtr)
 		return
 	},
 }
 
 var (
-	description, sharedflow string
-	continueOnErr           bool
+	continueOnErrPtr                          *bool
+	description, sharedflow, continueOnErrStr string
 )
 
 func init() {
@@ -51,8 +60,8 @@ func init() {
 		"", "Description for the flowhook")
 	CreateCmd.Flags().StringVarP(&sharedflow, "sharedflow", "s",
 		"", "Sharedflow name")
-	CreateCmd.Flags().BoolVarP(&continueOnErr, "continue", "c",
-		true, "Continue on error")
+	CreateCmd.Flags().StringVarP(&continueOnErrStr, "continue", "c",
+		"", "Continue on error")
 
 	_ = CreateCmd.MarkFlagRequired("name")
 	_ = CreateCmd.MarkFlagRequired("sharedflow")
