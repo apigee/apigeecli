@@ -31,6 +31,7 @@ import (
 	"internal/client/orgs"
 	"internal/client/products"
 	"internal/client/references"
+	"internal/client/reports"
 	"internal/client/securityprofiles"
 	"internal/client/sharedflows"
 	"internal/client/sync"
@@ -59,7 +60,7 @@ var ExportCmd = &cobra.Command{
 		cmd.SilenceUsage = true
 
 		var productResponse, appsResponse, targetServerResponse, referencesResponse, appGroupAppsResponse [][]byte
-		var respBody, listKVMBytes, appGroupsRespBody []byte
+		var respBody, listKVMBytes, appGroupsRespBody, custReports []byte
 
 		apiclient.DisableCmdPrintHttpResponse()
 
@@ -205,6 +206,17 @@ var ExportCmd = &cobra.Command{
 				false, respBody); proceedOnError(err) != nil {
 				return err
 			}
+		}
+
+		//export custom reports
+		if custReports, err = reports.List(true); proceedOnError(err) != nil {
+			return err
+		}
+		clilog.Info.Println("Exporting analytics custom reports...")
+		if err = apiclient.WriteByteArrayToFile(
+			customReportsName,
+			false, custReports); proceedOnError(err) != nil {
+			return err
 		}
 
 		var _, envDetailsRespBody []byte
