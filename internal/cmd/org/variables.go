@@ -30,6 +30,7 @@ const (
 	tracecfgFileName      = "_tracecfg.json"
 	referencesFileName    = "references.json"
 	envFileName           = "envs.json"
+	customReportsName     = "customreports.json"
 
 	proxiesFolderName          = "proxies"
 	sharedFlowsFolderName      = "sharedflows"

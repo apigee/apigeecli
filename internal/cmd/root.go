@@ -43,6 +43,7 @@ import (
 	"internal/cmd/products"
 	"internal/cmd/projects"
 	"internal/cmd/references"
+	"internal/cmd/reports"
 	"internal/cmd/securityprofiles"
 	"internal/cmd/sharedflows"
 	"internal/cmd/sites"
@@ -197,6 +198,7 @@ func init() {
 	RootCmd.AddCommand(sites.Cmd)
 	RootCmd.AddCommand(apihub.Cmd)
 	RootCmd.AddCommand(tree.Cmd)
+	RootCmd.AddCommand(reports.Cmd)
 }
 
 func initConfig() {
