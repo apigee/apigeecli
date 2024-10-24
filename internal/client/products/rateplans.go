@@ -18,6 +18,7 @@ import (
 	"internal/apiclient"
 	"net/url"
 	"path"
+	"strconv"
 )
 
 // CreateRatePlan
@@ -49,11 +50,7 @@ func ListRatePlan(productName string, expand bool) (respBody []byte, err error) 
 	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts", productName, "rateplans")
 	q := u.Query()
-	if expand {
-		q.Set("expand", "true")
-	} else {
-		q.Set("expand", "false")
-	}
+	q.Set("expand", strconv.FormatBool(expand))
 	u.RawQuery = q.Encode()
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
