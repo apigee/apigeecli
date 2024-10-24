@@ -48,6 +48,9 @@ func GetRatePlan(productName string, rateplan string) (respBody []byte, err erro
 func ListRatePlan(productName string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts", productName, "rateplans")
+	q := u.Query()
+	q.Set("expand", "true")
+	u.RawQuery = q.Encode()
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
 }
@@ -56,7 +59,9 @@ func ListRatePlan(productName string) (respBody []byte, err error) {
 func ExportRateplan(productName string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts", productName, "rateplans")
-
+	q := u.Query()
+	q.Set("expand", "true")
+	u.RawQuery = q.Encode()
 	// don't print to sysout
 	apiclient.ClientPrintHttpResponse.Set(false)
 	defer apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
