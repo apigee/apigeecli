@@ -23,7 +23,7 @@ import (
 
 // Cmd to api observability
 var Cmd = &cobra.Command{
-	Use:   "observe",
+	Use:   "observations",
 	Short: "Enables users to discover shadow APIs in GCP",
 	Long:  "Enables users to discover shadow APIs in existing Google Cloud infrastructure",
 }

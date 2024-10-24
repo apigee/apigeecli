@@ -18,7 +18,7 @@ import "github.com/spf13/cobra"
 
 // ObservationSourceCmd to manage apis
 var ObservationSourceCmd = &cobra.Command{
-	Use:   "observation-sources",
+	Use:   "sources",
 	Short: "Manage Observation sources for Shadow API Discovery",
 	Long:  "Manage Observation sources for Shadow API Discovery",
 }

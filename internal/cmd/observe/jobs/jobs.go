@@ -18,7 +18,7 @@ import "github.com/spf13/cobra"
 
 // ObservationJobCmd to manage apis
 var ObservationJobCmd = &cobra.Command{
-	Use:   "observation-jobs",
+	Use:   "jobs",
 	Short: "Manage Observation jobs for Shadow API Discovery",
 	Long:  "Manage Observation jobs for Shadow API Discovery",
 }
