@@ -28,6 +28,7 @@ var RatePlanCmd = &cobra.Command{
 var rateplan string
 
 func init() {
+	RatePlanCmd.AddCommand(CreateRateplanCmd)
 	RatePlanCmd.AddCommand(ListRatePlanCmd)
 	RatePlanCmd.AddCommand(GetRatePlanCmd)
 	RatePlanCmd.AddCommand(DelRatePlanCmd)
