@@ -33,17 +33,17 @@ var DelRatePlanCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
 
-		_, err = products.DeleteRatePlan(name, rateplan)
+		_, err = products.DeleteRatePlan(apiproduct, rateplan)
 		return
 	},
 }
 
 func init() {
-	DelRatePlanCmd.Flags().StringVarP(&name, "name", "n",
+	DelRatePlanCmd.Flags().StringVarP(&apiproduct, "product", "p",
 		"", "name of the API Product")
-	DelRatePlanCmd.Flags().StringVarP(&rateplan, "rateplan", "p",
-		"", "name of the API Product")
+	DelRatePlanCmd.Flags().StringVarP(&rateplan, "rateplan", "",
+		"", "Rate Plan Id")
 
-	_ = DelRatePlanCmd.MarkFlagRequired("name")
+	_ = DelRatePlanCmd.MarkFlagRequired("product")
 	_ = DelRatePlanCmd.MarkFlagRequired("rateplan")
 }

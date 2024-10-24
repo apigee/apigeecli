@@ -32,4 +32,5 @@ func init() {
 	RatePlanCmd.AddCommand(ListRatePlanCmd)
 	RatePlanCmd.AddCommand(GetRatePlanCmd)
 	RatePlanCmd.AddCommand(DelRatePlanCmd)
+	RatePlanCmd.AddCommand(ExpRateplanCmd)
 }

@@ -33,14 +33,16 @@ var ListRatePlanCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
 
-		_, err = products.ListRatePlan(name)
+		_, err = products.ListRatePlan(apiproduct, expand)
 		return
 	},
 }
 
 func init() {
-	ListRatePlanCmd.Flags().StringVarP(&name, "name", "n",
+	ListRatePlanCmd.Flags().StringVarP(&apiproduct, "product", "p",
 		"", "name of the API Product")
+	ListRatePlanCmd.Flags().BoolVarP(&expand, "expand", "x",
+		false, "Expand Details")
 
-	_ = ListRatePlanCmd.MarkFlagRequired("name")
+	_ = ListRatePlanCmd.MarkFlagRequired("product")
 }

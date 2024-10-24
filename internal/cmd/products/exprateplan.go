@@ -33,8 +33,8 @@ var ExpRateplanCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
 
-		exportFileName := "rateplan_" + name + ".json"
-		respBody, err := products.ExportRateplan(name)
+		exportFileName := "rateplan_" + apiproduct + ".json"
+		respBody, err := products.ExportRateplan(apiproduct)
 		if err != nil {
 			return err
 		}
@@ -43,8 +43,8 @@ var ExpRateplanCmd = &cobra.Command{
 }
 
 func init() {
-	ExpRateplanCmd.Flags().StringVarP(&name, "name", "n",
+	ExpRateplanCmd.Flags().StringVarP(&apiproduct, "product", "p",
 		"", "name of the API Product")
 
-	_ = ExpRateplanCmd.MarkFlagRequired("name")
+	_ = ExpRateplanCmd.MarkFlagRequired("product")
 }

@@ -55,6 +55,6 @@ func init() {
 	CreateRateplanCmd.Flags().StringVarP(&rateplanFile, "rateplan", "",
 		"", "File containing Rate plane JSON. See samples for how to create the file")
 
-	_ = CreateRateplanCmd.MarkFlagRequired("apiproduct")
+	_ = CreateRateplanCmd.MarkFlagRequired("product")
 	_ = CreateRateplanCmd.MarkFlagRequired("rateplan")
 }
