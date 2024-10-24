@@ -45,11 +45,15 @@ func GetRatePlan(productName string, rateplan string) (respBody []byte, err erro
 }
 
 // ListRatePlan
-func ListRatePlan(productName string) (respBody []byte, err error) {
+func ListRatePlan(productName string, expand bool) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts", productName, "rateplans")
 	q := u.Query()
-	q.Set("expand", "true")
+	if expand {
+		q.Set("expand", "true")
+	} else {
+		q.Set("expand", "false")
+	}
 	u.RawQuery = q.Encode()
 	respBody, err = apiclient.HttpClient(u.String())
 	return respBody, err
