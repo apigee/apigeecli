@@ -46,7 +46,7 @@ func init() {
 	CrtCmd.Flags().StringVarP(&observationSourceId, "id", "i",
 		"", "Observation Job")
 	CrtCmd.Flags().StringToStringVarP(&pscConfig, "psc-config", "p",
-		nil, "The VPC networks where traffic will be observed")
+		nil, "The full path to the VPC network and subnetwork where traffic will be observed. (repeat or comma separated)")
 
 	_ = CrtCmd.MarkFlagRequired("id")
 	_ = CrtCmd.MarkFlagRequired("sources")

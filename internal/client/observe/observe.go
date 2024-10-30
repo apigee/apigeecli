@@ -41,7 +41,7 @@ func CreateObservationJob(observationJobId string, sources []string) (respBody [
 	u.RawQuery = q.Encode()
 
 	if len(sources) != 0 {
-		payload = "{ \"sources\":[" + strings.Join(sources, ", ") + "]}"
+		payload = "{ \"sources\":[\"" + strings.Join(sources, "\", \"") + "\"]}"
 	}
 	respBody, err = apiclient.HttpClient(u.String(), payload, "POST")
 	return respBody, err
@@ -109,6 +109,10 @@ func ListApiObservations(observationJob string, pageSize int, pageToken string) 
 func CreateObservationSource(observationSourceId string, pscNetworkConfigs map[string]string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.GetAPIObserveURL())
 	u.Path = path.Join(u.Path, "observationSources")
+	q := u.Query()
+	q.Set("observationSourceId", observationSourceId)
+	u.RawQuery = q.Encode()
+
 	networkConfig, err := json.Marshal(pscNetworkConfigs)
 	if err != nil {
 		return nil, err

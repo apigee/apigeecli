@@ -46,7 +46,7 @@ func init() {
 	CrtCmd.Flags().StringVarP(&observationJobId, "id", "i",
 		"", "Observation Job")
 	CrtCmd.Flags().StringArrayVarP(&sources, "sources", "s",
-		nil, "sources")
+		nil, "The full path to source (repeat for multiple)")
 
 	_ = CrtCmd.MarkFlagRequired("id")
 	_ = CrtCmd.MarkFlagRequired("sources")
