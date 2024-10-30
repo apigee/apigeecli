@@ -24,8 +24,8 @@ import (
 // CreateSubCmd to create developer subscription
 var CreateSubCmd = &cobra.Command{
 	Use:   "create",
-	Short: "Create a subcription for a developer",
-	Long:  "Create a developer",
+	Short: "Create a subscription for a developer",
+	Long:  "Create a subscription for a developer",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
@@ -33,27 +33,19 @@ var CreateSubCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
 
-		_, err = developers.CreateSubscription(email, name, apiproduct, startTime, endTime)
+		_, err = developers.CreateSubscription(email, apiproduct)
 		return
 	},
 }
 
-var apiproduct, startTime, endTime string
+var apiproduct string
 
 func init() {
 	CreateSubCmd.Flags().StringVarP(&email, "email", "e",
 		"", "The developer's email")
-	CreateSubCmd.Flags().StringVarP(&name, "name", "n",
-		"", "The subscription name")
 	CreateSubCmd.Flags().StringVarP(&apiproduct, "apiproduct", "p",
 		"", "The name of the API Product")
-	CreateSubCmd.Flags().StringVarP(&startTime, "start", "s",
-		"", "Subscription start time")
-	CreateSubCmd.Flags().StringVarP(&endTime, "end", "d",
-		"", "Subscription end time")
 
 	_ = CreateSubCmd.MarkFlagRequired("email")
 	_ = CreateSubCmd.MarkFlagRequired("apiproduct")
-	_ = CreateSubCmd.MarkFlagRequired("start")
-	_ = CreateSubCmd.MarkFlagRequired("end")
 }

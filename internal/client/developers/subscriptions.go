@@ -21,15 +21,11 @@ import (
 	"strings"
 )
 
-func CreateSubscription(email string, name string, apiproduct string, startTime string, endTime string) (respBody []byte, err error) {
+func CreateSubscription(email string, apiproduct string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 
 	subscription := []string{}
-
-	subscription = append(subscription, "\"name\":\""+name+"\"")
 	subscription = append(subscription, "\"apiproduct\":\""+apiproduct+"\"")
-	subscription = append(subscription, "\"startTime\":\""+startTime+"\"")
-	subscription = append(subscription, "\"endTime\":\""+endTime+"\"")
 
 	payload := "{" + strings.Join(subscription, ",") + "}"
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", url.QueryEscape(email), "subscriptions")
