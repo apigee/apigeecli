@@ -37,6 +37,7 @@ import (
 	"internal/cmd/keyaliases"
 	"internal/cmd/keystores"
 	"internal/cmd/kvm"
+	"internal/cmd/observe"
 	"internal/cmd/ops"
 	"internal/cmd/org"
 	"internal/cmd/preferences"
@@ -197,6 +198,7 @@ func init() {
 	RootCmd.AddCommand(securityprofiles.Cmd)
 	RootCmd.AddCommand(sites.Cmd)
 	RootCmd.AddCommand(apihub.Cmd)
+	RootCmd.AddCommand(observe.Cmd)
 	RootCmd.AddCommand(tree.Cmd)
 	RootCmd.AddCommand(reports.Cmd)
 }
