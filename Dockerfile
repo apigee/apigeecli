@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM golang:1.23 AS builder
+FROM golang:1.23.2@sha256:a7f2fc9834049c1f5df787690026a53738e55fc097cd8a4a93faa3e06c67ee32 AS builder
 
 ARG TAG
 ARG COMMIT
@@ -33,7 +33,7 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -buildvcs=true -a -
 FROM ghcr.io/jqlang/jq:latest AS jq
 
 # use debug because it includes busybox
-FROM gcr.io/distroless/static-debian11:debug-nonroot
+FROM gcr.io/distroless/static-debian11:debug-nonroot@sha256:55716e80a7d4320ce9bc2dc8636fc193b418638041b817cf3306696bd0f975d1
 LABEL org.opencontainers.image.url='https://github.com/apigee/apigeecli' \
       org.opencontainers.image.documentation='https://github.com/apigee/apigeecli' \
       org.opencontainers.image.source='https://github.com/apigee/apigeecli' \

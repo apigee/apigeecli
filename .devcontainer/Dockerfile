@@ -12,9 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM gcr.io/projectsigstore/cosign:latest as cosign
+FROM gcr.io/projectsigstore/cosign:latest@sha256:b03690aa52bfe94054187142fba24dc54137650682810633901767d8a3e15b31 as cosign
 
-FROM mcr.microsoft.com/devcontainers/go:1-1.22-bookworm
+FROM mcr.microsoft.com/devcontainers/go:1.23-bookworm@@sha256:2e00578e7c526e76ebd51597260928d8542d27c17ffe6390d79200638c51a3e6
 
 COPY --from=cosign /ko-app/cosign /usr/bin
 
