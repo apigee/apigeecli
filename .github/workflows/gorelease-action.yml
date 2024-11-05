@@ -27,15 +27,15 @@ jobs:
   goreleaser:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
+      - uses: actions/checkout@1e31de5234b9f8995739874a8ce0492dc87873e2 #v4
+      - uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491 #v5
         with:
           #go-version: '>=1.18.0'
           go-version-file: './go.mod'
           check-latest: true
 
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v3
+        uses: golangci/golangci-lint-action@971e284b6050e8a5849b72094c50ab08da042db8 #v6.1.1
         with:
           version: latest
           args: --timeout=4m
@@ -43,10 +43,10 @@ jobs:
       - name: Write private key to disk
         run: echo "${{ secrets.COSIGN_PRIVATE_KEY }}" > /tmp/cosign.key
 
-      - uses: sigstore/cosign-installer@main
+      - uses: sigstore/cosign-installer@dc72c7d5c4d10cd6bcb8cf6e3fd625a9e5e537da #v3.7.0
 
       - name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@v6
+        uses: goreleaser/goreleaser-action@286f3b13b1b49da4ac219696163fb8c1c93e1200 #v6
         with:
           distribution: goreleaser
           version: latest
@@ -56,7 +56,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
 
       - name: Upload assets
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@97a0fba1372883ab732affbe8f94b823f91727db # v3.pre.node20
         with:
           name: apigeecli
           path: dist/*

@@ -30,7 +30,7 @@ RUN go mod download
 RUN date +%FT%H:%I:%M+%Z > /tmp/date
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -buildvcs=true -a -gcflags='all="-l"' -ldflags='-s -w -extldflags "-static" -X main.version='${TAG}' -X main.commit='${COMMIT}' -X main.date='$(cat /tmp/date) -o /go/bin/apigeecli /go/src/apigeecli/cmd/apigeecli/apigeecli.go
 
-FROM ghcr.io/jqlang/jq:latest AS jq
+FROM ghcr.io/jqlang/jq:1.7.1@sha256:096b83865ad59b5b02841f103f83f45c51318394331bf1995e187ea3be937432 AS jq
 
 # use debug because it includes busybox
 FROM gcr.io/distroless/static-debian11:debug-nonroot@sha256:55716e80a7d4320ce9bc2dc8636fc193b418638041b817cf3306696bd0f975d1
