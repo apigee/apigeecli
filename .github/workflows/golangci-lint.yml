@@ -13,6 +13,7 @@
 # limitations under the License.
 
 name: golangci-lint
+permissions: read-all
 on:
   push:
     branches:
@@ -20,8 +21,6 @@ on:
   pull_request:
     branches:
       - '**'
-permissions:
-  contents: read
 jobs:
   golangci:
     name: lint
@@ -33,7 +32,7 @@ jobs:
           cache: false
       - uses: actions/checkout@v4
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v3
+        uses: golangci/golangci-lint-action@971e284b6050e8a5849b72094c50ab08da042db8 #v6.1.1
         with:
           version: latest
           args: --timeout=4m
