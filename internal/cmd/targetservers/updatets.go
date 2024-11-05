@@ -64,6 +64,7 @@ var UpdateCmd = &cobra.Command{
 			protocol,
 			keyStore, keyAlias, trustStore,
 			tlsenabled, tlsenforce, clientAuthEnabled,
+			tlsVersions,
 			ignoreValidationErrors)
 		return err
 	},
@@ -99,6 +100,9 @@ func init() {
 		-1, "port number")
 	UpdateCmd.Flags().StringVarP(&protocol, "protocol", "",
 		"", "Protocol for a TargetServer")
+
+	UpdateCmd.Flags().StringArrayVarP(&tlsVersions, "tls-versions", "",
+		nil, "TLS versions for the target server")
 
 	_ = UpdateCmd.MarkFlagRequired("name")
 }

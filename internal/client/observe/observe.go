@@ -16,12 +16,11 @@ package observe
 
 import (
 	"encoding/json"
+	"internal/apiclient"
 	"net/url"
 	"path"
 	"strconv"
 	"strings"
-
-	"internal/apiclient"
 )
 
 type Action uint8

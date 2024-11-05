@@ -64,6 +64,7 @@ var CreateCmd = &cobra.Command{
 			protocol,
 			keyStore, keyAlias, trustStore,
 			tlsenabled, tlsenforce, clientAuthEnabled,
+			tlsVersions,
 			ignoreValidationErrors)
 		return err
 	},
@@ -72,6 +73,7 @@ var CreateCmd = &cobra.Command{
 var (
 	tlsenabled, tlsenforce, clientAuthEnabled, description, host, keyStore, keyAlias string
 	trustStore, protocol, ignoreValidationErrors                                     string
+	tlsVersions                                                                      []string
 	enable                                                                           bool
 	port                                                                             int
 )
@@ -106,6 +108,9 @@ func init() {
 		-1, "port number")
 	CreateCmd.Flags().StringVarP(&protocol, "protocol", "",
 		"HTTP", "Protocol for a TargetServer; default is HTTP")
+
+	CreateCmd.Flags().StringArrayVarP(&tlsVersions, "tls-versions", "",
+		nil, "TLS versions for the target server")
 
 	_ = CreateCmd.MarkFlagRequired("name")
 	_ = CreateCmd.MarkFlagRequired("host")

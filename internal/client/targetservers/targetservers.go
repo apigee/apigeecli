@@ -60,7 +60,10 @@ type commonName struct {
 }
 
 // Create
-func Create(name string, description string, host string, port int, enable bool, protocol string, keyStore string, keyAlias string, trustStore string, tlsenabled string, tlsenforce string, clientAuthEnabled string, ignoreValidationErrors string) (respBody []byte, err error) {
+func Create(name string, description string, host string, port int, enable bool, protocol string,
+	keyStore string, keyAlias string, trustStore string, tlsenabled string, tlsenforce string,
+	clientAuthEnabled string, tlsVersions []string, ignoreValidationErrors string,
+) (respBody []byte, err error) {
 	e := new(bool)
 	*e = enable
 
@@ -69,11 +72,15 @@ func Create(name string, description string, host string, port int, enable bool,
 		IsEnabled: e,
 	}
 
-	return createOrUpdate("create", targetsvr, name, description, host, port, protocol, keyStore, keyAlias, trustStore, tlsenabled, tlsenforce, clientAuthEnabled, ignoreValidationErrors)
+	return createOrUpdate("create", targetsvr, name, description, host, port, protocol,
+		keyStore, keyAlias, trustStore, tlsenabled, tlsenforce, clientAuthEnabled, tlsVersions, ignoreValidationErrors)
 }
 
 // Update
-func Update(name string, description string, host string, port int, enable bool, protocol string, keyStore string, keyAlias string, trustStore string, tlsenabled string, tlsenforce string, clientAuthEnabled string, ignoreValidationErrors string) (respBody []byte, err error) {
+func Update(name string, description string, host string, port int, enable bool, protocol string,
+	keyStore string, keyAlias string, trustStore string, tlsenabled string, tlsenforce string,
+	clientAuthEnabled string, tlsVersions []string, ignoreValidationErrors string,
+) (respBody []byte, err error) {
 	apiclient.ClientPrintHttpResponse.Set(false)
 	targetRespBody, err := Get(name)
 	if err != nil {
@@ -88,10 +95,15 @@ func Update(name string, description string, host string, port int, enable bool,
 
 	targetsvr.IsEnabled = &enable
 
-	return createOrUpdate("update", targetsvr, name, description, host, port, protocol, keyStore, keyAlias, trustStore, tlsenabled, tlsenforce, clientAuthEnabled, ignoreValidationErrors)
+	return createOrUpdate("update", targetsvr, name, description, host, port, protocol, keyStore,
+		keyAlias, trustStore, tlsenabled, tlsenforce, clientAuthEnabled, tlsVersions, ignoreValidationErrors)
 }
 
-func createOrUpdate(action string, targetsvr targetserver, name string, description string, host string, port int, protocol string, keyStore string, keyAlias string, trustStore string, tlsenabled string, tlsenforce string, clientAuthEnabled string, ignoreValidationErrors string) (respBody []byte, err error) {
+func createOrUpdate(action string, targetsvr targetserver, name string, description string,
+	host string, port int, protocol string, keyStore string, keyAlias string, trustStore string,
+	tlsenabled string, tlsenforce string, clientAuthEnabled string, tlsVersions []string,
+	ignoreValidationErrors string,
+) (respBody []byte, err error) {
 	if description != "" {
 		targetsvr.Description = description
 	}
@@ -125,6 +137,9 @@ func createOrUpdate(action string, targetsvr targetserver, name string, descript
 		}
 		if ignoreValidationErrors != "" {
 			targetsvr.SslInfo.IgnoreValidationErrors = getBool(ignoreValidationErrors)
+		}
+		if len(tlsVersions) != 0 {
+			targetsvr.SslInfo.Protocols = tlsVersions
 		}
 	}
 
