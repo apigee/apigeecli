@@ -32,7 +32,7 @@ jobs:
       - name: Push GH Pages
         run: |
           git config pull.rebase false
-          # git config --global user.name "apigeecli Publish Action"
+          git config --global user.name ${{ github.actor }}
           # git config --global user.email "apigeecli-bot@noreply.apigee.com"
 
           git pull origin main --allow-unrelated-histories
