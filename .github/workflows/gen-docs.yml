@@ -31,11 +31,14 @@ jobs:
         uses: actions/checkout@1e31de5234b9f8995739874a8ce0492dc87873e2 #v4
       - name: Push GH Pages
         run: |
+          TAG_NAME=${GITHUB_REF##*/}
+
           git config pull.rebase false
           git config --global user.name "apigeecli Publish Action"
           git config --global user.email "apigeecli-bot@noreply.apigee.com"
 
           git pull origin main --allow-unrelated-histories
+          git checkout -b docs_$TAG_NAME
 
           GOBIN=/tmp/ go install github.com/google/go-licenses@v1.0.0
           /tmp/go-licenses csv ./cmd/apigeecli > third-party-licenses.txt || echo "Ignore warnings"
@@ -48,4 +51,4 @@ jobs:
 
           git add --all
           git commit -m "Update GH Pages - $GITHUB_SHA" || echo "No Changes in docs"
-          git push origin HEAD:refs/heads/main
+          git push orgin docs_$TAG_NAME
