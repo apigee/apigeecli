@@ -32,8 +32,8 @@ jobs:
       - name: Push GH Pages
         run: |
           git config pull.rebase false
-          git config --global user.name ${{ github.actor }}
-          # git config --global user.email "apigeecli-bot@noreply.apigee.com"
+          git config --global user.name "$(git log -n 1 --pretty=format:%an)"
+          git config --global user.email "$(git log -n 1 --pretty=format:%ae)"
 
           git pull origin main --allow-unrelated-histories
           git checkout -b docs_$GITHUB_SHA
