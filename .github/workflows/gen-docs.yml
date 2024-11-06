@@ -16,10 +16,10 @@
 name: apigeecli Github Pages Pipeline
 
 on:
-  push:
+  #push:
     # Publish semver tags as releases.
-    tags:
-      - v[0-9].[0-9]+.[0-9]
+  #  tags:
+  #    - v[0-9].[0-9]+.[0-9]
   workflow_dispatch:
 
 jobs:
@@ -32,8 +32,8 @@ jobs:
       - name: Push GH Pages
         run: |
           git config pull.rebase false
-          git config --global user.name "apigeecli Publish Action"
-          git config --global user.email "apigeecli-bot@noreply.apigee.com"
+          # git config --global user.name "apigeecli Publish Action"
+          # git config --global user.email "apigeecli-bot@noreply.apigee.com"
 
           git pull origin main --allow-unrelated-histories
           git checkout -b docs_$GITHUB_SHA
