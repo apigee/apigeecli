@@ -44,10 +44,10 @@ jobs:
           /tmp/go-licenses save ./cmd/apigeecli --save_path=third-party --force || echo "Ignore warnings"
 
           git add third-party third-party-licenses.txt
-          git commit -m "generate licenses - $GITHUB_SHA" || echo "No Changes in license"
+          git commit -m "generate licenses - $SHORT_SHA" || echo "No Changes in license"
 
           go run docs/docs.go
 
           git add --all
-          git commit -m "Update GH Pages - $GITHUB_SHA" || echo "No Changes in docs"
-          git push origin docs_$GITHUB_SHA
+          git commit -m "Update GH Pages - $SHORT_SHA" || echo "No Changes in docs"
+          git push origin docs_$SHORT_SHA
