@@ -31,12 +31,13 @@ jobs:
         uses: actions/checkout@1e31de5234b9f8995739874a8ce0492dc87873e2 #v4
       - name: Push GH Pages
         run: |
+          SHORT_SHA=$(git rev-parse --short $GITHUB_SHA)
           git config pull.rebase false
           git config --global user.name "$(git log -n 1 --pretty=format:%an)"
           git config --global user.email "$(git log -n 1 --pretty=format:%ae)"
 
           git pull origin main --allow-unrelated-histories
-          git checkout -b docs_$GITHUB_SHA
+          git checkout -b docs_$SHORT_SHA
 
           GOBIN=/tmp/ go install github.com/google/go-licenses@v1.0.0
           /tmp/go-licenses csv ./cmd/apigeecli > third-party-licenses.txt || echo "Ignore warnings"
