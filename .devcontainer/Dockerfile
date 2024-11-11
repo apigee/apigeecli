@@ -19,7 +19,7 @@ FROM mcr.microsoft.com/devcontainers/go:1.23-bookworm@@sha256:2e00578e7c526e76eb
 COPY --from=cosign /ko-app/cosign /usr/bin
 
 #v1.1.1
-RUN go install github.com/google/addlicense@@dc31ac9ffcca99c9457226366135701794b128c0
+RUN go install github.com/google/addlicense@dc31ac9ffcca99c9457226366135701794b128c0
 
 # v1.6.0
 RUN go install github.com/google/go-licenses@5348b744d0983d85713295ea08a20cca1654a45e
