@@ -148,3 +148,15 @@ jobs:
           subject-digest: ${{ steps.build-and-push.outputs.digest }}
           sbom-path: 'sbom.spdx.json'
           push-to-registry: true
+
+      - name: Scan apigeecli container
+        uses: aquasecurity/trivy-action@915b19bbe73b92a6cf82a1bc12b087c9a19a5fe2 #0.28.0
+        with:
+          image-ref: '${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ steps.build-and-push.outputs.digest }}'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+
+      - name: Upload Trivy apigeecli SARIF Report
+        uses: github/codeql-action/upload-sarif@4f3212b61783c3c68e8309a0f18a699764811cda
+        with:
+          sarif_file: 'trivy-results.sarif'
