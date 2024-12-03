@@ -707,6 +707,7 @@ func Wait(name string, revision int) error {
 			clilog.Info.Println("Proxy deployment completed with status: ", respMap["state"])
 		default:
 			clilog.Info.Println("Proxy deployment failed with status: ", respMap["state"])
+			err = fmt.Errorf("proxy deployment failed with status: %s", respMap["state"])
 		}
 
 		return false
