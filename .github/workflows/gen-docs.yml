@@ -14,18 +14,22 @@
 
 # Generate documentation for apigeecli
 name: apigeecli Github Pages Pipeline
-
+permissions: read-all
 on:
-  #push:
-    # Publish semver tags as releases.
-  #  tags:
-  #    - v[0-9].[0-9]+.[0-9]
+  push:
+  # Publish semver tags as releases.
+    tags:
+      - v[0-9].[0-9]+.[0-9]
   workflow_dispatch:
 
 jobs:
   publish-gh-pages:
     name: Publish apigeecli Documentation
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # needed to create PR
+      packages: write
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@1e31de5234b9f8995739874a8ce0492dc87873e2 #v4
@@ -36,8 +40,8 @@ jobs:
           git config --global user.name "$(git log -n 1 --pretty=format:%an)"
           git config --global user.email "$(git log -n 1 --pretty=format:%ae)"
 
-          git pull origin main --allow-unrelated-histories
-          git checkout -b docs_$SHORT_SHA
+          git checkout docs
+          git reset --hard origin/main
 
           GOBIN=/tmp/ go install github.com/google/go-licenses@v1.0.0
           /tmp/go-licenses csv ./cmd/apigeecli > third-party-licenses.txt || echo "Ignore warnings"
@@ -50,4 +54,5 @@ jobs:
 
           git add --all
           git commit -m "Update GH Pages - $SHORT_SHA" || echo "No Changes in docs"
-          git push origin docs_$SHORT_SHA
+          git push origin docs
+          gh pr create --title "Update Documentation" --body "update docs to ${GITHUB_SHA}" --base main --head docs
