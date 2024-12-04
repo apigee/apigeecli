@@ -40,7 +40,7 @@ jobs:
           git config --global user.name "$(git log -n 1 --pretty=format:%an)"
           git config --global user.email "$(git log -n 1 --pretty=format:%ae)"
 
-          git checkout docs
+          git checkout gh_pages
           git reset --hard origin/main
 
           GOBIN=/tmp/ go install github.com/google/go-licenses@v1.0.0
@@ -54,5 +54,5 @@ jobs:
 
           git add --all
           git commit -m "Update GH Pages - $SHORT_SHA" || echo "No Changes in docs"
-          git push origin docs
+          git push origin gh_pages
           gh pr create --title "Update Documentation" --body "update docs to ${GITHUB_SHA}" --base main --head docs
