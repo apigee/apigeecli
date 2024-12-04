@@ -29,6 +29,8 @@ jobs:
     permissions:
       contents: write # needed to create PR
       packages: write
+      id-token: write
+      attestations: write
 
     steps:
       - name: Checkout Code
@@ -55,4 +57,4 @@ jobs:
           git add --all
           git commit -m "Update GH Pages - $SHORT_SHA" || echo "No Changes in docs"
           git push origin gh_pages
-          gh pr create --title "Update Documentation" --body "update docs to ${GITHUB_SHA}" --base main --head docs
+          gh pr create --title "Update Documentation" --body "update docs to ${GITHUB_SHA}" --base main --head gh_pages
