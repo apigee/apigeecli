@@ -42,7 +42,8 @@ jobs:
           git config --global user.name "$(git log -n 1 --pretty=format:%an)"
           git config --global user.email "$(git log -n 1 --pretty=format:%ae)"
 
-          git fetch origin
+          git fetch origin main
+          git fetch origin gh_pages
           git checkout gh_pages
           git merge origin/main --allow-unrelated-histories
 
