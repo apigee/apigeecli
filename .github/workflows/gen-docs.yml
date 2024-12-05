@@ -42,9 +42,10 @@ jobs:
           git config --global user.name "$(git log -n 1 --pretty=format:%an)"
           git config --global user.email "$(git log -n 1 --pretty=format:%ae)"
 
-          git fetch origin
+          git fetch origin main
+          git fetch origin gh_pages
           git checkout gh_pages
-          git merge main
+          git merge origin/main
 
           GOBIN=/tmp/ go install github.com/google/go-licenses@v1.0.0
           /tmp/go-licenses csv ./cmd/apigeecli > third-party-licenses.txt || echo "Ignore warnings"
