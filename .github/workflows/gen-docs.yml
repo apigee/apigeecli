@@ -39,7 +39,7 @@ jobs:
         uses: actions/checkout@1e31de5234b9f8995739874a8ce0492dc87873e2 #v4
       - name: Push GH Pages
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           SHORT_SHA=$(git rev-parse --short $GITHUB_SHA)
           git config pull.rebase false
