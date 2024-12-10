@@ -49,7 +49,7 @@ jobs:
           git fetch origin main
           git fetch origin gh_pages
           git checkout gh_pages
-          git merge origin/main --allow-unrelated-histories
+          git merge -X theirs origin/main --allow-unrelated-histories
 
           GOBIN=/tmp/ go install github.com/google/go-licenses@v1.0.0
           /tmp/go-licenses csv ./cmd/apigeecli > third-party-licenses.txt || echo "Ignore warnings"
