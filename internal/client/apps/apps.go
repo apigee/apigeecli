@@ -294,16 +294,7 @@ func Export(conn int) (payload [][]byte, err error) {
 	var mu sync.Mutex
 	const entityType = "apps"
 
-	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
-	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), entityType)
-
-	respBody, err := apiclient.HttpClient(u.String())
-	if err != nil {
-		return apiclient.GetEntityPayloadList(), err
-	}
-
-	entities := apps{}
-	err = json.Unmarshal(respBody, &entities)
+	entities, err := listAllApps()
 	if err != nil {
 		return apiclient.GetEntityPayloadList(), err
 	}
@@ -573,4 +564,49 @@ func getNewDeveloperId(oldDeveloperId string, developerEntities developers.Appde
 		}
 	}
 	return "", "", fmt.Errorf("developer not imported into Apigee")
+}
+
+func listAllApps() (appList apps, err error) {
+	var startKey string
+	appList = apps{}
+
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apps")
+
+	// don't print to sysout
+	apiclient.ClientPrintHttpResponse.Set(false)
+
+	for {
+
+		a := apps{}
+
+		if startKey != "" {
+			q := u.Query()
+			q.Set("startKey", startKey)
+			q.Set("rows", "10000")
+			u.RawQuery = q.Encode()
+		}
+
+		respBody, err := apiclient.HttpClient(u.String())
+		startKey = ""
+		if err != nil {
+			return appList, err
+		}
+
+		err = json.Unmarshal(respBody, &a)
+		if err != nil {
+			return appList, err
+		}
+
+		appList.Apps = append(appList.Apps, a.Apps...)
+
+		if len(a.Apps) == 10000 {
+			startKey = a.Apps[len(a.Apps)-1].AppID
+		} else if len(a.Apps) < 10000 {
+			break
+		}
+	}
+
+	apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
+	return appList, nil
 }
