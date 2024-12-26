@@ -69,5 +69,5 @@ func init() {
 	_ = CrtCmd.MarkFlagRequired("display-name")
 	_ = CrtCmd.MarkFlagRequired("resource-uri")
 	_ = CrtCmd.MarkFlagRequired("endpoints")
-	_ = CrtCmd.MarkFlagRequired("type")
+	_ = CrtCmd.MarkFlagRequired("dep-type")
 }
