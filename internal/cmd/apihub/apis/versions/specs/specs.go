@@ -27,6 +27,11 @@ var SpecsCmd = &cobra.Command{
 
 var org, region string
 
+var examples = []string{
+	`apigeecli apihub apis versions specs create -i $id --api-id $apiId \
+	--version=$version -d $displayName -f ./test/petstore.yaml -r $region --default-token`,
+}
+
 func init() {
 	SpecsCmd.PersistentFlags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
@@ -42,4 +47,8 @@ func init() {
 
 	_ = SpecsCmd.MarkFlagRequired("org")
 	_ = SpecsCmd.MarkFlagRequired("region")
+}
+
+func GetExample(i int) string {
+	return examples[i]
 }

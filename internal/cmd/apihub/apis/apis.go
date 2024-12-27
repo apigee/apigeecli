@@ -29,6 +29,10 @@ var ApisCmd = &cobra.Command{
 
 var org, region string
 
+var examples = []string{
+	`apigeecli apihub apis create -i $apiId -f ./test/api.json -r $region -p $project --default-token`,
+}
+
 func init() {
 	ApisCmd.PersistentFlags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
@@ -45,4 +49,8 @@ func init() {
 
 	_ = ApisCmd.MarkFlagRequired("org")
 	_ = ApisCmd.MarkFlagRequired("region")
+}
+
+func GetExample(i int) string {
+	return examples[i]
 }
