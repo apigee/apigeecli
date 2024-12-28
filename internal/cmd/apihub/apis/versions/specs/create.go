@@ -43,6 +43,7 @@ var CrtCmd = &cobra.Command{
 			contents, filepath.Ext(apiFilePath), sourceURI, documentation)
 		return
 	},
+	Example: `Create a new API Version Specification: ` + GetExample(0),
 }
 
 var (

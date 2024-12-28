@@ -41,6 +41,7 @@ var CrtCmd = &cobra.Command{
 		_, err = hub.CreateApi(id, apiFileBytes)
 		return
 	},
+	Example: `Create a new API: ` + GetExample(0),
 }
 
 var id, apiFilePath string
