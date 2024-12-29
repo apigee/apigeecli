@@ -309,20 +309,9 @@ func Export(conn int) (payload [][]byte, err error) {
 	// parent workgroup
 	var pwg sync.WaitGroup
 	var mu sync.Mutex
-	const entityType = "apiproducts"
 
-	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
-	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), entityType)
-	// don't print to sysout
-	apiclient.ClientPrintHttpResponse.Set(false)
-	respBody, err := apiclient.HttpClient(u.String())
-	apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
-	if err != nil {
-		return apiclient.GetEntityPayloadList(), err
-	}
-
-	products := apiProducts{}
-	err = json.Unmarshal(respBody, &products)
+	entityType := "apiproducts"
+	products, err := listAllProducts()
 	if err != nil {
 		return apiclient.GetEntityPayloadList(), err
 	}
@@ -469,5 +458,50 @@ func readProductsFile(filePath string) ([]APIProduct, error) {
 		return products, err
 	}
 
+	return products, nil
+}
+
+func listAllProducts() (products apiProducts, err error) {
+	var startKey string
+	products = apiProducts{}
+
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts")
+
+	// don't print to sysout
+	apiclient.ClientPrintHttpResponse.Set(false)
+
+	for {
+
+		p := apiProducts{}
+
+		if startKey != "" {
+			q := u.Query()
+			q.Set("startKey", startKey)
+			q.Set("count", "1000")
+			u.RawQuery = q.Encode()
+		}
+
+		respBody, err := apiclient.HttpClient(u.String())
+		startKey = ""
+		if err != nil {
+			return products, err
+		}
+
+		err = json.Unmarshal(respBody, &p)
+		if err != nil {
+			return products, err
+		}
+
+		products.APIProduct = append(products.APIProduct, p.APIProduct...)
+
+		if len(p.APIProduct) == 1000 {
+			startKey = p.APIProduct[len(p.APIProduct)-1].Name
+		} else if len(p.APIProduct) < 1000 {
+			break
+		}
+	}
+
+	apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
 	return products, nil
 }
