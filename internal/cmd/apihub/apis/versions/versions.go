@@ -29,6 +29,11 @@ var ApiVersionsCmd = &cobra.Command{
 
 var org, region string
 
+var examples = []string{
+	`apigeecli apihub apis versions create -i $apVeriId --api-id $apiId \
+	-f ./test/api-ver.json -r $region -p $project --default-token`,
+}
+
 func init() {
 	ApiVersionsCmd.PersistentFlags().StringVarP(&org, "org", "o",
 		"", "Apigee organization name")
@@ -44,4 +49,8 @@ func init() {
 
 	_ = ApiVersionsCmd.MarkFlagRequired("org")
 	_ = ApiVersionsCmd.MarkFlagRequired("region")
+}
+
+func GetExample(i int) string {
+	return examples[i]
 }

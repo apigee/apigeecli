@@ -36,6 +36,7 @@ var CrtCmd = &cobra.Command{
 			deploymentName, externalURI, resourceURI, endpoints, d, e, s)
 		return
 	},
+	Example: `Create a new Deployment for an Apigee proxy: ` + GetExample(0),
 }
 
 var (
@@ -69,5 +70,5 @@ func init() {
 	_ = CrtCmd.MarkFlagRequired("display-name")
 	_ = CrtCmd.MarkFlagRequired("resource-uri")
 	_ = CrtCmd.MarkFlagRequired("endpoints")
-	_ = CrtCmd.MarkFlagRequired("type")
+	_ = CrtCmd.MarkFlagRequired("dep-type")
 }

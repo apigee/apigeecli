@@ -17,6 +17,10 @@ package main
 import (
 	"internal/cmd"
 	"internal/cmd/apidocs"
+	apihubapi "internal/cmd/apihub/apis"
+	apiversion "internal/cmd/apihub/apis/versions"
+	apispec "internal/cmd/apihub/apis/versions/specs"
+	"internal/cmd/apihub/deployments"
 	"internal/cmd/apis"
 	"internal/cmd/appgroups"
 	"internal/cmd/apps"
@@ -71,6 +75,11 @@ Set up apigeecli with preferences: ` + getSingleLine("apigeecli prefs set -o $or
 | references | ` + getSingleLine(references.GetExample(0)) + ` |
 | apps | ` + getSingleLine(apps.GetExample(0)) + ` |
 | apidocs | ` + getSingleLine(apidocs.GetExample(0)) + `  |
+| apihub | ` + getSingleLine(apihubapi.GetExample(0)) + `  |
+| apihub | ` + getSingleLine(apiversion.GetExample(0)) + `  |
+| apihub | ` + getSingleLine(apispec.GetExample(0)) + `  |
+| apihub | ` + getSingleLine(deployments.GetExample(0)) + `  |
+
 
 
 NOTE: This file is auto-generated during a release. Do not modify.`

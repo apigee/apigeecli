@@ -34,6 +34,7 @@ var ExpCmd = &cobra.Command{
 		cmd.SilenceUsage = true
 
 		const exportFileName = "apps.json"
+		apiclient.DisableCmdPrintHttpResponse()
 		payload, err := apps.Export(conn)
 		if err != nil {
 			return err
