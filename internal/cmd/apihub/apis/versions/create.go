@@ -41,6 +41,7 @@ var CrtCmd = &cobra.Command{
 		_, err = hub.CreateApiVersion(id, apiID, apiFileBytes)
 		return
 	},
+	Example: `Create a new API Version: ` + GetExample(0),
 }
 
 var apiID, apiFilePath string

@@ -36,6 +36,7 @@ var CrtCmd = &cobra.Command{
 			deploymentName, externalURI, resourceURI, endpoints, d, e, s)
 		return
 	},
+	Example: `Create a new Deployment for an Apigee proxy: ` + GetExample(0),
 }
 
 var (
