@@ -114,4 +114,5 @@ func init() {
 
 	_ = UpdateCmd.MarkFlagRequired("name")
 	_ = UpdateCmd.MarkFlagRequired("display-name")
+	_ = UpdateCmd.MarkFlagRequired("approval")
 }
