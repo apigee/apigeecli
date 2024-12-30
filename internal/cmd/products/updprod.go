@@ -113,4 +113,5 @@ func init() {
 	// TODO: apiresource -r later
 
 	_ = UpdateCmd.MarkFlagRequired("name")
+	_ = UpdateCmd.MarkFlagRequired("display-name")
 }
