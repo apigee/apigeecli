@@ -51,11 +51,12 @@ jobs:
           git checkout gh_pages
           git merge -X theirs origin/main --allow-unrelated-histories
 
-          GOBIN=/tmp/ go install github.com/google/go-licenses@v1.0.0
-          /tmp/go-licenses csv ./cmd/apigeecli > third-party-licenses.txt || echo "Ignore warnings"
-          /tmp/go-licenses save ./cmd/apigeecli --save_path=third-party --force || echo "Ignore warnings"
+          GOBIN=/tmp/ go install github.com/google/go-licenses@v1.6.0
+          /tmp/go-licenses report ./... --template licenses.tpl --ignore internal > third-party-licenses.txt || echo "Ignore warnings"
+          # /tmp/go-licenses save ./cmd/apigeecli --save_path=third-party --force || echo "Ignore warnings"
 
-          git add third-party third-party-licenses.txt
+          # git add third-party third-party-licenses.txt
+          git add third-party-licenses.txt
           git commit -m "generate licenses - $SHORT_SHA" || echo "No Changes in license"
 
           go run docs/docs.go
