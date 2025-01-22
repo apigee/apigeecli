@@ -180,6 +180,21 @@ func ManageKey(developerEmail string, appID string, consumerKey string, action s
 	return respBody, err
 }
 
+func ManageKeyProduct(developerEmail string, appID string, consumerKey string, action string, product string) (respBody []byte, err error) {
+	if action != "revoke" && action != "approve" {
+		return nil, fmt.Errorf("invalid action. action must be revoke or approve")
+	}
+
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", developerEmail, "apps", appID, "keys", consumerKey, "apiproducts", product)
+	q := u.Query()
+	q.Set("action", action)
+	u.RawQuery = q.Encode()
+	respBody, err = apiclient.HttpClient(u.String(), "", "POST", "application/octet-stream")
+
+	return respBody, err
+}
+
 func deleteKeyProduct(developerEmail string, appID string, consumerKey string, product string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers",
