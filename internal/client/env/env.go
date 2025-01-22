@@ -38,7 +38,11 @@ type Environment struct {
 	ApiProxyType    string     `json:"apiProxyType,omitempty"`
 	ForwardProxyUri string     `json:"forwardProxyUri,omitempty"`
 	Type            string     `json:"type,omitempty"`
-	Properties      []Property `json:"properties,omitempty"`
+	Properties      Properties `json:"properties,omitempty"`
+}
+
+type Properties struct {
+	Property []Property `json:"property,omitempty"`
 }
 
 type Property struct {
