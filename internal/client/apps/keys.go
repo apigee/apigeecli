@@ -165,13 +165,17 @@ func UpdateKey(developerEmail string, appID string, consumerKey string,
 	return respBody, err
 }*/
 
-func ManageKey(developerEmail string, appID string, consumerKey string, action string) (respBody []byte, err error) {
+func ManageKey(developerEmail string, appID string, consumerKey string, action string, product string) (respBody []byte, err error) {
 	if action != "revoke" && action != "approve" {
 		return nil, fmt.Errorf("invalid action. action must be revoke or approve")
 	}
 
 	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
-	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", developerEmail, "apps", appID, "keys", consumerKey)
+	if product == "" {
+		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", developerEmail, "apps", appID, "keys", consumerKey)
+	} else {
+		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "developers", developerEmail, "apps", appID, "keys", consumerKey, "apiproducts", product)
+	}
 	q := u.Query()
 	q.Set("action", action)
 	u.RawQuery = q.Encode()

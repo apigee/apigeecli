@@ -33,7 +33,7 @@ var ManageKeyCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
 
-		_, err = apps.ManageKey(developerEmail, name, key, action)
+		_, err = apps.ManageKey(developerEmail, name, key, action, productName)
 		return
 	},
 }
@@ -45,6 +45,8 @@ func init() {
 		"", "Developer app consumer key")
 	ManageKeyCmd.Flags().StringVarP(&action, "action", "x",
 		"revoke", "Action to perform - revoke or approve")
+	ManageKeyCmd.Flags().StringVarP(&productName, "product", "",
+		"", "Name of the API Product; If not set the action is performed on all the API Products")
 
 	_ = ManageKeyCmd.MarkFlagRequired("key")
 	_ = ManageKeyCmd.MarkFlagRequired("action")
