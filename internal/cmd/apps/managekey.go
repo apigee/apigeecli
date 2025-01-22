@@ -33,11 +33,7 @@ var ManageKeyCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
 
-		if productName != "" {
-			_, err = apps.ManageKeyProduct(developerEmail, name, key, action, productName)
-		} else {
-			_, err = apps.ManageKey(developerEmail, name, key, action)
-		}
+		_, err = apps.ManageKey(developerEmail, name, key, action, productName)
 		return
 	},
 }
