@@ -20,6 +20,7 @@ ARG COMMIT
 ADD ./internal /go/src/apigeecli/internal
 ADD ./cmd /go/src/apigeecli/cmd
 
+COPY .github/workflows/licenses.tpl /go/src/apigeecli
 COPY go.mod go.sum /go/src/apigeecli/
 
 WORKDIR /go/src/apigeecli
@@ -28,6 +29,8 @@ ENV GO111MODULE=on
 RUN go mod tidy
 RUN go mod download
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -buildvcs=true -a -gcflags='all="-l"' -ldflags='-s -w -extldflags "-static" -X main.version='${TAG}' -X main.commit='${COMMIT}' -X main.date='$(date +%FT%H:%I:%M+%Z) -o /go/bin/apigeecli /go/src/apigeecli/cmd/apigeecli/apigeecli.go
+RUN GOBIN=/tmp/ go install github.com/google/go-licenses@v1.6.0
+RUN /tmp/go-licenses report ./... --template /go/src/apigeecli/licenses.tpl --ignore internal > /tmp/third-party-licenses.txt 2> /dev/null || echo "Ignore warnings"
 
 FROM ghcr.io/jqlang/jq:1.7.1@sha256:096b83865ad59b5b02841f103f83f45c51318394331bf1995e187ea3be937432 AS jq
 
@@ -41,8 +44,8 @@ LABEL org.opencontainers.image.url='https://github.com/apigee/apigeecli' \
       org.opencontainers.image.description='This is a tool to interact with Apigee APIs'
 
 COPY --from=builder /go/bin/apigeecli /usr/local/bin/apigeecli
-COPY LICENSE.txt /
-COPY third-party-licenses.txt /
+COPY --chown=nonroot:nonroot LICENSE.txt /
+COPY --from=builder --chown=nonroot:nonroot /tmp/third-party-licenses.txt /
 COPY --from=jq /jq /usr/local/bin/jq
 
 ENTRYPOINT [ "apigeecli" ]
