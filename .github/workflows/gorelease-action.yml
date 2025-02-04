@@ -56,7 +56,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
 
       - name: Upload assets
-        uses: actions/upload-artifact@@4f3212b61783c3c68e8309a0f18a699764811cda # v4.6.0
+        uses: actions/upload-artifact@4f3212b61783c3c68e8309a0f18a699764811cda # v4.6.0
         with:
           name: apigeecli
           path: dist/*
