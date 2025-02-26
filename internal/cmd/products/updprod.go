@@ -51,6 +51,7 @@ var UpdateCmd = &cobra.Command{
 		p.Environments = environments
 		p.Proxies = proxies
 		p.Scopes = scopes
+		p.Space = space
 
 		p.OperationGroup, err = getOperationGroup(operationGroupFile)
 		if err != nil {
@@ -110,6 +111,8 @@ func init() {
 		"", "File containing gRPC Operation Group JSON. See samples for how to create the file")
 	UpdateCmd.Flags().StringVarP(&quotaCounterScope, "quota-counter-scope", "",
 		"", "Scope of the quota decides how the quota counter gets applied; can be PROXY or OPERATION")
+	UpdateCmd.Flags().StringVarP(&space, "space", "",
+		"", "Associated Apigee Space. Pass this if the API Product being updated is part of a space")
 	// TODO: apiresource -r later
 
 	_ = UpdateCmd.MarkFlagRequired("name")
