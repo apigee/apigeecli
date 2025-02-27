@@ -78,6 +78,7 @@ func init() {
 	Cmd.AddCommand(UpdateCmd)
 	Cmd.AddCommand(AttributesCmd)
 	Cmd.AddCommand(RatePlanCmd)
+	Cmd.AddCommand(MoveCmd)
 }
 
 func getOperationGroup(operationGroupFile string) (*products.OperationGroup, error) {

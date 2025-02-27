@@ -143,6 +143,17 @@ func Delete(name string) (respBody []byte, err error) {
 	return respBody, err
 }
 
+// Move
+func Move(name string, space string) (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
+	q := u.Query()
+	q.Set("space", space)
+	u.RawQuery = q.Encode()
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts", name, ":move")
+	respBody, err = apiclient.HttpClient(u.String(), "")
+	return respBody, err
+}
+
 // upsert - use Action to control if upsert is enabled
 func upsert(p APIProduct, a Action) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
