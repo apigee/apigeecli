@@ -70,6 +70,7 @@ func init() {
 	Cmd.AddCommand(KvmCmd)
 	Cmd.AddCommand(UpdateCmd)
 	Cmd.AddCommand(CloneCmd)
+	Cmd.AddCommand(MoveCmd)
 }
 
 func GetExample(i int) string {

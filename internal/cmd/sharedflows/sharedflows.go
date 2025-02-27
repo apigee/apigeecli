@@ -49,6 +49,7 @@ func init() {
 	Cmd.AddCommand(ImpCmd)
 	Cmd.AddCommand(CleanCmd)
 	Cmd.AddCommand(ListDepCmd)
+	Cmd.AddCommand(MoveCmd)
 }
 
 func GetExample(i int) string {

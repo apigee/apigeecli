@@ -237,6 +237,17 @@ func ListProxies(includeRevisions bool) (respBody []byte, err error) {
 	return respBody, err
 }
 
+// Move between spaces
+func Move(name string, space string) (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
+	q := u.Query()
+	q.Set("space", space)
+	u.RawQuery = q.Encode()
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apis", name, ":move")
+	respBody, err = apiclient.HttpClient(u.String(), "")
+	return respBody, err
+}
+
 // ListEnvDeployments
 func ListEnvDeployments() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
