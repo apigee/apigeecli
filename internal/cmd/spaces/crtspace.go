@@ -41,7 +41,7 @@ var CreateCmd = &cobra.Command{
 func init() {
 	CreateCmd.Flags().StringVarP(&name, "name", "n",
 		"", "Name of the Space")
-	CreateCmd.Flags().StringVarP(&displayName, "displayName", "d",
+	CreateCmd.Flags().StringVarP(&displayName, "display-name", "d",
 		"", "Display Name for the Space")
 
 	_ = CreateCmd.MarkFlagRequired("name")

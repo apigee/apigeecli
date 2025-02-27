@@ -28,7 +28,7 @@ var Cmd = &cobra.Command{
 
 var org, displayName, name, region string
 
-var examples = []string{"apigeecli spaces create --name=space1 --displayName=\"Space 1\""}
+var examples = []string{"apigeecli spaces create --name=space1 --display-name=\"Space 1\""}
 
 func init() {
 	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
