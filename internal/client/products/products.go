@@ -143,7 +143,7 @@ func Delete(name string) (respBody []byte, err error) {
 	return respBody, err
 }
 
-// Move
+// Move between spaces
 func Move(name string, space string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	q := u.Query()
