@@ -57,6 +57,7 @@ type APIProduct struct {
 	QuotaTimeUnit         string                 `json:"quotaTimeUnit,omitempty"`
 	Scopes                []string               `json:"scopes,omitempty"`
 	QuotaCounterScope     string                 `json:"quotaCounterScope,omitempty"`
+	Space                 string                 `json:"space,omitempty"`
 }
 
 type OperationGroup struct {
@@ -139,6 +140,17 @@ func Delete(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts", name)
 	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
+	return respBody, err
+}
+
+// Move between spaces
+func Move(name string, space string) (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
+	q := u.Query()
+	q.Set("space", space)
+	u.RawQuery = q.Encode()
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts", name, ":move")
+	respBody, err = apiclient.HttpClient(u.String(), "")
 	return respBody, err
 }
 

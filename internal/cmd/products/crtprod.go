@@ -51,6 +51,7 @@ var CreateCmd = &cobra.Command{
 		p.Environments = environments
 		p.Proxies = proxies
 		p.Scopes = scopes
+		p.Space = space
 
 		p.OperationGroup, err = getOperationGroup(operationGroupFile)
 		if err != nil {
@@ -117,6 +118,8 @@ func init() {
 		"", "File containing gRPC Operation Group JSON. See samples for how to create the file")
 	CreateCmd.Flags().StringVarP(&quotaCounterScope, "quota-counter-scope", "",
 		"", "Scope of the quota decides how the quota counter gets applied; can be PROXY or OPERATION")
+	CreateCmd.Flags().StringVarP(&space, "space", "",
+		"", "Apigee Space to associate to")
 	// TODO: apiresource -r later
 
 	_ = CreateCmd.MarkFlagRequired("name")

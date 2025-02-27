@@ -37,9 +37,9 @@ var (
 )
 
 var (
-	description, approval, displayName, quota, quotaInterval, quotaUnit string
-	environments, proxies, scopes                                       []string
-	attrs                                                               map[string]string
+	description, approval, displayName, quota, quotaInterval, quotaUnit, space string
+	environments, proxies, scopes                                              []string
+	attrs                                                                      map[string]string
 )
 
 var examples = []string{
@@ -47,12 +47,15 @@ var examples = []string{
 --display-name $product_name \
 --opgrp $ops_file \
 --envs $env \
+--space $space \
 --approval auto \
---attrs access=public  --default-token`, `apigeecli products create --name $product_name \
+--attrs access=public  --default-token`,
+	`apigeecli products create --name $product_name \
 --display-name $product_name \
 --opgrp $ops_file \
 --envs $env \
 --approval auto \
+--space $space \
 --attrs access=public \
 --quota 100 --interval 1 --unit minute  --default-token`,
 	`apigeecli products import -f samples/apiproduct-legacy.json  --default-token`,
@@ -75,6 +78,7 @@ func init() {
 	Cmd.AddCommand(UpdateCmd)
 	Cmd.AddCommand(AttributesCmd)
 	Cmd.AddCommand(RatePlanCmd)
+	Cmd.AddCommand(MoveCmd)
 }
 
 func getOperationGroup(operationGroupFile string) (*products.OperationGroup, error) {
