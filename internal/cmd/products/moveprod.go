@@ -43,8 +43,6 @@ func init() {
 	MoveCmd.Flags().StringVarP(&space, "space", "",
 		"", "Name of the Apigee Space moving to")
 
-	// TODO: apiresource -r later
-
-	_ = UpdateCmd.MarkFlagRequired("name")
-	_ = UpdateCmd.MarkFlagRequired("space")
+	_ = MoveCmd.MarkFlagRequired("name")
+	_ = MoveCmd.MarkFlagRequired("space")
 }
