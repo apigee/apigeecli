@@ -53,7 +53,7 @@ var GhCreateCmd = &cobra.Command{
 			proxybundle.ProxyCleanUp()
 			return err
 		}
-		_, err = apis.CreateProxy(name, bundleName)
+		_, err = apis.CreateProxy(name, bundleName, space)
 		proxybundle.ProxyCleanUp()
 		return err
 	},
@@ -66,6 +66,8 @@ var ghOwner, ghRepo, ghPath string
 func init() {
 	GhCreateCmd.Flags().StringVarP(&name, "name", "n",
 		"", "API Proxy name")
+	GhCreateCmd.Flags().StringVarP(&space, "space", "",
+		"", "Apigee Space to asssociate to")
 	GhCreateCmd.Flags().StringVarP(&ghOwner, "owner", "u",
 		"", "The github organization or username. ex: In https://github.com/apigee, apigee is the owner name")
 	GhCreateCmd.Flags().StringVarP(&ghRepo, "repo", "",

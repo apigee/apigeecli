@@ -82,9 +82,9 @@ type conflictingdeployment struct {
 const interval = 10
 
 // CreateProxy
-func CreateProxy(name string, proxy string) (respBody []byte, err error) {
+func CreateProxy(name string, proxy string, space string) (respBody []byte, err error) {
 	if proxy != "" {
-		respBody, err = apiclient.ImportBundle("apis", name, proxy)
+		respBody, err = apiclient.ImportBundle("apis", name, proxy, space)
 		return respBody, err
 	}
 	u, _ := url.Parse(apiclient.GetApigeeBaseURL())

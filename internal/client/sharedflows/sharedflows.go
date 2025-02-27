@@ -48,9 +48,9 @@ type revision struct {
 }
 
 // Create
-func Create(name string, proxy string) (respBody []byte, err error) {
+func Create(name string, proxy string, space string) (respBody []byte, err error) {
 	if proxy != "" {
-		respBody, err = apiclient.ImportBundle("sharedflows", name, proxy)
+		respBody, err = apiclient.ImportBundle("sharedflows", name, proxy, space)
 		return respBody, err
 	}
 	u, _ := url.Parse(apiclient.GetApigeeBaseURL())

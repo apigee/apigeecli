@@ -26,8 +26,8 @@ var Cmd = &cobra.Command{
 }
 
 var (
-	name, org, env, region string
-	conn, revision         int
+	name, org, env, region, space string
+	conn, revision                int
 )
 
 var examples = []string{"apigeecli sharedflows import -f samples/sharedflows"}

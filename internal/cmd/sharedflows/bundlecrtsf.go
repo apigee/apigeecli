@@ -58,7 +58,7 @@ var BundleCreateCmd = &cobra.Command{
 
 		var respBody []byte
 		if sfZip != "" {
-			respBody, err = sharedflows.Create(name, sfZip)
+			respBody, err = sharedflows.Create(name, sfZip, space)
 		} else if sfFolder != "" {
 			if stat, err := os.Stat(folder); err == nil && !stat.IsDir() {
 				return fmt.Errorf("supplied path is not a folder")
@@ -93,7 +93,7 @@ var BundleCreateCmd = &cobra.Command{
 			if err = proxybundle.GenerateArchiveBundle(sfFolder, sfBundlePath, true); err != nil {
 				return err
 			}
-			if respBody, err = sharedflows.Create(name, sfBundlePath); err != nil {
+			if respBody, err = sharedflows.Create(name, sfBundlePath, space); err != nil {
 				return err
 			}
 			if err = os.Remove(sfBundlePath); err != nil {
@@ -127,6 +127,8 @@ func init() {
 		"", "Path to the Sharedflow Bundle; ex: ./test/sharedflowbundle")
 	BundleCreateCmd.Flags().StringVarP(&env, "env", "e",
 		"", "Apigee environment name")
+	BundleCreateCmd.Flags().StringVarP(&space, "space", "",
+		"", "Apigee Space to associate to")
 	BundleCreateCmd.Flags().BoolVarP(&overrides, "ovr", "",
 		false, "Forces deployment of the new revision")
 	BundleCreateCmd.Flags().BoolVarP(&wait, "wait", "",

@@ -52,7 +52,7 @@ var GhCreateCmd = &cobra.Command{
 			return err
 		}
 
-		_, err = sharedflows.Create(name, bundleName)
+		_, err = sharedflows.Create(name, bundleName, space)
 		proxybundle.SharedflowCleanUp()
 		return err
 	},
@@ -67,6 +67,8 @@ func init() {
 		"", "Sharedflow name")
 	GhCreateCmd.Flags().StringVarP(&ghOwner, "owner", "u",
 		"", "The github organization or username. ex: In https://github.com/apigee, apigee is the owner name")
+	GhCreateCmd.Flags().StringVarP(&space, "space", "",
+		"", "Apigee Space to associate to")
 	GhCreateCmd.Flags().StringVarP(&ghRepo, "repo", "",
 		"", "The github repo name. ex: https://github.com/apigee/api-platform-samples, api-platform-samples is the repo")
 	GhCreateCmd.Flags().StringVarP(&ghPath, "sf-path", "p",

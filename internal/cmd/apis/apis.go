@@ -26,24 +26,24 @@ var Cmd = &cobra.Command{
 }
 
 var (
-	org, region, env, name string
-	conn, revision         int
+	org, region, env, name, space string
+	conn, revision                int
 )
 
 const zipExt = ".zip"
 
 var examples = []string{
 	"apigeecli apis import -f samples/apis  --default-token",
-	`apigeecli apis create oas -n petstore \
+	`apigeecli apis create oas -n petstore --space=space1 \
 --oas-base-folderpath=./samples \
 --oas-name=petstore.yaml --add-cors=true \
 --google-idtoken-aud-literal=https://sample.run.app  --default-token`,
-	`apigeecli apis create oas -n petstore \
+	`apigeecli apis create oas -n petstore --space=space1 \
 -f ./samples/petstore.yaml \
 --add-cors=true --env=$env --wait=true --default-token`,
-	"apigeecli apis create graphql -n petstore --action=parse_verify --add-cors=true  --default-token",
-	"apigeecli apis create integration -n sample --trigger=sample  --default-token",
-	`apigeecli apis create github --name=petstore \
+	"apigeecli apis create graphql -n petstore --space=space1 --action=parse_verify --add-cors=true  --default-token",
+	"apigeecli apis create integration -n sample --space=space1 --trigger=sample  --default-token",
+	`apigeecli apis create github --name=petstore --space=space1 \
 --owner=apigee \
 --repo=api-platform-samples \
 --proxy-path=sample-proxies/apikey  --default-token`,
