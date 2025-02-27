@@ -82,9 +82,9 @@ type conflictingdeployment struct {
 const interval = 10
 
 // CreateProxy
-func CreateProxy(name string, proxy string) (respBody []byte, err error) {
+func CreateProxy(name string, proxy string, space string) (respBody []byte, err error) {
 	if proxy != "" {
-		respBody, err = apiclient.ImportBundle("apis", name, proxy)
+		respBody, err = apiclient.ImportBundle("apis", name, proxy, space)
 		return respBody, err
 	}
 	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
@@ -234,6 +234,17 @@ func ListProxies(includeRevisions bool) (respBody []byte, err error) {
 	}
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apis")
 	respBody, err = apiclient.HttpClient(u.String())
+	return respBody, err
+}
+
+// Move between spaces
+func Move(name string, space string) (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
+	q := u.Query()
+	q.Set("space", space)
+	u.RawQuery = q.Encode()
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apis", name, ":move")
+	respBody, err = apiclient.HttpClient(u.String(), "")
 	return respBody, err
 }
 

@@ -48,9 +48,9 @@ type revision struct {
 }
 
 // Create
-func Create(name string, proxy string) (respBody []byte, err error) {
+func Create(name string, proxy string, space string) (respBody []byte, err error) {
 	if proxy != "" {
-		respBody, err = apiclient.ImportBundle("sharedflows", name, proxy)
+		respBody, err = apiclient.ImportBundle("sharedflows", name, proxy, space)
 		return respBody, err
 	}
 	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
@@ -116,6 +116,17 @@ func List(includeRevisions bool) (respBody []byte, err error) {
 	}
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sharedflows")
 	respBody, err = apiclient.HttpClient(u.String())
+	return respBody, err
+}
+
+// Move between spaces
+func Move(name string, space string) (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
+	q := u.Query()
+	q.Set("space", space)
+	u.RawQuery = q.Encode()
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sharedflows", name, ":move")
+	respBody, err = apiclient.HttpClient(u.String(), "")
 	return respBody, err
 }
 

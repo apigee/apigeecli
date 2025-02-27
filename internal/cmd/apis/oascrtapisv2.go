@@ -129,7 +129,7 @@ Create an API Proxy from OAS and deploy the proxy to an environment:
 		}
 
 		if importProxy {
-			respBody, err := apis.CreateProxy(name, name+zipExt)
+			respBody, err := apis.CreateProxy(name, name+zipExt, space)
 			if err != nil {
 				return err
 			}
@@ -187,6 +187,8 @@ func init() {
 		"", "API Trigger name; don't include 'api_trigger/'")
 	OasCreatev2Cmd.Flags().BoolVarP(&importProxy, "import", "",
 		true, "Import API Proxy after generation from spec")
+	OasCreatev2Cmd.Flags().StringVarP(&space, "space", "",
+		"", "Apigee Space to associate to")
 	OasCreatev2Cmd.Flags().BoolVarP(&validateSpec, "validate", "",
 		false, "Validate Spec before generating proxy")
 	OasCreatev2Cmd.Flags().BoolVarP(&skipPolicy, "skip-policy", "",
