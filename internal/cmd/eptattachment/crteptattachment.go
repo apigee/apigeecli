@@ -40,9 +40,9 @@ var CreateCmd = &cobra.Command{
 
 		re := regexp.MustCompile(`projects\/([a-zA-Z0-9_-]+)\/regions` +
 			`\/([a-zA-Z0-9_-]+)\/serviceAttachments\/([a-zA-Z0-9_-]+)`)
-		ok := re.Match([]byte(location))
+		ok := re.Match([]byte(serviceAttachment))
 		if !ok {
-			return fmt.Errorf("disk encryption key must be of the format " +
+			return fmt.Errorf("serviceAttachment must be of the format " +
 				"projects/{project-id}/regions/{location}/serviceAttachments/{sa-name}")
 		}
 		respBody, err := eptattachment.Create(name, serviceAttachment, location)
