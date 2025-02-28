@@ -110,7 +110,7 @@ func Delete(name string, revision int) (respBody []byte, err error) {
 func List(includeRevisions bool, space string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	q := u.Query()
-	if includeRevisions || space != "" {
+	if includeRevisions {
 		q.Set("includeRevisions", strconv.FormatBool(includeRevisions))
 	}
 	if space != "" {
