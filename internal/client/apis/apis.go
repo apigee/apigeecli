@@ -225,11 +225,14 @@ func GenerateUndeployChangeReport(name string, revision int) (respBody []byte, e
 }
 
 // ListProxies
-func ListProxies(includeRevisions bool) (respBody []byte, err error) {
+func ListProxies(includeRevisions bool, space string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	if includeRevisions {
 		q := u.Query()
 		q.Set("includeRevisions", strconv.FormatBool(includeRevisions))
+		if space != "" {
+			q.Set("space", space)
+		}
 		u.RawQuery = q.Encode()
 	}
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apis")

@@ -107,11 +107,14 @@ func Delete(name string, revision int) (respBody []byte, err error) {
 }
 
 // List
-func List(includeRevisions bool) (respBody []byte, err error) {
+func List(includeRevisions bool, space string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	if includeRevisions {
 		q := u.Query()
 		q.Set("includeRevisions", strconv.FormatBool(includeRevisions))
+		if space != "" {
+			q.Set("space", space)
+		}
 		u.RawQuery = q.Encode()
 	}
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sharedflows")

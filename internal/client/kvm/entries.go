@@ -168,7 +168,7 @@ func ExportAllEntries() (err error) {
 	p := proxies{}
 	programmableProxies := []string{}
 
-	apiList, err := apis.ListProxies(false)
+	apiList, err := apis.ListProxies(false, "")
 	if err != nil {
 		return err
 	}
