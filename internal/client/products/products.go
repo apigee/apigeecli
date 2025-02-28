@@ -225,7 +225,7 @@ func ListAttributes(name string) (respBody []byte, err error) {
 }
 
 // List
-func List(count int, startKey string, expand bool) (respBody []byte, err error) {
+func List(count int, startKey string, expand bool, space string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts")
 	q := u.Query()
@@ -240,6 +240,9 @@ func List(count int, startKey string, expand bool) (respBody []byte, err error) 
 	if startKey != "" {
 		q.Set("startKey", startKey)
 	}
+	if space != "" {
+		q.Set("space", space)
+	}
 
 	u.RawQuery = q.Encode()
 
@@ -249,7 +252,7 @@ func List(count int, startKey string, expand bool) (respBody []byte, err error) 
 }
 
 // ListFilter
-func ListFilter(filter map[string]string) (respBody []byte, err error) {
+func ListFilter(filter map[string]string, space string) (respBody []byte, err error) {
 	maxProducts := 1000
 	nextPage := true
 	startKey := ""
@@ -259,7 +262,7 @@ func ListFilter(filter map[string]string) (respBody []byte, err error) {
 	apiclient.ClientPrintHttpResponse.Set(false)
 
 	for nextPage {
-		pageResp, err := List(maxProducts, startKey, true)
+		pageResp, err := List(maxProducts, startKey, true, space)
 		if err != nil {
 			return nil, err
 		}
