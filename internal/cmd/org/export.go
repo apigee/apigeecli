@@ -77,12 +77,12 @@ var ExportCmd = &cobra.Command{
 		}
 
 		clilog.Info.Println("Exporting API Proxies...")
-		if err = apis.ExportProxies(conn, proxiesFolderName, allRevisions); proceedOnError(err) != nil {
+		if err = apis.ExportProxies(conn, proxiesFolderName, allRevisions, space); proceedOnError(err) != nil {
 			return err
 		}
 
 		clilog.Info.Println("Exporting Sharedflows...")
-		if err = sharedflows.Export(conn, sharedFlowsFolderName, allRevisions); proceedOnError(err) != nil {
+		if err = sharedflows.Export(conn, sharedFlowsFolderName, allRevisions, space); proceedOnError(err) != nil {
 			return err
 		}
 
@@ -336,6 +336,8 @@ func init() {
 		"", "Apigee organization name")
 	ExportCmd.Flags().IntVarP(&conn, "conn", "c",
 		4, "Number of connections")
+	ExportCmd.Flags().StringVarP(&space, "space", "",
+		"", "Apigee Space associated to")
 	/*ExportCmd.Flags().StringVarP(&folder, "folder", "f",
 	"", "Folder to export org data")*/
 	ExportCmd.Flags().BoolVarP(&exportEntries, "export-entries", "",

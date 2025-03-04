@@ -429,10 +429,13 @@ func CleanProxy(name string, reportOnly bool, keepList []string) (err error) {
 }
 
 // ExportProxies
-func ExportProxies(conn int, folder string, allRevisions bool) (err error) {
+func ExportProxies(conn int, folder string, allRevisions bool, space string) (err error) {
 	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	q := u.Query()
 	q.Set("includeRevisions", "true")
+	if space != "" {
+		q.Set("space", space)
+	}
 	u.RawQuery = q.Encode()
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apis")
 
@@ -513,7 +516,7 @@ func exportAPIProxies(wg *sync.WaitGroup, jobs <-chan revision, folder string, a
 }
 
 // ImportProxies
-func ImportProxies(conn int, folder string) error {
+func ImportProxies(conn int, folder string, space string) error {
 	var bundles []string
 	err := filepath.Walk(folder, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -561,7 +564,7 @@ func ImportProxies(conn int, folder string) error {
 
 	for i := 0; i < conn; i++ {
 		fanOutWg.Add(1)
-		go importAPIProxies(&fanOutWg, jobChan, errChan)
+		go importAPIProxies(&fanOutWg, jobChan, space, errChan)
 	}
 
 	for _, bundle := range bundles {
@@ -578,7 +581,7 @@ func ImportProxies(conn int, folder string) error {
 	return nil
 }
 
-func importAPIProxies(wg *sync.WaitGroup, jobs <-chan string, errs chan<- error) {
+func importAPIProxies(wg *sync.WaitGroup, jobs <-chan string, space string, errs chan<- error) {
 	defer wg.Done()
 	for {
 		job, ok := <-jobs
@@ -589,6 +592,9 @@ func importAPIProxies(wg *sync.WaitGroup, jobs <-chan string, errs chan<- error)
 		u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 		q := u.Query()
 		n := strings.TrimSuffix(filepath.Base(job), ".zip")
+		if space != "" {
+			q.Set("space", space)
+		}
 		q.Set("name", n)
 		q.Set("action", "import")
 		u.RawQuery = q.Encode()
