@@ -26,7 +26,7 @@ var Cmd = &cobra.Command{
 	Long:    "Manage Apigee Orgs",
 }
 
-var org, region string
+var org, region, space string
 
 func init() {
 	Cmd.PersistentFlags().StringVarP(&region, "region", "r",

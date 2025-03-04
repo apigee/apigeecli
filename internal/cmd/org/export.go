@@ -87,7 +87,7 @@ var ExportCmd = &cobra.Command{
 		}
 
 		clilog.Info.Println("Exporting API Products...")
-		if productResponse, err = products.Export(conn); proceedOnError(err) != nil {
+		if productResponse, err = products.Export(conn, space); proceedOnError(err) != nil {
 			return err
 		}
 		if err = apiclient.WriteArrayByteArrayToFile(
@@ -336,6 +336,8 @@ func init() {
 		"", "Apigee organization name")
 	ExportCmd.Flags().IntVarP(&conn, "conn", "c",
 		4, "Number of connections")
+	ExportCmd.Flags().StringVarP(&space, "space", "",
+		"", "Apigee space associated to")
 	/*ExportCmd.Flags().StringVarP(&folder, "folder", "f",
 	"", "Folder to export org data")*/
 	ExportCmd.Flags().BoolVarP(&exportEntries, "export-entries", "",

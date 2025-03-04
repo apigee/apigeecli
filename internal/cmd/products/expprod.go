@@ -35,7 +35,7 @@ var ExpCmd = &cobra.Command{
 
 		const exportFileName = "products.json"
 		apiclient.DisableCmdPrintHttpResponse()
-		payload, err := products.Export(conn)
+		payload, err := products.Export(conn, space)
 		if err != nil {
 			return err
 		}
@@ -46,4 +46,6 @@ var ExpCmd = &cobra.Command{
 func init() {
 	ExpCmd.Flags().IntVarP(&conn, "conn", "c",
 		4, "Number of connections")
+	ExpCmd.Flags().StringVarP(&space, "space", "",
+		"", "Apigee Space associated to")
 }

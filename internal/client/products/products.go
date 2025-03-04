@@ -320,13 +320,13 @@ func ListFilter(filter map[string]string, space string) (respBody []byte, err er
 }
 
 // Export
-func Export(conn int) (payload [][]byte, err error) {
+func Export(conn int, space string) (payload [][]byte, err error) {
 	// parent workgroup
 	var pwg sync.WaitGroup
 	var mu sync.Mutex
 
 	entityType := "apiproducts"
-	products, err := listAllProducts()
+	products, err := listAllProducts(space)
 	if err != nil {
 		return apiclient.GetEntityPayloadList(), err
 	}
@@ -476,7 +476,7 @@ func readProductsFile(filePath string) ([]APIProduct, error) {
 	return products, nil
 }
 
-func listAllProducts() (products apiProducts, err error) {
+func listAllProducts(space string) (products apiProducts, err error) {
 	var startKey string
 	products = apiProducts{}
 
@@ -489,14 +489,16 @@ func listAllProducts() (products apiProducts, err error) {
 	for {
 
 		p := apiProducts{}
-
+		q := u.Query()
 		if startKey != "" {
-			q := u.Query()
+
 			q.Set("startKey", startKey)
 			q.Set("count", "1000")
-			u.RawQuery = q.Encode()
 		}
-
+		if space != "" {
+			q.Set("space", space)
+		}
+		u.RawQuery = q.Encode()
 		respBody, err := apiclient.HttpClient(u.String())
 		startKey = ""
 		if err != nil {
