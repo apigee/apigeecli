@@ -337,7 +337,7 @@ func init() {
 	ExportCmd.Flags().IntVarP(&conn, "conn", "c",
 		4, "Number of connections")
 	ExportCmd.Flags().StringVarP(&space, "space", "",
-		"", "Apigee Space associated to")
+		"", "Apigee Space to filter exported resources")
 	/*ExportCmd.Flags().StringVarP(&folder, "folder", "f",
 	"", "Folder to export org data")*/
 	ExportCmd.Flags().BoolVarP(&exportEntries, "export-entries", "",

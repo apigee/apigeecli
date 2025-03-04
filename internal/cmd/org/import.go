@@ -238,7 +238,7 @@ func init() {
 	ImportCmd.Flags().BoolVarP(&importDebugmask, "import-debugmask", "",
 		false, "Import debugmask configuration; default false")
 	ImportCmd.Flags().StringVarP(&space, "space", "",
-		"", "Apigee Space associated to")
+		"", "Apigee Space to associate imported resources")
 
 	_ = ImportCmd.MarkFlagRequired("folder")
 }
