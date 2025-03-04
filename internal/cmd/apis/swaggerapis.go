@@ -70,7 +70,7 @@ var SwaggerCreateCmd = &cobra.Command{
 			addCORS)
 
 		if importProxy {
-			_, err = apis.CreateProxy(name, name+zipExt)
+			_, err = apis.CreateProxy(name, name+zipExt, space)
 		}
 
 		return err
@@ -88,6 +88,8 @@ func init() {
 		"", "URI to a Swagger Specification file with API Gateway or Cloud Endpoints extensions")
 	SwaggerCreateCmd.Flags().BoolVarP(&importProxy, "import", "",
 		true, "Import API Proxy after generation from spec")
+	SwaggerCreateCmd.Flags().StringVarP(&space, "space", "",
+		"", "Apigee Space to associate to")
 	SwaggerCreateCmd.Flags().BoolVarP(&addCORS, "add-cors", "",
 		false, "Add a CORS policy")
 	SwaggerCreateCmd.Flags().StringVarP(&desc, "desc", "d",

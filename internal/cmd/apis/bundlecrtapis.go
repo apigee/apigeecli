@@ -57,7 +57,7 @@ var BundleCreateCmd = &cobra.Command{
 
 		var respBody []byte
 		if proxyZip != "" {
-			respBody, err = apis.CreateProxy(name, proxyZip)
+			respBody, err = apis.CreateProxy(name, proxyZip, space)
 		} else if proxyFolder != "" {
 			if stat, err := os.Stat(folder); err == nil && !stat.IsDir() {
 				return fmt.Errorf("supplied path is not a folder")
@@ -92,7 +92,7 @@ var BundleCreateCmd = &cobra.Command{
 			if err = proxybundle.GenerateArchiveBundle(proxyFolder, proxyBundlePath, false); err != nil {
 				return err
 			}
-			if respBody, err = apis.CreateProxy(name, proxyBundlePath); err != nil {
+			if respBody, err = apis.CreateProxy(name, proxyBundlePath, space); err != nil {
 				return err
 			}
 			if err = os.Remove(proxyBundlePath); err != nil {
@@ -126,7 +126,8 @@ func init() {
 		"", "Path to the Proxy bundle/zip file")
 	BundleCreateCmd.Flags().StringVarP(&proxyFolder, "proxy-folder", "f",
 		"", "Path to the Proxy Bundle; ex: ./test/apiproxy")
-
+	BundleCreateCmd.Flags().StringVarP(&space, "space", "",
+		"", "Apigee Space to associate to")
 	BundleCreateCmd.Flags().StringVarP(&env, "env", "e",
 		"", "Name of the environment to deploy the proxy")
 	BundleCreateCmd.Flags().BoolVarP(&overrides, "ovr", "",

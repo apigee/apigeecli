@@ -1,4 +1,4 @@
-// Copyright 2020 Google LLC
+// Copyright 2025 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,47 +12,37 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package apis
+package sharedflows
 
 import (
-	"fmt"
 	"internal/apiclient"
-	"internal/client/apis"
-	"os"
+	"internal/client/sharedflows"
 
 	"github.com/spf13/cobra"
 )
 
-// ImpCmd to import api bundles
-var ImpCmd = &cobra.Command{
-	Use:   "import",
-	Short: "Import a folder containing API proxy bundles",
-	Long:  "Import a folder containing API proxy bundles",
-	Example: `Import a folder containing API proxy bundles:
-` + GetExample(0),
+// MoveCmd to move products between spaces
+var MoveCmd = &cobra.Command{
+	Use:   "move",
+	Short: "Move a Sharedflow between Spaces",
+	Long:  "Move a Sharedflow between Spaces",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
-
-		if stat, err := os.Stat(folder); err == nil && !stat.IsDir() {
-			return fmt.Errorf("supplied path is not a folder")
-		}
-		return apis.ImportProxies(conn, folder, space)
+		_, err = sharedflows.Move(name, space)
+		return err
 	},
 }
 
-var folder string
-
 func init() {
-	ImpCmd.Flags().StringVarP(&folder, "folder", "f",
-		"", "folder containing one or more API proxy bundles in a zip format.")
-	ImpCmd.Flags().IntVarP(&conn, "conn", "c",
-		4, "Number of connections")
-	ImpCmd.Flags().StringVarP(&space, "space", "",
-		"", "Apigee Space associated to")
+	MoveCmd.Flags().StringVarP(&name, "name", "n",
+		"", "Name of the Sharedflow")
+	MoveCmd.Flags().StringVarP(&space, "space", "",
+		"", "Name of the Apigee Space moving to")
 
-	_ = ImpCmd.MarkFlagRequired("folder")
+	_ = MoveCmd.MarkFlagRequired("name")
+	_ = MoveCmd.MarkFlagRequired("space")
 }
