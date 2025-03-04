@@ -87,7 +87,7 @@ var ExportCmd = &cobra.Command{
 		}
 
 		clilog.Info.Println("Exporting API Products...")
-		if productResponse, err = products.Export(conn); proceedOnError(err) != nil {
+		if productResponse, err = products.Export(conn, space); proceedOnError(err) != nil {
 			return err
 		}
 		if err = apiclient.WriteArrayByteArrayToFile(

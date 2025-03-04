@@ -57,6 +57,7 @@ type APIProduct struct {
 	QuotaTimeUnit         string                 `json:"quotaTimeUnit,omitempty"`
 	Scopes                []string               `json:"scopes,omitempty"`
 	QuotaCounterScope     string                 `json:"quotaCounterScope,omitempty"`
+	Space                 string                 `json:"space,omitempty"`
 }
 
 type OperationGroup struct {
@@ -142,6 +143,17 @@ func Delete(name string) (respBody []byte, err error) {
 	return respBody, err
 }
 
+// Move between spaces
+func Move(name string, space string) (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
+	q := u.Query()
+	q.Set("space", space)
+	u.RawQuery = q.Encode()
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts", name, ":move")
+	respBody, err = apiclient.HttpClient(u.String(), "")
+	return respBody, err
+}
+
 // upsert - use Action to control if upsert is enabled
 func upsert(p APIProduct, a Action) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
@@ -213,7 +225,7 @@ func ListAttributes(name string) (respBody []byte, err error) {
 }
 
 // List
-func List(count int, startKey string, expand bool) (respBody []byte, err error) {
+func List(count int, startKey string, expand bool, space string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apiproducts")
 	q := u.Query()
@@ -228,6 +240,9 @@ func List(count int, startKey string, expand bool) (respBody []byte, err error) 
 	if startKey != "" {
 		q.Set("startKey", startKey)
 	}
+	if space != "" {
+		q.Set("space", space)
+	}
 
 	u.RawQuery = q.Encode()
 
@@ -237,7 +252,7 @@ func List(count int, startKey string, expand bool) (respBody []byte, err error) 
 }
 
 // ListFilter
-func ListFilter(filter map[string]string) (respBody []byte, err error) {
+func ListFilter(filter map[string]string, space string) (respBody []byte, err error) {
 	maxProducts := 1000
 	nextPage := true
 	startKey := ""
@@ -247,7 +262,7 @@ func ListFilter(filter map[string]string) (respBody []byte, err error) {
 	apiclient.ClientPrintHttpResponse.Set(false)
 
 	for nextPage {
-		pageResp, err := List(maxProducts, startKey, true)
+		pageResp, err := List(maxProducts, startKey, true, space)
 		if err != nil {
 			return nil, err
 		}
@@ -305,13 +320,13 @@ func ListFilter(filter map[string]string) (respBody []byte, err error) {
 }
 
 // Export
-func Export(conn int) (payload [][]byte, err error) {
+func Export(conn int, space string) (payload [][]byte, err error) {
 	// parent workgroup
 	var pwg sync.WaitGroup
 	var mu sync.Mutex
 
 	entityType := "apiproducts"
-	products, err := listAllProducts()
+	products, err := listAllProducts(space)
 	if err != nil {
 		return apiclient.GetEntityPayloadList(), err
 	}
@@ -461,7 +476,7 @@ func readProductsFile(filePath string) ([]APIProduct, error) {
 	return products, nil
 }
 
-func listAllProducts() (products apiProducts, err error) {
+func listAllProducts(space string) (products apiProducts, err error) {
 	var startKey string
 	products = apiProducts{}
 
@@ -474,14 +489,16 @@ func listAllProducts() (products apiProducts, err error) {
 	for {
 
 		p := apiProducts{}
-
+		q := u.Query()
 		if startKey != "" {
-			q := u.Query()
+
 			q.Set("startKey", startKey)
 			q.Set("count", "1000")
-			u.RawQuery = q.Encode()
 		}
-
+		if space != "" {
+			q.Set("space", space)
+		}
+		u.RawQuery = q.Encode()
 		respBody, err := apiclient.HttpClient(u.String())
 		startKey = ""
 		if err != nil {
