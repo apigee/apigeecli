@@ -223,7 +223,7 @@ var ImportCmd = &cobra.Command{
 
 var (
 	importTrace, importDebugmask bool
-	folder, space                string
+	folder                       string
 )
 
 func init() {
