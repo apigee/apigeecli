@@ -33,7 +33,7 @@ var ListCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
 
-		_, err = apis.ListProxies(includeRevisions)
+		_, err = apis.ListProxies(includeRevisions, space)
 		return
 	},
 }
@@ -43,4 +43,6 @@ var includeRevisions bool
 func init() {
 	ListCmd.Flags().BoolVarP(&includeRevisions, "incl", "i",
 		false, "Include revisions")
+	ListCmd.Flags().StringVarP(&space, "space", "",
+		"", "Apigee Space associated to")
 }

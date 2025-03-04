@@ -36,7 +36,7 @@ var ExpCmd = &cobra.Command{
 		if err = apiclient.FolderExists(folder); err != nil {
 			return err
 		}
-		return apis.ExportProxies(conn, folder, allRevisions)
+		return apis.ExportProxies(conn, folder, allRevisions, space)
 	},
 }
 
@@ -49,4 +49,6 @@ func init() {
 		"", "folder to export API proxy bundles")
 	ExpCmd.Flags().BoolVarP(&allRevisions, "all", "",
 		false, "Export all proxy revisions")
+	ExpCmd.Flags().StringVarP(&space, "space", "",
+		"", "Apigee Space associated to")
 }

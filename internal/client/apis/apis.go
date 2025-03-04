@@ -82,9 +82,9 @@ type conflictingdeployment struct {
 const interval = 10
 
 // CreateProxy
-func CreateProxy(name string, proxy string) (respBody []byte, err error) {
+func CreateProxy(name string, proxy string, space string) (respBody []byte, err error) {
 	if proxy != "" {
-		respBody, err = apiclient.ImportBundle("apis", name, proxy)
+		respBody, err = apiclient.ImportBundle("apis", name, proxy, space)
 		return respBody, err
 	}
 	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
@@ -225,15 +225,29 @@ func GenerateUndeployChangeReport(name string, revision int) (respBody []byte, e
 }
 
 // ListProxies
-func ListProxies(includeRevisions bool) (respBody []byte, err error) {
+func ListProxies(includeRevisions bool, space string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
+	q := u.Query()
 	if includeRevisions {
-		q := u.Query()
 		q.Set("includeRevisions", strconv.FormatBool(includeRevisions))
-		u.RawQuery = q.Encode()
 	}
+	if space != "" {
+		q.Set("space", space)
+	}
+	u.RawQuery = q.Encode()
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apis")
 	respBody, err = apiclient.HttpClient(u.String())
+	return respBody, err
+}
+
+// Move between spaces
+func Move(name string, space string) (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
+	q := u.Query()
+	q.Set("space", space)
+	u.RawQuery = q.Encode()
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apis", name, ":move")
+	respBody, err = apiclient.HttpClient(u.String(), "")
 	return respBody, err
 }
 
@@ -415,10 +429,13 @@ func CleanProxy(name string, reportOnly bool, keepList []string) (err error) {
 }
 
 // ExportProxies
-func ExportProxies(conn int, folder string, allRevisions bool) (err error) {
+func ExportProxies(conn int, folder string, allRevisions bool, space string) (err error) {
 	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	q := u.Query()
 	q.Set("includeRevisions", "true")
+	if space != "" {
+		q.Set("space", space)
+	}
 	u.RawQuery = q.Encode()
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apis")
 
@@ -499,7 +516,7 @@ func exportAPIProxies(wg *sync.WaitGroup, jobs <-chan revision, folder string, a
 }
 
 // ImportProxies
-func ImportProxies(conn int, folder string) error {
+func ImportProxies(conn int, folder string, space string) error {
 	var bundles []string
 	err := filepath.Walk(folder, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -547,7 +564,7 @@ func ImportProxies(conn int, folder string) error {
 
 	for i := 0; i < conn; i++ {
 		fanOutWg.Add(1)
-		go importAPIProxies(&fanOutWg, jobChan, errChan)
+		go importAPIProxies(&fanOutWg, jobChan, space, errChan)
 	}
 
 	for _, bundle := range bundles {
@@ -564,7 +581,7 @@ func ImportProxies(conn int, folder string) error {
 	return nil
 }
 
-func importAPIProxies(wg *sync.WaitGroup, jobs <-chan string, errs chan<- error) {
+func importAPIProxies(wg *sync.WaitGroup, jobs <-chan string, space string, errs chan<- error) {
 	defer wg.Done()
 	for {
 		job, ok := <-jobs
@@ -575,6 +592,9 @@ func importAPIProxies(wg *sync.WaitGroup, jobs <-chan string, errs chan<- error)
 		u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 		q := u.Query()
 		n := strings.TrimSuffix(filepath.Base(job), ".zip")
+		if space != "" {
+			q.Set("space", space)
+		}
 		q.Set("name", n)
 		q.Set("action", "import")
 		u.RawQuery = q.Encode()

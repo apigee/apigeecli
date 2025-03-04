@@ -37,7 +37,7 @@ var ExpCmd = &cobra.Command{
 		if err = apiclient.FolderExists(folder); err != nil {
 			return err
 		}
-		return sharedflows.Export(conn, folder, allRevisions)
+		return sharedflows.Export(conn, folder, allRevisions, space)
 	},
 }
 
@@ -50,4 +50,6 @@ func init() {
 		"", "folder to export sharedflow bundles")
 	ExpCmd.Flags().BoolVarP(&allRevisions, "all", "",
 		false, "Export all proxy revisions")
+	ExpCmd.Flags().StringVarP(&space, "space", "",
+		"", "Apigee Space associated to")
 }

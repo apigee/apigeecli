@@ -62,12 +62,12 @@ var ImportCmd = &cobra.Command{
 		apiclient.DisableCmdPrintHttpResponse()
 
 		clilog.Info.Println("Importing API Proxies...")
-		if err = apis.ImportProxies(conn, path.Join(folder, proxiesFolderName)); err != nil {
+		if err = apis.ImportProxies(conn, path.Join(folder, proxiesFolderName), space); err != nil {
 			return err
 		}
 
 		clilog.Info.Println("Importing Sharedflows...")
-		if err = sharedflows.Import(conn, path.Join(folder, sharedFlowsFolderName)); err != nil {
+		if err = sharedflows.Import(conn, path.Join(folder, sharedFlowsFolderName), space); err != nil {
 			return err
 		}
 
@@ -237,6 +237,8 @@ func init() {
 		false, "Import distributed trace configuration; default false")
 	ImportCmd.Flags().BoolVarP(&importDebugmask, "import-debugmask", "",
 		false, "Import debugmask configuration; default false")
+	ImportCmd.Flags().StringVarP(&space, "space", "",
+		"", "Apigee Space to associate imported resources")
 
 	_ = ImportCmd.MarkFlagRequired("folder")
 }

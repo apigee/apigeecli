@@ -42,9 +42,9 @@ var ListCmd = &cobra.Command{
 		cmd.SilenceUsage = true
 
 		if len(filter) > 0 {
-			_, err = products.ListFilter(filter)
+			_, err = products.ListFilter(filter, space)
 		} else {
-			_, err = products.List(count, startKey, expand)
+			_, err = products.List(count, startKey, expand, space)
 		}
 		return err
 	},
@@ -72,4 +72,7 @@ func init() {
 
 	ListCmd.Flags().BoolVarP(&expand, "expand", "x",
 		false, "Expand Details")
+
+	ListCmd.Flags().StringVarP(&space, "space", "",
+		"", "Apigee Space associated to")
 }

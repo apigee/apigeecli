@@ -229,14 +229,14 @@ func FetchBundle(entityType string, folder string, name string, revision string,
 }
 
 // ImportBundleAsync imports a sharedflow or api proxy bundle meantot be called asynchronously
-func ImportBundleAsync(entityType string, name string, bundlePath string, wg *sync.WaitGroup) {
+func ImportBundleAsync(entityType string, name string, bundlePath string, space string, wg *sync.WaitGroup) {
 	defer wg.Done()
 
-	_, _ = ImportBundle(entityType, name, bundlePath)
+	_, _ = ImportBundle(entityType, name, bundlePath, space)
 }
 
 // ImportBundle imports a sharedflow or api proxy bundle
-func ImportBundle(entityType string, name string, bundlePath string) (respBody []byte, err error) {
+func ImportBundle(entityType string, name string, bundlePath string, space string) (respBody []byte, err error) {
 	if err = ReadBundle(bundlePath); err != nil {
 		clilog.Error.Println(err)
 		return nil, err
@@ -255,6 +255,9 @@ func ImportBundle(entityType string, name string, bundlePath string) (respBody [
 	q := u.Query()
 	q.Set("name", name)
 	q.Set("action", "import")
+	if space != "" {
+		q.Set("space", space)
+	}
 	u.RawQuery = q.Encode()
 
 	formParams := map[string]string{

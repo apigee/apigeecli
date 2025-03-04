@@ -48,9 +48,9 @@ type revision struct {
 }
 
 // Create
-func Create(name string, proxy string) (respBody []byte, err error) {
+func Create(name string, proxy string, space string) (respBody []byte, err error) {
 	if proxy != "" {
-		respBody, err = apiclient.ImportBundle("sharedflows", name, proxy)
+		respBody, err = apiclient.ImportBundle("sharedflows", name, proxy, space)
 		return respBody, err
 	}
 	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
@@ -107,15 +107,29 @@ func Delete(name string, revision int) (respBody []byte, err error) {
 }
 
 // List
-func List(includeRevisions bool) (respBody []byte, err error) {
+func List(includeRevisions bool, space string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
+	q := u.Query()
 	if includeRevisions {
-		q := u.Query()
 		q.Set("includeRevisions", strconv.FormatBool(includeRevisions))
-		u.RawQuery = q.Encode()
 	}
+	if space != "" {
+		q.Set("space", space)
+	}
+	u.RawQuery = q.Encode()
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sharedflows")
 	respBody, err = apiclient.HttpClient(u.String())
+	return respBody, err
+}
+
+// Move between spaces
+func Move(name string, space string) (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
+	q := u.Query()
+	q.Set("space", space)
+	u.RawQuery = q.Encode()
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sharedflows", name, ":move")
+	respBody, err = apiclient.HttpClient(u.String(), "")
 	return respBody, err
 }
 
@@ -287,9 +301,12 @@ func Fetch(name string, revision int) (err error) {
 }
 
 // Export
-func Export(conn int, folder string, allRevisions bool) (err error) {
+func Export(conn int, folder string, allRevisions bool, space string) (err error) {
 	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	q := u.Query()
+	if space != "" {
+		q.Set("space", space)
+	}
 	q.Set("includeRevisions", "true")
 	u.RawQuery = q.Encode()
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sharedflows")
@@ -370,7 +387,7 @@ func exportSharedFlows(wg *sync.WaitGroup, jobs <-chan revision, folder string, 
 }
 
 // Import
-func Import(conn int, folder string) error {
+func Import(conn int, folder string, space string) error {
 	var bundles []string
 	err := filepath.Walk(folder, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -414,7 +431,7 @@ func Import(conn int, folder string) error {
 
 	for i := 0; i < conn; i++ {
 		fanOutWg.Add(1)
-		go importSharedFlows(&fanOutWg, jobChan, errChan)
+		go importSharedFlows(&fanOutWg, jobChan, space, errChan)
 	}
 
 	for _, bundle := range bundles {
@@ -431,7 +448,7 @@ func Import(conn int, folder string) error {
 	return nil
 }
 
-func importSharedFlows(wg *sync.WaitGroup, jobs <-chan string, errs chan<- error) {
+func importSharedFlows(wg *sync.WaitGroup, jobs <-chan string, space string, errs chan<- error) {
 	defer wg.Done()
 	for {
 		job, ok := <-jobs
@@ -442,6 +459,9 @@ func importSharedFlows(wg *sync.WaitGroup, jobs <-chan string, errs chan<- error
 		u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 		q := u.Query()
 		n := strings.TrimSuffix(filepath.Base(job), ".zip")
+		if space != "" {
+			q.Set("space", space)
+		}
 		q.Set("name", n)
 		q.Set("action", "import")
 		u.RawQuery = q.Encode()

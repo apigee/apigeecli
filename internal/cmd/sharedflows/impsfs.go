@@ -41,7 +41,7 @@ var ImpCmd = &cobra.Command{
 		if stat, err := os.Stat(folder); err == nil && !stat.IsDir() {
 			return fmt.Errorf("supplied path is not a folder")
 		}
-		return sharedflows.Import(conn, folder)
+		return sharedflows.Import(conn, folder, space)
 	},
 }
 
@@ -52,6 +52,8 @@ func init() {
 		"", "folder containing sharedflow bundles")
 	ImpCmd.Flags().IntVarP(&conn, "conn", "c",
 		4, "Number of connections")
+	ImpCmd.Flags().StringVarP(&space, "space", "",
+		"", "Apigee Space associated to")
 
 	_ = ImpCmd.MarkFlagRequired("folder")
 }

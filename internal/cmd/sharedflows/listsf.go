@@ -34,7 +34,7 @@ var ListCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
 
-		_, err = sharedflows.List(includeRevisions)
+		_, err = sharedflows.List(includeRevisions, space)
 		return
 	},
 }
@@ -46,4 +46,6 @@ func init() {
 		"", "Apigee environment name")
 	ListCmd.Flags().BoolVarP(&includeRevisions, "rev", "v",
 		false, "Include revisions")
+	ListCmd.Flags().StringVarP(&space, "space", "",
+		"", "Apigee Space associated to")
 }
