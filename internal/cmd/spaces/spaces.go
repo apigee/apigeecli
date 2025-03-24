@@ -1,4 +1,4 @@
-// Copyright 2020 Google LLC
+// Copyright 2025 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,39 +12,41 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org
+package spaces
 
 import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd to manage orgs
+// Cmd to manage spaces
 var Cmd = &cobra.Command{
-	Use:     "organizations",
-	Aliases: []string{"orgs"},
-	Short:   "Manage Apigee Orgs",
-	Long:    "Manage Apigee Orgs",
+	Use:     "spaces",
+	Aliases: []string{"space"},
+	Short:   "Manage Apigee Spaces",
+	Long:    "Manage Apigee Spaces",
 }
 
-var org, region, space string
+var org, displayName, name, region string
+
+var examples = []string{"apigeecli spaces create --name=space1 --display-name=\"Space 1\""}
 
 func init() {
+	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
+		"", "Apigee organization name")
 	Cmd.PersistentFlags().StringVarP(&region, "region", "r",
 		"", "Apigee control plane region name; default is https://apigee.googleapis.com")
 
-	Cmd.AddCommand(CreateCmd)
+	_ = Cmd.MarkPersistentFlagRequired("org")
+
 	Cmd.AddCommand(ListCmd)
 	Cmd.AddCommand(GetCmd)
-	Cmd.AddCommand(MartCmd)
-	Cmd.AddCommand(AcCmd)
-	Cmd.AddCommand(PropCmd)
-	Cmd.AddCommand(ObCmd)
-	Cmd.AddCommand(IngressCmd)
-	Cmd.AddCommand(ExportCmd)
-	Cmd.AddCommand(ImportCmd)
-	Cmd.AddCommand(UpdateCmd)
-	Cmd.AddCommand(SetAddonCmd)
-	Cmd.AddCommand(ReportCmd)
 	Cmd.AddCommand(DelCmd)
-	Cmd.AddCommand(DeployCmd)
+	Cmd.AddCommand(CreateCmd)
+	Cmd.AddCommand(UpdateCmd)
+	// TODO Cmd.AddCommand(ExpCmd)
+	// TODO Cmd.AddCommand(ImpCmd)
+}
+
+func GetExample(i int) string {
+	return examples[i]
 }

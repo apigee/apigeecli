@@ -48,6 +48,7 @@ import (
 	"internal/cmd/securityprofiles"
 	"internal/cmd/sharedflows"
 	"internal/cmd/sites"
+	"internal/cmd/spaces"
 	"internal/cmd/sync"
 	"internal/cmd/token"
 	"internal/cmd/tree"
@@ -179,6 +180,7 @@ func init() {
 	RootCmd.AddCommand(kvm.Cmd)
 	RootCmd.AddCommand(flowhooks.Cmd)
 	RootCmd.AddCommand(targetservers.Cmd)
+	RootCmd.AddCommand(spaces.Cmd)
 	RootCmd.AddCommand(token.Cmd)
 	RootCmd.AddCommand(keystores.Cmd)
 	RootCmd.AddCommand(keyaliases.Cmd)

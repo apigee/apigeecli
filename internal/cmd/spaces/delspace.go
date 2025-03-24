@@ -1,4 +1,4 @@
-// Copyright 2020 Google LLC
+// Copyright 2025 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,20 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package products
+package spaces
 
 import (
 	"internal/apiclient"
-	"internal/client/products"
+	"internal/client/spaces"
 
 	"github.com/spf13/cobra"
 )
 
-// ExpCmd to export products
-var ExpCmd = &cobra.Command{
-	Use:   "export",
-	Short: "Export API products to a file",
-	Long:  "Export API products to a file",
+// DelCmd to delete Space
+var DelCmd = &cobra.Command{
+	Use:   "delete",
+	Short: "Delete an Apigee Space",
+	Long:  "Delete an Apigee Space",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
@@ -33,19 +33,14 @@ var ExpCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
 
-		const exportFileName = "products.json"
-		apiclient.DisableCmdPrintHttpResponse()
-		payload, err := products.Export(conn, space)
-		if err != nil {
-			return err
-		}
-		return apiclient.WriteArrayByteArrayToFile(exportFileName, false, payload)
+		_, err = spaces.Delete(name)
+		return
 	},
 }
 
 func init() {
-	ExpCmd.Flags().IntVarP(&conn, "conn", "c",
-		4, "Number of connections")
-	ExpCmd.Flags().StringVarP(&space, "space", "",
-		"", "Apigee Space associated to")
+	DelCmd.Flags().StringVarP(&name, "name", "n",
+		"", "Name of the space")
+
+	_ = DelCmd.MarkFlagRequired("name")
 }

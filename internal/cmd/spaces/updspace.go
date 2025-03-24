@@ -12,20 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package products
+package spaces
 
 import (
 	"internal/apiclient"
-	"internal/client/products"
+	"internal/client/spaces"
 
 	"github.com/spf13/cobra"
 )
 
-// ExpCmd to export products
-var ExpCmd = &cobra.Command{
-	Use:   "export",
-	Short: "Export API products to a file",
-	Long:  "Export API products to a file",
+// UpdateCmd to update Apigee Space
+var UpdateCmd = &cobra.Command{
+	Use:   "update",
+	Short: "Update an Apigee Space",
+	Long:  "Update an Apigee Space",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
@@ -33,19 +33,17 @@ var ExpCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
 
-		const exportFileName = "products.json"
-		apiclient.DisableCmdPrintHttpResponse()
-		payload, err := products.Export(conn, space)
-		if err != nil {
-			return err
-		}
-		return apiclient.WriteArrayByteArrayToFile(exportFileName, false, payload)
+		_, err = spaces.Update(name, displayName)
+		return err
 	},
 }
 
 func init() {
-	ExpCmd.Flags().IntVarP(&conn, "conn", "c",
-		4, "Number of connections")
-	ExpCmd.Flags().StringVarP(&space, "space", "",
-		"", "Apigee Space associated to")
+	UpdateCmd.Flags().StringVarP(&name, "name", "n",
+		"", "Name of the Space")
+	UpdateCmd.Flags().StringVarP(&displayName, "display-name", "d",
+		"", "Display Name for the Space")
+
+	_ = UpdateCmd.MarkFlagRequired("name")
+	_ = UpdateCmd.MarkFlagRequired("displayName")
 }

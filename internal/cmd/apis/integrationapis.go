@@ -53,7 +53,7 @@ var IntegrationCmd = &cobra.Command{
 		}
 
 		if importProxy {
-			_, err = apis.CreateProxy(name, tmpDir)
+			_, err = apis.CreateProxy(name, tmpDir, space)
 		}
 		return err
 	},
@@ -72,6 +72,8 @@ func init() {
 		"", "API Trigger name; don't include 'api_trigger/'")
 	IntegrationCmd.Flags().BoolVarP(&importProxy, "import", "",
 		true, "Import API Proxy after generation")
+	IntegrationCmd.Flags().StringVarP(&space, "space", "",
+		"", "Apigee Space to associate to")
 
 	_ = IntegrationCmd.MarkFlagRequired("name")
 	_ = IntegrationCmd.MarkFlagRequired("integration")
