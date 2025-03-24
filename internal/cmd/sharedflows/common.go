@@ -65,6 +65,7 @@ func Wait(name string, revision int) error {
 			clilog.Info.Println("Sharedflow deployment completed with status: ", respMap["state"])
 		default:
 			clilog.Info.Println("Sharedflow deployment failed with status: ", respMap["state"])
+			err = fmt.Errorf("Sharedflow deployment failed with status: %s", respMap["state"])
 		}
 		return false
 	})

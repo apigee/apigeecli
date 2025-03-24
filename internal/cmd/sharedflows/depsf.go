@@ -39,8 +39,12 @@ var DepCmd = &cobra.Command{
 				return err
 			}
 		}
-		_, err = sharedflows.Deploy(name, revision, overrides, serviceAccountName)
-		apiclient.DisableCmdPrintHttpResponse()
+		if _, err = sharedflows.Deploy(name,
+			revision,
+			overrides,
+			serviceAccountName); err != nil {
+			return err
+		}
 
 		if wait {
 			err = Wait(name, revision)
