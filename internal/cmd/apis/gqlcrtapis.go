@@ -98,7 +98,7 @@ var GqlCreateCmd = &cobra.Command{
 		}
 
 		if importProxy {
-			_, err = apis.CreateProxy(name, name+zipExt)
+			_, err = apis.CreateProxy(name, name+zipExt, space)
 		}
 
 		return err
@@ -124,6 +124,8 @@ func init() {
 		"", "Set a target URL for the target endpoint")
 	GqlCreateCmd.Flags().StringVarP(&apiKeyLocation, "apikey-location", "",
 		"", "Set the location of the API key, ex: request.header.x-api-key")
+	GqlCreateCmd.Flags().StringVarP(&space, "space", "",
+		"", "Apigee Space to associate to")
 	GqlCreateCmd.Flags().BoolVarP(&importProxy, "import", "",
 		true, "Import API Proxy after generation from spec")
 	GqlCreateCmd.Flags().BoolVarP(&skipPolicy, "skip-policy", "",
