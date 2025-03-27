@@ -55,6 +55,7 @@ type ApigeeClientOptions struct {
 	MetadataToken  bool   // use metadata outh2 token
 	APIRate        Rate   // throttle api calls to Apigee
 	Region         string // control plane region
+	// Space          string // Apigee space
 }
 
 var options *ApigeeClientOptions

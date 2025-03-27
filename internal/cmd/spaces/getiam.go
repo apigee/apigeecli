@@ -1,4 +1,4 @@
-// Copyright 2025 Google LLC
+// Copyright 2020 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,29 +21,28 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// CreateCmd to create Apigee Space
-var CreateCmd = &cobra.Command{
-	Use:   "create",
-	Short: "Create an Apigee Space",
-	Long:  "Create an Apigee Space",
+// GetIamCmd to get env iam details
+var GetIamCmd = &cobra.Command{
+	Use:   "get",
+	Short: "Gets the IAM policy on an Space",
+	Long:  "Gets the IAM policy on an Space",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		// apiclient.SetApigeeSpace(space)
 		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
 
-		_, err = spaces.Create(name, displayName)
-		return err
+		_, err = spaces.GetIAM(space)
+		return
 	},
-	Example: `Create a space: ` + GetExample(0),
+	Example: `Get IAM for a space: ` + GetExample(1),
 }
 
 func init() {
-	CreateCmd.Flags().StringVarP(&name, "name", "n",
-		"", "Name of the Space")
-	CreateCmd.Flags().StringVarP(&displayName, "display-name", "d",
-		"", "Display Name for the Space")
+	GetIamCmd.Flags().StringVarP(&space, "space", "",
+		"", "Name of the space")
 
-	_ = CreateCmd.MarkFlagRequired("name")
+	_ = GetIamCmd.MarkFlagRequired("space")
 }
