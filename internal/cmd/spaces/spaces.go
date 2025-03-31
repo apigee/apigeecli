@@ -30,12 +30,11 @@ var org, displayName, name, region string
 
 var examples = []string{
 	"apigeecli spaces create --name=space1 --display-name=\"Space 1\"",
-	"apigeecli spaces iam get --space=templates",
-	"apigeecli spaces iam seteditor --space=templates --member-type=user --name=developer@any.com",
-	"apigeecli spaces iam test --space=templates --res=proxies",
-	"apigeecli spaces iam removerole --space=templates --name=user:developer@any.com --role=roles/apigee.spaceContentEditor",
+	"apigeecli spaces iam get --space=space1",
+	"apigeecli spaces iam seteditor --space=space1 --member-type=user --name=developer@any.com",
+	"apigeecli spaces iam test --space=space1 --res=proxies",
+	"apigeecli spaces iam removerole --space=space1 --name=user:developer@any.com --role=roles/apigee.spaceContentEditor",
 }
-
 
 func init() {
 	Cmd.PersistentFlags().StringVarP(&org, "org", "o",

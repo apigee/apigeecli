@@ -24,8 +24,8 @@ import (
 // GetIamCmd to get env iam details
 var GetIamCmd = &cobra.Command{
 	Use:   "get",
-	Short: "Gets the IAM policy on an Space",
-	Long:  "Gets the IAM policy on an Space",
+	Short: "Gets the IAM policy on a Space",
+	Long:  "Gets the IAM policy on a Space",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		// apiclient.SetApigeeSpace(space)
 		apiclient.SetRegion(region)
@@ -37,7 +37,7 @@ var GetIamCmd = &cobra.Command{
 		_, err = spaces.GetIAM(space)
 		return
 	},
-	Example: `Get IAM for a space: ` + GetExample(1),
+	Example: `Get IAM policy for a space: ` + GetExample(1),
 }
 
 func init() {

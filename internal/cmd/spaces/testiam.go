@@ -24,8 +24,8 @@ import (
 // TestIamCmd to manage tracing of apis
 var TestIamCmd = &cobra.Command{
 	Use:   "test",
-	Short: "Test IAM policy for an Space",
-	Long:  "Test IAM policy for an Space",
+	Short: "Test IAM policy for a Space",
+	Long:  "Test IAM policy for a Space",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
