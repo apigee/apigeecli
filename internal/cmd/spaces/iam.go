@@ -21,8 +21,8 @@ import (
 // IamCmd to manage manage env iam permissions
 var IamCmd = &cobra.Command{
 	Use:   "iam",
-	Short: "Manage IAM permissions for a space",
-	Long:  "Manage IAM permissions for a space",
+	Short: "Manage IAM permissions for a Space",
+	Long:  "Manage IAM permissions for a Space",
 }
 
 var memberName, role, memberType, space string
