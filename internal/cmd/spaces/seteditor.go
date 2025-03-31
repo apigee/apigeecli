@@ -26,7 +26,7 @@ import (
 var SetEditorCmd = &cobra.Command{
 	Use:   "seteditor",
 	Short: "Set Space Content Editor role for a member on a Space",
-	Long:  "Set Space Content Editor role for a member a Space",
+	Long:  "Set Space Content Editor role for a member on a Space",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)

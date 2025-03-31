@@ -25,8 +25,8 @@ import (
 // RemoveRoleCmd to a member from a role
 var RemoveRoleCmd = &cobra.Command{
 	Use:   "removerole",
-	Short: "Remove a member or SA from a role for a space",
-	Long:  "Remove a member or SA from a role for a space",
+	Short: "Remove a member or SA from a role for a Space",
+	Long:  "Remove a member or SA from a role for a Space",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)

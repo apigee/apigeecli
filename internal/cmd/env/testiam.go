@@ -45,5 +45,5 @@ func init() {
 	TestIamCmd.Flags().StringVarP(&verb, "verb", "v",
 		"get", "resource verb")
 	TestIamCmd.Flags().StringVarP(&resource, "res", "s",
-		"environment", "resource")
+		"environments", "resource")
 }
