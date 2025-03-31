@@ -37,8 +37,8 @@ var TestIamCmd = &cobra.Command{
 		return
 	},
 	Example: `Test IAM for a space:
-` + GetExample(3) + `
-` + GetExample(4),
+` + GetExample(4) + `
+` + GetExample(5),
 }
 
 var verb, resource string

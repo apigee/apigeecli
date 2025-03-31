@@ -41,7 +41,7 @@ var RemoveRoleCmd = &cobra.Command{
 		clilog.Info.Printf("Member \"%s\" removed access to role \"%s\" in space \"%s\"\n", memberName, role, space)
 		return nil
 	},
-	Example: `Remove Space Editor role for user in a space: ` + GetExample(4),
+	Example: `Remove Space Editor role for user in a space: ` + GetExample(6),
 }
 
 func init() {

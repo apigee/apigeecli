@@ -435,6 +435,8 @@ func SetIAMSpacePermission(space string, memberName string, iamRole string, memb
 	switch iamRole {
 	case "editor":
 		role = "roles/apigee.spaceContentEditor"
+	case "viewer":
+		role = "roles/apigee.spaceContentViewer"
 	default: // assume this is a custom role definition
 		re := regexp.MustCompile(`projects\/([a-zA-Z0-9_-]+)\/roles\/([a-zA-Z0-9_-]+)`)
 		result := re.FindString(iamRole)

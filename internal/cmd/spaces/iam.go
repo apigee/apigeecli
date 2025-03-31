@@ -36,5 +36,6 @@ func init() {
 	IamCmd.AddCommand(GetIamCmd)
 	IamCmd.AddCommand(RemoveRoleCmd)
 	IamCmd.AddCommand(SetEditorCmd)
+	IamCmd.AddCommand(SetViewerCmd)
 	IamCmd.AddCommand(TestIamCmd)
 }
