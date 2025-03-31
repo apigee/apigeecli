@@ -12,38 +12,37 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package env
+package spaces
 
 import (
 	"internal/apiclient"
-
-	environments "internal/client/env"
+	"internal/client/spaces"
 
 	"github.com/spf13/cobra"
 )
 
-// TestIamCmd to manage tracing of apis
-var TestIamCmd = &cobra.Command{
-	Use:   "test",
-	Short: "Test IAM policy for an Environment",
-	Long:  "Test IAM policy for an Environment",
+// GetIamCmd to get env iam details
+var GetIamCmd = &cobra.Command{
+	Use:   "get",
+	Short: "Gets the IAM policy on a Space",
+	Long:  "Gets the IAM policy on a Space",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
-		apiclient.SetApigeeEnv(environment)
+		// apiclient.SetApigeeSpace(space)
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
 
-		_, err = environments.TestIAM(resource, verb)
+		_, err = spaces.GetIAM(space)
 		return
 	},
+	Example: `Get IAM policy for a space: ` + GetExample(1),
 }
 
-var verb, resource string
-
 func init() {
-	TestIamCmd.Flags().StringVarP(&verb, "verb", "v",
-		"get", "resource verb")
-	TestIamCmd.Flags().StringVarP(&resource, "res", "s",
-		"environments", "resource")
+	GetIamCmd.Flags().StringVarP(&space, "space", "",
+		"", "Name of the space")
+
+	_ = GetIamCmd.MarkFlagRequired("space")
 }
