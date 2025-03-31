@@ -36,7 +36,9 @@ var TestIamCmd = &cobra.Command{
 		_, err = spaces.TestIAM(space, resource, verb)
 		return
 	},
-	Example: `Test IAM for a space: ` + GetExample(3),
+	Example: `Test IAM for a space:
+` + GetExample(3) + `
+` + GetExample(4),
 }
 
 var verb, resource string
@@ -47,7 +49,7 @@ func init() {
 	TestIamCmd.Flags().StringVarP(&verb, "verb", "v",
 		"get", "resource verb")
 	TestIamCmd.Flags().StringVarP(&resource, "res", "s",
-		"environments", "resource")
+		"proxies", "resource")
 
 	_ = TestIamCmd.MarkFlagRequired("space")
 
