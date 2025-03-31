@@ -28,7 +28,15 @@ var Cmd = &cobra.Command{
 
 var org, displayName, name, region string
 
-var examples = []string{"apigeecli spaces create --name=space1 --display-name=\"Space 1\""}
+var examples = []string{
+	"apigeecli spaces create --name=space1 --display-name=\"Space 1\"",
+	"apigeecli spaces iam get --space=space1",
+	"apigeecli spaces iam seteditor --space=space1 --member-type=user --name=developer@any.com",
+	"apigeecli spaces iam setviewer --space=space1 --member-type=user --name=developer@any.com",
+	"apigeecli spaces iam test --space=space1 --res=proxies",
+	"apigeecli spaces iam test --space=space1 --verb=create --res=sharedflows",
+	"apigeecli spaces iam removerole --space=space1 --name=user:developer@any.com --role=roles/apigee.spaceContentEditor",
+}
 
 func init() {
 	Cmd.PersistentFlags().StringVarP(&org, "org", "o",
@@ -43,6 +51,8 @@ func init() {
 	Cmd.AddCommand(DelCmd)
 	Cmd.AddCommand(CreateCmd)
 	Cmd.AddCommand(UpdateCmd)
+	Cmd.AddCommand(IamCmd)
+
 	// TODO Cmd.AddCommand(ExpCmd)
 	// TODO Cmd.AddCommand(ImpCmd)
 }

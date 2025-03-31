@@ -36,6 +36,7 @@ var CreateCmd = &cobra.Command{
 		_, err = spaces.Create(name, displayName)
 		return err
 	},
+	Example: `Create a space: ` + GetExample(0),
 }
 
 func init() {

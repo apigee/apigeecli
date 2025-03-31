@@ -428,6 +428,194 @@ func RemoveIAMPermission(memberName string, iamRole string) (err error) {
 	return err
 }
 
+// SetIAMSpacePermission set permissions for a member on an Apigee Env
+func SetIAMSpacePermission(space string, memberName string, iamRole string, memberType string) (err error) {
+	var role string
+
+	switch iamRole {
+	case "editor":
+		role = "roles/apigee.spaceContentEditor"
+	case "viewer":
+		role = "roles/apigee.spaceContentViewer"
+	default: // assume this is a custom role definition
+		re := regexp.MustCompile(`projects\/([a-zA-Z0-9_-]+)\/roles\/([a-zA-Z0-9_-]+)`)
+		result := re.FindString(iamRole)
+		if result == "" {
+			return fmt.Errorf("custom role must be of the format projects/{project-id}/roles/{role-name}")
+		}
+		role = iamRole
+	}
+
+	ClientPrintHttpResponse.Set(false)
+	defer ClientPrintHttpResponse.Set(GetCmdPrintHttpResponseSetting())
+
+	u, _ := url.Parse(GetApigeeBaseURL())
+	u.Path = path.Join(u.Path, GetApigeeOrg(), "spaces", space+":getIamPolicy")
+	getIamPolicyBody, err := HttpClient(u.String())
+	if err != nil {
+		clilog.Error.Println(err)
+		return err
+	}
+
+	getIamPolicy := iamPolicy{}
+
+	err = json.Unmarshal(getIamPolicyBody, &getIamPolicy)
+	if err != nil {
+		clilog.Error.Println(err)
+		return err
+	}
+
+	foundRole := false
+	for i, binding := range getIamPolicy.Bindings {
+		if binding.Role == role {
+			// found members with the role already, add the new SA to the role
+			getIamPolicy.Bindings[i].Members = append(binding.Members, memberType+":"+memberName)
+			foundRole = true
+		}
+	}
+
+	// no members with the role, add a new one
+	if !foundRole {
+		binding := roleBinding{}
+		binding.Role = role
+		binding.Members = append(binding.Members, memberType+":"+memberName)
+		getIamPolicy.Bindings = append(getIamPolicy.Bindings, binding)
+	}
+
+	u, _ = url.Parse(GetApigeeBaseURL())
+	u.Path = path.Join(u.Path, GetApigeeOrg(), "spaces", space+":setIamPolicy")
+
+	setIamPolicy := setIamPolicy{}
+	setIamPolicy.Policy = getIamPolicy
+
+	setIamPolicyBody, err := json.Marshal(setIamPolicy)
+	if err != nil {
+		clilog.Error.Println(err)
+		return err
+	}
+
+	_, err = HttpClient(u.String(), string(setIamPolicyBody))
+
+	return err
+}
+
+// RemoveIAMSpacePermission removes/unbinds IAM permission from all roles for an Apigee Env
+func RemoveIAMSpacePermission(space string, memberName string, iamRole string) (err error) {
+	ClientPrintHttpResponse.Set(false)
+	defer ClientPrintHttpResponse.Set(GetCmdPrintHttpResponseSetting())
+
+	u, _ := url.Parse(GetApigeeBaseURL())
+	u.Path = path.Join(u.Path, GetApigeeOrg(), "spaces", space+":getIamPolicy")
+	getIamPolicyBody, err := HttpClient(u.String())
+	clilog.Debug.Println(string(getIamPolicyBody))
+	if err != nil {
+		clilog.Error.Println(err)
+		return err
+	}
+
+	getIamPolicy := iamPolicy{}
+
+	err = json.Unmarshal(getIamPolicyBody, &getIamPolicy)
+	if err != nil {
+		clilog.Error.Println(err)
+		return err
+	}
+
+	foundRole := false
+	foundMember := false
+	removeIamPolicy := setIamPolicy{}
+
+	numBindings := len(getIamPolicy.Bindings)
+
+	if numBindings < 1 {
+		return fmt.Errorf("role %s not found for space %s", iamRole, space)
+	} else if numBindings == 1 { // there is only 1 binding
+		clilog.Debug.Printf("comparing %s and %s\n", getIamPolicy.Bindings[0].Role, iamRole)
+		if getIamPolicy.Bindings[0].Role == iamRole {
+			if len(getIamPolicy.Bindings[0].Members) > 1 { // more than one member in the role
+				removeIamPolicy.Policy.Etag = getIamPolicy.Etag
+				// create a new role binding
+				removeIamPolicy.Policy.Bindings = append(removeIamPolicy.Policy.Bindings, roleBinding{})
+				// copy the role
+				removeIamPolicy.Policy.Bindings[0].Role = getIamPolicy.Bindings[0].Role
+				// copy other members
+				for _, member := range getIamPolicy.Bindings[0].Members {
+					clilog.Debug.Printf("comparing %s and %s\n", memberName, member)
+					if member == memberName {
+						clilog.Debug.Println("found member")
+						foundMember = true
+						// don't include this member
+					} else {
+						removeIamPolicy.Policy.Bindings[0].Members = append(removeIamPolicy.Policy.Bindings[0].Members, member)
+					}
+				}
+				if !foundMember {
+					return fmt.Errorf("member %s not set for role %s in space %s", memberName, iamRole, space)
+				}
+			} else { // there is one member, one role
+				if getIamPolicy.Bindings[0].Members[0] == memberName {
+					clilog.Debug.Printf("comparing %s and %s\n", getIamPolicy.Bindings[0].Members[0], memberName)
+					removeIamPolicy.Policy.Etag = getIamPolicy.Etag
+				} else {
+					return fmt.Errorf("member %s not set for role %s in space %s", memberName, iamRole, space)
+				}
+			}
+		} else {
+			return fmt.Errorf("role %s not found for space %s", iamRole, space)
+		}
+	} else { // there are many bindings, loop through them
+		removeIamPolicy.Policy.Etag = getIamPolicy.Etag
+		for _, binding := range getIamPolicy.Bindings {
+			members := []string{}
+			clilog.Debug.Printf("comparing %s and %s\n", binding.Role, iamRole)
+			if binding.Role == iamRole {
+				if len(binding.Members) > 1 { // there is more than one member in the role
+					for _, member := range binding.Members {
+						clilog.Debug.Printf("comparing %s and %s\n", member, memberName)
+						if member == memberName { // remove the member
+							foundMember = true
+						} else {
+							members = append(members, member)
+						}
+					}
+					if !foundMember {
+						return fmt.Errorf("member %s not set for role %s in space %s", memberName, iamRole, space)
+					}
+				} else { // there is only one member in the role
+					if binding.Members[0] == memberName {
+						foundMember = true
+					} else {
+						return fmt.Errorf("member %s not set for role %s in space %s", memberName, iamRole, space)
+					}
+				}
+				copyRoleBinding := roleBinding{}
+				copyRoleBinding.Role = binding.Role
+				copyRoleBinding.Members = members
+				removeIamPolicy.Policy.Bindings = append(removeIamPolicy.Policy.Bindings, copyRoleBinding)
+				foundRole = true
+			} else { // copy the binding as-is
+				removeIamPolicy.Policy.Bindings = append(removeIamPolicy.Policy.Bindings, binding)
+			}
+		}
+
+		if !foundRole {
+			return fmt.Errorf("role %s not found for space %s", iamRole, space)
+		}
+	}
+
+	u, _ = url.Parse(GetApigeeBaseURL())
+	u.Path = path.Join(u.Path, GetApigeeOrg(), "spaces", space+":setIamPolicy")
+
+	removeIamPolicyBody, err := json.Marshal(removeIamPolicy)
+	if err != nil {
+		clilog.Error.Println(err)
+		return err
+	}
+
+	_, err = HttpClient(u.String(), string(removeIamPolicyBody))
+	return err
+}
+
 // AddWid add workload identity role to a service account
 func AddWid(projectID string, namespace string, kServiceAccount string, gServiceAccount string) (err error) {
 	const role = "roles/iam.workloadIdentityUser"
