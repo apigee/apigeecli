@@ -32,7 +32,7 @@ var DelCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
-		_, err = hub.DeleteApi(apiID)
+		_, err = hub.DeleteApi(apiID, force)
 		return
 	},
 }
@@ -40,6 +40,8 @@ var DelCmd = &cobra.Command{
 func init() {
 	DelCmd.Flags().StringVarP(&apiID, "id", "",
 		"", "API ID")
+	DelCmd.Flags().BoolVarP(&force, "force", "",
+		false, "force delete the API")
 
 	_ = DelCmd.MarkFlagRequired("id")
 }

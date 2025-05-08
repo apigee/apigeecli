@@ -38,6 +38,7 @@ var GetCmd = &cobra.Command{
 }
 
 var apiID string
+var force bool
 
 func init() {
 	GetCmd.Flags().StringVarP(&apiID, "id", "i",
