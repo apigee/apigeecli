@@ -205,9 +205,14 @@ func CreateApi(apiID string, contents []byte) (respBody []byte, err error) {
 	return respBody, err
 }
 
-func DeleteApi(apiID string) (respBody []byte, err error) {
+func DeleteApi(apiID string, force bool) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.GetApigeeRegistryURL())
 	u.Path = path.Join(u.Path, "apis", apiID)
+
+	q := u.Query()
+	q.Set("force", strconv.FormatBool(force))
+
+	u.RawQuery = q.Encode()
 
 	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
 	return respBody, err
