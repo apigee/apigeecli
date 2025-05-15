@@ -57,7 +57,7 @@ func ListKVMFiles(folder string) (orgKVMFileList map[string]string,
 				envKVMFileSplit := strings.Split(kvmFile, DefaultFileSplitter)
 				if len(envKVMFileSplit) > 2 {
 					clilog.Info.Printf("Map name %s, path %s\n", envKVMFileSplit[2], kvmFile)
-					envKVMFileList[envKVMFileSplit[2]] = path
+					envKVMFileList[envKVMFileSplit[1]+DefaultFileSplitter+envKVMFileSplit[2]] = path
 				}
 			case rproxy.MatchString(kvmFile):
 				proxyKVMFileSplit := strings.Split(kvmFile, DefaultFileSplitter)
