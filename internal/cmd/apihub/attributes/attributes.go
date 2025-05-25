@@ -37,6 +37,7 @@ func init() {
 	AttributeCmd.AddCommand(GetCmd)
 	AttributeCmd.AddCommand(DelCmd)
 	AttributeCmd.AddCommand(ListCmd)
+	AttributeCmd.AddCommand(UpdateCmd)
 
 	_ = AttributeCmd.MarkFlagRequired("org")
 	_ = AttributeCmd.MarkFlagRequired("region")

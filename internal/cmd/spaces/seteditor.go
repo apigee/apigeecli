@@ -55,4 +55,3 @@ func init() {
 	_ = SetEditorCmd.MarkFlagRequired("space")
 	_ = SetEditorCmd.MarkFlagRequired("name")
 }
-

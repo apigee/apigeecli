@@ -1007,6 +1007,87 @@ func DeleteAttribute(attributeID string) (respBody []byte, err error) {
 	return respBody, err
 }
 
+func UpdateAttribute(attributeID string, updateMask string, displayName string, description string, scope string,
+	dataType string, aValues []byte, cardinality int,
+) (respBody []byte, err error) {
+	type attributeScope string
+	const (
+		API           attributeScope = "API"
+		VERSION       attributeScope = "VERSION"
+		SPEC          attributeScope = "SPEC"
+		API_OPERATION attributeScope = "API_OPERATION"
+		DEPLOYMENT    attributeScope = "DEPLOYMENT"
+		DEPENDENCY    attributeScope = "DEPENDENCY"
+		DEFINITION    attributeScope = "DEFINITION"
+		EXTERNAL_API  attributeScope = "EXTERNAL_API"
+		PLUGIN        attributeScope = "PLUGIN"
+	)
+
+	type attributeDataType string
+	const (
+		ENUM   attributeDataType = "ENUM"
+		JSON   attributeDataType = "JSON"
+		STRING attributeDataType = "STRING"
+	)
+
+	type attribute struct {
+		DisplayName   *string            `json:"displayName,omitempty"`
+		Description   *string            `json:"description,omitempty"`
+		Scope         *attributeScope    `json:"scope,omitempty"`
+		DataType      *attributeDataType `json:"dataType,omitempty"`
+		AllowedValues []allowedValue     `json:"allowedValues,omitempty"`
+		Cardinality   *int               `json:"cardinality,omitempty"`
+	}
+
+	u, _ := url.Parse(apiclient.GetApigeeRegistryURL())
+	u.Path = path.Join(u.Path, "attributes", attributeID)
+	q := u.Query()
+	q.Set("updateMask", updateMask)
+	u.RawQuery = q.Encode()
+
+	a := attribute{}
+	if displayName != "" {
+		a.DisplayName = new(string)
+		*a.DisplayName = displayName
+	}
+	if description != "" {
+		a.Description = new(string)
+		*a.Description = description
+	}
+
+	if scope != "" {
+		a.Scope = new(attributeScope)
+		*a.Scope = attributeScope(scope)
+	}
+
+	if dataType != "" {
+		a.DataType = new(attributeDataType)
+		*a.DataType = attributeDataType(dataType)
+	}
+
+	if cardinality != 1 {
+		a.Cardinality = new(int)
+		*a.Cardinality = cardinality
+	}
+
+	if aValues != nil {
+		var av []allowedValue
+		err = json.Unmarshal(aValues, &av)
+		if err != nil {
+			return nil, err
+		}
+		a.AllowedValues = av
+	}
+
+	payload, err := json.Marshal(&a)
+	if err != nil {
+		return nil, err
+	}
+
+	respBody, err = apiclient.HttpClient(u.String(), string(payload), "PATCH")
+	return respBody, err
+}
+
 func ListAttributes(filter string, pageSize int, pageToken string) (respBody []byte, err error) {
 	return list("attributes", filter, pageSize, pageToken)
 }

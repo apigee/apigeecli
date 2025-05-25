@@ -15,44 +15,43 @@
 package spaces
 
 import (
-    "internal/apiclient"
-    "internal/client/spaces"
-    "internal/clilog"
+	"internal/apiclient"
+	"internal/client/spaces"
+	"internal/clilog"
 
-    "github.com/spf13/cobra"
+	"github.com/spf13/cobra"
 )
 
 // SetViewerCmd to set role on env
 var SetViewerCmd = &cobra.Command{
-    Use:   "setviewer",
-    Short: "Set Space Content Viewer role for a member on a Space",
-    Long:  "Set Space Content Viewer role for a member on a Space",
-    Args: func(cmd *cobra.Command, args []string) (err error) {
-        apiclient.SetRegion(region)
-        return apiclient.SetApigeeOrg(org)
-    },
-    RunE: func(cmd *cobra.Command, args []string) (err error) {
-        cmd.SilenceUsage = true
+	Use:   "setviewer",
+	Short: "Set Space Content Viewer role for a member on a Space",
+	Long:  "Set Space Content Viewer role for a member on a Space",
+	Args: func(cmd *cobra.Command, args []string) (err error) {
+		apiclient.SetRegion(region)
+		return apiclient.SetApigeeOrg(org)
+	},
+	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		cmd.SilenceUsage = true
 
-        err = spaces.SetIAM(space, memberName, "viewer", memberType)
-        if err != nil {
-            return err
-        }
-        clilog.Info.Printf("Member \"%s\" granted access to \"roles/apigee.spaceContentViewer\" role in space \"%s\"\n", memberName, space)
-        return nil
-    },
-    Example: `Set Space Viewer role for user in a space: ` + GetExample(3),
+		err = spaces.SetIAM(space, memberName, "viewer", memberType)
+		if err != nil {
+			return err
+		}
+		clilog.Info.Printf("Member \"%s\" granted access to \"roles/apigee.spaceContentViewer\" role in space \"%s\"\n", memberName, space)
+		return nil
+	},
+	Example: `Set Space Viewer role for user in a space: ` + GetExample(3),
 }
 
 func init() {
-    SetViewerCmd.Flags().StringVarP(&space, "space", "",
-        "", "Space name.")
-    SetViewerCmd.Flags().StringVarP(&memberName, "name", "n",
-        "", "Member Name, example Service Account Name")
-    SetViewerCmd.Flags().StringVarP(&memberType, "member-type", "m",
-        "serviceAccount", "memberType must be serviceAccount, user or group")
+	SetViewerCmd.Flags().StringVarP(&space, "space", "",
+		"", "Space name.")
+	SetViewerCmd.Flags().StringVarP(&memberName, "name", "n",
+		"", "Member Name, example Service Account Name")
+	SetViewerCmd.Flags().StringVarP(&memberType, "member-type", "m",
+		"serviceAccount", "memberType must be serviceAccount, user or group")
 
-    _ = SetViewerCmd.MarkFlagRequired("space")
-    _ = SetViewerCmd.MarkFlagRequired("name")
+	_ = SetViewerCmd.MarkFlagRequired("space")
+	_ = SetViewerCmd.MarkFlagRequired("name")
 }
-
