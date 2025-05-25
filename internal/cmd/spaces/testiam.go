@@ -52,5 +52,4 @@ func init() {
 		"proxies", "resource")
 
 	_ = TestIamCmd.MarkFlagRequired("space")
-
 }
