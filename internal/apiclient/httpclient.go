@@ -395,7 +395,7 @@ func GetHttpClient() (err error) {
 	}
 
 	if GetProxyURL() != "" {
-		if proxyUrl, err := url.Parse(GetProxyURL()); err != nil {
+		if proxyUrl, err := url.Parse(GetProxyURL()); err == nil {
 			ApigeeAPIClient = &RateLimitedHTTPClient{
 				client: &http.Client{
 					Transport: &http.Transport{
