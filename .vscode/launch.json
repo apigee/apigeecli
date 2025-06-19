@@ -9,7 +9,7 @@
             "type": "go",
             "request": "launch",
             "mode": "auto",
-            "program": "./cmd/apigeecli/apigeecli.go",
+            "program": "${workspaceFolder}/cmd/apigeecli/apigeecli.go",
             // please change these args before debugging. do not checkin changes.
             "args": [
                 "apis",
