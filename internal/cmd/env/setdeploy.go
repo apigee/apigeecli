@@ -30,6 +30,7 @@ var SetDepCmd = &cobra.Command{
 	Long:  "Set Apigee Deployer role for a member on an environment",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
 		apiclient.SetApigeeEnv(environment)
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

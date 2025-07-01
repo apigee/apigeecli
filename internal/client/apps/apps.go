@@ -583,7 +583,7 @@ func listAllApps() (appList apps, err error) {
 		if startKey != "" {
 			q := u.Query()
 			q.Set("startKey", startKey)
-			q.Set("rows", "10000")
+			q.Set("rows", "1000")
 			u.RawQuery = q.Encode()
 		}
 
@@ -600,9 +600,9 @@ func listAllApps() (appList apps, err error) {
 
 		appList.Apps = append(appList.Apps, a.Apps...)
 
-		if len(a.Apps) == 10000 {
+		if len(a.Apps) == 1000 {
 			startKey = a.Apps[len(a.Apps)-1].AppID
-		} else if len(a.Apps) < 10000 {
+		} else if len(a.Apps) < 1000 {
 			break
 		}
 	}

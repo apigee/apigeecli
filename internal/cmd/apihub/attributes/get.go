@@ -52,9 +52,9 @@ var GetCmd = &cobra.Command{
 		if slo {
 			attributeID = "system-slo"
 		} else if env {
-			attributeID = "system-envvironment"
+			attributeID = "system-environment"
 		} else if dep {
-			attributeID = "system-deployment"
+			attributeID = "system-deployment-type"
 		} else if specType {
 			attributeID = "system-spec-type"
 		}

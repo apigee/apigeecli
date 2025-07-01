@@ -34,6 +34,7 @@ var SetAxCmd = &cobra.Command{
 			return fmt.Errorf("invalid memberRole. Member role must be analyticsViewer or analyticsAgent")
 		}
 		apiclient.SetApigeeEnv(environment)
+		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
