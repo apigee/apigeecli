@@ -522,6 +522,7 @@ func createOrUpdateApiVersionSpec(apiID string, versionID string, specID string,
 	if sourceURI != "" {
 		s.SourceURI = sourceURI
 		updateMask = append(updateMask, "source_uri")
+		updateMask = append(updateMask, "specType")
 	}
 
 	if documentation != "" {
@@ -531,6 +532,7 @@ func createOrUpdateApiVersionSpec(apiID string, versionID string, specID string,
 	if contents != nil {
 		s.Contents.Contents = base64.StdEncoding.EncodeToString(contents)
 		updateMask = append(updateMask, "contents")
+		updateMask = append(updateMask, "specType")
 	}
 
 	if strings.Contains(mimeType, "yaml") || strings.Contains(mimeType, "yml") {
