@@ -28,7 +28,7 @@ var DeploymentCmd = &cobra.Command{
 var org, region string
 
 var examples = []string{
-	`apigeecli apihub deployments create -n $name --dep-type apigee -d $dispName \
+	`apigeecli apihub deployments create --dep-type apigee -d $dispName \
 	--env-type development --slo-type "99-99" --endpoints https://api.example.com \
 	--resource-uri https://apigee.googleapis.com/v1/organizations/$project/apis/$proxy/revisions/1 \
 	-r us-central1 --default-token`,

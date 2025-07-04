@@ -39,7 +39,7 @@ var GetCmd = &cobra.Command{
 
 func init() {
 	GetCmd.Flags().StringVarP(&deploymentID, "id", "i",
-		"", "Dependency ID")
+		"", "Deployment ID")
 
 	_ = GetCmd.MarkFlagRequired("id")
 }
