@@ -695,7 +695,7 @@ func ListDeployments(filter string, pageSize int, pageToken string) (respBody []
 	return list("deployments", filter, pageSize, pageToken)
 }
 
-func UpdateDeployment(deploymentName string, displayName string, description string,
+func UpdateDeployment(deploymentID string, displayName string, description string,
 	externalURI string, resourceURI string, endpoints []string, dep DeploymentType,
 	env EnvironmentType, slo SloType,
 ) (respBody []byte, err error) {
@@ -730,12 +730,12 @@ func UpdateDeployment(deploymentName string, displayName string, description str
 	}
 
 	u, _ := url.Parse(apiclient.GetApigeeRegistryURL())
-	u.Path = path.Join(u.Path, "deployments", deploymentName)
+	u.Path = path.Join(u.Path, "deployments", deploymentID)
 	q := u.Query()
 	q.Set("updateMask", strings.Join(updateMask, ","))
 	u.RawQuery = q.Encode()
 
-	payload, err := getDeployment(displayName, description, deploymentName,
+	payload, err := getDeployment(displayName, description, deploymentID,
 		externalURI, resourceURI, endpoints, dep, env, slo)
 	if err != nil {
 		return nil, err
