@@ -15,6 +15,7 @@
 package apis
 
 import (
+	"fmt"
 	"internal/apiclient"
 	"internal/client/hub"
 
@@ -27,12 +28,19 @@ var GetCmd = &cobra.Command{
 	Short: "Get details for an API",
 	Long:  "Get details for an API",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		if apiID == "" {
+			return fmt.Errorf("id cannot be empty")
+		}
 		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
-		_, err = hub.GetApi(apiID)
+
+		if apiID != "" {
+			_, err = hub.GetApi(apiID)
+			return err
+		}
 		return
 	},
 }
