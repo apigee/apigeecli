@@ -15,6 +15,7 @@
 package products
 
 import (
+	"fmt"
 	"internal/apiclient"
 	"internal/client/products"
 
@@ -27,13 +28,19 @@ var GetCmd = &cobra.Command{
 	Short: "Gets an API product from an organization",
 	Long:  "Gets an API product from an organization",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		if name == "" {
+			return fmt.Errorf("name cannot be empty")
+		}
 		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
 
-		_, err = products.Get(name)
+		if name != "" {
+			_, err = products.Get(name)
+			return err
+		}
 		return
 	},
 }

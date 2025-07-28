@@ -15,6 +15,7 @@
 package spaces
 
 import (
+	"fmt"
 	"internal/apiclient"
 	"internal/client/spaces"
 
@@ -27,13 +28,19 @@ var GetCmd = &cobra.Command{
 	Short: "Get an Apigee Space",
 	Long:  "Get an Apigee Space",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		if name == "" {
+			return fmt.Errorf("name cannot be empty")
+		}
 		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
 
-		_, err = spaces.Get(name)
+		if name != "" {
+			_, err = spaces.Get(name)
+			return err
+		}
 		return
 	},
 }
