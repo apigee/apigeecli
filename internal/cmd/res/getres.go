@@ -15,6 +15,7 @@
 package res
 
 import (
+	"fmt"
 	"internal/apiclient"
 	"internal/client/res"
 	"strings"
@@ -28,6 +29,9 @@ var GetCmd = &cobra.Command{
 	Short: "Get a resource file",
 	Long:  "Get a resource file",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		if name == "" {
+			return fmt.Errorf("name cannot be empty")
+		}
 		apiclient.SetApigeeEnv(env)
 		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
@@ -35,7 +39,10 @@ var GetCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
 
-		return res.Get(name, resType)
+		if name != "" {
+			return res.Get(name, resType)
+		}
+		return
 	},
 }
 

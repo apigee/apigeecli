@@ -15,6 +15,7 @@
 package appgroups
 
 import (
+	"fmt"
 	"internal/apiclient"
 	"internal/client/appgroups"
 
@@ -27,14 +28,20 @@ var GetCmd = &cobra.Command{
 	Short: "Get AppGroup in an Organization by AppGroup Name",
 	Long:  "Returns the app group details for the specified app group name",
 	Args: func(cmd *cobra.Command, args []string) error {
+		if name == "" {
+			return fmt.Errorf("name cannot be empty")
+		}
 		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
 
-		_, err = appgroups.Get(name)
-		return err
+		if name != "" {
+			_, err = appgroups.Get(name)
+			return err
+		}
+		return
 	},
 }
 

@@ -69,5 +69,4 @@ func init() {
 
 	_ = CreateAppCmd.MarkFlagRequired("name")
 	_ = CreateAppCmd.MarkFlagRequired("app-name")
-	_ = CreateAppCmd.MarkFlagRequired("prods")
 }

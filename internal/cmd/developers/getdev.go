@@ -15,6 +15,7 @@
 package developers
 
 import (
+	"fmt"
 	"internal/apiclient"
 	"internal/client/developers"
 
@@ -27,13 +28,19 @@ var GetCmd = &cobra.Command{
 	Short: "Returns the profile for a developer by email address or ID",
 	Long:  "Returns the profile for a developer by email address or ID",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		if email == "" {
+			return fmt.Errorf("email cannot be empty")
+		}
 		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
 
-		_, err = developers.Get(email)
+		if email != "" {
+			_, err = developers.Get(email)
+			return err
+		}
 		return
 	},
 }

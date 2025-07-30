@@ -15,6 +15,7 @@
 package eptattachment
 
 import (
+	"fmt"
 	"internal/apiclient"
 	"internal/client/eptattachment"
 
@@ -27,13 +28,19 @@ var GetCmd = &cobra.Command{
 	Short: "Get a service endpoint",
 	Long:  "Get a service endpoint",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		if name == "" {
+			return fmt.Errorf("name cannot be empty")
+		}
 		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
 
-		_, err = eptattachment.Get(name)
+		if name != "" {
+			_, err = eptattachment.Get(name)
+			return err
+		}
 		return
 	},
 }

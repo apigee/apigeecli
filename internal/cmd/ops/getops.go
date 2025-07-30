@@ -15,6 +15,7 @@
 package ops
 
 import (
+	"fmt"
 	"internal/apiclient"
 	"internal/client/operations"
 
@@ -27,13 +28,19 @@ var GetCmd = &cobra.Command{
 	Short: "Get operation of an org",
 	Long:  "Get operation of an org",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		if name == "" {
+			return fmt.Errorf("name cannot be empty")
+		}
 		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
 
-		_, err = operations.Get(name)
+		if name != "" {
+			_, err = operations.Get(name)
+			return err
+		}
 		return
 	},
 }

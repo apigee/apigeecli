@@ -32,14 +32,14 @@ var UpdateCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
-		_, err = hub.UpdateDeployment(deploymentName, displayName, description, externalURI, resourceURI, endpoints, d, e, s)
+		_, err = hub.UpdateDeployment(deploymentID, displayName, description, externalURI, resourceURI, endpoints, d, e, s)
 		return
 	},
 }
 
 func init() {
-	UpdateCmd.Flags().StringVarP(&deploymentName, "id", "i",
-		"", "Deployment Name")
+	UpdateCmd.Flags().StringVarP(&deploymentID, "id", "i",
+		"", "Deployment ID")
 	UpdateCmd.Flags().StringVarP(&displayName, "display-name", "d",
 		"", "Deployment Display Name")
 	UpdateCmd.Flags().StringVarP(&description, "description", "",

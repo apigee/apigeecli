@@ -66,7 +66,6 @@ func init() {
 	CrtCmd.Flags().Var(&e, "env-type", "The environment mapping to this deployment")
 	CrtCmd.Flags().Var(&s, "slo-type", "The SLO for this deployment")
 
-	_ = CrtCmd.MarkFlagRequired("name")
 	_ = CrtCmd.MarkFlagRequired("display-name")
 	_ = CrtCmd.MarkFlagRequired("resource-uri")
 	_ = CrtCmd.MarkFlagRequired("endpoints")

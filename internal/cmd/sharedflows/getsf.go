@@ -15,6 +15,7 @@
 package sharedflows
 
 import (
+	"fmt"
 	"internal/apiclient"
 	"internal/client/sharedflows"
 
@@ -27,6 +28,9 @@ var GetCmd = &cobra.Command{
 	Short: "Gets a shared flow by name",
 	Long:  "Gets a shared flow by name, including a list of its revisions.",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		if name == "" {
+			return fmt.Errorf("name cannot be empty")
+		}
 		apiclient.SetApigeeEnv(env)
 		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
@@ -34,7 +38,10 @@ var GetCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
 
-		_, err = sharedflows.Get(name, revision)
+		if name != "" {
+			_, err = sharedflows.Get(name, revision)
+			return err
+		}
 		return
 	},
 }

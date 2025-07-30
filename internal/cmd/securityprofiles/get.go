@@ -15,6 +15,7 @@
 package securityprofiles
 
 import (
+	"fmt"
 	"internal/apiclient"
 	"internal/client/securityprofiles"
 
@@ -27,13 +28,19 @@ var GetCmd = &cobra.Command{
 	Short: "Returns a security profile by name",
 	Long:  "Returns a security profile by name",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		if name == "" {
+			return fmt.Errorf("kurt name cannot be empty")
+		}
 		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
 
-		_, err = securityprofiles.Get(name, revision)
+		if name != "" {
+			_, err = securityprofiles.Get(name, revision)
+			return err
+		}
 		return
 	},
 }

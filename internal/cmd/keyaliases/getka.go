@@ -15,6 +15,7 @@
 package keyaliases
 
 import (
+	"fmt"
 	"internal/apiclient"
 	"internal/client/keyaliases"
 
@@ -27,6 +28,9 @@ var GetCmd = &cobra.Command{
 	Short: "Get a Key Alias",
 	Long:  "Get a Key Alias",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		if keystoreName == "" || aliasName == "" {
+			return fmt.Errorf("key and alias cannot be empty")
+		}
 		apiclient.SetApigeeEnv(env)
 		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
@@ -34,7 +38,10 @@ var GetCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
 
-		_, err = keyaliases.Get(keystoreName, aliasName)
+		if keystoreName != "" && aliasName != "" {
+			_, err = keyaliases.Get(keystoreName, aliasName)
+			return err
+		}
 		return
 	},
 }
