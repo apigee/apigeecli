@@ -2603,8 +2603,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ## golang.org/x/oauth2
 
 * Name: golang.org/x/oauth2
-* Version: v0.23.0
-* License: [BSD-3-Clause](https://cs.opensource.google/go/x/oauth2/+/v0.23.0:LICENSE)
+* Version: v0.27.0
+* License: [BSD-3-Clause](https://cs.opensource.google/go/x/oauth2/+/v0.27.0:LICENSE)
 
 ```
 Copyright 2009 The Go Authors.
