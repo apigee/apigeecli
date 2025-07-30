@@ -15,6 +15,7 @@
 package datacollectors
 
 import (
+	"fmt"
 	"internal/apiclient"
 	"internal/client/datacollectors"
 
@@ -27,13 +28,19 @@ var GetCmd = &cobra.Command{
 	Short: "Get a Data Collector",
 	Long:  "Get a Data Collector",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		if name == "" {
+			return fmt.Errorf("name cannot be empty")
+		}
 		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
 
-		_, err = datacollectors.Get(name)
+		if name != "" {
+			_, err = datacollectors.Get(name)
+			return err
+		}
 		return
 	},
 }

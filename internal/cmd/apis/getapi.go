@@ -15,6 +15,7 @@
 package apis
 
 import (
+	"fmt"
 	"internal/apiclient"
 	"internal/client/apis"
 
@@ -27,13 +28,19 @@ var GetCmd = &cobra.Command{
 	Short: "Gets an API Proxy by name",
 	Long:  "Gets an API Proxy by name, including a list of its revisions.",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		if name == "" {
+			return fmt.Errorf("name cannot be empty")
+		}
 		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
 
-		_, err = apis.GetProxy(name, revision)
+		if name != "" {
+			_, err = apis.GetProxy(name, revision)
+			return err
+		}
 		return
 	},
 }

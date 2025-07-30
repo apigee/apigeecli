@@ -15,6 +15,7 @@
 package reports
 
 import (
+	"fmt"
 	"internal/apiclient"
 	"internal/client/reports"
 
@@ -27,14 +28,20 @@ var GetCmd = &cobra.Command{
 	Short: "Get details for a custom report",
 	Long:  "Get details for a custom report",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		if name == "" {
+			return fmt.Errorf("name cannot be empty")
+		}
 		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
 
-		_, err = reports.Get(name)
-		return err
+		if name != "" {
+			_, err = reports.Get(name)
+			return err
+		}
+		return
 	},
 }
 

@@ -15,6 +15,7 @@
 package references
 
 import (
+	"fmt"
 	"internal/apiclient"
 	"internal/client/references"
 
@@ -27,6 +28,9 @@ var GetCmd = &cobra.Command{
 	Short: "Get a reference in an environment",
 	Long:  "Get a reference in an environment",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		if name == "" {
+			return fmt.Errorf("name cannot be empty")
+		}
 		apiclient.SetApigeeEnv(env)
 		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
@@ -34,7 +38,10 @@ var GetCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
 
-		_, err = references.Get(name)
+		if name != "" {
+			_, err = references.Get(name)
+			return err
+		}
 		return
 	},
 }

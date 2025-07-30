@@ -15,6 +15,7 @@
 package env
 
 import (
+	"fmt"
 	"internal/apiclient"
 	"internal/client/env"
 
@@ -27,6 +28,9 @@ var GetCmd = &cobra.Command{
 	Short: "Get properties of an environment",
 	Long:  "Get properties of an environment",
 	Args: func(cmd *cobra.Command, args []string) (err error) {
+		if environment == "" {
+			return fmt.Errorf("env cannot be empty")
+		}
 		apiclient.SetApigeeEnv(environment)
 		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
@@ -34,7 +38,10 @@ var GetCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
 
-		_, err = env.Get(config)
+		if environment != "" {
+			_, err = env.Get(config)
+			return err
+		}
 		return
 	},
 }
