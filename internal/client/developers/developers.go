@@ -246,7 +246,11 @@ func Export() (respBody []byte, err error) {
 		if err != nil {
 			return nil, err
 		}
-		if len(d.Developer) > 1 {
+		//Fix for #694
+		if len(d.Developer) == 1 && startKey == "" {
+			devs.Developer = append(d.Developer)
+			break
+		} else if len(d.Developer) > 1 {
 			devs.Developer = append(devs.Developer, d.Developer...)
 			startKey = devs.Developer[len(devs.Developer)-1].EMail
 		} else {
