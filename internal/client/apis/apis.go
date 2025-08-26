@@ -270,6 +270,14 @@ func ListProxyDeployments(name string) (respBody []byte, err error) {
 	return respBody, err
 }
 
+// ListProxyDeploymentsForEnv
+func ListProxyDeploymentsForEnv(name string) (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "apis", name, "deployments")
+	respBody, err = apiclient.HttpClient(u.String())
+	return respBody, err
+}
+
 // ListProxyRevisionDeployments
 func ListProxyRevisionDeployments(name string, revision int) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
