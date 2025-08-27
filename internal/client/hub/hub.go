@@ -235,7 +235,7 @@ func UpdateApi(apiID string, contents []byte) (respBody []byte, err error) {
 	u.Path = path.Join(u.Path, "apis", apiID)
 	q := u.Query()
 	q.Set("updateMask",
-		"display_name,description,owner,documentation,target_user,team,business_unit,maturity_level,attributes")
+		"display_name,description,owner,documentation,target_user,team,business_unit,maturity_level,api_style,attributes")
 	u.RawQuery = q.Encode()
 	respBody, err = apiclient.HttpClient(u.String(), string(contents), "PATCH")
 	return respBody, err

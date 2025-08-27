@@ -35,9 +35,6 @@ var ListDepCmd = &cobra.Command{
 		if revision != -1 && name == "" {
 			return fmt.Errorf("proxy name must be supplied with revision")
 		}
-		if name != "" && revision == -1 && apiclient.GetApigeeEnv() != "" {
-			return fmt.Errorf("revision must be supplied with proxy name and env")
-		}
 		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
@@ -45,7 +42,10 @@ var ListDepCmd = &cobra.Command{
 		cmd.SilenceUsage = true
 
 		if apiclient.GetApigeeEnv() != "" {
-			if revision != -1 {
+			// To fetch the deployment info for an api deployed to an environment Issue #695
+			if name != "" && revision == -1 {
+				_, err = apis.ListProxyDeploymentsForEnv(name)
+			} else if revision != -1 {
 				if !report {
 					_, err = apis.ListProxyRevisionDeployments(name, revision)
 				} else {
