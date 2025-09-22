@@ -35,9 +35,6 @@ var ListDepCmd = &cobra.Command{
 		if revision != -1 && name == "" {
 			return fmt.Errorf("sharedflow name must be supplied with revision")
 		}
-		if name != "" && revision == -1 && apiclient.GetApigeeEnv() != "" {
-			return fmt.Errorf("revision must be supplied with sharedflow name and env")
-		}
 		apiclient.SetRegion(region)
 		return apiclient.SetApigeeOrg(org)
 	},
@@ -45,7 +42,10 @@ var ListDepCmd = &cobra.Command{
 		cmd.SilenceUsage = true
 
 		if apiclient.GetApigeeEnv() != "" {
-			if revision != -1 {
+			// To fetch the deployment info for a sharedflow deployed to an environment Issue #702
+			if name != "" && revision == -1 {
+				_, err = sharedflows.ListSharedFlowDeploymentsForEnv(name)
+			} else if revision != -1 {
 				_, err = sharedflows.ListRevisionDeployments(name, revision)
 			} else {
 				_, err = sharedflows.ListEnvDeployments()
