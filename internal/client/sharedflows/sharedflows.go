@@ -150,6 +150,14 @@ func ListEnvDeployments() (respBody []byte, err error) {
 	return respBody, err
 }
 
+// ListSharedFlowDeploymentsForEnv
+func ListSharedFlowDeploymentsForEnv(name string) (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "sharedflows", name, "deployments")
+	respBody, err = apiclient.HttpClient(u.String())
+	return respBody, err
+}
+
 // ListDeployments
 func ListDeployments(name string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
