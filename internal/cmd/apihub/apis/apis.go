@@ -30,7 +30,7 @@ var ApisCmd = &cobra.Command{
 var org, region string
 
 var examples = []string{
-	`apigeecli apihub apis create -i $apiId -f ./test/api.json -r $region -p $project --default-token`,
+	`apigeecli apihub apis create -i $apiId -f ./test/api.json -r $region -o $project --default-token`,
 }
 
 func init() {
