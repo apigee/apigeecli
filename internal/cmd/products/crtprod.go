@@ -68,6 +68,14 @@ var CreateCmd = &cobra.Command{
 			return nil
 		}
 
+		p.LlmQuota = llmQuota
+		p.LlmQuotaInterval = llmQuotaInterval
+		p.LlmQuotaTimeUnit = llmQuotaUnit
+		p.LlmOperationGroup, err = getLlmOperationGroup(llmOperationGroupFile)
+		if err != nil {
+			return nil
+		}
+
 		p.Attributes = getAttributes(attrs)
 
 		if quotaCounterScope != "" {
@@ -82,10 +90,12 @@ var CreateCmd = &cobra.Command{
 ` + GetExample(0) + `
 
 Create an API product, using externally defined operations, with auto approval and access=public, and a quota of 100/minute:
-` + GetExample(1),
+` + GetExample(1)+ `
+Create an API product, using externally defined LLM operations, with auto approval and access=public, and an LLM quota of 1000/minute:
+` + GetExample(5),
 }
 
-var operationGroupFile, gqlOperationGroupFile, grpcOperationGroupFile, quotaCounterScope string
+var operationGroupFile, gqlOperationGroupFile, grpcOperationGroupFile, llmOperationGroupFile, quotaCounterScope string
 
 func init() {
 	CreateCmd.Flags().StringVarP(&name, "name", "n",
@@ -120,6 +130,14 @@ func init() {
 		"", "Scope of the quota decides how the quota counter gets applied; can be PROXY or OPERATION")
 	CreateCmd.Flags().StringVarP(&space, "space", "",
 		"", "Apigee Space to associate to")
+	CreateCmd.Flags().StringVarP(&llmQuota, "llm-quota", "",
+		"", "LLM Quota Amount")
+	CreateCmd.Flags().StringVarP(&llmQuotaInterval, "llm-quota-interval", "",
+		"", "LLM Quota Interval")
+	CreateCmd.Flags().StringVarP(&llmQuotaUnit, "llm-quota-timeunit", "",
+		"", "LLM Quota Unit")
+	CreateCmd.Flags().StringVarP(&llmOperationGroupFile, "llmopgrp", "",
+		"", "File containing LLM Operation Group JSON. See samples for how to create the file")
 	// TODO: apiresource -r later
 
 	_ = CreateCmd.MarkFlagRequired("name")

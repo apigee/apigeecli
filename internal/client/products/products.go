@@ -58,6 +58,10 @@ type APIProduct struct {
 	Scopes                []string               `json:"scopes,omitempty"`
 	QuotaCounterScope     string                 `json:"quotaCounterScope,omitempty"`
 	Space                 string                 `json:"space,omitempty"`
+	LlmQuota              string                 `json:"llmQuota,omitempty"`
+	LlmQuotaInterval      string                 `json:"llmQuotaInterval,omitempty"`
+	LlmQuotaTimeUnit	  string				 `json:"llmQuotaTimeUnit,omitempty"`
+	LlmOperationGroup	  *LlmOperationGroup	 `json:"llmOperationGroup,omitempty"`
 }
 
 type OperationGroup struct {
@@ -72,7 +76,10 @@ type GraphqlOperationGroup struct {
 
 type GrpcOperationGroup struct {
 	OperationConfigs    []grpcOperationConfig `json:"operationConfigs,omitempty"`
-	OperationConfigType string                `json:"operationConfigType,omitempty"`
+}
+
+type LlmOperationGroup struct {
+	OperationConfigs    []llmOperationConfig  `json:"operationConfigs,omitempty"`
 }
 
 type operationConfig struct {
@@ -97,6 +104,13 @@ type grpcOperationConfig struct {
 	Attributes []Attribute `json:"attributes,omitempty"`
 }
 
+type llmOperationConfig struct {
+	APISource  string             `json:"apiSource,omitempty"`
+	Operations []llmOperation 	  `json:"llmOperations,omitempty"`
+	Quota      *quota             `json:"llmTokenQuota,omitempty"`
+	Attributes []Attribute        `json:"attributes,omitempty"`
+}
+
 type operation struct {
 	Resource string   `json:"resource,omitempty"`
 	Methods  []string `json:"methods,omitempty"`
@@ -105,6 +119,12 @@ type operation struct {
 type graphQLoperation struct {
 	OperationTypes []string `json:"operationTypes,omitempty"`
 	Operation      string   `json:"operation,omitempty"`
+}
+
+type llmOperation struct {
+	Resource string   `json:"resource,omitempty"`
+	Methods  []string `json:"methods,omitempty"`
+	Model	 string   `json:"model,omitempty"`
 }
 
 type quota struct {

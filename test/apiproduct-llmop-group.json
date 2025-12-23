@@ -1,0 +1,27 @@
+{
+  "operationConfigs": [
+    {
+      "apiSource": "httpbin",
+      "llmOperations": [
+        {
+          "resource": "/httpbin",
+          "methods": [
+            "POST"
+          ],
+          "model": "gemini-2.5-flash"
+        }
+      ],
+      "llmTokenQuota": {
+        "limit": "100",
+        "interval": "5",
+        "timeUnit": "minute"
+      },
+      "attributes": [
+        {
+          "name": "key1",
+          "value": "value1"
+        }
+      ]
+    }
+  ]
+}

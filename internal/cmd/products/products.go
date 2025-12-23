@@ -37,7 +37,7 @@ var (
 )
 
 var (
-	description, approval, displayName, quota, quotaInterval, quotaUnit, space string
+	description, approval, displayName, quota, quotaInterval, quotaUnit, llmQuota, llmQuotaInterval, llmQuotaUnit, space string
 	environments, proxies, scopes                                              []string
 	attrs                                                                      map[string]string
 )
@@ -61,6 +61,16 @@ var examples = []string{
 	`apigeecli products import -f samples/apiproduct-legacy.json  --default-token`,
 	`apigeecli products import -f samples/apiproduct-gqlgroup.json  --default-token`,
 	`apigeecli products import -f samples/apiproduct-op-group.json  --default-token`,
+	`apigeecli products create --name $product_name \
+--display-name $product_name \
+--llmopgrp $ops_file \
+--llm-quota=1000 \
+--llm-quota-interval=1 \
+--llm-quota-timeunit=minute \
+--envs $env \
+--space $space \
+--approval auto \
+--attrs access=public  --default-token`,
 }
 
 func init() {
@@ -137,6 +147,26 @@ func getGrpcOperationGroup(grpcOperationGroupFile string) (*products.GrpcOperati
 			return nil, err
 		}
 		return &grpcOperationGrp, nil
+	}
+	return nil, nil
+}
+
+func getLlmOperationGroup(llmOperationGroupFile string) (*products.LlmOperationGroup, error) {
+	var llmOperationGrpBytes []byte
+	var err error
+
+	llmOperationGrp := products.LlmOperationGroup{}
+
+	if llmOperationGroupFile != "" {
+		if llmOperationGrpBytes, err = os.ReadFile(llmOperationGroupFile); err != nil {
+			clilog.Debug.Println(err)
+			return nil, err
+		}
+		if err = json.Unmarshal(llmOperationGrpBytes, &llmOperationGrp); err != nil {
+			clilog.Debug.Println(err)
+			return nil, err
+		}
+		return &llmOperationGrp, nil
 	}
 	return nil, nil
 }
