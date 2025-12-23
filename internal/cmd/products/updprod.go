@@ -68,6 +68,14 @@ var UpdateCmd = &cobra.Command{
 			return nil
 		}
 
+		p.LlmQuota = llmQuota
+		p.LlmQuotaInterval = llmQuotaInterval
+		p.LlmQuotaTimeUnit = llmQuotaUnit
+		p.LlmOperationGroup, err = getLlmOperationGroup(llmOperationGroupFile)
+		if err != nil {
+			return nil
+		}
+
 		p.Attributes = getAttributes(attrs)
 
 		if quotaCounterScope != "" {
@@ -113,6 +121,14 @@ func init() {
 		"", "Scope of the quota decides how the quota counter gets applied; can be PROXY or OPERATION")
 	UpdateCmd.Flags().StringVarP(&space, "space", "",
 		"", "Associated Apigee Space. Pass this if the API Product being updated is part of a space")
+	UpdateCmd.Flags().StringVarP(&llmQuota, "llm-quota", "",
+		"", "LLM Quota Amount")
+	UpdateCmd.Flags().StringVarP(&llmQuotaInterval, "llm-quota-interval", "",
+		"", "LLM Quota Interval")
+	UpdateCmd.Flags().StringVarP(&llmQuotaUnit, "llm-quota-timeunit", "",
+		"", "LLM Quota Unit")
+	UpdateCmd.Flags().StringVarP(&llmOperationGroupFile, "llmopgrp", "",
+		"", "File containing LLM Operation Group JSON. See samples for how to create the file")
 	// TODO: apiresource -r later
 
 	_ = UpdateCmd.MarkFlagRequired("name")
