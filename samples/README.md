@@ -25,7 +25,7 @@ Set up apigeecli with preferences: `apigeecli prefs set -o $org`
 | references | `apigeecli references import -f samples/references.json  -e $env` |
 | apps | `apigeecli apps import -f samples/references.json -d samples/developers.json` |
 | apidocs | `apigeecli apidocs import -f samples/apidocs  -s $siteId`  |
-| apihub | `apigeecli apihub apis create -i $apiId -f ./test/api.json -r $region -p $project --default-token`  |
+| apihub | `apigeecli apihub apis create -i $apiId -f ./test/api.json -r $region -o $project --default-token`  |
 | apihub | `apigeecli apihub apis versions create -i $apVeriId --api-id $apiId 	-f ./test/api-ver.json -r $region -p $project --default-token`  |
 | apihub | `apigeecli apihub apis versions specs create -i $id --api-id $apiId 	--version=$version -d $displayName -f ./test/petstore.yaml -r $region --default-token`  |
 | apihub | `apigeecli apihub deployments create --dep-type apigee -d $dispName 	--env-type development --slo-type "99-99" --endpoints https://api.example.com 	--resource-uri https://apigee.googleapis.com/v1/organizations/$project/apis/$proxy/revisions/1 	-r us-central1 --default-token`  |
