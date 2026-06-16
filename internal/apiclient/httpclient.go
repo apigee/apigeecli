@@ -463,7 +463,13 @@ func handleResponse(resp *http.Response) (respBody []byte, err error) {
 		return nil, err
 	} else if resp.StatusCode > 399 {
 		clilog.Debug.Printf("status code %d, error in response: %s\n", resp.StatusCode, string(respBody))
-		clilog.HttpError.Println(string(respBody))
+		// Honor the same print toggle the success path uses (PrettyPrint). Callers that
+		// temporarily disable response printing to probe an entity's existence (e.g.
+		// upsert's pre-check GET) expect the probe's error response to stay silent too;
+		// otherwise an expected 404 leaks to stderr even though the overall command succeeds.
+		if GetCmdPrintHttpResponseSetting() && ClientPrintHttpResponse.Get() {
+			clilog.HttpError.Println(string(respBody))
+		}
 		return nil, errors.New(getErrorMessage(resp.StatusCode))
 	}
 	clilog.Debug.Println("Response: ", string(respBody))
