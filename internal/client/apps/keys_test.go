@@ -52,7 +52,7 @@ func TestManageKey(t *testing.T) {
 		clienttest.SITEID_NOT_REQD, clienttest.CLIPATH_NOT_REQD); err != nil {
 		t.Fatalf("%v", err)
 	}
-	if _, err := ManageKey(name, appID, "key1", "approve"); err != nil {
+	if _, err := ManageKey(name, appID, "key1", "approve", ""); err != nil {
 		t.Fatalf("%v", err)
 	}
 }
