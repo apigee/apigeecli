@@ -131,8 +131,18 @@ func TestGenerateKey(t *testing.T) {
 	expires := "-1"
 	callback := ""
 	scopes := []string{"test"}
-	if _, err := GenerateKey(name, devID, apiProducts, callback, expires, scopes); err != nil {
+	respBody, err := GenerateKey(name, devID, apiProducts, callback, expires, scopes)
+	if err != nil {
 		t.Fatalf("%v", err)
+	}
+
+	var respJSONMap map[string]interface{}
+	if err = json.Unmarshal(respBody, &respJSONMap); err != nil {
+		t.Fatalf("%v", err)
+	}
+	attrs, ok := respJSONMap["attributes"].([]interface{})
+	if !ok || len(attrs) == 0 {
+		t.Fatalf("expected app attributes to be preserved after genkey, got none")
 	}
 }
 

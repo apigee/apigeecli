@@ -70,6 +70,7 @@ func TestGenerateAPIProxyBundleFromOAS(t *testing.T) {
 		},
 	}
 	if err := bundlegen.GenerateAPIProxyDefFromOASv2(name,
+		"",
 		basePath,
 		specName,
 		skipPolicy,

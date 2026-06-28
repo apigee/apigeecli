@@ -261,6 +261,23 @@ func ListApps(productName string) (respBody []byte, err error) {
 func GenerateKey(name string, developerID string, apiProducts []string, callback string, expires string, scopes []string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 
+	// Fetch the existing app to preserve its attributes; the Apigee POST
+	// endpoint for key generation also updates the app, clearing any fields
+	// absent from the request body.
+	apiclient.ClientPrintHttpResponse.Set(false)
+	appURL, _ := url.Parse(apiclient.GetApigeeBaseURL())
+	appURL.Path = path.Join(appURL.Path, apiclient.GetApigeeOrg(), "developers", developerID, "apps", name)
+	existingAppBody, err := apiclient.HttpClient(appURL.String())
+	apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
+	if err != nil {
+		return nil, err
+	}
+
+	var existingApp application
+	if err = json.Unmarshal(existingAppBody, &existingApp); err != nil {
+		return nil, err
+	}
+
 	key := []string{}
 
 	key = append(key, "\"name\":\""+name+"\"")
@@ -276,6 +293,14 @@ func GenerateKey(name string, developerID string, apiProducts []string, callback
 
 	if len(scopes) > 0 {
 		key = append(key, "\"scopes\":[\""+getArrayStr(scopes)+"\"]")
+	}
+
+	if len(existingApp.Attributes) > 0 {
+		attrBytes, err := json.Marshal(existingApp.Attributes)
+		if err != nil {
+			return nil, err
+		}
+		key = append(key, "\"attributes\":"+string(attrBytes))
 	}
 
 	payload := "{" + strings.Join(key, ",") + "}"

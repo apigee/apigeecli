@@ -155,8 +155,8 @@ func GenerateAPIProxyDefFromOASv2(name string,
 
 	apiproxy.AddProxyEndpoint(DEFAULT)
 
+	apiproxy.AddResource(oasDocName, "oas")
 	if !skipPolicy {
-		apiproxy.AddResource(oasDocName, "oas")
 		apiproxy.AddPolicy("Validate-" + name + "-Schema")
 	}
 
