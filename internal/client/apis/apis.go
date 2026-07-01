@@ -655,6 +655,13 @@ func importAPIProxies(wg *sync.WaitGroup, jobs <-chan string, space string, errs
 			continue
 		}
 
+		var importResp struct {
+			Revision string `json:"revision"`
+		}
+		if err = json.Unmarshal(b, &importResp); err == nil && importResp.Revision != "" {
+			clilog.Info.Printf("Imported proxy %s revision %s\n", n, importResp.Revision)
+		}
+
 		if len(b) > 0 && apiclient.GetPrintOutput() {
 			out := bytes.NewBuffer([]byte{})
 			if err = json.Indent(out, bytes.TrimSpace(b), "", "  "); err != nil {
