@@ -51,10 +51,12 @@ type ApigeeClientOptions struct {
 	PrintOutput    bool   // prints output from http calls
 	NoOutput       bool   // Disable all statements to stdout
 	NoWarnings     bool   // Disable printing warnings to stderr
-	ProxyUrl       string // use a proxy url
-	MetadataToken  bool   // use metadata outh2 token
-	APIRate        Rate   // throttle api calls to Apigee
-	Region         string // control plane region
+	ProxyUrl        string // use a proxy url
+	MetadataToken   bool   // use metadata outh2 token
+	APIRate         Rate   // throttle api calls to Apigee
+	Region          string // control plane region
+	SkipSSLVerify   bool   // skip TLS certificate verification
+	OverrideBaseURL string // override the Apigee base URL
 	// Space          string // Apigee space
 }
 
@@ -125,6 +127,8 @@ func NewApigeeClient(o ApigeeClientOptions) {
 	options.PrintOutput = o.PrintOutput
 	options.NoOutput = o.NoOutput
 	options.NoWarnings = o.NoWarnings
+	options.SkipSSLVerify = o.SkipSSLVerify
+	options.OverrideBaseURL = o.OverrideBaseURL
 
 	// initialize logs
 	clilog.Init(options.DebugLog, options.PrintOutput, options.NoOutput, options.NoWarnings)
@@ -348,8 +352,31 @@ func GetAPIObserveURL() (apiObserveURL string) {
 	return fmt.Sprintf(apiObserveBaseURL, options.ProjectID, options.Region)
 }
 
+// SetSkipSSLVerify
+func SetSkipSSLVerify(skip bool) {
+	options.SkipSSLVerify = skip
+}
+
+// GetSkipSSLVerify
+func GetSkipSSLVerify() bool {
+	return options.SkipSSLVerify
+}
+
+// SetOverrideBaseURL
+func SetOverrideBaseURL(u string) {
+	options.OverrideBaseURL = u
+}
+
+// GetOverrideBaseURL
+func GetOverrideBaseURL() string {
+	return options.OverrideBaseURL
+}
+
 // GetApigeeBaseURL
 func GetApigeeBaseURL() string {
+	if options.OverrideBaseURL != "" {
+		return options.OverrideBaseURL
+	}
 	if options.Region != "" {
 		return fmt.Sprintf(baseDRZURL, options.Region)
 	}

@@ -130,8 +130,9 @@ func Execute() {
 }
 
 var (
-	accessToken, serviceAccount                                                  string
+	accessToken, serviceAccount, overrideBaseURL                                 string
 	disableCheck, printOutput, noOutput, metadataToken, defaultToken, noWarnings bool
+	skipSSLVerify                                                                bool
 	api                                                                          apiclient.API
 )
 
@@ -166,6 +167,12 @@ func init() {
 
 	RootCmd.PersistentFlags().Var(&api, "api", "Sets the control plane API. Must be one of prod, autopush "+
 		"or staging; default is prod")
+
+	RootCmd.PersistentFlags().BoolVarP(&skipSSLVerify, "skip-ssl-verify", "",
+		false, "Skip TLS certificate verification (not recommended for production)")
+
+	RootCmd.PersistentFlags().StringVarP(&overrideBaseURL, "override-base-url", "",
+		"", "Override the Apigee base URL (e.g. for local proxies or testing)")
 
 	RootCmd.AddCommand(apis.Cmd)
 	RootCmd.AddCommand(org.Cmd)
@@ -215,17 +222,26 @@ func initConfig() {
 
 	skipCache, _ = strconv.ParseBool(os.Getenv("APIGEECLI_SKIPCACHE"))
 
+	if os.Getenv("APIGEECLI_SKIP_SSL_VERIFY") == ENABLED {
+		skipSSLVerify = true
+	}
+	if envOverride := os.Getenv("APIGEECLI_OVERRIDE_BASE_URL"); envOverride != "" {
+		overrideBaseURL = envOverride
+	}
+
 	if noOutput {
 		printOutput = noOutput
 	}
 
 	apiclient.NewApigeeClient(apiclient.ApigeeClientOptions{
-		TokenCheck:  true,
-		PrintOutput: printOutput,
-		NoOutput:    noOutput,
-		DebugLog:    debug,
-		SkipCache:   skipCache,
-		NoWarnings:  noWarnings,
+		TokenCheck:      true,
+		PrintOutput:     printOutput,
+		NoOutput:        noOutput,
+		DebugLog:        debug,
+		SkipCache:       skipCache,
+		NoWarnings:      noWarnings,
+		SkipSSLVerify:   skipSSLVerify,
+		OverrideBaseURL: overrideBaseURL,
 	})
 
 	if os.Getenv("APIGEECLI_ENABLE_RATELIMIT") == ENABLED {

@@ -17,6 +17,7 @@ package apiclient
 import (
 	"bytes"
 	"context"
+	"crypto/tls"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -394,12 +395,15 @@ func GetHttpClient() (err error) {
 		apiRateLimit = noAPIRateLimit
 	}
 
+	tlsCfg := &tls.Config{InsecureSkipVerify: GetSkipSSLVerify()} //nolint:gosec
+
 	if GetProxyURL() != "" {
 		if proxyUrl, err := url.Parse(GetProxyURL()); err == nil {
 			ApigeeAPIClient = &RateLimitedHTTPClient{
 				client: &http.Client{
 					Transport: &http.Transport{
-						Proxy: http.ProxyURL(proxyUrl),
+						Proxy:           http.ProxyURL(proxyUrl),
+						TLSClientConfig: tlsCfg,
 					},
 				},
 				Ratelimiter: apiRateLimit,
@@ -409,7 +413,11 @@ func GetHttpClient() (err error) {
 		}
 	} else {
 		ApigeeAPIClient = &RateLimitedHTTPClient{
-			client:      http.DefaultClient,
+			client: &http.Client{
+				Transport: &http.Transport{
+					TLSClientConfig: tlsCfg,
+				},
+			},
 			Ratelimiter: apiRateLimit,
 		}
 	}
