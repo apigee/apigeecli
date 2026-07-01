@@ -29,6 +29,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"time"
 )
 
 type secprofiles struct {
@@ -213,6 +214,36 @@ func Update(name string, content []byte) (respBody []byte, err error) {
 
 	respBody, err = apiclient.HttpClient(u.String(), string(content), "PATCH")
 	return respBody, err
+}
+
+// GetProxyScore returns the security risk assessment score for a specific API proxy
+// by filtering computeEnvironmentScores to the proxy's score path.
+func GetProxyScore(profileName string, proxyName string, startTime string, endTime string) (respBody []byte, err error) {
+	if startTime == "" {
+		startTime = time.Now().AddDate(0, 0, -1).UTC().Format(time.RFC3339)
+	}
+	if endTime == "" {
+		endTime = time.Now().UTC().Format(time.RFC3339)
+	}
+
+	scorePath := fmt.Sprintf("/org@%s/envs/%s/proxies/%s",
+		apiclient.GetApigeeOrg(), apiclient.GetApigeeEnv(), proxyName)
+
+	score := computeenvscore{
+		TimeRange: timeInterval{StartTime: startTime, EndTime: endTime},
+		Filters:   []scoreFilter{{ScorePath: scorePath}},
+	}
+
+	payload, err := json.Marshal(score)
+	if err != nil {
+		return nil, err
+	}
+
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "securityProfiles",
+		profileName, "environments", apiclient.GetApigeeEnv()+":computeEnvironmentScores")
+
+	return apiclient.HttpClient(u.String(), string(payload))
 }
 
 // Compute

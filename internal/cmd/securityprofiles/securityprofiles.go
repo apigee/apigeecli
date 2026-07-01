@@ -45,6 +45,7 @@ func init() {
 	Cmd.AddCommand(ExpCmd)
 	Cmd.AddCommand(ImpCmd)
 	Cmd.AddCommand(ComputeCmd)
+	Cmd.AddCommand(ScoreCmd)
 
 	_ = Cmd.MarkFlagRequired("org")
 }
