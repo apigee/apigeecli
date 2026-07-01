@@ -22,11 +22,49 @@ import (
 	"github.com/thedevsaddam/gojsonq"
 )
 
-// List
+// List returns all integrated developer portals for the org.
 func List() (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sites")
 	respBody, err = apiclient.HttpClient(u.String())
+	return respBody, err
+}
+
+// Get returns a single integrated developer portal by site ID.
+func Get(siteID string) (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sites", siteID)
+	respBody, err = apiclient.HttpClient(u.String())
+	return respBody, err
+}
+
+// Create creates a new integrated developer portal from a JSON payload.
+// siteID is the desired portal ID; it may be passed as a query param.
+func Create(siteID string, payload []byte) (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sites")
+	if siteID != "" {
+		q := u.Query()
+		q.Set("siteId", siteID)
+		u.RawQuery = q.Encode()
+	}
+	respBody, err = apiclient.HttpClient(u.String(), string(payload))
+	return respBody, err
+}
+
+// Update replaces an integrated developer portal configuration.
+func Update(siteID string, payload []byte) (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sites", siteID)
+	respBody, err = apiclient.HttpClient(u.String(), string(payload), "PUT")
+	return respBody, err
+}
+
+// Delete removes an integrated developer portal.
+func Delete(siteID string) (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
+	u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "sites", siteID)
+	respBody, err = apiclient.HttpClient(u.String(), "", "DELETE")
 	return respBody, err
 }
 

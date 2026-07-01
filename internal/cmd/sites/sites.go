@@ -35,6 +35,10 @@ func init() {
 		"", "Apigee control plane region name; default is https://apigee.googleapis.com")
 
 	Cmd.AddCommand(ListCmd)
+	Cmd.AddCommand(GetCmd)
+	Cmd.AddCommand(CreateCmd)
+	Cmd.AddCommand(UpdateCmd)
+	Cmd.AddCommand(DeleteCmd)
 
 	_ = Cmd.MarkFlagRequired("org")
 }
