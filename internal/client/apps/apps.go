@@ -60,7 +60,8 @@ type credential struct {
 }
 
 type apiProduct struct {
-	Name string `json:"apiproduct,omitempty"`
+	Name   string `json:"apiproduct,omitempty"`
+	Status string `json:"status,omitempty"`
 }
 
 type importCredential struct {
@@ -539,6 +540,18 @@ func createAsyncApp(app application, developerEntities developers.Appdevelopers,
 			_, err = apiclient.HttpClient(updateDeveloperAppUrl.String(), string(updateCredJSON))
 			if err != nil {
 				return
+			}
+
+			// set the API product status on the credential if it was approved
+			for _, apiProd := range credential.APIProducts {
+				if apiProd.Status == "approved" {
+					apiclient.ClientPrintHttpResponse.Set(false)
+					_, err = ManageKey(url.QueryEscape(developerEmail), app.Name, credential.ConsumerKey, "approve", apiProd.Name)
+					apiclient.ClientPrintHttpResponse.Set(apiclient.GetCmdPrintHttpResponseSetting())
+					if err != nil {
+						clilog.Warning.Printf("failed to approve API product %s on key %s: %v\n", apiProd.Name, credential.ConsumerKey, err)
+					}
+				}
 			}
 		} else {
 			clilog.Warning.Println("NOTE: apiProducts are not associated with the app")
