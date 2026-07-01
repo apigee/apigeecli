@@ -120,16 +120,19 @@ func totalAPICallsInMonth(dimension bool, environment string, month int, year in
 					for _, m := range d.Metrics {
 						calls, _ := strconv.Atoi(m.Values[0])
 						totalExtensible = totalExtensible + calls
+						totalApiCalls = totalApiCalls + calls
 					}
 				} else if d.Name == "STANDARD" {
 					for _, m := range d.Metrics {
 						calls, _ := strconv.Atoi(m.Values[0])
 						totalStandard = totalStandard + calls
+						totalApiCalls = totalApiCalls + calls
 					}
 				} else if d.Name == "(not set)" {
 					for _, m := range d.Metrics {
 						calls, _ := strconv.Atoi(m.Values[0])
 						totalApiCalls = totalApiCalls + calls
+						totalStandard = totalStandard + calls
 					}
 				}
 			} else {
