@@ -17,6 +17,7 @@ package deployments
 import (
 	"internal/apiclient"
 	"internal/client/hub"
+	"os"
 
 	"github.com/spf13/cobra"
 )
@@ -32,10 +33,22 @@ var UpdateCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
+
+		if updateFilePath != "" {
+			var contents []byte
+			if contents, err = os.ReadFile(updateFilePath); err != nil {
+				return err
+			}
+			_, err = hub.UpdateDeploymentFromFile(deploymentID, contents)
+			return
+		}
+
 		_, err = hub.UpdateDeployment(deploymentID, displayName, description, externalURI, resourceURI, endpoints, d, e, s)
 		return
 	},
 }
+
+var updateFilePath string
 
 func init() {
 	UpdateCmd.Flags().StringVarP(&deploymentID, "id", "i",
@@ -53,4 +66,6 @@ func init() {
 	UpdateCmd.Flags().Var(&d, "dep-type", "The type of deployment")
 	UpdateCmd.Flags().Var(&e, "env-type", "The environment mapping to this deployment")
 	UpdateCmd.Flags().Var(&s, "slo-type", "The SLO for this deployment")
+	UpdateCmd.Flags().StringVarP(&updateFilePath, "file", "f",
+		"", "Path to a JSON file containing the deployment definition to update (supports custom attributes)")
 }

@@ -677,6 +677,27 @@ func CreateDeployment(deploymentID string, displayName string, description strin
 	return respBody, err
 }
 
+// CreateDeploymentFromFile creates a deployment using raw JSON from a file.
+func CreateDeploymentFromFile(deploymentID string, contents []byte) (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.GetApigeeRegistryURL())
+	u.Path = path.Join(u.Path, "deployments")
+	if deploymentID != "" {
+		q := u.Query()
+		q.Set("deploymentId", deploymentID)
+		u.RawQuery = q.Encode()
+	}
+	respBody, err = apiclient.HttpClient(u.String(), string(contents))
+	return respBody, err
+}
+
+// UpdateDeploymentFromFile updates a deployment using raw JSON from a file.
+func UpdateDeploymentFromFile(deploymentID string, contents []byte) (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.GetApigeeRegistryURL())
+	u.Path = path.Join(u.Path, "deployments", deploymentID)
+	respBody, err = apiclient.HttpClient(u.String(), string(contents), "PATCH")
+	return respBody, err
+}
+
 func GetDeployment(deploymentID string) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.GetApigeeRegistryURL())
 	u.Path = path.Join(u.Path, "deployments", deploymentID)

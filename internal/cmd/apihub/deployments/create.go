@@ -15,8 +15,10 @@
 package deployments
 
 import (
+	"fmt"
 	"internal/apiclient"
 	"internal/client/hub"
+	"os"
 
 	"github.com/spf13/cobra"
 )
@@ -32,6 +34,30 @@ var CrtCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
+
+		if filePath != "" {
+			var contents []byte
+			if contents, err = os.ReadFile(filePath); err != nil {
+				return err
+			}
+			_, err = hub.CreateDeploymentFromFile(deploymentID, contents)
+			return
+		}
+
+		// Validate required flags when not using a file
+		if displayName == "" {
+			return fmt.Errorf("required flag \"display-name\" not set")
+		}
+		if resourceURI == "" {
+			return fmt.Errorf("required flag \"resource-uri\" not set")
+		}
+		if len(endpoints) == 0 {
+			return fmt.Errorf("required flag \"endpoints\" not set")
+		}
+		if string(d) == "" {
+			return fmt.Errorf("required flag \"dep-type\" not set")
+		}
+
 		_, err = hub.CreateDeployment(deploymentID, displayName, description,
 			deploymentName, externalURI, resourceURI, endpoints, d, e, s)
 		return
@@ -45,6 +71,7 @@ var (
 	d                                                                                hub.DeploymentType
 	e                                                                                hub.EnvironmentType
 	s                                                                                hub.SloType
+	filePath                                                                         string
 )
 
 func init() {
@@ -65,9 +92,6 @@ func init() {
 	CrtCmd.Flags().Var(&d, "dep-type", "The type of deployment")
 	CrtCmd.Flags().Var(&e, "env-type", "The environment mapping to this deployment")
 	CrtCmd.Flags().Var(&s, "slo-type", "The SLO for this deployment")
-
-	_ = CrtCmd.MarkFlagRequired("display-name")
-	_ = CrtCmd.MarkFlagRequired("resource-uri")
-	_ = CrtCmd.MarkFlagRequired("endpoints")
-	_ = CrtCmd.MarkFlagRequired("dep-type")
+	CrtCmd.Flags().StringVarP(&filePath, "file", "f",
+		"", "Path to a JSON file containing the deployment definition (including custom attributes)")
 }
