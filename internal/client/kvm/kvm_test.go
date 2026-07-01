@@ -40,7 +40,7 @@ func TestCreate(t *testing.T) {
 	apiclient.SetApigeeEnv("")
 
 	// test org KVM
-	if _, err := Create("", kvmName, true); err != nil {
+	if _, err := Create("", kvmName, true, false); err != nil {
 		t.Fatalf("%v", err)
 	}
 
@@ -48,13 +48,13 @@ func TestCreate(t *testing.T) {
 	if _, err := apis.CreateProxy(proxyName, path.Join(cliPath, testFolder, "test_proxy.zip")); err != nil {
 		t.Fatalf("%v", err)
 	}
-	if _, err := Create(proxyName, kvmName, true); err != nil {
+	if _, err := Create(proxyName, kvmName, true, false); err != nil {
 		t.Fatalf("%v", err)
 	}
 
 	// test env KVM
 	apiclient.SetApigeeEnv(env)
-	if _, err := Create("", kvmName, true); err != nil {
+	if _, err := Create("", kvmName, true, false); err != nil {
 		t.Fatalf("%v", err)
 	}
 }

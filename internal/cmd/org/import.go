@@ -81,7 +81,7 @@ var ImportCmd = &cobra.Command{
 			}
 			for _, kvmName := range kvmList {
 				// create only encrypted KVMs
-				if _, err = kvm.Create("", kvmName, true); err != nil {
+				if _, err = kvm.Create("", kvmName, true, false); err != nil {
 					return err
 				}
 				if orgKVMFileList[kvmName] != "" {
@@ -185,7 +185,7 @@ var ImportCmd = &cobra.Command{
 				}
 				for _, kvmName := range kvmList {
 					// create only encrypted KVMs
-					if _, err = kvm.Create("", kvmName, true); err != nil {
+					if _, err = kvm.Create("", kvmName, true, false); err != nil {
 						return err
 					}
 					if envKVMFileList[kvmName] != "" {

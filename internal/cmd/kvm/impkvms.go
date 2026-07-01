@@ -50,7 +50,7 @@ var ImpCmd = &cobra.Command{
 				kvmFile := filepath.Base(orgKVMFile)
 				kvmMetadata := strings.Split(kvmFile, utils.DefaultFileSplitter)
 				clilog.Info.Printf("\tCreating KVM %s\n", orgKVMFile)
-				if _, err = kvm.Create("", kvmMetadata[1], true); proceedOnError(err) != nil {
+				if _, err = kvm.Create("", kvmMetadata[1], true, false); proceedOnError(err) != nil {
 					return err
 				}
 				clilog.Info.Printf("\tImporting entries for %s\n", orgKVMFile)
@@ -66,7 +66,7 @@ var ImpCmd = &cobra.Command{
 				kvmFile := filepath.Base(proxyKVMFile)
 				kvmMetadata := strings.Split(kvmFile, utils.DefaultFileSplitter)
 				clilog.Info.Printf("\tCreating KVM %s\n", proxyKVMFile)
-				if _, err = kvm.Create(kvmMetadata[1], kvmMetadata[2], true); proceedOnError(err) != nil {
+				if _, err = kvm.Create(kvmMetadata[1], kvmMetadata[2], true, false); proceedOnError(err) != nil {
 					return err
 				}
 				clilog.Info.Printf("\tImporting entries for %s\n", proxyKVMFile)
@@ -83,7 +83,7 @@ var ImpCmd = &cobra.Command{
 				kvmMetadata := strings.Split(kvmFile, utils.DefaultFileSplitter)
 				apiclient.SetApigeeEnv(kvmMetadata[1])
 				clilog.Info.Printf("\tCreating KVM %s\n", envKVMFile)
-				if _, err = kvm.Create("", kvmMetadata[2], true); proceedOnError(err) != nil {
+				if _, err = kvm.Create("", kvmMetadata[2], true, false); proceedOnError(err) != nil {
 					return err
 				}
 				clilog.Info.Printf("\tImporting entries for %s\n", envKVMFile)

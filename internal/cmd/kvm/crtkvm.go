@@ -40,10 +40,12 @@ var CreateCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
 
-		_, err = kvm.Create(proxyName, name, true)
+		_, err = kvm.Create(proxyName, name, true, masked)
 		return
 	},
 }
+
+var masked bool
 
 func init() {
 	CreateCmd.Flags().StringVarP(&env, "env", "e",
@@ -52,6 +54,8 @@ func init() {
 		"", "API Proxy name")
 	CreateCmd.Flags().StringVarP(&name, "name", "n",
 		"", "KVM Map name")
+	CreateCmd.Flags().BoolVarP(&masked, "masked", "m",
+		false, "Mask the KVM values in the debug session")
 
 	_ = CreateCmd.MarkFlagRequired("name")
 }

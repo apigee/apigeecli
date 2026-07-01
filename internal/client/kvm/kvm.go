@@ -23,13 +23,16 @@ import (
 )
 
 // Create
-func Create(proxyName string, name string, encrypt bool) (respBody []byte, err error) {
+func Create(proxyName string, name string, encrypt bool, masked bool) (respBody []byte, err error) {
 	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
 	kvm := []string{}
 
 	kvm = append(kvm, "\"name\":\""+name+"\"")
 	if encrypt {
 		kvm = append(kvm, "\"encrypted\":"+strconv.FormatBool(encrypt))
+	}
+	if masked {
+		kvm = append(kvm, "\"masked\":"+strconv.FormatBool(masked))
 	}
 	payload := "{" + strings.Join(kvm, ",") + "}"
 
@@ -42,6 +45,23 @@ func Create(proxyName string, name string, encrypt bool) (respBody []byte, err e
 	}
 
 	respBody, err = apiclient.HttpClient(u.String(), payload)
+	return respBody, err
+}
+
+// Update
+func Update(proxyName string, name string, masked bool) (respBody []byte, err error) {
+	u, _ := url.Parse(apiclient.GetApigeeBaseURL())
+	payload := "{\"masked\":" + strconv.FormatBool(masked) + "}"
+
+	if apiclient.GetApigeeEnv() != "" {
+		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "environments", apiclient.GetApigeeEnv(), "keyvaluemaps", name)
+	} else if proxyName != "" {
+		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "apis", proxyName, "keyvaluemaps", name)
+	} else {
+		u.Path = path.Join(u.Path, apiclient.GetApigeeOrg(), "keyvaluemaps", name)
+	}
+
+	respBody, err = apiclient.HttpClient(u.String(), payload, "PATCH")
 	return respBody, err
 }
 
